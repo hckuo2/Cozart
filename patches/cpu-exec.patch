@@ -1,0 +1,20 @@
+diff --git a/accel/tcg/cpu-exec.c b/accel/tcg/cpu-exec.c
+index c738b7f..9958b65 100644
+--- a/accel/tcg/cpu-exec.c
++++ b/accel/tcg/cpu-exec.c
+@@ -256,6 +256,7 @@ void cpu_exec_step_atomic(CPUState *cpu)
+         cc->cpu_exec_enter(cpu);
+         /* execute the generated code */
+         trace_exec_tb(tb, pc);
++        trace_exec_tb_block(tb, pc, tb->size, tb->icount);
+         cpu_tb_exec(cpu, tb);
+         cc->cpu_exec_exit(cpu);
+     } else {
+@@ -609,6 +610,7 @@ static inline void cpu_loop_exec_tb(CPUState *cpu, TranslationBlock *tb,
+     int32_t insns_left;
+
+     trace_exec_tb(tb, tb->pc);
++    trace_exec_tb_block(tb, tb->pc, tb->size, tb->icount);
+     ret = cpu_tb_exec(cpu, tb);
+     tb = (TranslationBlock *)(ret & ~TB_EXIT_MASK);
+     *tb_exit = ret & TB_EXIT_MASK;

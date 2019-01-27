@@ -1,0 +1,12 @@
+diff --git a/accel/tcg/trace-events b/accel/tcg/trace-events
+index c22ad60..f863253 100644
+--- a/accel/tcg/trace-events
++++ b/accel/tcg/trace-events
+@@ -5,6 +5,7 @@
+ disable exec_tb(void *tb, uintptr_t pc) "tb:%p pc=0x%"PRIxPTR
+ disable exec_tb_nocache(void *tb, uintptr_t pc) "tb:%p pc=0x%"PRIxPTR
+ disable exec_tb_exit(void *last_tb, unsigned int flags) "tb:%p flags=0x%x"
++exec_tb_block(void *tb, uintptr_t pc, uint16_t size, uint32_t icount) "t b:%p pc=0x%" PRIxPTR " size=%d icount=%d"
+
+ # translate-all.c
+ translate_block(void *tb, uintptr_t pc, uint8_t *tb_code) "tb:%p, pc:0x%"PRIxPTR", tb_code:%p"
