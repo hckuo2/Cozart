@@ -11,7 +11,10 @@ do
         -kernel bzImage.vanilla -nographic -no-reboot \
         -append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=/bin/bash" \
              2> trace-tmp;
-    cat trace-tmp | ./bin/trace-parser | sort | uniq | ./trace2line.sh | ./line2config.sh > newconfig
+    cat trace-tmp | ./bin/trace-parser | sort | uniq | ./trace2line.sh > lines
+    cat lines | ./line2config.sh > kernel.config
+    cat lines | ./file2config.sh > driver.config
+    cat kernel.config driver.config > new.config
     rm trace-tmp;
 done
 }

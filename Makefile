@@ -11,6 +11,12 @@ build-directives-db:
 	cd $(linuxdir) && \
 	../directive-extracter.sh . > ../directives.db
 
+build-makefile-db:
+	touch filename.db
+	cd $(linuxdir) && \
+	go run ../makefile-extracter.go >> ../filename.db
+
+
 bin/%: %.go
 	go build -o $@ $<;
 
