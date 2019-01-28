@@ -2,7 +2,8 @@
 workdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 qemudir="$workdir/qemu"
 qemubin="$qemudir/x86_64-softmmu/qemu-system-x86_64"
-linuxdir="$workdir/MultiK-linux"
+linuxversion="4.19.16"
+linuxdir="$workdir/linux-$linuxversion"
 vmlinux="$linuxdir/vmlinux"
 bzImage="$linuxdir/arch/x86/boot/bzImage"
 
