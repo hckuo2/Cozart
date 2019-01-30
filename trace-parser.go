@@ -35,6 +35,7 @@ func getTextSize() uint64 {
 }
 
 const kernelText uint64 = 0xffffffff81000000
+// const kernelText uint64 = 0x0
 
 type Block struct {
 	start     uint64

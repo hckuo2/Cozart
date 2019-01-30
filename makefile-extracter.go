@@ -15,19 +15,23 @@ func main() {
         filename := scanner.Text()
         log.Println(filename)
     data, err := ioutil.ReadFile(filename)
-    objregexp := regexp.MustCompile("obj-\\$\\((.+)\\)")
+    objregexp := regexp.MustCompile("(obj|mounts|libdata)-\\$\\((.+)\\)")
     if err != nil {
         panic(err)
     }
     for _, line := range strings.Split(string(data), "\n") {
         matches := objregexp.FindStringSubmatch(line)
-        if len(matches) == 2 {
+        if len(matches) == 3 {
             i := strings.Index(line, "=")
+            if i == -1 {
+                continue
+            }
             line = line[i:]
             vs := strings.Split(line, " ")
             for _, f := range vs[1:] {
                 if len(f)-2 > 0 {
-                    fmt.Println(f[:len(f)-2] + ".c", matches[1])
+                    basename := f[:len(f)-2]
+                    fmt.Println(strings.Replace(basename, "_mod", "", 1) + ".c", matches[2])
                 }
             }
         }

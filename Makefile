@@ -14,7 +14,7 @@ build-directives-db:
 build-makefile-db:
 	touch filename.db
 	cd $(linuxdir) && \
-	go run ../makefile-extracter.go >> ../filename.db
+	find -name Makefile | go run ../makefile-extracter.go > ../filename.db
 
 
 bin/%: %.go
@@ -36,8 +36,8 @@ install-kernel-modules:
 	-sudo umount --recursive $(mnt)
 	sudo mount -o loop $(disk) $(mnt)
 	cd $(linuxdir) && \
-	INSTALL_MOD_PATH=$(mnt)/lib/modules/$(kernelversion)/ make modules_install
-	-sudo umount --recursive $(mnt)
+	INSTALL_MOD_PATH=../$(mnt)/lib/modules/$(kernelversion)/ make modules_install
+	-sudo umount --recursive ../$(mnt)
 
 debootstrap: $(disk) $(mnt)
 	sudo mkfs.ext4 $(disk)

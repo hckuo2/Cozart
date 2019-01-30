@@ -7,22 +7,29 @@ os.environ['SRCARCH'] = "x86"
 os.environ['ARCH'] = "x86"
 kconf = kconfiglib.Kconfig()
 
-def _find_deps(dep, result):
+def is_constant_y(sym):
+    return sym.is_constant and (kconfiglib.expr_value(sym) == 2)
+
+def _find_deps(dep, result, level):
     if type(dep) is tuple:
         relation = dep[0]
-        if relation == 2 or relation == 20:
+        if relation == kconfiglib.AND:
             for i in dep[1:]:
-                _find_deps(i, result)
+                _find_deps(i, result, level + 1)
+        if relation == kconfiglib.EQUAL and is_constant_y(dep[2]):
+            result.add(dep[1].name)
+
     elif type(dep) is kconfiglib.Symbol:
+        if is_constant_y(dep):
+            return
         if dep.name not in result:
             result.add(dep.name)
-        else:
-            _find_deps(dep.direct_dep, result)
+            _find_deps(dep.direct_dep, result, level + 1)
 
 
 def find_deps(sym):
     result = set()
-    _find_deps(sym.direct_dep, result)
+    _find_deps(sym.direct_dep, result, 0)
     return result
 
 

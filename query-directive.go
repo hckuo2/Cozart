@@ -35,7 +35,7 @@ func main () {
             continue
         }
         results := strings.Split(db[i-1], ":")
-        if strings.Contains(results[2], "#endif") {
+        if len(results) < 3 || strings.Contains(results[2], "#endif") {
             continue
         } else {
             fmt.Println(results)
