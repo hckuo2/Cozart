@@ -2,5 +2,6 @@ qemu/
 *.ext4
 *.db
 bin/
-*.config
+*.tmp
+
 
