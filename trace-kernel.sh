@@ -10,7 +10,7 @@ trace-kernel() {
     $qemubin -trace exec_tb_block -smp 2 -m 8G -cpu kvm64 \
         -drive file="$workdir/qemu-disk.ext4,if=ide,format=raw" \
         -kernel $distro.bzImage -nographic -no-reboot \
-        -append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=/bin/bash"\
+        -append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw"\
              2> trace.tmp;
         # -initrd ../initramfs-vanilla \
     echo "Getting line information..."
@@ -27,5 +27,4 @@ trace-kernel() {
         > $kerneldir/.config;
 }
 trace-kernel "$1";
-rm *.tmp;
 

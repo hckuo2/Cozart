@@ -14,8 +14,27 @@ build-directives-db:
 build-makefile-db:
 	touch filename.db
 	cd $(linuxdir) && \
-	find -name Makefile | go run ../makefile-extracter.go > ../filename.db
+	find drivers init net -name Makefile | go run ../makefile-extracter.go > ../filename.db
 
+setup-linux:
+	wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-$(kernelversion).tar.xz
+	tar xf linux-$(kernelversion).tar.xz
+
+setup-qemu:
+	-git clone --depth 1 -b stable-2.12 https://github.com/qemu/qemu.git
+	cd qemu && \
+	git submodule init && git submodule update --recursive && \
+	git apply -v ../patches/cpu-exec.patch && \
+	git apply -v ../patches/trace-events.patch && \
+	./configure --enable-trace-backend=log --target-list=x86_64-softmmu && \
+	make -j`nproc`
+
+build-ubuntu-vanilla:
+	cp -u ubuntu.config $(linuxdir)/.config;
+	cd $(linuxdir) && \
+	make -j`nproc` bzImage && \
+	cp vmlinux ../ubuntu.vmlinux && \
+	cp arch/x86/boot/bzImage ../ubuntu.bzImage
 
 bin/%: %.go
 	go build -o $@ $<;
@@ -36,8 +55,8 @@ install-kernel-modules:
 	-sudo umount --recursive $(mnt)
 	sudo mount -o loop $(disk) $(mnt)
 	cd $(linuxdir) && \
-	INSTALL_MOD_PATH=../$(mnt)/lib/modules/$(kernelversion)/ make modules_install
-	-sudo umount --recursive ../$(mnt)
+	sudo INSTALL_MOD_PATH=../$(mnt) make modules_install
+	-sudo umount --recursive ./$(mnt)
 
 debootstrap: $(disk) $(mnt)
 	sudo mkfs.ext4 $(disk)
