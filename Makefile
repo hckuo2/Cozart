@@ -11,6 +11,12 @@ build-directives-db:
 	cd $(linuxdir) && \
 	../directive-extracter.sh . > ../directives.db
 
+ubuntu-bzImage:
+	cp ubuntu.config $(linuxdir)/.config;
+	cp $(linuxdir) && \
+	make olddefconfig && \
+	make -j`nproc`
+
 build-makefile-db:
 	touch filename.db
 	cd $(linuxdir) && \
