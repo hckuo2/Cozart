@@ -2,10 +2,6 @@
 workdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 qemudir="$workdir/qemu"
 qemubin="$qemudir/x86_64-softmmu/qemu-system-x86_64"
-linuxversion="4.19.16"
-linuxdir="$workdir/linux-$linuxversion"
-vmlinux="$linuxdir/vmlinux"
-bzImage="$linuxdir/arch/x86/boot/bzImage"
 
 install-qemu() {
     git clone --depth 1 -b stable-2.12 https://github.com/qemu/qemu.git $qemudir

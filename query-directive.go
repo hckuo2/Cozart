@@ -7,6 +7,7 @@ import (
     "strconv"
     "bufio"
     "fmt"
+    "log"
 )
 
 func main () {
@@ -18,7 +19,6 @@ func main () {
     scanner := bufio.NewScanner(os.Stdin)
     for scanner.Scan() {
         query := scanner.Text()
-        query = "./" + query
         i := sort.Search(len(db), func(i int) bool {
             line := db[i]
             vs := strings.Split(line, ":")
@@ -35,9 +35,15 @@ func main () {
             continue
         }
         results := strings.Split(db[i-1], ":")
+        rfilename := results[0]
+        qfilename := strings.Split(query, ":")[0]
+        if strings.Compare(rfilename, qfilename) != 0 {
+            continue
+        }
         if len(results) < 3 || strings.Contains(results[2], "#endif") {
             continue
         } else {
+            log.Println(query, results)
             fmt.Println(results)
         }
     }

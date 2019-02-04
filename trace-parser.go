@@ -34,8 +34,6 @@ func getTextSize() uint64 {
 	return sec.SectionHeader.Size
 }
 
-const kernelText uint64 = 0xffffffff81000000
-// const kernelText uint64 = 0x0
 
 type Block struct {
 	start     uint64
@@ -59,9 +57,7 @@ func parse(jobs <-chan string, results chan<- Block, wg *sync.WaitGroup) {
 		timestamp, _ := strconv.ParseFloat(matches[1], 64)
 		start, _ := strconv.ParseUint(matches[2], 16, 64)
 		size, _ := strconv.ParseUint(matches[3], 10, 64)
-        if start > kernelText {
-			results <- Block{start, start + size, timestamp}
-		}
+        results <- Block{start, start + size, timestamp}
 	}
 }
 

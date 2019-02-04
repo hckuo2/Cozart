@@ -2,9 +2,7 @@
 import kconfiglib
 import os
 import sys
-os.environ['srctree'] = "linux-4.19.16"
-os.environ['SRCARCH'] = "x86"
-os.environ['ARCH'] = "x86"
+os.environ['srctree'] = "src/kernel/fiasco/src"
 kconf = kconfiglib.Kconfig()
 
 def is_constant_y(sym):

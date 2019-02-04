@@ -1,24 +1,23 @@
-mnt=mnt/
-disk=qemu-disk.ext4
-setupfile=bench/native/setup_custom.sh
-kernelversion=4.19.16
-linuxdir=linux-$(kernelversion)
+ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+mnt:=$(ROOT_DIR)/mnt/
+disk:=$(ROOT_DIR)/qemu-disk.ext4
+kernelversion:=18.11
+kerneldir:=$(ROOT_DIR)/src/kernel/fiasco
 .PHONY: rm-disk clean
 
 trace-processor: bin/trace-parser
 
 build-directives-db:
-	cd $(linuxdir) && \
-	../directive-extracter.sh . > ../directives.db
+	$(ROOT_DIR)/directive-extracter.sh $(kerneldir)/src > $(ROOT_DIR)/directives.db
 
 build-makefile-db:
 	touch filename.db
 	cd $(linuxdir) && \
 	find drivers init net -name Makefile | go run ../makefile-extracter.go > ../filename.db
 
-setup-linux:
-	wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-$(kernelversion).tar.xz
-	tar xf linux-$(kernelversion).tar.xz
+setup-fiasco:
+	svn cat https://svn.l4re.org/repos/oc/l4re/trunk/repomgr \
+		| perl - init https://svn.l4re.org/repos/oc/l4re fiasco l4re
 
 setup-qemu:
 	-git clone --depth 1 -b stable-2.12 https://github.com/qemu/qemu.git
@@ -28,13 +27,6 @@ setup-qemu:
 	git apply -v ../patches/trace-events.patch && \
 	./configure --enable-trace-backend=log --target-list=x86_64-softmmu && \
 	make -j`nproc`
-
-build-ubuntu-vanilla:
-	cp -u ubuntu.config $(linuxdir)/.config;
-	cd $(linuxdir) && \
-	make -j`nproc` bzImage && \
-	cp vmlinux ../ubuntu.vmlinux && \
-	cp arch/x86/boot/bzImage ../ubuntu.bzImage
 
 bin/%: %.go
 	go build -o $@ $<;
@@ -51,40 +43,9 @@ clean:
 rm-disk:
 	rm $(disk)
 
-install-kernel-modules:
-	-sudo umount --recursive $(mnt)
-	sudo mount -o loop $(disk) $(mnt)
-	cd $(linuxdir) && \
-	sudo INSTALL_MOD_PATH=../$(mnt) make modules_install
-	-sudo umount --recursive ./$(mnt)
-
 debootstrap: $(disk) $(mnt)
 	sudo mkfs.ext4 $(disk)
 	sudo mount -o loop $(disk) $(mnt)
 	sudo debootstrap --include="vim kmod time net-tools apache2 apache2-utils" --arch=amd64 cosmic $(mnt) http://us.archive.ubuntu.com/ubuntu/
 	sudo umount --recursive $(mnt)
 
-ext4-fs:
-	cd $(linuxdir); \
-	./scripts/config --enable EXT4_FS; \
-	./scripts/config --enable BLOCK;
-
-ide-drive:
-	cd $(linuxdir); \
-	./scripts/config --enable BLOCK; \
-	./scripts/config --enable BLK_DEV_SD; \
-	./scripts/config --enable ATA_PIIX; \
-	./scripts/config --enable ATA; \
-	./scripts/config --enable SATA_AHCI; \
-	./scripts/config --enable SCSI_CONSTANTS; \
-	./scripts/config --enable SCSI_SPI_ATTRS; \
-
-serial:
-	cd $(linuxdir); \
-	./scripts/config --enable SERIAL_8250; \
-	./scripts/config --enable SERIAL_8250_CONSOLE; \
-
-printk:
-	cd $(linuxdir); \
-	./scripts/config --enable EXPERT; \
-	./scripts/config --enable PRINTK;
