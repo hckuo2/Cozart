@@ -70,7 +70,7 @@ install-kernel-modules:
 debootstrap: $(disk) $(mnt)
 	sudo mkfs.ext4 $(disk)
 	sudo mount -o loop $(disk) $(mnt)
-	sudo debootstrap --include="vim kmod time net-tools apache2 apache2-utils" --arch=amd64 cosmic $(mnt) http://us.archive.ubuntu.com/ubuntu/
+	sudo debootstrap --include="vim kmod time net-tools apache2 apache2-utils haveged" --arch=amd64 stretch $(mnt)
 	sudo umount --recursive $(mnt)
 
 ext4-fs:

@@ -14,7 +14,7 @@ trace-kernel() {
         -append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=/bin/bash"\
              2> trace.raw.tmp;
         # -initrd ../initramfs-vanilla \
-    cat trace.raw.tmp | ./bin/trace-parser $2 | sort | uniq > trace.tmp
+    cat trace.raw.tmp | ./bin/trace-parser $checkmark | sort | uniq > trace.tmp
     echo "Getting line information..."
     cat trace.tmp | ./trace2line.sh $distro > lines.tmp
     echo "Getting kernel config imformation..."
