@@ -2,8 +2,8 @@ mnt=mnt/
 disk=qemu-disk.ext4
 setupfile=bench/native/setup_custom.sh
 kernelversion=4.19.16
-linuxdir=linux-$(kernelversion)
-.PHONY: rm-disk clean build-directives-db build-makefile-db
+linuxdir=$(CURDIR)/linux-$(kernelversion)
+.PHONY: rm-disk clean build-db
 
 trace-processor: bin/trace-parser
 
@@ -21,10 +21,9 @@ prepare-ubuntu:
 	cp vmlinux ../ubuntu.vmlinux
 
 
-build-makefile-db:
-	touch filename.db
-	cd $(linuxdir) && \
-	find drivers init net -name Makefile | go run ../makefile-extracter.go > ../filename.db
+build-db:
+	./directive-extracter.sh $(linuxdir) > directives.db
+	find $(linuxdir)/drivers $(linuxdir)/init $(linuxdir)/net -name Makefile | go run makefile-extracter.go > filename.db
 
 setup-linux:
 	wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-$(kernelversion).tar.xz

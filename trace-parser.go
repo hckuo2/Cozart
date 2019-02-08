@@ -85,7 +85,7 @@ func main() {
 
 	var keys []uint64
 	for k, b := range blocks {
-        if checkmark {
+        if *checkmark {
             if b.timestamp < startTime || b.timestamp > endTime {
                 continue
             }

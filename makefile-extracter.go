@@ -6,13 +6,14 @@ import (
     "strings"
     "regexp"
     "bufio"
+    "path"
 )
 
 func main() {
     scanner := bufio.NewScanner(os.Stdin)
     for scanner.Scan() {
         filename := scanner.Text()
-        // log.Println(filename)
+        dir := path.Dir(filename) + "/"
         data, err := ioutil.ReadFile(filename)
         objregexp := regexp.MustCompile("(obj|mounts|libdata)-\\$\\((.+)\\)")
         subobjregexp := regexp.MustCompile("(\\w+)-y")
@@ -31,7 +32,7 @@ func main() {
                 for _, f := range vs[1:] {
                     if len(f)-2 > 0 {
                         basename := f[:len(f)-2]
-                        fmt.Println(strings.Replace(basename, "_mod", "", 1) + ".c", matches[2])
+                        fmt.Println(dir+strings.Replace(basename, "_mod", "", 1) + ".c", matches[2])
                     }
                 }
             } else {
@@ -46,7 +47,7 @@ func main() {
                     for _, f := range vs[1:] {
                         if len(f)-2 > 0 {
                             basename := f[:len(f)-2]
-                            fmt.Println(strings.Replace(basename, "_mod", "", 1) + ".c", strings.ToUpper("CONFIG_" + matches[1]))
+                            fmt.Println(dir+strings.Replace(basename, "_mod", "", 1) + ".c", strings.ToUpper("CONFIG_" + matches[1]))
                         }
                     }
                 }
