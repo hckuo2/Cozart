@@ -10,11 +10,12 @@ trace-kernel() {
     $qemubin -trace exec_tb_block -smp 2 -m 8G -cpu kvm64 \
         -drive file="$workdir/qemu-disk.ext4,if=ide,format=raw" \
         -kernel $distro.bzImage -nographic -no-reboot \
-        -append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw"\
-             2> trace.tmp;
+        -append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=/bin/bash"\
+             2> trace.raw.tmp;
         # -initrd ../initramfs-vanilla \
+    cat trace.raw.tmp | ./bin/trace-parser | sort | uniq > trace.tmp
     echo "Getting line information..."
-    cat trace.tmp | ./bin/trace-parser | sort | uniq | ./trace2line.sh $distro > lines.tmp
+    cat trace.tmp | ./trace2line.sh $distro > lines.tmp
     echo "Getting kernel config imformation..."
     cat lines.tmp | ./line2kconfig.sh > kernel.config.tmp
     echo "Getting driver config imformation..."

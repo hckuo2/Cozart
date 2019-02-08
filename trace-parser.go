@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"debug/elf"
 	"fmt"
 	"log"
 	"os"
@@ -10,6 +9,7 @@ import (
 	"sort"
 	"strconv"
 	"sync"
+    "flag"
 )
 
 func check(e error) {
@@ -24,18 +24,9 @@ func Max(x, y uint64) uint64 {
 	return x
 }
 
-func getTextSize() uint64 {
-	elf, err := elf.Open("vmlinux")
-	if err != nil {
-		log.Println(err)
-		return 0
-	}
-	sec := elf.Section(".text")
-	return sec.SectionHeader.Size
-}
+const startMark uint64 = 0x333333333000
+const endMark uint64 = 0x222222222000
 
-const kernelText uint64 = 0xffffffff81000000
-// const kernelText uint64 = 0x0
 
 type Block struct {
 	start     uint64
@@ -59,13 +50,13 @@ func parse(jobs <-chan string, results chan<- Block, wg *sync.WaitGroup) {
 		timestamp, _ := strconv.ParseFloat(matches[1], 64)
 		start, _ := strconv.ParseUint(matches[2], 16, 64)
 		size, _ := strconv.ParseUint(matches[3], 10, 64)
-        if start > kernelText {
-			results <- Block{start, start + size, timestamp}
-		}
+        results <- Block{start, start + size, timestamp}
 	}
 }
 
 func main() {
+    checkmark := flag.Bool("checkmark", false, "a bool")
+    flag.Parse()
 	scanner := bufio.NewScanner(os.Stdin)
 	jobs := make(chan string)
 	results := make(chan Block)
@@ -89,8 +80,16 @@ func main() {
 		blocks[b.start] = b
 	}
 
+	startTime := blocks[startMark].timestamp
+	endTime := blocks[endMark].timestamp
+
 	var keys []uint64
-	for k, _ := range blocks {
+	for k, b := range blocks {
+        if checkmark {
+            if b.timestamp < startTime || b.timestamp > endTime {
+                continue
+            }
+        }
 		keys = append(keys, k)
 	}
 	log.Printf("[Block Count] before filter: %d\t after filter: %d\n",

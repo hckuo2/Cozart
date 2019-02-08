@@ -3,19 +3,23 @@ disk=qemu-disk.ext4
 setupfile=bench/native/setup_custom.sh
 kernelversion=4.19.16
 linuxdir=linux-$(kernelversion)
-.PHONY: rm-disk clean
+.PHONY: rm-disk clean build-directives-db build-makefile-db
 
 trace-processor: bin/trace-parser
 
 build-directives-db:
-	cd $(linuxdir) && \
-	../directive-extracter.sh . > ../directives.db
+	./directive-extracter.sh $(CURDIR)/$(linuxdir) > directives.db
+	# cd $(linuxdir) && \
+	# ../directive-extracter.sh  > ../directives.db
 
-ubuntu-bzImage:
-	cp ubuntu.config $(linuxdir)/.config;
-	cp $(linuxdir) && \
+prepare-ubuntu:
+	cp ./ubuntu.config $(linuxdir)/.config
+	cd $(linuxdir) && \
 	make olddefconfig && \
-	make -j`nproc`
+	make -j`nproc` && \
+	cp arch/x86/boot/bzImage ../ubuntu.bzImage && \
+	cp vmlinux ../ubuntu.vmlinux
+
 
 build-makefile-db:
 	touch filename.db
@@ -94,3 +98,11 @@ printk:
 	cd $(linuxdir); \
 	./scripts/config --enable EXPERT; \
 	./scripts/config --enable PRINTK;
+
+install-mark:
+	-sudo umount --recursive $(mnt)
+	sudo mount -o loop $(disk) $(mnt)
+	gcc -o mark mark.c
+	sudo mv mark $(mnt)
+	sudo umount --recursive $(mnt)
+

@@ -18,7 +18,6 @@ func main () {
     scanner := bufio.NewScanner(os.Stdin)
     for scanner.Scan() {
         query := scanner.Text()
-        query = "./" + query
         i := sort.Search(len(db), func(i int) bool {
             line := db[i]
             vs := strings.Split(line, ":")
