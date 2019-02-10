@@ -1,4 +1,4 @@
-# KTrimmer
+# Cozart (Configuration + Mozart)
 Silm your kernel with better configuration.
 
 ## Setup
