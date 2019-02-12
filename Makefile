@@ -70,7 +70,7 @@ install-kernel-modules:
 debootstrap: $(disk) $(mnt)
 	sudo mkfs.ext4 $(disk)
 	sudo mount -o loop $(disk) $(mnt)
-	sudo debootstrap --include="build-essential vim kmod time net-tools apache2 apache2-utils haveged linux-tools" --arch=amd64 stretch $(mnt)
+	sudo debootstrap --include="build-essential vim kmod time net-tools apache2 apache2-utils haveged linux-tools libltdl7 cgroupfs-mount" --arch=amd64 stretch $(mnt)
 	sudo umount --recursive $(mnt)
 
 ext4-fs:
@@ -104,4 +104,11 @@ install-mark:
 	gcc -o mark mark.c
 	sudo mv mark $(mnt)
 	sudo umount --recursive $(mnt)
+
+install-docker:
+	wget https://download.docker.com/linux/debian/dists/stretch/pool/stable/amd64/docker-ce_18.06.2~ce~3-0~debian_amd64.deb;
+	-sudo umount --recursive $(mnt)
+	sudo mount -o loop $(disk) $(mnt)
+	sudo mv docker-ce_18.06.2~ce~3-0~debian_amd64.deb ./mnt
+	-sudo umount --recursive $(mnt)
 
