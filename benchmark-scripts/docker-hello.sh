@@ -8,5 +8,6 @@ haveged &
 enable_network
 rm -rf run/docker* var/run/docker*
 dockerd &
+sleep 5;
 docker run hello-world
 mark_end
