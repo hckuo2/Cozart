@@ -105,6 +105,13 @@ install-mark:
 	sudo mv mark $(mnt)
 	sudo umount --recursive $(mnt)
 
+install-hello:
+	-sudo umount --recursive $(mnt)
+	sudo mount -o loop $(disk) $(mnt)
+	gcc -o hello hello.c
+	sudo mv hello $(mnt)
+	sudo umount --recursive $(mnt)
+
 install-docker:
 	wget https://download.docker.com/linux/debian/dists/stretch/pool/stable/amd64/docker-ce_18.06.2~ce~3-0~debian_amd64.deb;
 	-sudo umount --recursive $(mnt)
