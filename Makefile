@@ -41,9 +41,11 @@ setup-qemu:
 build-ubuntu-vanilla:
 	cp -u ubuntu.config $(linuxdir)/.config;
 	cd $(linuxdir) && \
-	make -j`nproc` bzImage && \
-	cp vmlinux ../ubuntu.vmlinux && \
-	cp arch/x86/boot/bzImage ../ubuntu.bzImage
+		make oldconfig && \
+		make -j`nproc` LOCALVERSION=-vanilla && \
+		cp vmlinux ../ubuntu.vmlinux && \
+		cp arch/x86/boot/bzImage ../ubuntu.bzImage
+	make install-kernel-modules
 
 bin/%: %.go
 	go build -o $@ $<;
@@ -52,7 +54,7 @@ $(mnt):
 	mkdir -p $(mnt)
 
 $(disk):
-	qemu-img create -f raw $(disk) 10G
+	qemu-img create -f raw $(disk) 30G
 
 clean:
 	rm -rf ./tmp/* ./bin/*
