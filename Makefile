@@ -23,7 +23,8 @@ prepare-ubuntu:
 
 build-db:
 	./directive-extracter.sh $(linuxdir) > directives.db
-	find $(linuxdir)/drivers $(linuxdir)/init $(linuxdir)/net -name Makefile | go run makefile-extracter.go > filename.db
+	find $(linuxdir)/drivers $(linuxdir)/init $(linuxdir)/net -name Makefile \
+		| go run makefile-extracter.go > filename.db
 
 setup-linux:
 	wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-$(kernelversion).tar.xz
@@ -41,7 +42,7 @@ setup-qemu:
 build-ubuntu-vanilla:
 	cp -u ubuntu.config $(linuxdir)/.config;
 	cd $(linuxdir) && \
-		make oldconfig && \
+		make olddefconfig && \
 		make -j`nproc` LOCALVERSION=-vanilla && \
 		cp vmlinux ../ubuntu.vmlinux && \
 		cp arch/x86/boot/bzImage ../ubuntu.bzImage

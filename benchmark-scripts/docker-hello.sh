@@ -6,8 +6,9 @@ mark_start
 mount_fs
 haveged &
 enable_network
-rm -rf run/docker* var/run/docker*
+rm -rf /run/docker* /var/run/docker*
 dockerd &
 sleep 5;
-docker run hello-world
+docker run hello-world;
+docker system prune --all --force;
 mark_end
