@@ -5,7 +5,7 @@ bin/
 *.tmp
 mnt/
 linux-*
+linux_*
 *.bzImage
 *.vmlinux
-
 

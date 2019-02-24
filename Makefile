@@ -1,7 +1,7 @@
 mnt=mnt/
 disk=qemu-disk.ext4
 setupfile=bench/native/setup_custom.sh
-kernelversion=4.19.16
+kernelversion=4.18.0
 linuxdir=$(CURDIR)/linux-$(kernelversion)
 .PHONY: rm-disk clean build-db
 
@@ -27,8 +27,12 @@ build-db:
 		| go run makefile-extracter.go > filename.db
 
 setup-linux:
-	wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-$(kernelversion).tar.xz
-	tar xf linux-$(kernelversion).tar.xz
+	wget --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux_$(kernelversion).orig.tar.gz
+	wget --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux_$(kernelversion)-15.16.diff.gz
+	tar xvzf linux_$(kernelversion).orig.tar.gz
+	mv linux-4.18 $(linuxdir)
+	cd $(linuxdir) && \
+	zcat ../linux_$(kernelversion)-15.16.diff.gz | patch -p1
 
 setup-qemu:
 	-git clone --depth 1 -b stable-2.12 https://github.com/qemu/qemu.git
