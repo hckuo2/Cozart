@@ -16,9 +16,10 @@ prepare-ubuntu:
 	cp ./ubuntu.config $(linuxdir)/.config
 	cd $(linuxdir) && \
 	make olddefconfig && \
-	make -j`nproc` && \
+	make -j`nproc` SUBVERSION=-vanilla && \
 	cp arch/x86/boot/bzImage ../ubuntu.bzImage && \
-	cp vmlinux ../ubuntu.vmlinux
+	cp vmlinux ../ubuntu.vmlinux && \
+	INSTALL_PATH=../compiled-kernels/ubuntu/vanilla make install
 
 
 build-db:
@@ -47,7 +48,7 @@ build-ubuntu-vanilla:
 	cp -u ubuntu.config $(linuxdir)/.config;
 	cd $(linuxdir) && \
 		make olddefconfig && \
-		make -j`nproc` LOCALVERSION=-vanilla && \
+		make -j`nproc` LOCALVERSION=-ubuntu-vanilla && \
 		cp vmlinux ../ubuntu.vmlinux && \
 		cp arch/x86/boot/bzImage ../ubuntu.bzImage
 	make install-kernel-modules
@@ -75,9 +76,12 @@ install-kernel-modules:
 	-sudo umount --recursive ./$(mnt)
 
 debootstrap: $(disk) $(mnt)
+	-sudo umount --recursive $(mnt)
 	sudo mkfs.ext4 $(disk)
 	sudo mount -o loop $(disk) $(mnt)
-	sudo debootstrap --include="build-essential vim kmod time net-tools apache2 apache2-utils haveged linux-tools libltdl7 cgroupfs-mount" --arch=amd64 stretch $(mnt)
+	sudo debootstrap --components=main,universe \
+		--include="build-essential vim kmod net-tools apache2 apache2-utils haveged cgroupfs-mount linux-tools-generic" \
+		--arch=amd64 cosmic $(mnt) http://archive.ubuntu.com/ubuntu
 	sudo umount --recursive $(mnt)
 
 ext4-fs:

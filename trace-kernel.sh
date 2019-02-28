@@ -1,6 +1,5 @@
 #!/bin/bash
-source helper.sh;
-kerneldir="linux-4.19.16"
+kerneldir=linux-4.18.0
 
 make trace-processor
 distro=$1
