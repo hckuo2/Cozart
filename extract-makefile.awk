@@ -8,10 +8,7 @@ function dirname(file) {
 }
 
 BEGIN{
-    # RS="[^\\\\]\n"
-    print "Begin job"
 }
-
 
 {
     config = ""
@@ -20,7 +17,7 @@ BEGIN{
     } else if(match($0, /^((?!obj\b)\w+)-y/, matches)) {
         config = "CONFIG_" toupper(matches[1])
     }
-    dir = dirname(ARGV[1])
+    dir = dirname(FILENAME)
     if (config) {
         for(i = 3; i <= NF; i++) {
             gsub("_mod$", "", $i); # unix_mod.c <-> unix.o
@@ -31,5 +28,4 @@ BEGIN{
 }
 
 END{
-    print "End job"
 }

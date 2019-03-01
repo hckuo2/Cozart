@@ -7,11 +7,6 @@ linuxdir=$(CURDIR)/linux-$(kernelversion)
 
 trace-processor: bin/trace-parser
 
-build-directives-db:
-	./directive-extracter.sh $(CURDIR)/$(linuxdir) > directives.db
-	# cd $(linuxdir) && \
-	# ../directive-extracter.sh  > ../directives.db
-
 prepare-ubuntu:
 	cp ./ubuntu.config $(linuxdir)/.config
 	cd $(linuxdir) && \
@@ -25,7 +20,7 @@ prepare-ubuntu:
 build-db:
 	./directive-extracter.sh $(linuxdir) > directives.db
 	find $(linuxdir)/drivers $(linuxdir)/init $(linuxdir)/net -name Makefile \
-		| go run makefile-extracter.go > filename.db
+		| xargs awk -f extract-makefile.awk > filename.db
 
 setup-linux:
 	wget --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux_$(kernelversion).orig.tar.gz
