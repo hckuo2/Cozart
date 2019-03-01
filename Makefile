@@ -5,8 +5,6 @@ kernelversion=4.18.0
 linuxdir=$(CURDIR)/linux-$(kernelversion)
 .PHONY: rm-disk clean build-db
 
-trace-processor: bin/trace-parser
-
 prepare-ubuntu:
 	cp ./ubuntu.config $(linuxdir)/.config
 	cd $(linuxdir) && \

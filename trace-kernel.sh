@@ -1,7 +1,10 @@
 #!/bin/bash
-kerneldir=linux-4.18.0
+workdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+qemudir="$workdir/qemu"
+qemubin="$qemudir/x86_64-softmmu/qemu-system-x86_64"
+linuxversion="4.18.0"
+linuxdir="$workdir/linux-$linuxversion"
 
-make trace-processor
 distro=$1
 originalconfig="$distro.config"
 checkmark=$2
@@ -23,10 +26,10 @@ trace-kernel() {
 
     echo "Getting final config imformation..."
     cat kernel.config.tmp driver.config.tmp | sort | uniq > imm0.config.tmp
-    # cd $kerneldir && cp ../imm0.config.tmp .config && make olddefconfig && \
+    # cd $linuxdir && cp ../imm0.config.tmp .config && make olddefconfig && \
         # mv .config ../imm1.config.tmp && cd ..;
     python3 filter-config.py $originalconfig "imm0.config.tmp" \
-        > $kerneldir/.config;
+        > $linuxdir/.config;
 }
 trace-kernel "$1";
 
