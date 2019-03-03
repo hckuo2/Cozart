@@ -7,8 +7,10 @@ os.environ['SRCARCH'] = "x86"
 os.environ['ARCH'] = "x86"
 kconf = kconfiglib.Kconfig()
 
+
 def is_constant_y(sym):
     return sym.is_constant and (kconfiglib.expr_value(sym) == 2)
+
 
 def _find_deps(dep, result, level):
     if type(dep) is tuple:
@@ -43,4 +45,3 @@ if __name__ == '__main__':
                 print("CONFIG_" + d)
         except KeyError:
             pass
-

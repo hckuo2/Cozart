@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 
+
 def parse_db():
     db = {}
     isnotset = []
@@ -19,6 +20,7 @@ def parse_db():
         db[words[0]] = words[1]
     return db, isnotset
 
+
 if __name__ == '__main__':
     db, isnotset = parse_db()
     targetfile = sys.argv[2]
@@ -29,5 +31,4 @@ if __name__ == '__main__':
             continue
         conf = line.strip()
         if conf in db:
-            print(conf+"="+db[conf])
-
+            print(conf + "=" + db[conf])
