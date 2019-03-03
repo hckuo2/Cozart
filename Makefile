@@ -37,6 +37,7 @@ build-ubuntu-vanilla:
 		cp vmlinux ../ubuntu.vmlinux && \
 		cp arch/x86/boot/bzImage ../ubuntu.bzImage
 	INSTALL_PATH=../compiled-kernels/ubuntu/vanilla make install
+	make install-kernel-modules
 
 $(mnt):
 	mkdir -p $(mnt)

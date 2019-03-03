@@ -1,5 +1,6 @@
 #!/bin/bash
+linuxdir="linux-4.18.0"
 
 rebase-linuxdir() {
-	sed -r 's/.+linux-([0-9])+\.([0-9])+\.([0-9])+\///'
+	sed -r "s/.+$linuxdir/$linuxdir/"
 }

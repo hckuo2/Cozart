@@ -6,7 +6,7 @@ linuxversion="4.18.0"
 linuxdir="$workdir/linux-$linuxversion"
 
 distro=$1
-originalconfig="$distro.config"
+vanillaconfig="config-db/$distro/vanilla.config"
 checkmark=$2
 
 trace-kernel() {
@@ -15,20 +15,22 @@ trace-kernel() {
 		-kernel $distro.bzImage -nographic -no-reboot \
 		-append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=/bin/bash" \
 		2>trace.raw.tmp
-	# -initrd ../initramfs-vanilla \
+
+	echo "Parsing raw trace ..."
 	awk -f extract-trace.awk trace.raw.tmp | uniq >trace.tmp
+
 	echo "Getting line information..."
 	cat trace.tmp | ./trace2line.sh $distro >lines.tmp
+
 	echo "Getting kernel config imformation..."
 	cat lines.tmp | ./line2kconfig.sh >kernel.config.tmp
+
 	echo "Getting driver config imformation..."
 	cat lines.tmp | ./line2dconfig.sh >driver.config.tmp
 
 	echo "Getting final config imformation..."
 	cat kernel.config.tmp driver.config.tmp | sort | uniq >imm0.config.tmp
-	# cd $linuxdir && cp ../imm0.config.tmp .config && make olddefconfig && \
-	# mv .config ../imm1.config.tmp && cd ..;
-	python3 filter-config.py $originalconfig "imm0.config.tmp" \
+	python3 filter-config.py $vanillaconfig "imm0.config.tmp" \
 		>$linuxdir/.config
 }
 trace-kernel "$1"
