@@ -2,7 +2,7 @@ mnt=mnt/
 disk=qemu-disk.ext4
 setupfile=bench/native/setup_custom.sh
 kernelversion=4.18.0
-linuxdir=$(CURDIR)/linux-$(kernelversion)
+linuxdir=linux-$(kernelversion)
 .PHONY: rm-disk clean build-db
 
 prepare-ubuntu:
