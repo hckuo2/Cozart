@@ -5,15 +5,7 @@ kernelversion=4.18.0
 linuxdir=linux-$(kernelversion)
 .PHONY: rm-disk clean build-db
 
-prepare-ubuntu:
-	cp ./ubuntu.config $(linuxdir)/.config
-	cd $(linuxdir) && \
-	make olddefconfig && \
-	make -j`nproc` SUBVERSION=-vanilla && \
-	cp arch/x86/boot/bzImage ../ubuntu.bzImage && \
-	cp vmlinux ../ubuntu.vmlinux && \
-	INSTALL_PATH=../compiled-kernels/ubuntu/vanilla make install
-
+nothing:
 
 build-db:
 	./directive-extracter.sh $(linuxdir) > directives.db
@@ -38,16 +30,13 @@ setup-qemu:
 	make -j`nproc`
 
 build-ubuntu-vanilla:
-	cp -u ubuntu.config $(linuxdir)/.config;
+	cp -u config-db/ubuntu/vanilla.config $(linuxdir)/.config;
 	cd $(linuxdir) && \
 		make olddefconfig && \
 		make -j`nproc` LOCALVERSION=-ubuntu-vanilla && \
 		cp vmlinux ../ubuntu.vmlinux && \
 		cp arch/x86/boot/bzImage ../ubuntu.bzImage
-	make install-kernel-modules
-
-bin/%: %.go
-	go build -o $@ $<;
+	INSTALL_PATH=../compiled-kernels/ubuntu/vanilla make install
 
 $(mnt):
 	mkdir -p $(mnt)
