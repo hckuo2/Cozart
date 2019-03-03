@@ -37,10 +37,10 @@ if __name__ == '__main__':
     for line in sys.stdin:
         line = line.strip()
         name = line.replace("CONFIG_", "")
-        print("CONFIG_"+name+"=y")
+        print("CONFIG_" + name)
         try:
             for d in find_deps(kconf.syms[name]):
-                print("CONFIG_"+d+"=y")
+                print("CONFIG_" + d)
         except KeyError:
             pass
 

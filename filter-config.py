@@ -27,9 +27,7 @@ if __name__ == '__main__':
     for line in open(targetfile):
         if line[0] == "#":
             continue
-        line = line.strip()
-        words = line.split("=")
-        conf = words[0]
+        conf = line.strip()
         if conf in db:
             print(conf+"="+db[conf])
 
