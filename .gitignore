@@ -8,4 +8,4 @@ linux-*
 *.bzImage
 *.vmlinux
 src
-*.iso
+
