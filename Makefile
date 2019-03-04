@@ -30,13 +30,14 @@ setup-qemu:
 	make -j`nproc`
 
 build-ubuntu-vanilla:
-	cp -u config-db/ubuntu/vanilla.config $(linuxdir)/.config;
 	cd $(linuxdir) && \
+		make distclean && \
+		cp -u ../config-db/ubuntu/vanilla.config .config && \
 		make olddefconfig && \
 		make -j`nproc` LOCALVERSION=-ubuntu-vanilla && \
 		cp vmlinux ../ubuntu.vmlinux && \
-		cp arch/x86/boot/bzImage ../ubuntu.bzImage
-	INSTALL_PATH=../compiled-kernels/ubuntu/vanilla make install
+		cp arch/x86/boot/bzImage ../ubuntu.bzImage && \
+		INSTALL_PATH=../compiled-kernels/ubuntu/vanilla make install
 	make install-kernel-modules
 
 $(mnt):

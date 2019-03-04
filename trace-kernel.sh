@@ -9,15 +9,20 @@ distro=$1
 vanillaconfig="config-db/$distro/vanilla.config"
 checkmark=$2
 
+help() {
+    echo "./trace-kernel.sh distro initProgram [local=true]"
+    echo "The third argument is for observe a local view."
+}
+
 trace-kernel() {
 	$qemubin -trace exec_tb_block -smp 2 -m 8G -cpu kvm64 \
 		-drive file="$workdir/qemu-disk.ext4,if=ide,format=raw" \
 		-kernel $distro.bzImage -nographic -no-reboot \
-		-append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=/bin/bash" \
+		-append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=$2" \
 		2>trace.raw.tmp
 
 	echo "Parsing raw trace ..."
-	awk -f extract-trace.awk trace.raw.tmp | uniq >trace.tmp
+	awk --file --assign local=$3 extract-trace.awk trace.raw.tmp | uniq >trace.tmp
 
 	echo "Getting line information..."
 	cat trace.tmp | ./trace2line.sh $distro >lines.tmp
@@ -33,4 +38,9 @@ trace-kernel() {
 	python3 filter-config.py $vanillaconfig "imm0.config.tmp" \
 		>$linuxdir/.config
 }
-trace-kernel "$1"
+if (test $# -ne 2) && (test $# -ne 3); then
+    help
+    exit 1
+fi
+trace-kernel $@
+
