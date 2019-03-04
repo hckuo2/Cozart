@@ -4,13 +4,8 @@ kerneldir:=$(ROOT_DIR)/src/kernel/fiasco
 
 nothing:
 
-build-directives-db:
+build-db:
 	$(ROOT_DIR)/directive-extracter.sh $(kerneldir) > $(ROOT_DIR)/directives.db
-
-build-makefile-db:
-	touch filename.db
-	cd $(linuxdir) && \
-	find drivers init net -name Makefile | go run ../makefile-extracter.go > ../filename.db
 
 setup-fiasco:
 	svn cat https://svn.l4re.org/repos/oc/l4re/trunk/repomgr \
