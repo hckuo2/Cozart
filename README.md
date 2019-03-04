@@ -4,7 +4,7 @@
 
 1. Install dependencies
 
-`apt-get install make gawk g++ binutils pkg-config g++-multilib subversion flex bison xorriso`
+`apt-get install make gawk g++ binutils pkg-config g++-multilib subversion flex bison xorriso mtools`
 
 2. Install source
 
