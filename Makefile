@@ -27,14 +27,18 @@ setup-qemu:
 
 build-allyes:
 	cd src/kernel/fiasco && \
-		rm -rf mybuild && \
-		make BUILDDIR=mybuild && \
+		make BUILDDIR=mybuild; \
+		cd mybuild && \
 		make allyesconfig && \
 		make -j`nproc`
 
 build-runtime:
 	cd src/l4 && \
-		rm -rf mybuild && \
-		make B=mybuild && \
+		make B=mybuild; \
 		make -j`nproc` O=mybuild
+
+build-iso:
+	cd src/l4/mybuild && \
+		make grub2iso E=hello MODULE_SEARCH_PATH=../kernel/fiasco/mybuild
+	cp src/l4/mybuild/images/hello.iso .
 
