@@ -1,11 +1,12 @@
 ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 kernelversion:=18.11
 kerneldir:=$(ROOT_DIR)/src/kernel/fiasco
+compileddir:=$(ROOT_DIR)/compiled-kernels
 
 nothing:
 
 build-db:
-	$(ROOT_DIR)/directive-extracter.sh $(kerneldir) > $(ROOT_DIR)/directives.db
+	$(ROOT_DIR)/directive-extracter.sh $(kerneldir)/src > $(ROOT_DIR)/directives.db
 
 setup-fiasco:
 	svn cat https://svn.l4re.org/repos/oc/l4re/trunk/repomgr \
@@ -25,7 +26,8 @@ build-allyes:
 		make BUILDDIR=mybuild; \
 		cd mybuild && \
 		make allyesconfig && \
-		make -j`nproc`
+		make -j`nproc` && \
+		cp fiasco.debug $(compileddir)/allyes
 
 build-runtime:
 	cd src/l4 && \
