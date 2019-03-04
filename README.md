@@ -3,9 +3,11 @@
 ## Setup
 
 - Install dependencies
+
 `apt-get install make gawk g++ binutils pkg-config g++-multilib subversion flex bison`
 
 - Build targets
+
 `make build-allyes build-runtime build-iso`
 
 ## Run
