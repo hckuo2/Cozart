@@ -5,7 +5,7 @@ kerneldir:=$(ROOT_DIR)/src/kernel/fiasco
 nothing:
 
 build-directives-db:
-	$(ROOT_DIR)/directive-extracter.sh $(kerneldir)/src > $(ROOT_DIR)/directives.db
+	$(ROOT_DIR)/directive-extracter.sh $(kerneldir) > $(ROOT_DIR)/directives.db
 
 build-makefile-db:
 	touch filename.db
