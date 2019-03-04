@@ -11,8 +11,12 @@ trace-kernel() {
     echo "Getting line information..."
     cat trace.tmp | ./trace2line.sh > lines.tmp
 
-    echo "Getting kernel config imformation..."
+    echo "Getting kernel config"
     cat lines.tmp | ./line2kconfig.sh > kernel.config.tmp
+
+    echo "Including config dependencies"
+    cat kernel.config.tmp | python3 include-dep.py > globalconfig.out
+
 }
 trace-kernel "$1";
 
