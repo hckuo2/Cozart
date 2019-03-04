@@ -36,6 +36,6 @@ build-runtime:
 
 build-iso:
 	cd src/l4/mybuild && \
-		make grub2iso E=hello MODULE_SEARCH_PATH=../kernel/fiasco/mybuild
+		make grub2iso E=hello MODULE_SEARCH_PATH=../kernel/fiasco/$(kernelbuild)
 	cp src/l4/mybuild/images/hello.iso .
 
