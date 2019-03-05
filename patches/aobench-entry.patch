@@ -1,0 +1,16 @@
+diff --git a/modules.list b/modules.list
+index c028e20..4e5b75b 100644
+--- a/modules.list
++++ b/modules.list
+@@ -58,6 +58,11 @@ roottask moe --init=rom/hello
+ module l4re
+ module hello
+ 
++entry aobench
++roottask moe --init=rom/aobench
++module l4re
++module aobench
++
+ entry hello-cfg
+ kernel fiasco -serial_esc
+ roottask moe rom/hello.cfg

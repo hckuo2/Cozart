@@ -39,3 +39,8 @@ build-iso:
 		make grub2iso E=$(app) MODULE_SEARCH_PATH=../kernel/fiasco/$(kernelbuild)
 	cp src/l4/mybuild/images/$(app).iso .
 
+patch-aobench:
+	mkdir -p src/l4/pkg/aobench
+	git apply --directory=src/l4/pkg/aobench patches/aobench.patch
+	git apply --directory=src/l4/conf patches/aobench-entry.patch
+
