@@ -27,3 +27,7 @@ mark_start() {
 mark_end() {
     ./mark 1
 }
+
+randomd() {
+    haveged start
+}

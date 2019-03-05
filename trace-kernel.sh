@@ -23,9 +23,9 @@ trace-kernel() {
 
 	echo "Parsing raw trace ..."
     if [ -n $3 ]; then
-        awk --file --assign local=true extract-trace.awk trace.raw.tmp | uniq >trace.tmp
+        awk --assign local=true --file extract-trace.awk trace.raw.tmp | uniq >trace.tmp
     else
-        awk --file --assign extract-trace.awk trace.raw.tmp | uniq >trace.tmp
+        awk --assign --file extract-trace.awk trace.raw.tmp | uniq >trace.tmp
     fi
 
 	echo "Getting line information..."

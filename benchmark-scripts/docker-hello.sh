@@ -4,7 +4,7 @@ source benchmark-scripts/general-helper.sh
 source benchmark-scripts/docker-helper.sh
 mark_start
 mount_fs
-haveged &
+randomd
 enable_network
 rm -rf /run/docker* /var/run/docker*
 dockerd &
