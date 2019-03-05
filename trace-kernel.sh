@@ -21,10 +21,11 @@ trace-kernel() {
 		-append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=$2" \
 		2>trace.raw.tmp
 
-	echo "Parsing raw trace ..."
     if [ -n $3 ]; then
+        echo "Parsing LOCAL raw trace ..."
         awk --assign local=true --file extract-trace.awk trace.raw.tmp | uniq >trace.tmp
     else
+        echo "Parsing GLOBAL raw trace ..."
         awk --assign --file extract-trace.awk trace.raw.tmp | uniq >trace.tmp
     fi
 
