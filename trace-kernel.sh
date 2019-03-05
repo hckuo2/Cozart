@@ -3,7 +3,7 @@ source lib.sh
 
 trace-kernel() {
     $qemubin -trace exec_tb_block -nographic \
-        -cdrom $vanilla/hello.iso 2> trace.raw.tmp;
+        -cdrom $vanilla/$1.iso 2> trace.raw.tmp;
 
     echo "Parsing raw trace..."
     cat trace.raw.tmp | awk -f extract-trace.awk | sort | uniq > trace.tmp
