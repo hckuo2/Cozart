@@ -63,7 +63,7 @@ debootstrap: $(disk) $(mnt)
 	sudo mkfs.ext4 $(disk)
 	sudo mount -o loop $(disk) $(mnt)
 	sudo debootstrap --components=main,universe \
-		--include="build-essential vim kmod net-tools apache2 apache2-utils haveged cgroupfs-mount linux-tools-generic" \
+		--include="build-essential vim kmod net-tools apache2 apache2-utils haveged cgroupfs-mount linux-tools-generic iptables libltdl7" \
 		--arch=amd64 cosmic $(mnt) http://archive.ubuntu.com/ubuntu
 	sudo umount --recursive $(mnt)
 
