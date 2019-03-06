@@ -4,12 +4,11 @@ setupfile=bench/native/setup_custom.sh
 kernelversion=4.18.0
 linuxdir=linux-$(kernelversion)
 .PHONY: rm-disk clean build-db
-
 nothing:
 
 build-db:
 	./directive-extracter.sh $(linuxdir) > directives.db
-	find $(linuxdir)/drivers $(linuxdir)/init $(linuxdir)/net -name Makefile \
+	find $(linuxdir) -name Makefile \
 		| xargs awk -f extract-makefile.awk > filename.db
 
 setup-linux:
