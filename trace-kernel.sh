@@ -42,7 +42,7 @@ trace-kernel() {
 	cat kernel.config.tmp driver.config.tmp | sort | uniq >imm.config.tmp
 
 	echo "Including config dependencies"
-    cat imm.config.tmp | python3 include-dep.py >final.config
+    cat imm.config.tmp | python3 include-dep.py | sort | uniq >final.config
 
 }
 if (test $# -ne 2) && (test $# -ne 3); then
