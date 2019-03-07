@@ -50,7 +50,7 @@ $(disk):
 	qemu-img create -f raw $(disk) 30G
 
 clean:
-	rm -rf ./tmp/* ./bin/*
+	rm -rf ./tmp/* ./bin/* *.tmp
 
 rm-disk:
 	rm $(disk)
@@ -120,6 +120,6 @@ install-docker:
 get-modules:
 	-sudo umount --recursive $(mnt)
 	sudo mount -o loop $(disk) $(mnt)
-	sudo cp $(mnt)/modules .
+	sudo mv $(mnt)/modules .
 	sudo chown $(whoami):$(whoami) modules
 	sudo umount --recursive $(mnt)

@@ -1,9 +1,5 @@
 #!/bin/bash
-workdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
-qemudir="$workdir/qemu"
-qemubin="$qemudir/x86_64-softmmu/qemu-system-x86_64"
-linuxversion="4.18.0"
-linuxdir="$workdir/linux-$linuxversion"
+source lib.sh
 
 distro=$1
 vanillaconfig="config-db/$distro/vanilla.config"
@@ -14,6 +10,7 @@ help() {
 }
 
 trace-kernel() {
+    make clean
 	$qemubin -trace exec_tb_block -smp 2 -m 8G -cpu kvm64 \
 		-drive file="$workdir/qemu-disk.ext4,if=ide,format=raw" \
 		-kernel $distro.bzImage -nographic -no-reboot \
@@ -39,6 +36,7 @@ trace-kernel() {
 
 	echo "Getting module config information..."
     make get-modules && cat modules | ./module2config.sh $distro >module.config.tmp
+    rm -f modules
 
 	echo "Combining all configs..."
 	cat kernel.config.tmp driver.config.tmp module.config.tmp | sort | uniq \
