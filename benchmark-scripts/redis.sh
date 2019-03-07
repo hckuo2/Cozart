@@ -10,4 +10,5 @@ for i in `seq 1`; do
     redis-benchmark -t SET,GET --csv
 done
 redis-cli shutdown
+write_modules
 mark_end;

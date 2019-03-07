@@ -8,5 +8,6 @@ linux-*
 linux_*
 *.bzImage
 *.vmlinux
+vmlinux
 *.old
-
+modules
