@@ -7,6 +7,7 @@ function dirname(file) {
     return file
 }
 {
+    config = ""
     if (match($0, /^(\w+)-\$\(CONFIG_(\w+)\)/, matches)) {
         config = "CONFIG_" matches[2]
     } else if(match($0, /^(\w+)-y/, matches)) {

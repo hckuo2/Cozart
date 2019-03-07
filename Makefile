@@ -7,6 +7,8 @@ linuxdir=linux-$(kernelversion)
 nothing:
 
 build-db:
+	find $(linuxdir) -name Makefile | \
+		xargs sed -i ':a;N;$!ba;s/\\\n/ /g'
 	./directive-extracter.sh $(linuxdir) > directives.db
 	find $(linuxdir) -name Makefile \
 		| xargs awk -f extract-makefile.awk > filename.db
