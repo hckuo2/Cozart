@@ -6,9 +6,11 @@ linuxdir=linux-$(kernelversion)
 .PHONY: rm-disk clean build-db
 nothing:
 
-build-db:
+remove-makefile-escaped-newlines:
 	find $(linuxdir) -name Makefile | \
 		xargs sed -i ':a;N;$!ba;s/\\\n/ /g'
+
+build-db:
 	./directive-extracter.sh $(linuxdir) > directives.db
 	find $(linuxdir) -name Makefile \
 		| xargs awk -f extract-makefile.awk > filename.db
