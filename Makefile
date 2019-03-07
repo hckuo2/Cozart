@@ -113,3 +113,9 @@ install-docker:
 	sudo mv docker-ce_18.06.2~ce~3-0~debian_amd64.deb ./mnt
 	-sudo umount --recursive $(mnt)
 
+get-modules:
+	-sudo umount --recursive $(mnt)
+	sudo mount -o loop $(disk) $(mnt)
+	sudo cp $(mnt)/modules .
+	sudo chown $(whoami):$(whoami) modules
+	sudo umount --recursive $(mnt)

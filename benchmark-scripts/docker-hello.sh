@@ -11,4 +11,5 @@ dockerd &
 sleep 5;
 docker run hello-world;
 docker system prune --all --force;
+write_modules
 mark_end

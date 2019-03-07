@@ -31,3 +31,8 @@ mark_end() {
 randomd() {
     haveged start
 }
+
+write_modules() {
+    cat /proc/modules > modules
+    sync
+}

@@ -7,7 +7,6 @@ linuxdir="$workdir/linux-$linuxversion"
 
 distro=$1
 vanillaconfig="config-db/$distro/vanilla.config"
-checkmark=$2
 
 help() {
     echo "./trace-kernel.sh distro initProgram [local=true]"
@@ -32,22 +31,28 @@ trace-kernel() {
 	echo "Getting line information..."
 	cat trace.tmp | ./trace2line.sh $distro >lines.tmp
 
-	echo "Getting kernel config imformation..."
+	echo "Getting directive config information..."
 	cat lines.tmp | ./line2kconfig.sh >kernel.config.tmp
 
-	echo "Getting driver config imformation..."
+	echo "Getting filename config information..."
 	cat lines.tmp | ./line2dconfig.sh >driver.config.tmp
 
-	echo "Combining driver/kernel config imformation..."
-	cat kernel.config.tmp driver.config.tmp | sort | uniq >imm.config.tmp
+	echo "Getting module config information..."
+    make get-modules && cat modules | ./module2config.sh $distro >module.config.tmp
+
+	echo "Combining all configs..."
+	cat kernel.config.tmp driver.config.tmp module.config.tmp | sort | uniq \
+        >imm.config.tmp
 
 	echo "Including config dependencies"
     cat imm.config.tmp | python3 include-dep.py | sort | uniq >final.config
 
 }
+
 if (test $# -ne 2) && (test $# -ne 3); then
     help
     exit 1
 fi
+
 trace-kernel $@
 
