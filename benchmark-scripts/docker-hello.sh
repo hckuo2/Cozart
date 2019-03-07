@@ -3,6 +3,7 @@
 source benchmark-scripts/general-helper.sh
 source benchmark-scripts/docker-helper.sh
 mark_start
+mount_procfs
 mount_fs
 randomd
 enable_network
