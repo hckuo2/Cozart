@@ -20,8 +20,8 @@ function dirname(file) {
     dir = dirname(FILENAME)
     if (config) {
         for(i = 3; i <= NF; i++) {
-            if ($i !~ /.o/ && $i !~ /\w+\//) {
-                next
+            if ($i !~ /\.o/ && $i !~ /\w+\//) {
+                continue
             }
 
             gsub("\.o$", "\.c", $i)
