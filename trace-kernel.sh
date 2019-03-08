@@ -27,31 +27,30 @@ trace-kernel() {
 
     make get-modules
 	echo "Getting module config information..."
-    {
-        cat modules.tmp | ./module2config.sh $distro >module.config.tmp
-    } &
+    cat modules.tmp | ./module2config.sh $distro >module.config.tmp &
 
 	echo "Getting line information..."
-    {
-        cat trace.tmp | ./trace2line.sh $distro >lines.tmp
-        cat trace.tmp | awk /ffffffffc0/'{print $0}' | sort | ./trace2modline.sh \
-            >> lines.tmp
-    } &
+    cat trace.tmp | ./trace2line.sh $distro >lines.tmp &
+    cat trace.tmp | awk /ffffffffc0/'{print $0}' | sort | ./trace2modline.sh \
+        >lines.mod.tmp &
 
     wait
 
 	echo "Getting directive config information..."
-	cat lines.tmp | ./line2kconfig.sh >kernel.config.tmp
+	cat lines.tmp | ./line2directive-config.sh >directive.config.tmp &
 
 	echo "Getting filename config information..."
-	cat lines.tmp | ./line2dconfig.sh >driver.config.tmp
+	cat lines.tmp | ./line2filename-config.sh >filename.config.tmp &
+	cat lines.mod.tmp | ./line2filename-config.sh >filename.mod.config.tmp &
+
+    wait
 
 	echo "Combining all configs..."
-	cat kernel.config.tmp driver.config.tmp module.config.tmp | sort | uniq \
-        >imm.config.tmp
+	cat directive.config.tmp filename.config.tmp filename.mod.config.tmp \
+        module.config.tmp | sort | uniq >imm.config.tmp
 
 	echo "Including config dependencies"
-    cat imm.config.tmp | python3 include-dep.py | sort | uniq >final.config
+    cat imm.config.tmp | python3 include-dep.py | sort | uniq >final.config.tmp
 
 }
 

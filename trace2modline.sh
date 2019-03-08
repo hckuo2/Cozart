@@ -1,4 +1,5 @@
 #!/bin/bash
+
 source lib.sh
 distro=$1
 tmp=$(mktemp)
@@ -17,35 +18,20 @@ get_module_addr() {
 
 addrmod2lines() {
     modfile=$1
-    offset=$2
-    addr=$3
-    echo $(( addr - offset )) \
-        | addr2line -e $modfile | cut -d' ' -f1 | remove-dot-dir \
+    addr2line -e $modfile | cut -d' ' -f1 | remove-dot-dir \
         | rebase-linuxdir
 }
 
 declare -a files
 declare -a offsets
 
-i=0
+trace=$(</dev/stdin)
+{
 while read line;
 do
     mod=$(echo $line | get_module_name)
     offset=$(echo $line | get_module_addr)
     modfile=$(get_module_file $mod)
-    files[$i]=$modfile
-    offsets[$i]=$offset
-    (( i++ ))
-done <modules.tmp
-
-modidx=0
-while read line;
-do
-    addr=$(echo $line | awk -F "," '{print "0x" $1}')
-    f=${files[$modidx]}
-    o=${offsets[$modidx]}
-    nexto=${offsets[((modidx+1))]}
-    [[ $addr -lt $o ]] && continue
-    [[ $addr -ge $nexto ]] && (( modidx++ ))
-    addrmod2lines $f $o $addr
-done | sort | uniq
+    echo $trace | tr " " "\n" | python3 ./offset_addr.py $offset | addrmod2lines $modfile
+done<modules.tmp
+} | sort | uniq

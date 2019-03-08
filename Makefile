@@ -124,5 +124,5 @@ get-modules:
 	-sudo umount --recursive $(mnt)
 	sudo mount -o loop $(disk) $(mnt)
 	sudo mv $(mnt)/modules modules.tmp
-	sudo chown $(whoami):$(whoami) modules
+	sudo chown $(whoami):$(whoami) modules.tmp
 	sudo umount --recursive $(mnt)

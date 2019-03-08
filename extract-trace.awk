@@ -19,7 +19,7 @@ BEGIN{
 
         # print if it's a kernel address
         if (pc ~ /ffff/) {
-            printf("%s,%x\n", pc, size)
+            printf("0x%s\n", pc)
         }
     }
 }

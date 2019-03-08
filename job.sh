@@ -23,5 +23,5 @@ aggregate() {
     done
 }
 
-aggregate $@;
+trace $@;
 
