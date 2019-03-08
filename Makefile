@@ -34,6 +34,7 @@ setup-qemu:
 	make -j`nproc`
 
 build-ubuntu-vanilla:
+	mkdir -p vanilla-modules
 	cd $(linuxdir) && \
 		make distclean && \
 		cp -u ../config-db/ubuntu/vanilla.config .config && \
@@ -41,7 +42,8 @@ build-ubuntu-vanilla:
 		make -j`nproc` LOCALVERSION=-ubuntu-vanilla && \
 		cp vmlinux ../ubuntu.vmlinux && \
 		cp arch/x86/boot/bzImage ../ubuntu.bzImage && \
-		INSTALL_PATH=../compiled-kernels/ubuntu/vanilla make install
+		INSTALL_PATH=../compiled-kernels/ubuntu/vanilla make install && \
+		INSTALL_MOD_PATH=../vanilla-modules make modules_install
 	make install-kernel-modules
 
 $(mnt):
@@ -121,6 +123,6 @@ install-docker:
 get-modules:
 	-sudo umount --recursive $(mnt)
 	sudo mount -o loop $(disk) $(mnt)
-	sudo mv $(mnt)/modules .
+	sudo mv $(mnt)/modules modules.tmp
 	sudo chown $(whoami):$(whoami) modules
 	sudo umount --recursive $(mnt)

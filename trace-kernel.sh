@@ -25,8 +25,10 @@ trace-kernel() {
         awk --file extract-trace.awk trace.raw.tmp | sort | uniq >trace.tmp
     fi
 
+    make get-modules
 	echo "Getting line information..."
 	cat trace.tmp | ./trace2line.sh $distro >lines.tmp
+    cat trace.tmp | ./trace2modline.sh
 
 	echo "Getting directive config information..."
 	cat lines.tmp | ./line2kconfig.sh >kernel.config.tmp
@@ -35,8 +37,7 @@ trace-kernel() {
 	cat lines.tmp | ./line2dconfig.sh >driver.config.tmp
 
 	echo "Getting module config information..."
-    make get-modules && cat modules | ./module2config.sh $distro >module.config.tmp
-    rm -f modules
+    cat modules.tmp | ./module2config.sh $distro >module.config.tmp
 
 	echo "Combining all configs..."
 	cat kernel.config.tmp driver.config.tmp module.config.tmp | sort | uniq \
