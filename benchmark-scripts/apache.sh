@@ -13,4 +13,5 @@ for i in `seq 1`; do
     ab -n 10000 -c 100 127.0.0.1:80/index.html;
 done
 apache2ctl stop;
+write_modules
 mark_end;

@@ -38,6 +38,7 @@ trace-kernel() {
 
 	echo "Getting directive config information..."
 	cat lines.tmp | ./line2directive-config.sh >directive.config.tmp &
+	cat lines.mod.tmp | ./line2directive-config.sh >directive.mod.config.tmp &
 
 	echo "Getting filename config information..."
 	cat lines.tmp | ./line2filename-config.sh >filename.config.tmp &
@@ -46,8 +47,9 @@ trace-kernel() {
     wait
 
 	echo "Combining all configs..."
-	cat directive.config.tmp filename.config.tmp filename.mod.config.tmp \
-        module.config.tmp | sed '/^$/d' | sort | uniq >imm.config.tmp
+	cat directive.config.tmp directive.mod.config.tmp filename.config.tmp \
+        filename.mod.config.tmp  module.config.tmp | sed '/^$/d' | sort | \
+        uniq >imm.config.tmp
 
 	echo "Including config dependencies"
     cat imm.config.tmp | python3 include-dep.py | sort | uniq >final.config.tmp
