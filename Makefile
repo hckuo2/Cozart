@@ -73,31 +73,7 @@ debootstrap: $(disk) $(mnt)
 		--include="build-essential vim kmod net-tools apache2 apache2-utils haveged cgroupfs-mount linux-tools-generic iptables libltdl7 redis-server redis-tools" \
 		--arch=amd64 cosmic $(mnt) http://archive.ubuntu.com/ubuntu
 	sudo umount --recursive $(mnt)
-
-ext4-fs:
-	cd $(linuxdir); \
-	./scripts/config --enable EXT4_FS; \
-	./scripts/config --enable BLOCK;
-
-ide-drive:
-	cd $(linuxdir); \
-	./scripts/config --enable BLOCK; \
-	./scripts/config --enable BLK_DEV_SD; \
-	./scripts/config --enable ATA_PIIX; \
-	./scripts/config --enable ATA; \
-	./scripts/config --enable SATA_AHCI; \
-	./scripts/config --enable SCSI_CONSTANTS; \
-	./scripts/config --enable SCSI_SPI_ATTRS; \
-
-serial:
-	cd $(linuxdir); \
-	./scripts/config --enable SERIAL_8250; \
-	./scripts/config --enable SERIAL_8250_CONSOLE; \
-
-printk:
-	cd $(linuxdir); \
-	./scripts/config --enable EXPERT; \
-	./scripts/config --enable PRINTK;
+	make install-docker install-mark
 
 install-mark:
 	-sudo umount --recursive $(mnt)
