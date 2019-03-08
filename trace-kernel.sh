@@ -47,7 +47,7 @@ trace-kernel() {
 
 	echo "Combining all configs..."
 	cat directive.config.tmp filename.config.tmp filename.mod.config.tmp \
-        module.config.tmp | sort | uniq >imm.config.tmp
+        module.config.tmp | sed '/^$/d' | sort | uniq >imm.config.tmp
 
 	echo "Including config dependencies"
     cat imm.config.tmp | python3 include-dep.py | sort | uniq >final.config.tmp

@@ -6,7 +6,7 @@ trace() {
     for app in $@; do
         echo "Tracing $app"
         ./trace-kernel.sh ubuntu /benchmark-scripts/$app.sh true;
-        cp final.config config-db/ubuntu/$app.config
+        cp final.config.tmp config-db/ubuntu/$app.config
     done
 }
 
@@ -22,6 +22,9 @@ aggregate() {
         make install-kernel-modules
     done
 }
+action=$1
 
-trace $@;
+shift
+
+$action $@;
 
