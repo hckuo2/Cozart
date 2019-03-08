@@ -28,7 +28,8 @@ trace-kernel() {
     make get-modules
 	echo "Getting line information..."
 	cat trace.tmp | ./trace2line.sh $distro >lines.tmp
-    cat trace.tmp | ./trace2modline.sh
+    cat trace.tmp | awk /ffffffffc0/'{print $0}' | sort | ./trace2modline.sh \
+        >> lines.tmp
 
 	echo "Getting directive config information..."
 	cat lines.tmp | ./line2kconfig.sh >kernel.config.tmp
