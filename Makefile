@@ -21,7 +21,8 @@ setup-linux:
 	tar xvzf linux_$(kernelversion).orig.tar.gz
 	mv linux-4.18 $(linuxdir)
 	cd $(linuxdir) && \
-	zcat ../linux_$(kernelversion)-15.16.diff.gz | patch -p1
+		zcat ../linux_$(kernelversion)-15.16.diff.gz | patch -p1
+	make remove-makefile-escaped-newlines
 
 setup-qemu:
 	-git clone --depth 1 -b stable-2.12 https://github.com/qemu/qemu.git

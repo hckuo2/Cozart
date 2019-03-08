@@ -3,7 +3,7 @@ set -e
 source lib.sh
 
 trace() {
-    for app in apache redis docker-hello; do
+    for app in $@; do
         echo "Tracing $app"
         ./trace-kernel.sh ubuntu /benchmark-scripts/$app.sh true;
         cp final.config config-db/ubuntu/$app.config
@@ -11,16 +11,17 @@ trace() {
 }
 
 aggregate() {
-    for app in apache redis docker-hello; do
+    for app in $@; do
         echo "Aggregate $app"
-        ./aggregate-config.sh ubuntu $app
+        ./aggregate-config.sh ubuntu boot $app
         cd $linuxdir
-        make -j`nproc` clean
+        make clean
         make -j`nproc` LOCALVERSION=-ubuntu-$app
         INSTALL_PATH=$workdir/compiled-kernels/ubuntu/$app make install
         cd $workdir
+        make install-kernel-modules
     done
 }
 
-aggregate;
+aggregate $@;
 
