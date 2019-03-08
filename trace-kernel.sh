@@ -26,19 +26,25 @@ trace-kernel() {
     fi
 
     make get-modules
+	echo "Getting module config information..."
+    {
+        cat modules.tmp | ./module2config.sh $distro >module.config.tmp
+    } &
+
 	echo "Getting line information..."
-	cat trace.tmp | ./trace2line.sh $distro >lines.tmp
-    cat trace.tmp | awk /ffffffffc0/'{print $0}' | sort | ./trace2modline.sh \
-        >> lines.tmp
+    {
+        cat trace.tmp | ./trace2line.sh $distro >lines.tmp
+        cat trace.tmp | awk /ffffffffc0/'{print $0}' | sort | ./trace2modline.sh \
+            >> lines.tmp
+    } &
+
+    wait
 
 	echo "Getting directive config information..."
 	cat lines.tmp | ./line2kconfig.sh >kernel.config.tmp
 
 	echo "Getting filename config information..."
 	cat lines.tmp | ./line2dconfig.sh >driver.config.tmp
-
-	echo "Getting module config information..."
-    cat modules.tmp | ./module2config.sh $distro >module.config.tmp
 
 	echo "Combining all configs..."
 	cat kernel.config.tmp driver.config.tmp module.config.tmp | sort | uniq \
