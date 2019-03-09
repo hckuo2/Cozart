@@ -19,8 +19,7 @@ setup-linux:
 	wget --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux_$(kernelversion).orig.tar.gz
 	wget --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux_$(kernelversion)-15.16.diff.gz
 	tar xvzf linux_$(kernelversion).orig.tar.gz
-	mv linux-4.18 $(linuxdir)
-	cd $(linuxdir) && \
+	mv linux-4.18 $(linuxdir) cd $(linuxdir) && \
 		zcat ../linux_$(kernelversion)-15.16.diff.gz | patch -p1
 	make remove-makefile-escaped-newlines
 
@@ -102,3 +101,17 @@ get-modules:
 	sudo mv $(mnt)/modules modules.tmp
 	sudo chown $(whoami):$(whoami) modules.tmp
 	sudo umount --recursive $(mnt)
+
+sync-scripts:
+	./copy2disks.sh benchmark-scripts
+
+toggle-benchmark-mode:
+	sed -i 's/reqcnt=.+/reqcnt=100000/' benchmark-scripts/apache.sh benchmark-scripts/redis.sh
+	sed -i 's/itr=.+/itr=10/' benchmark-scripts/apache.sh benchmark-scripts/redis.sh
+	make sync-scripts
+
+toggle-trace-mode:
+	sed -i 's/reqcnt=.+/reqcnt=1000/' benchmark-scripts/apache.sh benchmark-scripts/redis.sh
+	sed -i 's/itr=.+/itr=1/' benchmark-scripts/apache.sh benchmark-scripts/redis.sh
+	make sync-scripts
+
