@@ -14,7 +14,8 @@ name2config() {
 
 get_module_name >> $tmp
 
-echo "" > module.config.tmp
+touch module.config.tmp
+truncate -s 0 module.config.tmp
 while read mod; do
     name2config $mod
 done <$tmp

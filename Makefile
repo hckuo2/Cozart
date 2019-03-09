@@ -13,7 +13,7 @@ remove-makefile-escaped-newlines:
 build-db:
 	./directive-extracter.sh $(linuxdir) > directives.db
 	find $(linuxdir) -name Makefile \
-		| xargs awk -f extract-makefile.awk | LC_ALL=C sort -k1 >filename.db
+		| xargs awk -f extract-makefile.awk >filename.db
 
 setup-linux:
 	wget --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux_$(kernelversion).orig.tar.gz
@@ -104,12 +104,12 @@ sync-scripts:
 	./copy2disks.sh benchmark-scripts
 
 toggle-benchmark-mode:
-	sed -i 's/reqcnt=.+/reqcnt=100000/' benchmark-scripts/apache.sh benchmark-scripts/redis.sh
-	sed -i 's/itr=.+/itr=10/' benchmark-scripts/apache.sh benchmark-scripts/redis.sh
+	sed -i 's/reqcnt=.*/reqcnt=100000/' benchmark-scripts/apache.sh benchmark-scripts/redis.sh
+	sed -i 's/itr=.*/itr=10/' benchmark-scripts/apache.sh benchmark-scripts/redis.sh
 	make sync-scripts
 
 toggle-trace-mode:
-	sed -i 's/reqcnt=.+/reqcnt=1000/' benchmark-scripts/apache.sh benchmark-scripts/redis.sh
-	sed -i 's/itr=.+/itr=1/' benchmark-scripts/apache.sh benchmark-scripts/redis.sh
+	sed -i 's/reqcnt=.*/reqcnt=1000/' benchmark-scripts/apache.sh benchmark-scripts/redis.sh
+	sed -i 's/itr=.*/itr=1/' benchmark-scripts/apache.sh benchmark-scripts/redis.sh
 	make sync-scripts
 

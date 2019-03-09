@@ -2,7 +2,7 @@
 export PATH=$PATH:/usr/local/sbin/
 export PATH=$PATH:/usr/sbin/
 export PATH=$PATH:/sbin
-mount_proc() {
+mount_procfs() {
     mount -t proc proc /proc;
 }
 
