@@ -13,7 +13,7 @@ remove-makefile-escaped-newlines:
 build-db:
 	./directive-extracter.sh $(linuxdir) > directives.db
 	find $(linuxdir) -name Makefile \
-		| xargs awk -f extract-makefile.awk > filename.db
+		| xargs awk -f extract-makefile.awk | LC_ALL=C sort -k1 >filename.db
 
 setup-linux:
 	wget --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux_$(kernelversion).orig.tar.gz
@@ -24,9 +24,7 @@ setup-linux:
 	make remove-makefile-escaped-newlines
 
 setup-qemu:
-	-git clone --depth 1 -b stable-2.12 https://github.com/qemu/qemu.git
-	cd qemu && \
-	git submodule init && git submodule update --recursive && \
+	-git clone --depth 1 -b stable-2.12 https://github.com/qemu/qemu.git cd qemu && \ git submodule init && git submodule update --recursive && \
 	git apply -v ../patches/cpu-exec.patch && \
 	git apply -v ../patches/trace-events.patch && \
 	./configure --enable-trace-backend=log --target-list=x86_64-softmmu && \
