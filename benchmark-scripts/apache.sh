@@ -1,5 +1,5 @@
 #!/bin/bash
-itr=10
+itr=20
 reqcnt=100000
 
 source benchmark-scripts/general-helper.sh

@@ -105,7 +105,7 @@ sync-scripts:
 
 toggle-benchmark-mode:
 	sed -i 's/reqcnt=.*/reqcnt=100000/' benchmark-scripts/apache.sh benchmark-scripts/redis.sh
-	sed -i 's/itr=.*/itr=10/' benchmark-scripts/apache.sh benchmark-scripts/redis.sh
+	sed -i 's/itr=.*/itr=20/' benchmark-scripts/apache.sh benchmark-scripts/redis.sh
 	make sync-scripts
 
 toggle-trace-mode:
