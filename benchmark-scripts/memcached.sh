@@ -1,6 +1,6 @@
 #!/bin/bash
 itr=20
-reqcnt=100000
+reqcnt=10000
 
 source benchmark-scripts/general-helper.sh
 mark_start;

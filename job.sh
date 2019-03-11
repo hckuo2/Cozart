@@ -18,6 +18,7 @@ aggregate() {
         cd $linuxdir
         make clean
         make -j`nproc` LOCALVERSION=-ubuntu-$app
+        mkdir -p $workdir/compiled-kernels/ubuntu/$app
         INSTALL_PATH=$workdir/compiled-kernels/ubuntu/$app make install
         cd $workdir
         make install-kernel-modules
@@ -30,7 +31,7 @@ benchmark() {
     for app in $@; do
         echo "Benchmark $app on cozarted kernel"
         sudo sh -c "sync; echo 3 > /proc/sys/vm/drop_caches"
-        qemu/x86_64-softmmu/qemu-system-x86_64 -cpu kvm64 -enable-kvm -smp 2 -m 8G \
+        qemu/x86_64-softmmu/qemu-system-x86_64 -cpu $cpu -enable-kvm -smp 2 -m 16G \
             -kernel $workdir/compiled-kernels/ubuntu/$app/vmlinuz* \
             -drive file="$(pwd)/qemu-disk.ext4",if=ide,format=raw \
             -nographic -no-reboot \
@@ -39,7 +40,7 @@ benchmark() {
 
         echo "Benchmark $app on vanilla kernel"
         sudo sh -c "sync; echo 3 > /proc/sys/vm/drop_caches"
-        qemu/x86_64-softmmu/qemu-system-x86_64 -cpu kvm64 -enable-kvm -smp 2 -m 8G \
+        qemu/x86_64-softmmu/qemu-system-x86_64 -cpu $cpu -enable-kvm -smp 2 -m 16G \
             -kernel $workdir/compiled-kernels/ubuntu/vanilla/vmlinuz* \
             -drive file="$(pwd)/qemu-disk.ext4",if=ide,format=raw \
             -nographic -no-reboot \

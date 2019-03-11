@@ -5,6 +5,7 @@ qemubin="$qemudir/x86_64-softmmu/qemu-system-x86_64"
 linuxversion="4.18.0"
 linuxdir="linux-$linuxversion"
 vanillamoddir="vanilla-modules"
+cpu="Skylake-Server"
 
 rebase-linuxdir() {
     sed -r "s/.+$linuxdir/$linuxdir/"

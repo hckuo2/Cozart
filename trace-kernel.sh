@@ -11,7 +11,7 @@ help() {
 
 trace-kernel() {
     make clean
-	$qemubin -trace exec_tb_block -smp 2 -m 8G -cpu kvm64 \
+	$qemubin -trace exec_tb_block -smp 2 -m 8G -cpu $cpu \
 		-drive file="$workdir/qemu-disk.ext4,if=ide,format=raw" \
 		-kernel $distro.bzImage -nographic -no-reboot \
 		-append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=$2" \

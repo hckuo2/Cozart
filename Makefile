@@ -104,12 +104,13 @@ sync-scripts:
 	./copy2disks.sh benchmark-scripts
 
 toggle-benchmark-mode:
-	sed -i 's/reqcnt=.*/reqcnt=100000/' benchmark-scripts/apache.sh benchmark-scripts/redis.sh
-	sed -i 's/itr=.*/itr=20/' benchmark-scripts/apache.sh benchmark-scripts/redis.sh
+	sed -i 's/reqcnt=.*/reqcnt=100000/' benchmark-scripts/*.sh
+	sed -i 's/reqcnt=.*/reqcnt=10000/' benchmark-scripts/memcached.sh
+	sed -i 's/itr=.*/itr=20/' benchmark-scripts/*.sh
 	make sync-scripts
 
 toggle-trace-mode:
-	sed -i 's/reqcnt=.*/reqcnt=1000/' benchmark-scripts/apache.sh benchmark-scripts/redis.sh
-	sed -i 's/itr=.*/itr=1/' benchmark-scripts/apache.sh benchmark-scripts/redis.sh
+	sed -i 's/reqcnt=.*/reqcnt=100/' benchmark-scripts/*.sh
+	sed -i 's/itr=.*/itr=1/' benchmark-scripts/*.sh
 	make sync-scripts
 
