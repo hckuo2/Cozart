@@ -4,7 +4,7 @@ qemudir="$workdir/qemu"
 qemubin="$qemudir/x86_64-softmmu/qemu-system-x86_64"
 linuxversion="4.18.0"
 linuxdir="linux-$linuxversion"
-vanillamoddir="vanilla-modules"
+vanillamoddir="compiled-kernels/ubuntu/vanilla/"
 cpu="Skylake-Server"
 
 rebase-linuxdir() {
