@@ -20,6 +20,7 @@ aggregate() {
         make -j`nproc` LOCALVERSION=-ubuntu-$app
         mkdir -p $workdir/compiled-kernels/ubuntu/$app
         INSTALL_PATH=$workdir/compiled-kernels/ubuntu/$app make install
+        INSTALL_MOD_PATH=$workdir/compiled-kernels/ubuntu/$app make modules_install
         cd $workdir
         make install-kernel-modules
     done

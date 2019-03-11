@@ -3,6 +3,7 @@ disk=qemu-disk.ext4
 setupfile=bench/native/setup_custom.sh
 kernelversion=4.18.0
 linuxdir=linux-$(kernelversion)
+whoami=hckuo2
 .PHONY: rm-disk clean build-db
 nothing:
 
@@ -25,10 +26,7 @@ setup-linux:
 
 setup-qemu:
 	-git clone --depth 1 -b stable-2.12 https://github.com/qemu/qemu.git cd qemu && \ git submodule init && git submodule update --recursive && \
-	git apply -v ../patches/cpu-exec.patch && \
-	git apply -v ../patches/trace-events.patch && \
-	./configure --enable-trace-backend=log --target-list=x86_64-softmmu && \
-	make -j`nproc`
+	git apply -v ../patches/cpu-exec.patch && \ git apply -v ../patches/trace-events.patch && \ ./configure --enable-trace-backend=log --target-list=x86_64-softmmu && \ make -j`nproc`
 
 build-ubuntu-vanilla:
 	mkdir -p vanilla-modules
@@ -96,7 +94,7 @@ install-docker:
 get-modules:
 	-sudo umount --recursive $(mnt)
 	sudo mount -o loop $(disk) $(mnt)
-	sudo mv $(mnt)/modules modules.tmp
+	-sudo mv $(mnt)/modules modules.tmp
 	sudo chown $(whoami):$(whoami) modules.tmp
 	sudo umount --recursive $(mnt)
 

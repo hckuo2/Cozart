@@ -11,3 +11,4 @@ linux_*
 vmlinux
 *.old
 modules
+compiled-kernels/
