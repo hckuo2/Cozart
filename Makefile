@@ -18,7 +18,7 @@ build-db:
 
 setup-linux:
 	wget --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux_$(kernelversion).orig.tar.gz
-	wget --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux_$(kernelversion)-15.16.diff.gz
+	wget --no-clobber https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/linux/$(kernelversion)-15.16/linux_$(kernelversion)-15.16.diff.gz
 	tar xvzf linux_$(kernelversion).orig.tar.gz
 	mv linux-4.18 $(linuxdir) cd $(linuxdir) && \
 		zcat ../linux_$(kernelversion)-15.16.diff.gz | patch -p1
