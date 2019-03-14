@@ -6,6 +6,8 @@ linuxversion="4.18.0"
 linuxdir="linux-$linuxversion"
 vanillamoddir="compiled-kernels/ubuntu/vanilla/"
 cpu="Skylake-Server"
+cores="4"
+mem="8G"
 
 rebase-linuxdir() {
     sed -r "s/.+$linuxdir/$linuxdir/"

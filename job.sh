@@ -6,7 +6,11 @@ trace() {
     make toggle-trace-mode
     for app in $@; do
         echo "Tracing $app"
-        ./trace-kernel.sh ubuntu /benchmark-scripts/$app.sh true;
+        if [[ $app == "boot" ]]; then
+            ./trace-kernel.sh ubuntu /benchmark-scripts/$app.sh;
+        else
+            ./trace-kernel.sh ubuntu /benchmark-scripts/$app.sh true;
+        fi
         cp final.config.tmp config-db/ubuntu/$app.config
     done
 }
@@ -32,7 +36,7 @@ benchmark() {
     for app in $@; do
         echo "Benchmark $app on cozarted kernel"
         sudo sh -c "sync; echo 3 > /proc/sys/vm/drop_caches"
-        qemu/x86_64-softmmu/qemu-system-x86_64 -cpu $cpu -enable-kvm -smp 2 -m 16G \
+        qemu/x86_64-softmmu/qemu-system-x86_64 -cpu $cpu -enable-kvm -smp $cores -m $mem \
             -kernel $workdir/compiled-kernels/ubuntu/$app/vmlinuz* \
             -drive file="$(pwd)/qemu-disk.ext4",if=ide,format=raw \
             -nographic -no-reboot \
@@ -41,7 +45,7 @@ benchmark() {
 
         echo "Benchmark $app on vanilla kernel"
         sudo sh -c "sync; echo 3 > /proc/sys/vm/drop_caches"
-        qemu/x86_64-softmmu/qemu-system-x86_64 -cpu $cpu -enable-kvm -smp 2 -m 16G \
+        qemu/x86_64-softmmu/qemu-system-x86_64 -cpu $cpu -enable-kvm -smp $cores -m $mem \
             -kernel $workdir/compiled-kernels/ubuntu/vanilla/vmlinuz* \
             -drive file="$(pwd)/qemu-disk.ext4",if=ide,format=raw \
             -nographic -no-reboot \

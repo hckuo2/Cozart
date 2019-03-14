@@ -3,5 +3,8 @@ import sys
 
 base = int(sys.argv[1], 16)
 for line in sys.stdin:
-    print(hex(int(line, 16)-base))
+    try:
+        print(hex(int(line, 16)-base))
+    except ValueError:
+        pass
 
