@@ -113,3 +113,10 @@ toggle-trace-mode:
 	sed -i 's/itr=.*/itr=1/' benchmark-scripts/*.sh
 	make sync-scripts
 
+install-unixbench:
+	-git clone https://github.com/kdlucas/byte-unixbench.git
+	cd byte-unixbench/UnixBench && \
+		make
+	./copy2disks.sh byte-unixbench
+
+
