@@ -10,7 +10,7 @@ randomd
 service mysql start
 sleep 3;
 for i in `seq $itr`; do
-    mysqlslap --user=root --password=root --host=localhost  --auto-generate-sql --verbose
+    mysqlslap --user=root --password=root --host=localhost  --auto-generate-sql --verbose --number-of-queries=$reqcnt --concurrency=20
 done
 service mysql stop
 write_modules
