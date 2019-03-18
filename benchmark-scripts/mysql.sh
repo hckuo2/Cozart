@@ -10,7 +10,9 @@ randomd
 service mysql start
 sleep 3;
 for i in `seq $itr`; do
-    mysqlslap --user=root --password=root --host=localhost  --auto-generate-sql --verbose --number-of-queries=$reqcnt --concurrency=20
+    sysbench --mysql-user=root --mysql-password=root --db-driver=mysql --test=oltp_read_write prepare
+    sysbench --mysql-user=root --mysql-password=root --db-driver=mysql --test=oltp_read_write run
+    sysbench --mysql-user=root --mysql-password=root --db-driver=mysql --test=oltp_read_write cleanup
 done
 service mysql stop
 write_modules
