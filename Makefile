@@ -66,7 +66,7 @@ debootstrap: $(disk) $(mnt)
 	sudo mkfs.ext4 $(disk)
 	sudo mount -o loop $(disk) $(mnt)
 	sudo debootstrap --components=main,universe \
-		--include="build-essential vim kmod net-tools apache2 apache2-utils haveged cgroupfs-mount linux-tools-generic iptables libltdl7 redis-server redis-tools nginx mysql-server" \
+		--include="build-essential vim kmod net-tools apache2 apache2-utils haveged cgroupfs-mount linux-tools-generic iptables libltdl7 redis-server redis-tools nginx mysql-server sysbench openjdk-8-jre" \
 		--arch=amd64 cosmic $(mnt) http://archive.ubuntu.com/ubuntu
 	sudo umount --recursive $(mnt)
 	make install-docker install-mark
@@ -115,8 +115,6 @@ toggle-trace-mode:
 
 install-unixbench:
 	-git clone https://github.com/kdlucas/byte-unixbench.git
-	cd byte-unixbench/UnixBench && \
-		make
 	./copy2disks.sh byte-unixbench
 
 
