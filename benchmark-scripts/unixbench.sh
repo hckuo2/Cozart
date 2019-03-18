@@ -5,7 +5,7 @@ source benchmark-scripts/general-helper.sh
 mark_start;
 mount_procfs;
 mount_fs;
-cd /benchmark-scripts/byte-unixbench/UnixBench
+cd /byte-unixbench/UnixBench
 ./Run -i $itr
 cd /
 write_modules
