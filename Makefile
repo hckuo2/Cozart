@@ -26,8 +26,11 @@ setup-linux:
 	make remove-makefile-escaped-newlines
 
 setup-qemu:
-	-git clone --depth 1 -b stable-2.12 https://github.com/qemu/qemu.git cd qemu && \ git submodule init && git submodule update --recursive && \
-	git apply -v ../patches/cpu-exec.patch && \ git apply -v ../patches/trace-events.patch && \ ./configure --enable-trace-backend=log --target-list=x86_64-softmmu && \ make -j`nproc`
+	-git clone --depth 1 -b stable-2.12 https://github.com/qemu/qemu.git
+	cd qemu && \
+		git submodule init && git submodule update --recursive && \
+		git apply -v ../patches/cpu-exec.patch && \ git apply -v ../patches/trace-events.patch && \
+		./configure --enable-trace-backend=log --target-list=x86_64-softmmu && \ make -j`nproc`
 
 build-ubuntu-vanilla:
 	mkdir -p vanilla-modules
