@@ -4,7 +4,7 @@ reqcnt=100000
 
 source benchmark-scripts/general-helper.sh
 mark_start;
-mount_procfs;
+mount_fs;
 enable_network;
 randomd
 rm -rf /var/run/apache2

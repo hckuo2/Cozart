@@ -4,7 +4,7 @@ reqcnt=500
 
 source benchmark-scripts/general-helper.sh
 mark_start;
-mount_procfs;
+mount_fs;
 enable_network;
 randomd
 service mysql start

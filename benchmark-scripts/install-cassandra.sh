@@ -1,6 +1,5 @@
 #!/bin/bash
 source benchmark-scripts/general-helper.sh
-mount_procfs;
 mount_fs;
 enable_network;
 
