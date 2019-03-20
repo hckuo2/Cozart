@@ -13,7 +13,7 @@ rm -rf /var/lib/cassandra/saved_caches/*
 rm -rf /var/log/cassandra/*
 
 cassandra -R &> /cassandra.log
-sleep 5
+sleep 15
 cassandra-stress write n=$reqcnt -node localhost
 cassandra-stress read n=$reqcnt -node localhost
 write_modules
