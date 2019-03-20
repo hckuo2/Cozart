@@ -14,7 +14,8 @@ mount_fs() {
 enable_network() {
     modprobe e1000;
     hostname qemu
-    echo "127.0.0.1  qemu  localhost.localdomain localhost" > /etc/hosts
+    echo "127.0.0.1  localhost.localdomain localhost" > /etc/hosts
+    echo "127.0.1.1  qemu.localdomain qemu" >> /etc/hosts
     echo "nameserver 10.0.2.3" > /etc/resolv.conf;
     /sbin/ifconfig lo 127.0.0.1 netmask 255.0.0.0 up;
     /sbin/ifconfig eth0 up 10.0.2.15 netmask 255.255.255.0 up;
