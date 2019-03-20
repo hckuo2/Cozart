@@ -7,12 +7,12 @@ mark_start;
 mount_procfs;
 enable_network;
 randomd
-nginx &
+service nginx start
 sleep 3;
 for i in `seq $itr`; do
     ab -n $reqcnt -c 100 127.0.0.1:80/index.html;
 done
-pkill nginx
+service nginx stop
 write_modules
 mark_end;
 
