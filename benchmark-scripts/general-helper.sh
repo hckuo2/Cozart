@@ -2,11 +2,8 @@
 export PATH=$PATH:/usr/local/sbin/
 export PATH=$PATH:/usr/sbin/
 export PATH=$PATH:/sbin
-mount_procfs() {
-    mount -t proc proc /proc;
-}
-
 mount_fs() {
+    mount -t proc proc /proc;
     mount -t sysfs sys sys/
     mount -o bind /dev dev/
     mkdir -p /tmp;
@@ -16,6 +13,8 @@ mount_fs() {
 
 enable_network() {
     modprobe e1000;
+    hostname qemu
+    echo "127.0.0.1  qemu  localhost.localdomain localhost" > /etc/hosts
     echo "nameserver 10.0.2.3" > /etc/resolv.conf;
     /sbin/ifconfig lo 127.0.0.1 netmask 255.0.0.0 up;
     /sbin/ifconfig eth0 up 10.0.2.15 netmask 255.255.255.0 up;
