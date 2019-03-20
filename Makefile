@@ -115,7 +115,7 @@ toggle-benchmark-mode:
 	make sync-scripts
 
 toggle-trace-mode:
-	sed -i 's/reqcnt=.*/reqcnt=500/' benchmark-scripts/*.sh
+	sed -i 's/reqcnt=.*/reqcnt=5000/' benchmark-scripts/*.sh
 	sed -i 's/itr=.*/itr=1/' benchmark-scripts/*.sh
 	make sync-scripts
 
