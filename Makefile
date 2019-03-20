@@ -29,11 +29,14 @@ setup-qemu:
 	-git clone --depth 1 -b stable-2.12 https://github.com/qemu/qemu.git
 	cd qemu && \
 		git submodule init && git submodule update --recursive && \
-		git apply -v ../patches/cpu-exec.patch && \ git apply -v ../patches/trace-events.patch && \
-		./configure --enable-trace-backend=log --target-list=x86_64-softmmu && \ make -j`nproc`
+		git apply -v ../patches/cpu-exec.patch && \
+		git apply -v ../patches/trace-events.patch && \
+		./configure --enable-trace-backend=log --target-list=x86_64-softmmu && \
+		make -j`nproc`
 
 build-ubuntu-vanilla:
 	mkdir -p vanilla-modules
+	mkdir -p compiled-kernels/ubuntu/vanilla
 	cd $(linuxdir) && \
 		make distclean && \
 		cp -u ../config-db/ubuntu/vanilla.config .config && \
@@ -69,7 +72,7 @@ debootstrap: $(disk) $(mnt)
 	sudo mkfs.ext4 $(disk)
 	sudo mount -o loop $(disk) $(mnt)
 	sudo debootstrap --components=main,universe \
-		--include="build-essential vim kmod net-tools apache2 apache2-utils haveged cgroupfs-mount linux-tools-generic iptables libltdl7 redis-server redis-tools nginx mysql-server sysbench openjdk-8-jre" \
+		--include="build-essential vim kmod net-tools apache2 apache2-utils haveged cgroupfs-mount linux-tools-generic iptables libltdl7 redis-server redis-tools nginx mysql-server sysbench" \
 		--arch=amd64 cosmic $(mnt) http://archive.ubuntu.com/ubuntu
 	sudo umount --recursive $(mnt)
 	make install-docker install-mark
