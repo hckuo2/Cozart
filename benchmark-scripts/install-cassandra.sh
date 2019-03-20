@@ -4,6 +4,7 @@ mount_procfs;
 mount_fs;
 enable_network;
 
+echo "deb http://www.apache.org/dist/cassandra/debian 311x main" | tee -a /etc/apt/sources.list.d/cassandra.sources.list
 apt install curl gnupg
 apt-key adv --keyserver pool.sks-keyservers.net --recv-key A278B781FE4B2BDA
 curl https://www.apache.org/dist/cassandra/KEYS | apt-key add -
