@@ -7,6 +7,12 @@ mount_procfs;
 mount_fs
 enable_network;
 randomd
+# cleanup
+rm -rf /var/lib/cassandra/commitlog/*
+rm -rf /var/lib/cassandra/data/*
+rm -rf /var/lib/cassandra/saved_caches/*
+rm -rf /var/log/cassandra/*
+
 cassandra -R &> /cassandra.log
 sleep 5
 cassandra-stress write n=$reqcnt -node localhost
