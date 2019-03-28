@@ -31,4 +31,14 @@ memcached() {
         <(grep Sets benchresult.memcached.cozart.tmp | awk '{print $2}')
 }
 
+mysql() {
+    echo mysql-vanilla mysql-cozart
+    paste -d ' ' \
+        <(grep "total:" benchresult.mysql.vanilla.tmp | awk '{print $2}') \
+        <(grep "total:" benchresult.mysql.cozart.tmp | awk '{print $2}')
+}
+
+cassandra() {
+    ls
+}
 paste -d ' ' <($1) <($2) <($3) <($4) <($5) <($6) <($7)
