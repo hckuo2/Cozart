@@ -21,11 +21,12 @@ main() {
 	done
 
     echo "Filter with the $distro vanilla"
-	# use the original config as a filter
-	python3 filter-config.py config-db/$distro/vanilla.config $tmp >$linuxdir/.config
+	# use the original config to determine the value
+	python3 assign-config-value.py config-db/$distro/vanilla.config $tmp >$linuxdir/.config
 
     echo "Merge with allnoconfig"
     cd $linuxdir
     ./scripts/kconfig/merge_config.sh -n .config &>merge.log
 }
+
 main $@

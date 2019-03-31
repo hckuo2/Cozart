@@ -11,7 +11,7 @@ for line in sys.stdin:
     line = line.strip()
     if cur == 0:
         stats *= len(line.split())
-        print(line)
+        #  print(line)
     else:
         nums = line.split()
         for i in range(len(nums)):
@@ -23,9 +23,10 @@ for line in sys.stdin:
 for i in range(len(stats)):
     stats[i] /= cur
     if i == 0:
-        print("{:.2f}".format(stats[i]), end="")
+        #  print("{:.2f}".format(stats[i]), end="")
+        pass
     else:
-        print(" {:.2f}".format(stats[i]), end="")
+        #  print(" {:.2f}".format(stats[i]), end="")
         if i % 2 == 1:
             print(" ({:.2f} %)".format(improvement(stats[i], stats[i-1])), end="")
 print()
