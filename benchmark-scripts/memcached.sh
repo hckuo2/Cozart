@@ -1,12 +1,11 @@
 #!/bin/bash
-itr=20
-reqcnt=10000
+itr=1
+reqcnt=500
 
 source benchmark-scripts/general-helper.sh
-mark_start;
 mount_fs;
 enable_network;
-sleep 3;
+mark_start;
 memcached -u root &
 sleep 2;
 for i in `seq $itr`; do

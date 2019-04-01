@@ -1,12 +1,11 @@
 #!/bin/bash
-itr=20
-reqcnt=100000
+itr=1
+reqcnt=5000
 
 source benchmark-scripts/general-helper.sh
-mark_start;
 mount_fs;
 enable_network;
-sleep 3;
+mark_start;
 redis-server --save "" --appendonly no &
 sleep 2;
 redis-cli FLUSHALL

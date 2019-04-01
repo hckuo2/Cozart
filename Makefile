@@ -111,11 +111,12 @@ sync-scripts:
 toggle-benchmark-mode:
 	sed -i 's/reqcnt=.*/reqcnt=100000/' benchmark-scripts/*.sh
 	sed -i 's/reqcnt=.*/reqcnt=10000/' benchmark-scripts/memcached.sh
-	sed -i 's/itr=.*/itr=25/' benchmark-scripts/*.sh
+	sed -i 's/itr=.*/itr=20/' benchmark-scripts/*.sh
 	make sync-scripts
 
 toggle-trace-mode:
 	sed -i 's/reqcnt=.*/reqcnt=5000/' benchmark-scripts/*.sh
+	sed -i 's/reqcnt=.*/reqcnt=500/' benchmark-scripts/memcached.sh
 	sed -i 's/itr=.*/itr=1/' benchmark-scripts/*.sh
 	make sync-scripts
 

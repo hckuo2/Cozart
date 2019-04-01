@@ -18,7 +18,7 @@ trace() {
 aggregate() {
     for app in $@; do
         echo "Aggregate $app"
-        ./aggregate-config.sh ubuntu boot $app
+        ./aggregate-config.sh ubuntu boot vanilla-choice $app
         cd $linuxdir
         make clean
         make -j`nproc` LOCALVERSION=-ubuntu-$app

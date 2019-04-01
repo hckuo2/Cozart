@@ -20,6 +20,7 @@ enable_network() {
     /sbin/ifconfig lo 127.0.0.1 netmask 255.0.0.0 up;
     /sbin/ifconfig eth0 up 10.0.2.15 netmask 255.255.255.0 up;
     /sbin/route add default gw 10.0.2.2;
+    sleep 5;
 }
 
 mark_start() {

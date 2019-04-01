@@ -2,8 +2,9 @@
 itr=1
 
 source benchmark-scripts/general-helper.sh
-mark_start;
 mount_fs;
+enable_network;
+mark_start;
 cd /byte-unixbench/UnixBench
 make clean
 make

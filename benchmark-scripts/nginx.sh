@@ -1,12 +1,11 @@
 #!/bin/bash
 itr=1
-reqcnt=500
+reqcnt=5000
 
 source benchmark-scripts/general-helper.sh
-mark_start;
 mount_fs;
 enable_network;
-randomd
+mark_start;
 service nginx start
 sleep 3;
 for i in `seq $itr`; do
