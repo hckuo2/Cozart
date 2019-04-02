@@ -12,11 +12,12 @@ rm -rf /run/docker* /var/run/docker*
 docker_start
 sleep 5;
 docker system prune --all --force;
-docker run -dit --name my-apache-app -p 80:80 httpd:2.4
+docker run -dit --name my-redis-app -p 6379:6379 redis:4.0
+redis-cli FLUSHALL
 for i in `seq $itr`; do
-    ab -n $reqcnt -c 100 127.0.0.1:80/index.html;
+    redis-benchmark -n $reqcnt -t SET,GET --csv
 done
-docker stop my-apache-app
+docker stop my-redis-app
 write_modules
 mark_end
 

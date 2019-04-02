@@ -13,8 +13,10 @@ rm -rf /var/lib/cassandra/saved_caches/*
 rm -rf /var/log/cassandra/*
 
 cassandra -R &> /cassandra.log
-sleep 180
-nodetool status
+until nodetool status; do
+    printf ".";
+    sleep 1;
+done
 cassandra-stress write n=$reqcnt -node localhost -rate threads=4
 for i in `seq $itr`; do
     cassandra-stress mixed n=$reqcnt -node localhost -rate threads=4

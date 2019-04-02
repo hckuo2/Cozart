@@ -1,6 +1,6 @@
 #!/bin/bash
 itr=1
-reqcnt=5000
+reqcnt=500
 
 source benchmark-scripts/general-helper.sh
 source benchmark-scripts/docker-helper.sh
@@ -12,11 +12,12 @@ rm -rf /run/docker* /var/run/docker*
 docker_start
 sleep 5;
 docker system prune --all --force;
-docker run -dit --name my-apache-app -p 80:80 httpd:2.4
+docker run -dit --name my-memcached-app -p 11211:11211 memcached:1.5
 for i in `seq $itr`; do
-    ab -n $reqcnt -c 100 127.0.0.1:80/index.html;
+    /benchmark-scripts/memtier_benchmark -p 11211 -P memcache_binary \
+        --requests=$reqcnt --hide-histogram
 done
-docker stop my-apache-app
+docker stop my-memcached-app
 write_modules
 mark_end
 

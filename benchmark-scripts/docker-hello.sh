@@ -7,7 +7,7 @@ mount_fs
 randomd
 enable_network
 rm -rf /run/docker* /var/run/docker*
-dockerd &
+docker_start
 sleep 5;
 docker run hello-world;
 docker system prune --all --force;

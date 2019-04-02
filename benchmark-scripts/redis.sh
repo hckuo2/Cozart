@@ -6,7 +6,7 @@ source benchmark-scripts/general-helper.sh
 mount_fs;
 enable_network;
 mark_start;
-redis-server --save "" --appendonly no &
+redis-server;
 sleep 2;
 redis-cli FLUSHALL
 for i in `seq $itr`; do

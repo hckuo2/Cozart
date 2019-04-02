@@ -9,7 +9,7 @@ mount_fs
 randomd
 enable_network
 rm -rf /run/docker* /var/run/docker*
-dockerd &
+docker_start
 sleep 5;
 docker system prune --all --force;
 docker run -dit --name my-nginx-app -p 80:80 nginx:1.15
