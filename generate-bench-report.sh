@@ -39,6 +39,9 @@ mysql() {
 }
 
 cassandra() {
-    ls
+    echo cassandra-vanilla cassandra-cozart
+    paste -d ' ' \
+        <(grep "Op rate" benchresult.cassandra.vanilla.tmp | grep READ | awk '{print $4}' | tr -d ',') \
+        <(grep "Op rate" benchresult.cassandra.cozart.tmp | grep READ | awk '{print $4}' | tr -d ',')
 }
 paste -d ' ' <($1) <($2) <($3) <($4) <($5) <($6) <($7)

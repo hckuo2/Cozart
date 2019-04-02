@@ -1,6 +1,6 @@
 #!/bin/bash
-itr=1
-reqcnt=5000
+itr=20
+reqcnt=100000
 
 source benchmark-scripts/general-helper.sh
 mount_fs
@@ -15,8 +15,8 @@ rm -rf /var/log/cassandra/*
 cassandra -R &> /cassandra.log
 sleep 180
 nodetool status
+cassandra-stress write n=$reqcnt -node localhost -rate threads=4
 for i in `seq $itr`; do
-    cassandra-stress write n=$reqcnt -node localhost -rate threads=4
     cassandra-stress mixed n=$reqcnt -node localhost -rate threads=4
 done
 
