@@ -55,7 +55,7 @@ $(disk):
 	qemu-img create -f raw $(disk) 30G
 
 clean:
-	rm -rf ./tmp/* ./bin/* *.tmp
+	rm -rf ./bin/* *.tmp *.benchresult
 
 rm-disk:
 	rm $(disk)
