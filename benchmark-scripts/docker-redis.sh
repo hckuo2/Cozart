@@ -11,7 +11,7 @@ mark_start
 rm -rf /run/docker* /var/run/docker*
 docker_start
 sleep 5;
-docker system prune --all --force;
+docker container prune --force;
 docker run -dit --name my-redis-app -p 6379:6379 redis:4.0
 redis-cli FLUSHALL
 for i in `seq $itr`; do

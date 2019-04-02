@@ -11,7 +11,7 @@ mark_start
 rm -rf /run/docker* /var/run/docker*
 docker_start
 sleep 5;
-docker system prune --all --force;
+docker container prune --force;
 docker run -dit --health-cmd='mysqladmin ping --silent' --name my-mysql-app -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mysql:5.7
 
 while [ $(docker inspect --format "{{json .State.Health.Status }}" my-mysql-app) != "\"healthy\"" ]; do

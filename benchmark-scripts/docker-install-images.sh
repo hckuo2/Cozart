@@ -5,11 +5,11 @@ source benchmark-scripts/docker-helper.sh
 mount_fs
 randomd
 enable_network
-mark_start
 rm -rf /run/docker* /var/run/docker*
 docker_start
-sleep 5;
-docker run hello-world;
-docker container prune --force;
-write_modules
-mark_end
+docker pull httpd:2.4
+docker pull nginx:1.15
+docker pull mysql:5.7
+docker pull memcached:1.5
+docker pull redis:4.0
+docker pull cassandra:3.11
