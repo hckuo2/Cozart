@@ -2,10 +2,10 @@
 
 source benchmark-scripts/general-helper.sh
 source benchmark-scripts/docker-helper.sh
-mark_start
 mount_fs
 randomd
 enable_network
+mark_start
 rm -rf /run/docker* /var/run/docker*
 docker_start
 sleep 5;
