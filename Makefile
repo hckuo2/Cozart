@@ -123,5 +123,6 @@ toggle-trace-mode:
 install-unixbench:
 	-git clone https://github.com/kdlucas/byte-unixbench.git
 	./copy2disks.sh byte-unixbench
+	rm -rf byte-unixbench
 
 
