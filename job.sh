@@ -15,10 +15,16 @@ trace() {
     done
 }
 
+decompose_app() {
+    # this function is a helper for application stacks and has no effect for
+    # single application
+    echo $1 | tr '+' ' '
+}
+
 aggregate() {
     for app in $@; do
         echo "Aggregate $app"
-        ./aggregate-config.sh ubuntu boot vanilla-choice $app
+        ./aggregate-config.sh ubuntu boot vanilla-choice $(decompose_app $app)
         cd $linuxdir
         make clean
         make -j`nproc` LOCALVERSION=-ubuntu-$app
