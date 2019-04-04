@@ -9,7 +9,7 @@ mark_start
 rm -rf /run/docker* /var/run/docker*
 docker_start
 sleep 5;
-docker run hello-world;
 docker container prune --force;
+docker run hello-world;
 write_modules
 mark_end
