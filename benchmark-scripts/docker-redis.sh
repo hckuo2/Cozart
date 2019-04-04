@@ -13,6 +13,7 @@ docker_start
 sleep 5;
 docker container prune --force;
 docker run -dit --name my-redis-app -p 6379:6379 redis:4.0
+sleep 5;
 redis-cli FLUSHALL
 for i in `seq $itr`; do
     redis-benchmark -n $reqcnt -t SET,GET --csv
