@@ -25,6 +25,7 @@ trace-kernel() {
         echo "Parsing GLOBAL raw trace ..."
         awk --file extract-trace.awk $rawtrace | sort | uniq >trace.tmp
     fi
+    rm $rawtrace;
 
     make get-modules
 	echo "Getting module config information..."
