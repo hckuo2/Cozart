@@ -11,18 +11,19 @@ help() {
 
 trace-kernel() {
     make clean
+    rawtrace=$(mktemp)
 	$qemubin -trace exec_tb_block -smp $cores -m $mem -cpu $cpu \
 		-drive file="$workdir/qemu-disk.ext4,if=ide,format=raw" \
 		-kernel $distro.bzImage -nographic -no-reboot \
 		-append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=$2" \
-		2>trace.raw.tmp
+		2>$rawtrace
 
     if [ $# -eq 3 ]; then
         echo "Parsing LOCAL raw trace ..."
-        awk --assign local=true --file extract-trace.awk trace.raw.tmp | sort | uniq >trace.tmp
+        awk --assign local=true --file extract-trace.awk $rawtrace | sort | uniq >trace.tmp
     else
         echo "Parsing GLOBAL raw trace ..."
-        awk --file extract-trace.awk trace.raw.tmp | sort | uniq >trace.tmp
+        awk --file extract-trace.awk $rawtrace | sort | uniq >trace.tmp
     fi
 
     make get-modules
