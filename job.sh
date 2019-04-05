@@ -46,7 +46,7 @@ benchmark() {
             -drive file="$(pwd)/qemu-disk.ext4",if=ide,format=raw \
             -nographic -no-reboot \
             -append "panic=-1 console=ttyS0 root=/dev/sda rw init=/benchmark-scripts/$app.sh" \
-            > app.cozart.benchresult;
+            > $app.cozart.benchresult;
 
         echo "Benchmark $app on vanilla kernel"
        qemu-system-x86_64 -cpu $cpu -enable-kvm -smp $cores -m $mem \
@@ -54,9 +54,9 @@ benchmark() {
             -drive file="$(pwd)/qemu-disk.ext4",if=ide,format=raw \
             -nographic -no-reboot \
             -append "panic=-1 console=ttyS0 root=/dev/sda rw init=/benchmark-scripts/$app.sh" \
-            > app.vanilla.benchresult;
+            > $app.vanilla.benchresult;
 
-       dos2unix --force app.*.benchresult
+       dos2unix --force $app.*.benchresult
     done
 }
 
