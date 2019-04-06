@@ -12,11 +12,12 @@ rm -rf /var/lib/cassandra/saved_caches/*
 rm -rf /var/log/cassandra/*
 
 cassandra -R &> /cassandra.log
-until tail cassandra.log | grep "CQL clients on"; do
+
+until nodetool status; do
     echo "Waiting for cassandra"
-    tail cassandra.log
     sleep 3
 done
+
 cassandra-stress write n=$reqcnt -node localhost -rate threads=4
 for i in `seq $itr`; do
     cassandra-stress mixed n=$reqcnt -node localhost -rate threads=4
