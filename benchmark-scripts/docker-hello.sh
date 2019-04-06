@@ -2,9 +2,7 @@
 
 source benchmark-scripts/general-helper.sh
 source benchmark-scripts/docker-helper.sh
-mount_fs
-randomd
-enable_network
+bootstrap;
 mark_start
 rm -rf /run/docker* /var/run/docker*
 docker_start

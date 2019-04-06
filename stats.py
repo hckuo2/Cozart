@@ -27,6 +27,9 @@ for i in range(len(stats)):
         pass
     else:
         #  print(" {:.2f}".format(stats[i]), end="")
-        if i % 2 == 1:
-            print(" ({:.2f} %)".format(improvement(stats[i], stats[i-1])), end="")
+        try:
+            if i % 2 == 1:
+                print(" ({:.2f} %)".format(improvement(stats[i], stats[i-1])), end="")
+        except ZeroDivisionError:
+                print(" (empty)", end="")
 print()

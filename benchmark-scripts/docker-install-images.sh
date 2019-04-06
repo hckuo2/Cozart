@@ -2,9 +2,7 @@
 
 source benchmark-scripts/general-helper.sh
 source benchmark-scripts/docker-helper.sh
-mount_fs
-randomd
-enable_network
+bootstrap;
 rm -rf /run/docker* /var/run/docker*
 docker_start
 docker pull httpd:2.4
