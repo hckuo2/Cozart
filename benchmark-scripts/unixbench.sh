@@ -1,9 +1,8 @@
 #!/bin/bash
-itr=1
+itr=20
 
 source benchmark-scripts/general-helper.sh
-mount_fs;
-enable_network;
+bootstrap;
 mark_start;
 cd /byte-unixbench/UnixBench
 make clean

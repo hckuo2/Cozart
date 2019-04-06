@@ -1,11 +1,9 @@
 #!/bin/bash
-itr=1
-reqcnt=5000
+itr=20
+reqcnt=100000
 
 source benchmark-scripts/general-helper.sh
-mount_fs;
-enable_network;
-randomd
+bootstrap;
 mark_start;
 rm -rf /var/run/apache2
 apache2ctl start

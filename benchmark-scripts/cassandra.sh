@@ -1,10 +1,9 @@
 #!/bin/bash
-itr=1
-reqcnt=5000
+itr=20
+reqcnt=100000
 
 source benchmark-scripts/general-helper.sh
-mount_fs
-enable_network;
+bootstrap;
 mark_start;
 # cleanup
 rm -rf /var/lib/cassandra/commitlog/*
@@ -13,9 +12,10 @@ rm -rf /var/lib/cassandra/saved_caches/*
 rm -rf /var/log/cassandra/*
 
 cassandra -R &> /cassandra.log
-until nodetool status; do
-    printf ".";
-    sleep 1;
+until tail cassandra.log | grep "CQL clients on"; do
+    echo "Waiting for cassandra"
+    tail cassandra.log
+    sleep 3
 done
 cassandra-stress write n=$reqcnt -node localhost -rate threads=4
 for i in `seq $itr`; do

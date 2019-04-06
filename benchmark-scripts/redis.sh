@@ -3,8 +3,7 @@ itr=20
 reqcnt=100000
 
 source benchmark-scripts/general-helper.sh
-mount_fs;
-enable_network;
+bootstrap;
 mark_start;
 redis-server &
 sleep 2;

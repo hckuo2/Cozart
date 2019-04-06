@@ -1,14 +1,13 @@
 #!/bin/bash
-itr=1
-reqcnt=5000
+itr=20
+reqcnt=100000
 
 source benchmark-scripts/general-helper.sh
-mount_fs;
-enable_network;
+bootstrap;
 mark_start;
 rm /var/log/mysql/error.log
-sleep 3
 service mysql restart || cat /var/log/mysql/error.log
+sleep 3
 for i in `seq $itr`; do
     sysbench --mysql-user=root --mysql-password=root --db-driver=mysql --test=oltp_read_write run
 done

@@ -39,3 +39,10 @@ write_modules() {
     cat /proc/modules > modules
     sync
 }
+
+bootstrap() {
+    mount_fs;
+    enable_network;
+    randomd;
+    sleep 3;
+}

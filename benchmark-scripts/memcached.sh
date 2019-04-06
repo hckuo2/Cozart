@@ -1,10 +1,9 @@
 #!/bin/bash
-itr=1
-reqcnt=500
+itr=20
+reqcnt=10000
 
 source benchmark-scripts/general-helper.sh
-mount_fs;
-enable_network;
+bootstrap;
 mark_start;
 memcached -u root &
 sleep 2;

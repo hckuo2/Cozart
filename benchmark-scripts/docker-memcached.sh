@@ -1,6 +1,6 @@
 #!/bin/bash
-itr=1
-reqcnt=500
+itr=20
+reqcnt=10000
 
 source benchmark-scripts/general-helper.sh
 source benchmark-scripts/docker-helper.sh
