@@ -10,11 +10,14 @@ stats = [0]
 for line in sys.stdin:
     line = line.strip()
     if cur == 0:
-        stats *= len(line.split())
+        stats *= len(line.split(','))
+        print(len(stats))
         #  print(line)
     else:
-        nums = line.split()
+        nums = line.split(',')
         for i in range(len(nums)):
+            if nums[i] == '':
+                continue
             stats[i] += float(nums[i])
     cur += 1
 
