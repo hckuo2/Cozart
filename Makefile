@@ -2,7 +2,7 @@ mnt=mnt/
 disk=qemu-disk.ext4
 kernelversion=rpi-4.14.y
 linuxdir=linux-$(kernelversion)
-whoami=hckuo2
+whoami=hckuo
 .PHONY: rm-disk clean build-db
 nothing:
 
@@ -38,6 +38,7 @@ build-raspberry-vanilla:
 		export CROSS_COMPILE=aarch64-linux-gnu- && \
 		INSTALL_DIR=../compiled-kernels/raspberry/vanilla && \
 		make bcmrpi3_defconfig && \
+		sed -i 's/# CONFIG_DEBUG_INFO is not set/CONFIG_DEBUG_INFO=y/' .config && \
 	 	make -j`nproc` \
 		LOCALVERSION=-raspberry-vanilla && \
 		INSTALL_PATH=$$INSTALL_DIR make install && \
@@ -67,12 +68,6 @@ install-kernel-modules:
 debootstrap: $(disk) $(mnt)
 	-sudo umount --recursive $(mnt)
 	sudo mkfs.ext4 $(disk)
-	sudo mount -o loop $(disk) $(mnt)
-	sudo debootstrap --components=main,universe \
-		--include="build-essential vim kmod net-tools apache2 apache2-utils haveged cgroupfs-mount linux-tools-generic iptables libltdl7 redis-server redis-tools nginx mysql-server sysbench php" \
-		--arch=amd64 cosmic $(mnt) http://archive.ubuntu.com/ubuntu
-	sudo umount --recursive $(mnt)
-	make install-docker install-mark
 
 install-mark:
 	-sudo umount --recursive $(mnt)

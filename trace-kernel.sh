@@ -17,7 +17,8 @@ trace-kernel() {
         -dtb compiled-kernels/$distro/vanilla/boot/bcm2837-rpi-3-b.dtb \
         -kernel compiled-kernels/$distro/vanilla/vmlinuz-4.14.98-v8* \
         -drive file=qemu-disk.ext4,format=raw,if=sd \
-        -append "nokaslr rw earlycon=pl011,0x3f201000 console=ttyAMA0 loglevel=3 root=/dev/mmcblk0" \
+        -no-reboot \
+        -append "nokaslr rw panic=-1 earlycon=pl011,0x3f201000 console=ttyAMA0 loglevel=3 root=/dev/mmcblk0 init=$2" \
         2>$rawtrace
 
     if [ $# -eq 3 ]; then

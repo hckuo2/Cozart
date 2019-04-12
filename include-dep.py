@@ -3,8 +3,8 @@ import kconfiglib
 import os
 import sys
 os.environ['srctree'] = "linux-rpi-4.14.y"
-os.environ['SRCARCH'] = "aarch64"
-os.environ['ARCH'] = "aarch64"
+os.environ['SRCARCH'] = "arm64"
+os.environ['ARCH'] = "arm64"
 kconf = kconfiglib.Kconfig()
 
 
