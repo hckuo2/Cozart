@@ -1,14 +1,15 @@
 #!/bin/bash
 workdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 qemudir="$workdir/qemu"
-qemubin="$qemudir/x86_64-softmmu/qemu-system-x86_64"
-linuxversion="4.18.0"
+qemubin="$qemudir/aarch64-softmmu/qemu-system-aarch64"
+linuxversion="rpi-4.14.y"
 linuxdir="linux-$linuxversion"
-vanillamoddir="compiled-kernels/ubuntu/vanilla/"
-# cpu="Skylake-Server"
-cpu="kvm64"
+vanillamoddir="compiled-kernels/raspberry/vanilla/"
+cpu="cortex-a15"
 cores="4"
-mem="8G"
+mem="1024"
+machine="raspi3"
+distro="raspberry"
 
 rebase-linuxdir() {
     sed -r "s/.+$linuxdir/$linuxdir/"

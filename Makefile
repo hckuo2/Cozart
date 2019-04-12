@@ -1,15 +1,13 @@
 mnt=mnt/
 disk=qemu-disk.ext4
-setupfile=bench/native/setup_custom.sh
-kernelversion=4.18.0
+kernelversion=rpi-4.14.y
 linuxdir=linux-$(kernelversion)
 whoami=hckuo2
 .PHONY: rm-disk clean build-db
 nothing:
 
 remove-makefile-escaped-newlines:
-	find $(linuxdir) -name Makefile | \
-		xargs sed -i ':a;N;$!ba;s/\\\n/ /g'
+	bash remove-makefile-escaped-newlines.sh
 
 build-db:
 	./directive-extracter.sh $(linuxdir) > directives.db
@@ -17,42 +15,41 @@ build-db:
 		| xargs awk -f extract-makefile.awk >filename.db
 
 setup-linux:
-	wget --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux_$(kernelversion).orig.tar.gz
-	wget --no-clobber https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/linux/$(kernelversion)-15.16/linux_$(kernelversion)-15.16.diff.gz
-	tar xvzf linux_$(kernelversion).orig.tar.gz
-	mv linux-4.18 $(linuxdir)
-	cd $(linuxdir) && \
-		zcat ../linux_$(kernelversion)-15.16.diff.gz | patch -p1
+	wget --no-clobber https://github.com/raspberrypi/linux/archive/$(kernelversion).zip
+	unzip $(kernelversion).zip
 	make remove-makefile-escaped-newlines
+
+setup-cc-toolchains:
+	sudo apt install -y libc6-armel-cross libc6-dev-armel-cross binutils-arm-linux-gnueabi libncurses5-dev
 
 setup-qemu:
 	-git clone --depth 1 -b stable-2.12 https://github.com/qemu/qemu.git
 	cd qemu && \
 		git submodule init && git submodule update --recursive && \
-		git apply -v ../patches/cpu-exec.patch && \
-		git apply -v ../patches/trace-events.patch && \
-		./configure --enable-trace-backend=log --target-list=x86_64-softmmu && \
+		git apply -v ../patches/cpu-exec.patch; \
+		git apply -v ../patches/trace-events.patch; \
+		./configure --enable-trace-backend=log --target-list=aarch64-softmmu --disable-werror && \
 		make -j`nproc`
 
-build-ubuntu-vanilla:
-	mkdir -p vanilla-modules
-	mkdir -p compiled-kernels/ubuntu/vanilla
+build-raspberry-vanilla:
+	mkdir -p compiled-kernels/raspberry/vanilla/boot/overlays
 	cd $(linuxdir) && \
-		make distclean && \
-		cp -u ../config-db/ubuntu/vanilla.config .config && \
-		make olddefconfig && \
-		make -j`nproc` LOCALVERSION=-ubuntu-vanilla && \
-		cp vmlinux ../ubuntu.vmlinux && \
-		cp arch/x86/boot/bzImage ../ubuntu.bzImage && \
-		INSTALL_PATH=../compiled-kernels/ubuntu/vanilla make install && \
-		INSTALL_MOD_PATH=../compiled-kernels/ubuntu/vanilla make modules_install
-	make install-kernel-modules
+		export ARCH=arm64 && \
+		export CROSS_COMPILE=aarch64-linux-gnu- && \
+		INSTALL_DIR=../compiled-kernels/raspberry/vanilla && \
+		make bcmrpi3_defconfig && \
+	 	make -j`nproc` \
+		LOCALVERSION=-raspberry-vanilla && \
+		INSTALL_PATH=$$INSTALL_DIR make install && \
+		INSTALL_MOD_PATH=$$INSTALL_DIR make modules_install && \
+		cp arch/arm/boot/dts/*.dtb $$INSTALL_DIR/boot/ && \
+		cp arch/arm/boot/dts/overlays/*.dtb* $$INSTALL_DIR/boot/overlays/ && \
+		cp arch/arm/boot/dts/overlays/README $$INSTALL_DIR/boot/overlays/ && \
+		cp arch/arm/boot/zImage $$INSTALL_DIR/boot/kernel7.img
+
 
 $(mnt):
 	mkdir -p $(mnt)
-
-$(disk):
-	qemu-img create -f raw $(disk) 30G
 
 clean:
 	rm -rf ./bin/* *.tmp *.benchresult
@@ -64,7 +61,7 @@ install-kernel-modules:
 	-sudo umount --recursive $(mnt)
 	sudo mount -o loop $(disk) $(mnt)
 	cd $(linuxdir) && \
-	sudo INSTALL_MOD_PATH=../$(mnt) make modules_install
+		sudo INSTALL_MOD_PATH=../$(mnt) make modules_install
 	-sudo umount --recursive ./$(mnt)
 
 debootstrap: $(disk) $(mnt)

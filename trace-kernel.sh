@@ -12,11 +12,13 @@ help() {
 trace-kernel() {
     make clean
     rawtrace=$(mktemp)
-	$qemubin -trace exec_tb_block -smp $cores -m $mem -cpu $cpu \
-		-drive file="$workdir/qemu-disk.ext4,if=ide,format=raw" \
-		-kernel $distro.bzImage -nographic -no-reboot \
-		-append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=$2" \
-		2>$rawtrace
+    echo $rawtrace
+	$qemubin -trace exec_tb_block -m $mem -M $machine -cpu $cpu -nographic \
+        -dtb compiled-kernels/$distro/vanilla/boot/bcm2837-rpi-3-b.dtb \
+        -kernel compiled-kernels/$distro/vanilla/vmlinuz-4.14.98-v8* \
+        -drive file=qemu-disk.ext4,format=raw,if=sd \
+        -append "nokaslr rw earlycon=pl011,0x3f201000 console=ttyAMA0 loglevel=3 root=/dev/mmcblk0" \
+        2>$rawtrace
 
     if [ $# -eq 3 ]; then
         echo "Parsing LOCAL raw trace ..."

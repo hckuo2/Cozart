@@ -2,9 +2,9 @@
 import kconfiglib
 import os
 import sys
-os.environ['srctree'] = "linux-4.18.0"
-os.environ['SRCARCH'] = "x86"
-os.environ['ARCH'] = "x86"
+os.environ['srctree'] = "linux-rpi-4.14.y"
+os.environ['SRCARCH'] = "aarch64"
+os.environ['ARCH'] = "aarch64"
 kconf = kconfiglib.Kconfig()
 
 
