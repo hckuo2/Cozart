@@ -62,7 +62,7 @@ install-kernel-modules:
 	-sudo umount --recursive $(mnt)
 	sudo mount -o loop $(disk) $(mnt)
 	cd $(linuxdir) && \
-		sudo INSTALL_MOD_PATH=../$(mnt) make modules_install
+		sudo ARCH=arm64 INSTALL_MOD_PATH=../$(mnt) make modules_install
 	-sudo umount --recursive ./$(mnt)
 
 debootstrap: $(disk) $(mnt)

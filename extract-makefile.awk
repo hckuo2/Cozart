@@ -12,6 +12,8 @@ function dirname(file) {
         config = "CONFIG_" matches[2]
     } else if(match($0, /^(\w+)-y/, matches)) {
         config = "CONFIG_" toupper(matches[1])
+    } else if(match($0, /^(\w+)-objs/, matches)) {
+        config = "CONFIG_" toupper(matches[1])
     }
     if ( config ~ /CONFIG_OBJ/ ) {
         next

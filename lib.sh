@@ -1,4 +1,6 @@
 #!/bin/bash
+export ARCH=arm64
+export CROSS_COMPILE=aarch64-linux-gnu-
 workdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 qemudir="$workdir/qemu"
 qemubin="$qemudir/aarch64-softmmu/qemu-system-aarch64"

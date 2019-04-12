@@ -6,6 +6,7 @@ help() {
 	echo "aggregate-config.sh distro app [apps ...]"
 }
 main() {
+    export ARCH=arm64;
 	if [ "$#" -lt 2 ]; then
 		help
 		exit 1
