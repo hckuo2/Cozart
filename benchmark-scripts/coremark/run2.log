@@ -1,0 +1,16 @@
+2K validation run parameters for coremark.
+CoreMark Size    : 666
+Total ticks      : 12735
+Total time (secs): 12.735000
+Iterations/Sec   : 31409.501374
+Iterations       : 400000
+Compiler version : GCC8.2.0
+Compiler flags   : -O2 -DPERFORMANCE_RUN=1  -lrt
+Memory location  : Please put data memory location here
+			(e.g. code in flash, data on heap etc)
+seedcrc          : 0x18f2
+[0]crclist       : 0xe3c1
+[0]crcmatrix     : 0x0747
+[0]crcstate      : 0x8d84
+[0]crcfinal      : 0x8091
+Correct operation validated. See README.md for run and reporting rules.

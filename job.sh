@@ -6,7 +6,7 @@ trace() {
     make toggle-trace-mode
     for app in $@; do echo "Tracing $app"
         make clean
-        if [[ $app == "boot" ]]; then
+        if [[ $app == "boot"* ]]; then
             ./trace-kernel.sh $distro /benchmark-scripts/$app.sh;
         else
             ./trace-kernel.sh $distro /benchmark-scripts/$app.sh true;
@@ -24,7 +24,7 @@ decompose_app() {
 aggregate() {
     for app in $@; do
         echo "Aggregate $app"
-        ./aggregate-config.sh $distro boot $(decompose_app $app)
+        ./aggregate-config.sh $distro $(decompose_app $app)
         cd $linuxdir
         make clean
         make -j`nproc` LOCALVERSION=-$distro-$app

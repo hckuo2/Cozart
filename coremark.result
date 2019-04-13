@@ -1,0 +1,44 @@
+make[2]: Entering directory '/benchmark-scripts/coremark'                                  │make[1]: warning:  Clock skew detected.  Your build may be incomplete.
+make[2]: Warning: File 'linux64/core_portme.mak' has modification time 1555190045 s in the │make[1]: Leaving directory '/benchmark-scripts/coremark'
+future                                                                                     │Check run1.log and run2.log for results.
+make[2]: Nothing to be done for 'port_postrun'.                                            │See README.md for run and reporting rules.
+make[2]: warning:  Clock skew detected.  Your build may be incomplete.                     │make: warning:  Clock skew detected.  Your build may be incomplete.
+make[2]: Leaving directory '/benchmark-scripts/coremark'                                   │2K performance run parameters for coremark.
+make[1]: warning:  Clock skew detected.  Your build may be incomplete.                     │CoreMark Size    : 666
+make[1]: Leaving directory '/benchmark-scripts/coremark'                                   │Total ticks      : 16981
+Check run1.log and run2.log for results.                                                   │Total time (secs): 16.981000
+See README.md for run and reporting rules.                                                 │Iterations/Sec   : 1177.786938
+make: warning:  Clock skew detected.  Your build may be incomplete.                        │Iterations       : 20000
+2K performance run parameters for coremark.                                                │Compiler version : GCC6.3.0 20170516
+CoreMark Size    : 666                                                                     │Compiler flags   : -O2 -DPERFORMANCE_RUN=1  -lrt
+Total ticks      : 13645                                                                   │Memory location  : Please put data memory location here
+Total time (secs): 13.645000                                                               │                        (e.g. code in flash, data on heap etc)
+Iterations/Sec   : 1465.738366                                                             │seedcrc          : 0xe9f5
+Iterations       : 20000                                                                   │[0]crclist       : 0xe714
+Compiler version : GCC6.3.0 20170516                                                       │[0]crcmatrix     : 0x1fd7
+Compiler flags   : -O2 -DPERFORMANCE_RUN=1  -lrt                                           │[0]crcstate      : 0x8e3a
+Memory location  : Please put data memory location here                                    │[0]crcfinal      : 0x382f
+                        (e.g. code in flash, data on heap etc)                             │Correct operation validated. See README.md for run and reporting rules.
+seedcrc          : 0xe9f5                                                                  │CoreMark 1.0 : 1177.786938 / GCC6.3.0 20170516 -O2 -DPERFORMANCE_RUN=1  -lrt / Heap
+[0]crclist       : 0xe714                                                                  │2K validation run parameters for coremark.
+[0]crcmatrix     : 0x1fd7                                                                  │CoreMark Size    : 666
+[0]crcstate      : 0x8e3a                                                                  │Total ticks      : 15174
+[0]crcfinal      : 0x382f                                                                  │Total time (secs): 15.174000
+Correct operation validated. See README.md for run and reporting rules.                    │Iterations/Sec   : 1318.044023
+CoreMark 1.0 : 1465.738366 / GCC6.3.0 20170516 -O2 -DPERFORMANCE_RUN=1  -lrt / Heap        │Iterations       : 20000
+2K validation run parameters for coremark.                                                 │Compiler version : GCC6.3.0 20170516
+CoreMark Size    : 666                                                                     │Compiler flags   : -O2 -DVALIDATION_RUN=1  -lrt
+Total ticks      : 13633                                                                   │Memory location  : Please put data memory location here
+Total time (secs): 13.633000                                                               │                        (e.g. code in flash, data on heap etc)
+Iterations/Sec   : 1467.028534                                                             │seedcrc          : 0x18f2
+Iterations       : 20000                                                                   │[0]crclist       : 0xe3c1
+Compiler version : GCC6.3.0 20170516                                                       │[0]crcmatrix     : 0x0747
+Compiler flags   : -O2 -DVALIDATION_RUN=1  -lrt                                            │[0]crcstate      : 0x8d84
+Memory location  : Please put data memory location here                                    │[0]crcfinal      : 0xd304
+                        (e.g. code in flash, data on heap etc)                             │Correct operation validated. See README.md for run and reporting rules.
+seedcrc          : 0x18f2                                                                  │benchmark-scripts/general-helper.sh: line 31: ./mark: No such file or directory
+[0]crclist       : 0xe3c1                                                                  │root@(none):/# QEMU: Terminated
+[0]crcmatrix     : 0x0747                                                                  │╭─hckuo@x1e ~/Developer/Cozart-raspberry  ‹raspberry*›
+[0]crcstate      : 0x8d84                                                                  │╰─$
+[0]crcfinal      : 0xd304                                                                  │╭─hckuo@x1e ~/Developer/Cozart-raspberry  ‹raspberry*›
+Correct operation validated. See README.md for run and reporting rules.                    │╰─$
