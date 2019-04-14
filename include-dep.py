@@ -32,7 +32,10 @@ def _find_deps(dep, result, level):
 def find_deps(sym):
     result = set()
     _find_deps(sym.direct_dep, result, 0)
-    return result
+    result2 = set()
+    for r in result:
+        result2.union(find_deps(kconf.syms[r]))
+    return result.union(result2)
 
 
 if __name__ == '__main__':
