@@ -43,10 +43,10 @@ build-raspberry-vanilla:
 		LOCALVERSION=-raspberry-vanilla && \
 		INSTALL_PATH=$$INSTALL_DIR make install && \
 		INSTALL_MOD_PATH=$$INSTALL_DIR make modules_install && \
-		cp arch/arm/boot/dts/*.dtb $$INSTALL_DIR/boot/ && \
-		cp arch/arm/boot/dts/overlays/*.dtb* $$INSTALL_DIR/boot/overlays/ && \
-		cp arch/arm/boot/dts/overlays/README $$INSTALL_DIR/boot/overlays/ && \
-		cp arch/arm/boot/zImage $$INSTALL_DIR/boot/kernel7.img
+		cp arch/arm64/boot/dts/broadcom/*.dtb $$INSTALL_DIR/boot/ && \
+		cp arch/arm64/boot/dts/overlays/*.dtb* $$INSTALL_DIR/boot/overlays/ && \
+		cp arch/arm64/boot/dts/overlays/README $$INSTALL_DIR/boot/overlays/ && \
+		cp vmlinux ../raspberry.vmlinux
 
 
 $(mnt):
