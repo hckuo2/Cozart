@@ -7,7 +7,7 @@ bootstrap;
 mark_start;
 rm /var/log/mysql/error.log
 service mysql restart || cat /var/log/mysql/error.log
-sleep 3
+sleep 10
 for i in `seq $itr`; do
     sysbench --mysql-user=root --mysql-password=root --db-driver=mysql --test=oltp_read_write run
 done

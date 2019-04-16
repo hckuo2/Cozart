@@ -9,12 +9,7 @@ mark_start
 docker_start
 sleep 5;
 docker container prune --force
-docker run -dit --name my-apache-app -p 80:80 httpd:2.4
-sleep 5;
-for i in `seq $itr`; do
-    ab -n $reqcnt -c 100 localhost:80/index.html;
-done
-docker stop my-apache-app
+docker run -it --name my-unixbench-app tutum/unixbench;
 write_modules
 mark_end
 
