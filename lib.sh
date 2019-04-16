@@ -1,16 +1,15 @@
 #!/bin/bash
-export ARCH=arm64
-export CROSS_COMPILE=aarch64-linux-gnu-
+export ARCH=arm
+export CROSS_COMPILE=arm-linux-gnueabi-
 workdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 qemudir="$workdir/qemu"
-qemubin="$qemudir/aarch64-softmmu/qemu-system-aarch64"
+qemubin="$qemudir/arm-softmmu/qemu-system-arm"
 linuxversion="rpi-4.14.y"
 linuxdir="linux-$linuxversion"
 vanillamoddir="compiled-kernels/raspberry/vanilla/"
-cpu="cortex-a15"
 cores="4"
 mem="1024"
-machine="raspi3"
+machine="raspi2"
 distro="raspberry"
 
 rebase-linuxdir() {

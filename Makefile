@@ -28,24 +28,23 @@ setup-qemu:
 		git submodule init && git submodule update --recursive && \
 		git apply -v ../patches/cpu-exec.patch; \
 		git apply -v ../patches/trace-events.patch; \
-		./configure --enable-trace-backend=log --target-list=aarch64-softmmu --disable-werror && \
+		./configure --enable-trace-backend=log --target-list=aarch64-softmmu,arm-softmmu --disable-werror && \
 		make -j`nproc`
 
 build-raspberry-vanilla:
 	mkdir -p compiled-kernels/raspberry/vanilla/boot/overlays
 	cd $(linuxdir) && \
-		export ARCH=arm64 && \
-		export CROSS_COMPILE=aarch64-linux-gnu- && \
+		export ARCH=arm && \
+		export CROSS_COMPILE=arm-linux-gnueabi- && \
 		INSTALL_DIR=../compiled-kernels/raspberry/vanilla && \
-		make bcmrpi3_defconfig && \
+		cp ../config-db/raspberry/vanilla.config .config && \
 		sed -i 's/# CONFIG_DEBUG_INFO is not set/CONFIG_DEBUG_INFO=y/' .config && \
-	 	make -j`nproc` \
-		LOCALVERSION=-raspberry-vanilla && \
-		INSTALL_PATH=$$INSTALL_DIR make install && \
+	 	make -j`nproc` zImage modules dtbs LOCALVERSION=-raspberry-vanilla && \
 		INSTALL_MOD_PATH=$$INSTALL_DIR make modules_install && \
-		cp arch/arm64/boot/dts/broadcom/*.dtb $$INSTALL_DIR/boot/ && \
-		cp arch/arm64/boot/dts/overlays/*.dtb* $$INSTALL_DIR/boot/overlays/ && \
-		cp arch/arm64/boot/dts/overlays/README $$INSTALL_DIR/boot/overlays/ && \
+		cp arch/arm/boot/dts/*.dtb $$INSTALL_DIR/boot/ && \
+		cp arch/arm/boot/dts/overlays/*.dtb* $$INSTALL_DIR/boot/overlays/ && \
+		cp arch/arm/boot/dts/overlays/README $$INSTALL_DIR/boot/overlays/ && \
+		cp arch/arm/boot/zImage $$INSTALL_DIR/boot/kernel7.img && \
 		cp vmlinux ../raspberry.vmlinux
 
 

@@ -13,12 +13,12 @@ trace-kernel() {
     make clean
     rawtrace=$(mktemp)
     echo $rawtrace
-	$qemubin -trace exec_tb_block -m $mem -M $machine -cpu $cpu -nographic \
-        -dtb compiled-kernels/$distro/vanilla/boot/bcm2837-rpi-3-b.dtb \
-        -kernel compiled-kernels/$distro/vanilla/vmlinuz-4.14.98-v8* \
+	$qemubin -trace exec_tb_block -m $mem -M $machine -nographic \
+        -dtb compiled-kernels/$distro/vanilla/boot/bcm2710-rpi-3-b.dtb \
+        -kernel compiled-kernels/$distro/vanilla/boot/kernel7.img \
         -drive file=qemu-disk.ext4,format=raw,if=sd \
         -no-reboot \
-        -append "nokaslr rw panic=-1 earlycon=pl011,0x3f201000 console=ttyAMA0 loglevel=3 root=/dev/mmcblk0 init=$2" \
+        -append "nokaslr rw panic=-1 earlycon=pl011,0x3f201000 console=ttyAMA0 loglevel=7 root=/dev/mmcblk0 init=$2" \
         2>$rawtrace
 
     if [ $# -eq 3 ]; then
