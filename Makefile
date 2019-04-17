@@ -1,7 +1,8 @@
 mnt=mnt/
 disk=qemu-disk.ext4
 setupfile=bench/native/setup_custom.sh
-kernelversion=4.18.0
+kernelversion=xenial
+distro=ubuntu-xenial
 linuxdir=linux-$(kernelversion)
 whoami=hckuo2
 .PHONY: rm-disk clean build-db
@@ -17,12 +18,7 @@ build-db:
 		| xargs awk -f extract-makefile.awk >filename.db
 
 setup-linux:
-	wget --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux_$(kernelversion).orig.tar.gz
-	wget --no-clobber https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/linux/$(kernelversion)-15.16/linux_$(kernelversion)-15.16.diff.gz
-	tar xvzf linux_$(kernelversion).orig.tar.gz
-	mv linux-4.18 $(linuxdir)
-	cd $(linuxdir) && \
-		zcat ../linux_$(kernelversion)-15.16.diff.gz | patch -p1
+	git clone --depth=1 git://kernel.ubuntu.com/ubuntu/$(distro).git linux-xenial
 	make remove-makefile-escaped-newlines
 
 setup-qemu:
@@ -36,16 +32,15 @@ setup-qemu:
 
 build-ubuntu-vanilla:
 	mkdir -p vanilla-modules
-	mkdir -p compiled-kernels/ubuntu/vanilla
+	mkdir -p compiled-kernels/$(distro)/vanilla
 	cd $(linuxdir) && \
-		make distclean && \
-		cp -u ../config-db/ubuntu/vanilla.config .config && \
+		cp -u ../config-db/$(distro)/vanilla.config .config && \
 		make olddefconfig && \
-		make -j`nproc` LOCALVERSION=-ubuntu-vanilla && \
-		cp vmlinux ../ubuntu.vmlinux && \
-		cp arch/x86/boot/bzImage ../ubuntu.bzImage && \
-		INSTALL_PATH=../compiled-kernels/ubuntu/vanilla make install && \
-		INSTALL_MOD_PATH=../compiled-kernels/ubuntu/vanilla make modules_install
+		make -j`nproc` LOCALVERSION=-$(distro)-vanilla && \
+		cp vmlinux ../$(distro).vmlinux && \
+		cp arch/x86/boot/bzImage ../$(distro).bzImage && \
+		INSTALL_PATH=../compiled-kernels/$(distro)/vanilla make install && \
+		INSTALL_MOD_PATH=../compiled-kernels/$(distro)/vanilla make modules_install
 	make install-kernel-modules
 
 $(mnt):

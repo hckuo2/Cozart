@@ -1,7 +1,6 @@
 #!/bin/bash
 source lib.sh
 
-distro=$1
 vanillaconfig="config-db/$distro/vanilla.config"
 
 help() {
