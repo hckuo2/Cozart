@@ -2,8 +2,10 @@
 
 import sys
 
+
 def improvement(a, b):
-    return (a-b)/b * 100
+    return (a - b) / b * 100
+
 
 cur = 0
 stats = [0]
@@ -21,8 +23,6 @@ for line in sys.stdin:
             stats[i] += float(nums[i])
     cur += 1
 
-
-
 for i in range(len(stats)):
     stats[i] /= cur
     if i == 0:
@@ -32,7 +32,9 @@ for i in range(len(stats)):
         #  print(" {:.2f}".format(stats[i]), end="")
         try:
             if i % 2 == 1:
-                print(" ({:.2f} %)".format(improvement(stats[i], stats[i-1])), end="")
+                print(
+                    " ({:.2f} %)".format(improvement(stats[i], stats[i - 1])),
+                    end="")
         except ZeroDivisionError:
-                print(" (empty)", end="")
+            print(" (empty)", end="")
 print()

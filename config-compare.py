@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 import sys
 
+
 def parse_line(line):
     idx = line.index("=")
-    return line[:idx], line[idx+1:]
+    return line[:idx], line[idx + 1:]
+
 
 if __name__ == '__main__':
     base = {}
@@ -25,4 +27,3 @@ if __name__ == '__main__':
         item, value = parse_line(line)
         if item not in base:
             print(line + " is not in " + sys.argv[1])
-
