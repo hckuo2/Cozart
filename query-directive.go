@@ -37,7 +37,9 @@ func main () {
         if mappings, ok := db[filename]; ok {
             for i, m := range mappings {
                 if linenum < m.linenum {
-                    fmt.Println(mappings[i-1].text)
+                    if i > 0 {
+                        fmt.Println(mappings[i-1].text)
+                    }
                     break
                 }
             }
