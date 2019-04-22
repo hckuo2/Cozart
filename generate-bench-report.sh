@@ -12,9 +12,7 @@ nginx() {
         <(grep Requests nginx.vanilla.benchresult | awk '{print $4}') \
         <(grep Requests nginx.cozart.benchresult | awk '{print $4}')
 }
-
-redis() {
-    echo redis-get-vanilla,redis-get-cozart,redis-set-vanilla,redis-set-cozart
+redis() { echo redis-get-vanilla,redis-get-cozart,redis-set-vanilla,redis-set-cozart
     paste -d ',' \
         <(grep GET redis.vanilla.benchresult | cut -d',' -f2 | tr -d '"') \
         <(grep GET redis.cozart.benchresult | cut -d',' -f2 | tr -d '"') \
@@ -44,6 +42,14 @@ cassandra() {
         <(grep "Op rate" cassandra.vanilla.benchresult | grep READ | awk '{print $4}' | tr -d ',') \
         <(grep "Op rate" cassandra.cozart.benchresult | grep READ | awk '{print $4}' | tr -d ',')
 }
+
+php() {
+    echo php-vanilla,php-cozart
+    paste -d ',' \
+        <(grep "Total time" php.vanilla.benchresult | awk '{print $4}' | tr -d ',') \
+        <(grep "Total time" php.cozart.benchresult | awk '{print $4}' | tr -d ',')
+}
+
 docker-apache() {
     echo docker-apache-vanilla,docker-apache-cozart
     paste -d ',' \

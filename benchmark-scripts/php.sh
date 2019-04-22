@@ -7,6 +7,8 @@ mount_fs;
 enable_network;
 randomd
 mark_start;
-php benchmark-scripts/phpbench.php
+for i in `seq $itr`; do
+    php benchmark-scripts/phpbench.php
+done
 mark_end;
 write_modules

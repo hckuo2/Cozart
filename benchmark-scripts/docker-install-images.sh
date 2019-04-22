@@ -12,3 +12,5 @@ docker pull memcached:1.5
 docker pull redis:4.0
 docker pull cassandra:3.11
 docker pull tutum/unixbench
+cd benchmark-scripts;
+docker build -t phpbench . -f Dockerfile.php
