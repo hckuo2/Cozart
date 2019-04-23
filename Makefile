@@ -1,8 +1,8 @@
 mnt=mnt/
 disk=qemu-disk.ext4
 setupfile=bench/native/setup_custom.sh
-kernelversion=4.18.0
-distro=ubuntu-4.18.0
+kernelversion=cosmic
+distro=ubuntu-cosmic
 linuxdir=linux-$(kernelversion)
 whoami=hckuo2
 .PHONY: rm-disk clean build-db
@@ -68,7 +68,7 @@ debootstrap: $(disk) $(mnt)
 	sudo mount -o loop $(disk) $(mnt)
 	sudo debootstrap --components=main,universe \
 		--include="build-essential vim kmod net-tools apache2 apache2-utils haveged cgroupfs-mount linux-tools-generic iptables libltdl7 redis-server redis-tools nginx mysql-server sysbench php" \
-		--arch=amd64 4.18.0 $(mnt) http://archive.ubuntu.com/ubuntu
+		--arch=amd64 cosmic $(mnt) http://archive.ubuntu.com/ubuntu
 	sudo umount --recursive $(mnt)
 	make install-docker install-mark
 
