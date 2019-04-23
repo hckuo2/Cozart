@@ -11,6 +11,7 @@ trace() {
         else
             ./trace-kernel.sh $distro /benchmark-scripts/$app.sh true;
         fi
+        mkdir -p config-db/$distro
         cp final.config.tmp config-db/$distro/$app.config
     done
 }
