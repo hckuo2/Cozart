@@ -20,6 +20,7 @@ build-db:
 setup-linux:
 	git clone --depth=1 git://kernel.ubuntu.com/ubuntu/$(distro).git $(linuxdir)
 	make remove-makefile-escaped-newlines
+	cp $(linuxdir)/debian/scripts/retpoline-extract-one $(linuxdir)/scripts/ubuntu-retpoline-extract-one
 
 setup-qemu:
 	-git clone --depth 1 -b stable-2.12 https://github.com/qemu/qemu.git
@@ -47,7 +48,7 @@ $(mnt):
 	mkdir -p $(mnt)
 
 $(disk):
-	qemu-img create -f raw $(disk) 30G
+	qemu-img create -f raw $(disk) 60G
 
 clean:
 	rm -rf *.tmp
@@ -70,7 +71,7 @@ debootstrap: $(disk) $(mnt)
 		--include="build-essential vim kmod net-tools apache2 apache2-utils haveged cgroupfs-mount linux-tools-generic iptables libltdl7 redis-server redis-tools nginx mysql-server sysbench php" \
 		--arch=amd64 cosmic $(mnt) http://archive.ubuntu.com/ubuntu
 	sudo umount --recursive $(mnt)
-	make install-docker install-mark
+	make install-docker install-mark sync-scripts
 
 install-mark:
 	-sudo umount --recursive $(mnt)
@@ -91,6 +92,7 @@ install-docker:
 	-sudo umount --recursive $(mnt)
 	sudo mount -o loop $(disk) $(mnt)
 	sudo mv docker-ce_18.06.2~ce~3-0~debian_amd64.deb ./mnt
+	sudo chroot ./mnt /bin/bash -c "dpkg -i docker-ce_18.06.2~ce~3-0~debian_amd64.deb"
 	-sudo umount --recursive $(mnt)
 
 get-modules:
