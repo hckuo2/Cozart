@@ -17,10 +17,11 @@ until nodetool status; do
     echo "Waiting for cassandra"
     sleep 3
 done
+sleep 3
 
-cassandra-stress write n=$reqcnt -node localhost -rate threads=4
+cassandra-stress write n=$reqcnt -node 127.0.0.1 -rate threads=4
 for i in `seq $itr`; do
-    cassandra-stress mixed n=$reqcnt -node localhost -rate threads=4
+    cassandra-stress mixed n=$reqcnt -node 127.0.0.1 -rate threads=4
 done
 
 write_modules
