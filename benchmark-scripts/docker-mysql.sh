@@ -13,9 +13,9 @@ docker run -dit --health-cmd='mysqladmin ping --silent' --name my-mysql-app -p 3
 sleep 5;
 while [ $(docker inspect --format "{{json .State.Health.Status }}" my-mysql-app) != "\"healthy\"" ]; do
     printf ".";
-    sleep 1;
+    sleep 3;
 done
-
+sleep 90;
 mysql -h 0.0.0.0 -uroot -proot -e "create database sbtest;"
 sysbench --mysql-host=0.0.0.0 --mysql-user=root --mysql-password=root --db-driver=mysql --test=oltp_read_write prepare
 for i in `seq $itr`; do

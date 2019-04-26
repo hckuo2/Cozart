@@ -15,7 +15,7 @@ until docker logs --tail 5 my-cassandra-app | grep "CQL clients on"; do
     echo "Waiting for cassandra"
     sleep 3
 done
-sleep 5;
+sleep 300;
 cassandra-stress write n=$reqcnt -node localhost -rate threads=4
 for i in `seq $itr`; do
     cassandra-stress mixed n=$reqcnt -node localhost -rate threads=4
