@@ -1,5 +1,5 @@
 #!/bin/bash
-itr=20
+itr=1
 
 source benchmark-scripts/general-helper.sh
 bootstrap;
