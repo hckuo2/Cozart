@@ -1,26 +1,24 @@
 #!/usr/bin/env bash
+shopt -s globstar
 
-subdirs=(arch crypto drivers fs include init ipc kernel lib mm net scripts \
-    security sound usr)
-
+archs=(riscv powerpc amd64 i386 arm64 mips arm sparc64)
 count() {
-    for dir in ${subdirs[@]}; do
-        printf $(find "$1/$dir" -name Kconfig -o -iname "Kconfig.*" | \
-            xargs grep --only-matching -E "\bconfig [A-Z0-9_]+" | \
-            cut -d':' -f2  | sort | uniq | wc -l)
-        printf " "
-    done
-    echo
+    find . -name NOTES | xargs cat | sed -E -n -f $1/sys/conf/makeLINT.sed | wc -l
 }
 
-pushd linux-stable
-git reset --hard master && git checkout master && git clean -f -d
-tags=$(git tag | sort -V)
+# this is for release before 5.0.0
+count_legacy() {
+    find $1/sys -name LINT | xargs cat | sed -E -n -f parse-freebsd.sed | wc -l
+}
+
+pushd freebsd
+releases=$(git --no-pager branch -r | grep '/release/' | sort -V)
+# releases=(origin/release/12.0.0)
 popd
 echo ${subdirs[@]} | tee > result
-for tag in $tags; do
-    pushd linux-stable
-    git checkout $tag && git clean -f -d && git checkout -- .
+for release in $releases; do
+    pushd freebsd
+    git checkout "$release"
     popd
-    echo $tag $(count linux-stable) | tee >> result
+    echo $release $(count_legacy freebsd) | tee >>result
 done
