@@ -25,8 +25,8 @@ if __name__ == '__main__':
 
     with open(sys.argv[2]) as f:
         for line in f:
+            conf = line.strip()
             if line[0] == "#":
                 continue
-        conf = line.strip()
-        if conf in vanilla:
-            print(conf + "=" + vanilla[conf])
+            if conf in vanilla:
+                print(conf + "=" + vanilla[conf])
