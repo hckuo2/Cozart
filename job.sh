@@ -25,7 +25,7 @@ decompose_app() {
 aggregate() {
     for app in $@; do
         echo "Aggregate $distro $app"
-        ./aggregate-config.sh $distro boot vanilla-choice disable $(decompose_app $app)
+        ./aggregate-config.sh $distro disable boot vanilla-choice $(decompose_app $app)
         cd $linuxdir
         make clean
         make -j`nproc` LOCALVERSION=-$distro-$app

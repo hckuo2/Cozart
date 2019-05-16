@@ -12,3 +12,4 @@ vmlinux
 *.old
 modules
 compiled-kernels/
+*.benchresult

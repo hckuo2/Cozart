@@ -14,7 +14,6 @@ trace-kernel() {
 	$qemubin -trace exec_tb_block -smp $cores -m $mem -cpu $cpu \
 		-drive file="$workdir/qemu-disk.ext4,if=ide,format=raw" \
 		-kernel $distro.bzImage -nographic -no-reboot \
-        # -initrd compiled-kernels/amazon2/vanilla/initramfs-4.14.104-95.84.amzn2.x86_64.img.lz4 \
 		-append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=$2" \
         2>$rawtrace
 

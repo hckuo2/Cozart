@@ -36,7 +36,7 @@ build-ubuntu-vanilla:
 	mkdir -p vanilla-modules
 	mkdir -p compiled-kernels/$(distro)/vanilla
 	cd $(linuxdir) && \
-		cp -u ../config-db/$(distro)/vanilla.config .config && \
+		cp ../config-db/$(distro)/vanilla.config .config && \
 		make olddefconfig && \
 		make -j`nproc` LOCALVERSION=-$(distro)-vanilla && \
 		cp vmlinux ../$(distro).vmlinux && \
