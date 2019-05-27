@@ -11,13 +11,49 @@ use vars qw(@EXPORT);
 use Cwd;
 my $builddir = getcwd;
 
+my @unixsockets = ();
 
 @EXPORT = qw(new_memcached sleep mem_get_is mem_gets mem_gets_is mem_stats
-             supports_sasl free_port);
+             supports_sasl free_port supports_drop_priv supports_extstore
+             wait_ext_flush supports_tls enabled_tls_testing);
+
+use constant MAX_READ_WRITE_SIZE => 16384;
+use constant SRV_CRT => "server_crt.pem";
+use constant SRV_KEY => "server_key.pem";
+use constant CLIENT_CRT => "client_crt.pem";
+use constant CLIENT_KEY => "client_key.pem";
+use constant CA_CRT => "cacert.pem";
+
+my $testdir = $builddir . "/t/";
+my $client_crt = $testdir. CLIENT_CRT;
+my $client_key = $testdir. CLIENT_KEY;
+my $server_crt = $testdir . SRV_CRT;
+my $server_key = $testdir . SRV_KEY;
+
+my $tls_checked = 0;
 
 sub sleep {
     my $n = shift;
     select undef, undef, undef, $n;
+}
+
+# Wait until all items have flushed
+sub wait_ext_flush {
+    my $sock = shift;
+    my $target = shift || 0;
+    my $sum = $target + 1;
+    while ($sum > $target) {
+        my $s = mem_stats($sock, "items");
+        $sum = 0;
+        for my $key (keys %$s) {
+            if ($key =~ m/items:(\d+):number/) {
+                # Ignore classes which can contain extstore items
+                next if $1 < 3;
+                $sum += $s->{$key};
+            }
+        }
+        sleep 1 if $sum > $target;
+    }
 }
 
 sub mem_stats {
@@ -128,10 +164,20 @@ sub free_port {
     my $port;
     while (!$sock) {
         $port = int(rand(20000)) + 30000;
-        $sock = IO::Socket::INET->new(LocalAddr => '127.0.0.1',
+        if (enabled_tls_testing()) {
+            $sock = eval qq{ IO::Socket::SSL->new(LocalAddr => '127.0.0.1',
+                                      LocalPort => $port,
+                                      Proto     => '$type',
+                                      ReuseAddr => 1,
+                                      SSL_verify_mode => SSL_VERIFY_NONE);
+                                      };
+             die $@ if $@; # sanity check.
+        } else {
+            $sock = IO::Socket::INET->new(LocalAddr => '127.0.0.1',
                                       LocalPort => $port,
                                       Proto     => $type,
                                       ReuseAddr => 1);
+        }
     }
     return $port;
 }
@@ -148,14 +194,54 @@ sub supports_sasl {
     return 0;
 }
 
+sub supports_extstore {
+    my $output = `$builddir/memcached-debug -h`;
+    return 1 if $output =~ /ext_path/i;
+    return 0;
+}
+
+sub supports_tls {
+    my $output = `$builddir/memcached-debug -h`;
+    return 1 if $output =~ /enable-ssl/i;
+    return 0;
+}
+
+sub enabled_tls_testing {
+    if ($tls_checked) {
+        return 1;
+    } elsif (supports_tls() && $ENV{SSL_TEST}) {
+        eval "use IO::Socket::SSL";
+        croak("IO::Socket::SSL not installed or failed to load, cannot run SSL tests as requested") if $@;
+        $tls_checked = 1;
+        return 1;
+    }
+}
+
+sub supports_drop_priv {
+    my $output = `$builddir/memcached-debug -h`;
+    return 1 if $output =~ /no_drop_privileges/i;
+    return 0;
+}
+
 sub new_memcached {
     my ($args, $passed_port) = @_;
-    my $port = $passed_port || free_port();
+    my $port = $passed_port;
     my $host = '127.0.0.1';
+    my $ssl_enabled  = enabled_tls_testing();
 
     if ($ENV{T_MEMD_USE_DAEMON}) {
         my ($host, $port) = ($ENV{T_MEMD_USE_DAEMON} =~ m/^([^:]+):(\d+)$/);
-        my $conn = IO::Socket::INET->new(PeerAddr => "$host:$port");
+        my $conn;
+        if ($ssl_enabled) {
+            $conn = eval qq{IO::Socket::SSL->new(PeerAddr => "$host:$port",
+                                        SSL_verify_mode => SSL_VERIFY_NONE,
+                                        SSL_cert_file => '$client_crt',
+                                        SSL_key_file => '$client_key');
+                                        };
+             die $@ if $@; # sanity check.
+        } else {
+            $conn = IO::Socket::INET->new(PeerAddr => "$host:$port");
+        }
         if ($conn) {
             return Memcached::Handle->new(conn => $conn,
                                           host => $host,
@@ -164,13 +250,29 @@ sub new_memcached {
         croak("Failed to connect to specified memcached server.") unless $conn;
     }
 
-    my $udpport = free_port("udp");
-    $args .= " -p $port";
-    if (supports_udp()) {
-        $args .= " -U $udpport";
-    }
     if ($< == 0) {
         $args .= " -u root";
+    }
+    $args .= " -o relaxed_privileges";
+
+    my $udpport;
+    if ($args =~ /-l (\S+)/ || ($ssl_enabled && ($args !~ /-s (\S+)/))) {
+        if (!$port) {
+            $port = free_port();
+        }
+        $udpport = free_port("udp");
+        $args .= " -p $port";
+        if (supports_udp() && $args !~ /-U (\S+)/) {
+            $args .= " -U $udpport";
+        }
+        if ($ssl_enabled) {
+            $args .= " -Z -o ssl_chain_cert=$server_crt -o ssl_key=$server_key";
+        }
+    } elsif ($args !~ /-s (\S+)/) {
+        my $num = @unixsockets;
+        my $file = "/tmp/memcachetest.$$.$num";
+        $args .= " -s $file";
+        push(@unixsockets, $file);
     }
 
     my $childpid = fork();
@@ -202,7 +304,17 @@ sub new_memcached {
     # sockets
 
     for (1..20) {
-        my $conn = IO::Socket::INET->new(PeerAddr => "127.0.0.1:$port");
+        my $conn;
+        if ($ssl_enabled) {
+            $conn = eval qq{ IO::Socket::SSL->new(PeerAddr => "127.0.0.1:$port",
+                                        SSL_verify_mode => SSL_VERIFY_NONE,
+                                        SSL_cert_file => '$client_crt',
+                                        SSL_key_file => '$client_key');
+                                        };
+            die $@ if $@; # sanity check.
+        } else {
+            $conn = IO::Socket::INET->new(PeerAddr => "127.0.0.1:$port");
+        }
         if ($conn) {
             return Memcached::Handle->new(pid  => $childpid,
                                           conn => $conn,
@@ -213,6 +325,12 @@ sub new_memcached {
         select undef, undef, undef, 0.10;
     }
     croak("Failed to startup/connect to memcached server.");
+}
+
+END {
+    for (@unixsockets) {
+        unlink $_;
+    }
 }
 
 ############################################################################
@@ -249,6 +367,12 @@ sub new_sock {
     my $self = shift;
     if ($self->{domainsocket}) {
         return IO::Socket::UNIX->new(Peer => $self->{domainsocket});
+    } elsif (MemcachedTest::enabled_tls_testing()) {
+        return eval qq{ IO::Socket::SSL->new(PeerAddr => "$self->{host}:$self->{port}",
+                                    SSL_verify_mode => IO::Socket::SSL::SSL_VERIFY_NONE,
+                                    SSL_cert_file => '$client_crt',
+                                    SSL_key_file => '$client_key');
+                                    };
     } else {
         return IO::Socket::INET->new(PeerAddr => "$self->{host}:$self->{port}");
     }

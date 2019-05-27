@@ -3,6 +3,9 @@
  * Thread management for memcached.
  */
 #include "memcached.h"
+#ifdef EXTSTORE
+#include "storage.h"
+#endif
 #include <assert.h>
 #include <stdio.h>
 #include <errno.h>
@@ -12,6 +15,10 @@
 
 #ifdef __sun
 #include <atomic.h>
+#endif
+
+#ifdef TLS
+#include <openssl/ssl.h>
 #endif
 
 #define ITEMS_PER_ALLOC 64
@@ -30,6 +37,7 @@ struct conn_queue_item {
     enum network_transport     transport;
     enum conn_queue_item_modes mode;
     conn *c;
+    void    *ssl;
     CQ_ITEM          *next;
 };
 
@@ -136,17 +144,25 @@ void pause_threads(enum pause_thread_types type) {
     buf[0] = 0;
     switch (type) {
         case PAUSE_ALL_THREADS:
-            lru_maintainer_pause();
             slabs_rebalancer_pause();
+            lru_maintainer_pause();
             lru_crawler_pause();
+#ifdef EXTSTORE
+            storage_compact_pause();
+            storage_write_pause();
+#endif
         case PAUSE_WORKER_THREADS:
             buf[0] = 'p';
             pthread_mutex_lock(&worker_hang_lock);
             break;
         case RESUME_ALL_THREADS:
-            lru_maintainer_resume();
             slabs_rebalancer_resume();
+            lru_maintainer_resume();
             lru_crawler_resume();
+#ifdef EXTSTORE
+            storage_compact_resume();
+            storage_write_resume();
+#endif
         case RESUME_WORKER_THREADS:
             pthread_mutex_unlock(&worker_hang_lock);
             break;
@@ -300,7 +316,16 @@ void accept_new_conns(const bool do_accept) {
  * Set up a thread's information.
  */
 static void setup_thread(LIBEVENT_THREAD *me) {
+#if defined(LIBEVENT_VERSION_NUMBER) && LIBEVENT_VERSION_NUMBER >= 0x02000101
+    struct event_config *ev_config;
+    ev_config = event_config_new();
+    event_config_set_flag(ev_config, EVENT_BASE_FLAG_NOLOCK);
+    me->base = event_base_new_with_config(ev_config);
+    event_config_free(ev_config);
+#else
     me->base = event_init();
+#endif
+
     if (! me->base) {
         fprintf(stderr, "Can't allocate event base\n");
         exit(1);
@@ -334,6 +359,22 @@ static void setup_thread(LIBEVENT_THREAD *me) {
         fprintf(stderr, "Failed to create suffix cache\n");
         exit(EXIT_FAILURE);
     }
+#ifdef EXTSTORE
+    me->io_cache = cache_create("io", sizeof(io_wrap), sizeof(char*), NULL, NULL);
+    if (me->io_cache == NULL) {
+        fprintf(stderr, "Failed to create IO object cache\n");
+        exit(EXIT_FAILURE);
+    }
+#endif
+#ifdef TLS
+    if (settings.ssl_enabled) {
+        me->ssl_wbuf = (char *)malloc((size_t)settings.ssl_wbuf_size);
+        if (me->ssl_wbuf == NULL) {
+            fprintf(stderr, "Failed to allocate the SSL write buffer\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+#endif
 }
 
 /*
@@ -351,9 +392,15 @@ static void *worker_libevent(void *arg) {
         abort();
     }
 
+    if (settings.drop_privileges) {
+        drop_worker_privileges();
+    }
+
     register_thread_initialized();
 
     event_base_loop(me->base, 0);
+
+    event_base_free(me->base);
     return NULL;
 }
 
@@ -386,7 +433,7 @@ static void thread_libevent_process(int fd, short which, void *arg) {
             case queue_new_conn:
                 c = conn_new(item->sfd, item->init_state, item->event_flags,
                                    item->read_buffer_size, item->transport,
-                                   me->base);
+                                   me->base, item->ssl);
                 if (c == NULL) {
                     if (IS_UDP(item->transport)) {
                         fprintf(stderr, "Can't listen for events on UDP socket\n");
@@ -400,6 +447,12 @@ static void thread_libevent_process(int fd, short which, void *arg) {
                     }
                 } else {
                     c->thread = me;
+#ifdef TLS
+                    if (settings.ssl_enabled && c->ssl != NULL) {
+                        assert(c->thread && c->thread->ssl_wbuf);
+                        c->ssl_wbuf = c->thread->ssl_wbuf;
+                    }
+#endif
                 }
                 break;
 
@@ -434,7 +487,7 @@ static int last_thread = -1;
  * of an incoming connection.
  */
 void dispatch_conn_new(int sfd, enum conn_states init_state, int event_flags,
-                       int read_buffer_size, enum network_transport transport) {
+                       int read_buffer_size, enum network_transport transport, void *ssl) {
     CQ_ITEM *item = cqi_new();
     char buf[1];
     if (item == NULL) {
@@ -456,6 +509,7 @@ void dispatch_conn_new(int sfd, enum conn_states init_state, int event_flags,
     item->read_buffer_size = read_buffer_size;
     item->transport = transport;
     item->mode = queue_new_conn;
+    item->ssl = ssl;
 
     cq_push(thread->new_conn_queue, item);
 
@@ -498,6 +552,13 @@ void sidethread_conn_close(conn *c) {
     c->state = conn_closed;
     if (settings.verbose > 1)
         fprintf(stderr, "<%d connection closed from side thread.\n", c->sfd);
+#ifdef TLS
+    if (c->ssl) {
+        c->ssl_wbuf = NULL;
+        SSL_shutdown(c->ssl);
+        SSL_free(c->ssl);
+    }
+#endif
     close(c->sfd);
 
     STATS_LOCK();
@@ -530,6 +591,17 @@ item *item_get(const char *key, const size_t nkey, conn *c, const bool do_update
     item_lock(hv);
     it = do_item_get(key, nkey, hv, c, do_update);
     item_unlock(hv);
+    return it;
+}
+
+// returns an item with the item lock held.
+// lock will still be held even if return is NULL, allowing caller to replace
+// an item atomically if desired.
+item *item_get_locked(const char *key, const size_t nkey, conn *c, const bool do_update, uint32_t *hv) {
+    item *it;
+    *hv = hash(key, nkey);
+    item_lock(*hv);
+    it = do_item_get(key, nkey, *hv, c, do_update);
     return it;
 }
 
@@ -594,7 +666,7 @@ void item_unlink(item *item) {
  * Does arithmetic on a numeric item value.
  */
 enum delta_result_type add_delta(conn *c, const char *key,
-                                 const size_t nkey, int incr,
+                                 const size_t nkey, bool incr,
                                  const int64_t delta, char *buf,
                                  uint64_t *cas) {
     enum delta_result_type ret;
@@ -637,6 +709,9 @@ void threadlocal_stats_reset(void) {
         pthread_mutex_lock(&threads[ii].stats.mutex);
 #define X(name) threads[ii].stats.name = 0;
         THREAD_STATS_FIELDS
+#ifdef EXTSTORE
+        EXTSTORE_THREAD_STATS_FIELDS
+#endif
 #undef X
 
         memset(&threads[ii].stats.slab_stats, 0,
@@ -659,6 +734,9 @@ void threadlocal_stats_aggregate(struct thread_stats *stats) {
         pthread_mutex_lock(&threads[ii].stats.mutex);
 #define X(name) stats->name += threads[ii].stats.name;
         THREAD_STATS_FIELDS
+#ifdef EXTSTORE
+        EXTSTORE_THREAD_STATS_FIELDS
+#endif
 #undef X
 
         for (sid = 0; sid < MAX_NUMBER_OF_SLAB_CLASSES; sid++) {
@@ -696,7 +774,7 @@ void slab_stats_aggregate(struct thread_stats *stats, struct slab_stats *out) {
  *
  * nthreads  Number of worker event handler threads to spawn
  */
-void memcached_thread_init(int nthreads) {
+void memcached_thread_init(int nthreads, void *arg) {
     int         i;
     int         power;
 
@@ -761,7 +839,9 @@ void memcached_thread_init(int nthreads) {
 
         threads[i].notify_receive_fd = fds[0];
         threads[i].notify_send_fd = fds[1];
-
+#ifdef EXTSTORE
+        threads[i].storage = arg;
+#endif
         setup_thread(&threads[i]);
         /* Reserve three fds for the libevent base, and two for the pipe */
         stats_state.reserved_fds += 5;

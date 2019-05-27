@@ -9,7 +9,7 @@ use MemcachedTest;
 
 # Regression test for underestimating the size of items after the large memory
 # change.
-my $server = new_memcached('-m 3 -o lru_maintainer,lru_crawler');
+my $server = new_memcached('-m 3 -o lru_maintainer,lru_crawler -l 127.0.0.1');
 my $sock = $server->sock;
 my $keystub = "X"x200;
 for (1 .. 15000) {
@@ -21,7 +21,7 @@ print $sock "set $keystub 0 0 2\r\nok\r\n";
 is(scalar <$sock>, "STORED\r\n", "stored key without OOM");
 
 # Basic tests
-$server = new_memcached('-m 6 -o lru_maintainer,lru_crawler');
+$server = new_memcached('-m 6 -o lru_maintainer,lru_crawler -l 127.0.0.1');
 $sock = $server->sock;
 
 for (1 .. 10) {
@@ -56,6 +56,20 @@ for (my $key = 0; $key < 100; $key++) {
         # Items need two fetches to become active
         mem_get_is($sock, "canary", $value);
         mem_get_is($sock, "canary", $value);
+        $stats = mem_stats($sock);
+        # The maintainer thread needs to juggle a bit to actually rescue an
+        # item. If it's slow we could evict after resuming setting.
+        sleep 1;
+        for (0..4) {
+            my $s2 = mem_stats($sock);
+            if ($s2->{lru_maintainer_juggles} - $stats->{lru_maintainer_juggles} < 5) {
+                sleep 1;
+                next;
+            }
+            last;
+        }
+        $stats = mem_stats($sock, "items");
+        isnt($stats->{"items:31:moves_to_warm"}, 0, "our canary moved to warm");
     }
     print $sock "set key$key 0 0 66560\r\n$value\r\n";
     is(scalar <$sock>, "STORED\r\n", "stored key$key");
@@ -64,8 +78,6 @@ for (my $key = 0; $key < 100; $key++) {
 {
     my $stats = mem_stats($sock);
     isnt($stats->{evictions}, 0, "some evictions happened");
-    my $istats = mem_stats($sock, "items");
-    isnt($istats->{"items:31:number_warm"}, 0, "our canary moved to warm");
     use Data::Dumper qw/Dumper/;
 }
 

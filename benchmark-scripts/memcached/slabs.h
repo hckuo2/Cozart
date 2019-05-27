@@ -10,6 +10,8 @@
 */
 void slabs_init(const size_t limit, const double factor, const bool prealloc, const uint32_t *slab_sizes);
 
+/** Call only during init. Pre-allocates all available memory */
+void slabs_prefill_global(void);
 
 /**
  * Given object size, return id to use when allocating/freeing memory for object
@@ -36,10 +38,12 @@ bool get_stats(const char *stat_type, int nkey, ADD_STAT add_stats, void *c);
 
 typedef struct {
     unsigned int chunks_per_page;
+    unsigned int chunk_size;
     long int free_chunks;
     long int total_pages;
 } slab_stats_automove;
 void fill_slab_stats_automove(slab_stats_automove *am);
+unsigned int global_page_pool_size(bool *mem_flag);
 
 /** Fill buffer with stats */ /*@null@*/
 void slabs_stats(ADD_STAT add_stats, void *c);
@@ -62,5 +66,9 @@ enum reassign_result_type slabs_reassign(int src, int dst);
 
 void slabs_rebalancer_pause(void);
 void slabs_rebalancer_resume(void);
+
+#ifdef EXTSTORE
+void slabs_set_storage(void *arg);
+#endif
 
 #endif

@@ -10,7 +10,7 @@ use lib "$Bin/lib";
 use MemcachedTest;
 
 # start up a server with 10 maximum connections
-my $server = new_memcached("-o idle_timeout=3");
+my $server = new_memcached("-o idle_timeout=3 -l 127.0.0.1");
 my $sock = $server->sock;
 
 # Make sure we can talk to start with
@@ -30,7 +30,13 @@ is($stats->{idle_kicks}, "0", "check stats 2");
 sleep(5);
 mem_stats($sock);   # Network activity, so socket code will see dead socket
 sleep(1);
-is($sock->connected(), undef, "check disconnected");
+# we run SSL tests over TCP; hence IO::Socket::SSL returns
+# '' upon disconnecting with the server.
+if (enabled_tls_testing()) {
+    is($sock->connected(),'', "check disconnected");
+} else {
+    is($sock->connected(),undef, "check disconnected");
+}
 
 $sock = $server->sock;
 $stats = mem_stats($sock);

@@ -68,12 +68,13 @@ crawler_module_reg_t crawler_expired_mod = {
 };
 
 static void crawler_metadump_eval(crawler_module_t *cm, item *search, uint32_t hv, int i);
+static void crawler_metadump_finalize(crawler_module_t *cm);
 
 crawler_module_reg_t crawler_metadump_mod = {
     .init = NULL,
     .eval = crawler_metadump_eval,
     .doneclass = NULL,
-    .finalize = NULL,
+    .finalize = crawler_metadump_finalize,
     .needs_lock = false,
     .needs_client = true
 };
@@ -84,6 +85,7 @@ crawler_module_reg_t *crawler_mod_regs[3] = {
     &crawler_metadump_mod
 };
 
+static int lru_crawler_client_getbuf(crawler_client_t *c);
 crawler_module_t active_crawler_mod;
 enum crawler_run_type active_crawler_type;
 
@@ -94,6 +96,10 @@ static volatile int do_run_lru_crawler_thread = 0;
 static int lru_crawler_initialized = 0;
 static pthread_mutex_t lru_crawler_lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t  lru_crawler_cond = PTHREAD_COND_INITIALIZER;
+#ifdef EXTSTORE
+/* TODO: pass this around */
+static void *storage;
+#endif
 
 /* Will crawl all slab classes a minimum of once per hour */
 #define MAX_MAINTCRAWL_WAIT 60 * 60
@@ -177,8 +183,20 @@ static void crawler_expired_eval(crawler_module_t *cm, item *search, uint32_t hv
     pthread_mutex_lock(&d->lock);
     crawlerstats_t *s = &d->crawlerstats[i];
     int is_flushed = item_is_flushed(search);
+#ifdef EXTSTORE
+    bool is_valid = true;
+    if (search->it_flags & ITEM_HDR) {
+        item_hdr *hdr = (item_hdr *)ITEM_data(search);
+        if (extstore_check(storage, hdr->page_id, hdr->page_version) != 0)
+            is_valid = false;
+    }
+#endif
     if ((search->exptime != 0 && search->exptime < current_time)
-        || is_flushed) {
+        || is_flushed
+#ifdef EXTSTORE
+        || !is_valid
+#endif
+        ) {
         crawlers[i].reclaimed++;
         s->reclaimed++;
 
@@ -195,9 +213,11 @@ static void crawler_expired_eval(crawler_module_t *cm, item *search, uint32_t hv
         if ((search->it_flags & ITEM_FETCHED) == 0 && !is_flushed) {
             crawlers[i].unfetched++;
         }
+#ifdef EXTSTORE
+        STORAGE_delete(storage, search);
+#endif
         do_item_unlink_nolock(search, hv);
         do_item_remove(search);
-        assert(search->slabs_clsid == 0);
     } else {
         s->seen++;
         refcount_decr(search);
@@ -218,7 +238,7 @@ static void crawler_expired_eval(crawler_module_t *cm, item *search, uint32_t hv
 
 static void crawler_metadump_eval(crawler_module_t *cm, item *it, uint32_t hv, int i) {
     //int slab_id = CLEAR_LRU(i);
-    char keybuf[KEY_MAX_LENGTH * 3 + 1];
+    char keybuf[KEY_MAX_URI_ENCODED_LENGTH];
     int is_flushed = item_is_flushed(it);
     /* Ignore expired content. */
     if ((it->exptime != 0 && it->exptime < current_time)
@@ -227,14 +247,16 @@ static void crawler_metadump_eval(crawler_module_t *cm, item *it, uint32_t hv, i
         return;
     }
     // TODO: uriencode directly into the buffer.
-    uriencode(ITEM_key(it), keybuf, it->nkey, KEY_MAX_LENGTH * 3 + 1);
+    uriencode(ITEM_key(it), keybuf, it->nkey, KEY_MAX_URI_ENCODED_LENGTH);
     int total = snprintf(cm->c.cbuf, 4096,
-            "key=%s exp=%ld la=%llu cas=%llu fetch=%s\n",
+            "key=%s exp=%ld la=%llu cas=%llu fetch=%s cls=%u size=%lu\n",
             keybuf,
-            (it->exptime == 0) ? -1 : (long)it->exptime + process_started,
-            (unsigned long long)it->time + process_started,
+            (it->exptime == 0) ? -1 : (long)(it->exptime + process_started),
+            (unsigned long long)(it->time + process_started),
             (unsigned long long)ITEM_get_cas(it),
-            (it->it_flags & ITEM_FETCHED) ? "yes" : "no");
+            (it->it_flags & ITEM_FETCHED) ? "yes" : "no",
+            ITEM_clsid(it),
+            (unsigned long) ITEM_ntotal(it));
     refcount_decr(it);
     // TODO: some way of tracking the errors. these are very unlikely though.
     if (total >= LRU_CRAWLER_WRITEBUF - 1 || total <= 0) {
@@ -242,6 +264,15 @@ static void crawler_metadump_eval(crawler_module_t *cm, item *it, uint32_t hv, i
         return;
     }
     bipbuf_push(cm->c.buf, total);
+}
+
+static void crawler_metadump_finalize(crawler_module_t *cm) {
+    if (cm->c.c != NULL) {
+        // Ensure space for final message.
+        lru_crawler_client_getbuf(&cm->c);
+        memcpy(cm->c.cbuf, "END\r\n", 5);
+        bipbuf_push(cm->c.buf, 5);
+    }
 }
 
 static int lru_crawler_poll(crawler_client_t *c) {
@@ -262,7 +293,7 @@ static int lru_crawler_poll(crawler_client_t *c) {
 
     if (to_poll[0].revents & POLLIN) {
         char buf[1];
-        int res = read(c->sfd, buf, 1);
+        int res = ((conn*)c->c)->read(c->c, buf, 1);
         if (res == 0 || (res == -1 && (errno != EAGAIN && errno != EWOULDBLOCK))) {
             lru_crawler_close_client(c);
             return -1;
@@ -273,7 +304,7 @@ static int lru_crawler_poll(crawler_client_t *c) {
             lru_crawler_close_client(c);
             return -1;
         } else if (to_poll[0].revents & POLLOUT) {
-            int total = write(c->sfd, data, data_size);
+            int total = ((conn*)c->c)->write(c->c, data, data_size);
             if (total == -1) {
                 if (errno != EAGAIN && errno != EWOULDBLOCK) {
                     lru_crawler_close_client(c);
@@ -498,6 +529,17 @@ static int do_lru_crawler_start(uint32_t id, uint32_t remaining) {
         crawlers[sid].next = 0;
         crawlers[sid].prev = 0;
         crawlers[sid].time = 0;
+        if (remaining == LRU_CRAWLER_CAP_REMAINING) {
+            remaining = do_get_lru_size(sid);
+        }
+        /* Values for remaining:
+         * remaining = 0
+         * - scan all elements, until a NULL is reached
+         * - if empty, NULL is reached right away
+         * remaining = n + 1
+         * - first n elements are parsed (or until a NULL is reached)
+         */
+        if (remaining) remaining++;
         crawlers[sid].remaining = remaining;
         crawlers[sid].slabs_clsid = sid;
         crawlers[sid].reclaimed = 0;
@@ -590,7 +632,7 @@ int lru_crawler_start(uint8_t *ids, uint32_t remaining,
  * Also only clear the crawlerstats once per sid.
  */
 enum crawler_result_type lru_crawler_crawl(char *slabs, const enum crawler_run_type type,
-        void *c, const int sfd) {
+        void *c, const int sfd, unsigned int remaining) {
     char *b = NULL;
     uint32_t sid = 0;
     int starts = 0;
@@ -619,8 +661,7 @@ enum crawler_result_type lru_crawler_crawl(char *slabs, const enum crawler_run_t
         }
     }
 
-    starts = lru_crawler_start(tocrawl, settings.lru_crawler_tocrawl,
-            type, NULL, c, sfd);
+    starts = lru_crawler_start(tocrawl, remaining, type, NULL, c, sfd);
     if (starts == -1) {
         return CRAWLER_RUNNING;
     } else if (starts == -2) {
@@ -641,8 +682,11 @@ void lru_crawler_resume(void) {
     pthread_mutex_unlock(&lru_crawler_lock);
 }
 
-int init_lru_crawler(void) {
+int init_lru_crawler(void *arg) {
     if (lru_crawler_initialized == 0) {
+#ifdef EXTSTORE
+        storage = arg;
+#endif
         if (pthread_cond_init(&lru_crawler_cond, NULL) != 0) {
             fprintf(stderr, "Can't initialize lru crawler condition\n");
             return -1;

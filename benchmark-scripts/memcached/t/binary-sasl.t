@@ -13,7 +13,7 @@ use Test::More;
 
 if (supports_sasl()) {
     if ($ENV{'RUN_SASL_TESTS'}) {
-        plan tests => 33;
+        plan tests => 34;
     } else {
         plan skip_all => 'Skipping SASL tests';
         exit 0;
@@ -92,7 +92,7 @@ use constant RES_MAGIC        => 0x81;
 my $pwd=getcwd;
 $ENV{'SASL_CONF_PATH'} = "$pwd/t/sasl";
 
-my $server = new_memcached('-B binary -S ');
+my $server = new_memcached('-B binary -S -l 127.0.0.1 ');
 
 my $mc = MC::Client->new;
 
@@ -192,7 +192,9 @@ for my $dir (split(/:/, $ENV{PATH}),
     }
 }
 
-system("echo testpass | $saslpasswd_path -a memcached -c -p testuser");
+my $sasl_realm = 'memcached.realm';
+
+system("echo testpass | $saslpasswd_path -a memcached -u $sasl_realm -c -p testuser");
 
 $mc = MC::Client->new;
 
@@ -261,6 +263,11 @@ $empty->('x', 'somevalue');
     cmp_ok($status,'==',ERR_AUTH_ERROR, "error code matches");
 }
 
+{
+    my $mc = MC::Client->new;
+    is ($mc->sasl_step('testuser', 'testpass'), 0x20, "sasl_step_fails_no_segfault");
+}
+
 # check the SASL stats, make sure they track things correctly
 # note: the enabled or not is presence checked in stats.t
 
@@ -273,8 +280,8 @@ $empty->('x', 'somevalue');
 
 {
     my %stats = $mc->stats('');
-    is ($stats{'auth_cmds'}, 5, "auth commands counted");
-    is ($stats{'auth_errors'}, 3, "auth errors correct");
+    is ($stats{'auth_cmds'}, 6, "auth commands counted");
+    is ($stats{'auth_errors'}, 4, "auth errors correct");
 }
 
 
@@ -309,8 +316,15 @@ sub new {
 sub authenticate {
     my ($self, $user, $pass, $mech)= @_;
     $mech ||= 'PLAIN';
-    my $buf = sprintf("%c%s%c%s", 0, $user, 0, $pass);
+    my $buf = sprintf("%c%s@%s%c%s", 0, $user, $sasl_realm, 0, $pass);
     my ($status, $rv, undef) = $self->_do_command(::CMD_SASL_AUTH, $mech, $buf, '');
+    return $status;
+}
+sub sasl_step {
+    my ($self, $user, $pass, $mech)= @_;
+    $mech ||= 'PLAIN';
+    my $buf = sprintf("%c%s@%s%c%s", 0, $user, $sasl_realm, 0, $pass);
+    my ($status, $rv, undef) = $self->_do_command(::CMD_SASL_STEP, $mech, $buf, '');
     return $status;
 }
 sub list_mechs {
@@ -661,4 +675,3 @@ sub auth_error {
 unlink $sasldb;
 
 # vim: filetype=perl
-

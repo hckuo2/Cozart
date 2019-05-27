@@ -57,14 +57,17 @@ Number of times the underlying slab class was unable to store a new item.
 Print general-purpose statistics of the daemon. Each line contains the name of
 the statistic and its value.
 .TP
-.B dump
+.B dump [limit]
 Make a partial dump of the cache written in the add statements of the
-memcached protocol.
+memcached protocol. If
+.B limit
+is given and is a strictly positive
+integer, then the dump is limited to that number of items.
 
 .SH SEE ALSO
 .BR memcached (1),
 .br
-.B http://www.memcached.org
+.B https://www.memcached.org
 
 .SH AUTHOR
 The memcached-tool script was written by Brad Fitzpatrick

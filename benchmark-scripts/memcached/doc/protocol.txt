@@ -89,6 +89,9 @@ of seconds in 30 days); if the number sent by a client is larger than
 that, the server will consider it to be real Unix time value rather
 than an offset from current time.
 
+Note that a TTL of 1 will sometimes immediately expire. Time is internally
+updated on second boundaries, which makes expiration time roughly +/- 1s.
+This more proportionally affects very low TTL's.
 
 Error strings
 -------------
@@ -120,6 +123,23 @@ In the descriptions of individual commands below, these error lines
 are not again specifically mentioned, but clients must allow for their
 possibility.
 
+Authentication
+--------------
+
+Optional username/password token authentication (see -Y option). Used by
+sending a fake "set" command with any key:
+
+set <key> <flags> <exptime> <bytes>\r\n
+username password\r\n
+
+key, flags, and exptime are ignored for authentication. Bytes is the length
+of the username/password payload.
+
+- "STORED\r\n" indicates success. After this point any command should work
+  normally.
+
+- "CLIENT_ERROR [message]\r\n" will be returned if authentication fails for
+  any reason.
 
 Storage commands
 ----------------
@@ -341,6 +361,45 @@ The response line to this command can be one of:
 
 - "NOT_FOUND\r\n" to indicate that the item with this key was not
   found.
+
+Get And Touch
+-------------
+
+The "gat" and "gats" commands are used to fetch items and update the
+expiration time of an existing items.
+
+gat <exptime> <key>*\r\n
+gats <exptime> <key>*\r\n
+
+- <exptime> is expiration time.
+
+- <key>* means one or more key strings separated by whitespace.
+
+After this command, the client expects zero or more items, each of
+which is received as a text line followed by a data block. After all
+the items have been transmitted, the server sends the string
+
+"END\r\n"
+
+to indicate the end of response.
+
+Each item sent by the server looks like this:
+
+VALUE <key> <flags> <bytes> [<cas unique>]\r\n
+<data block>\r\n
+
+- <key> is the key for the item being sent
+
+- <flags> is the flags value set by the storage command
+
+- <bytes> is the length of the data block to follow, *not* including
+  its delimiting \r\n
+
+- <cas unique> is a unique 64-bit integer that uniquely identifies
+  this specific item.
+
+- <data block> is the data for this item.
+
 
 Slabs Reassign
 --------------
@@ -591,7 +650,7 @@ memcache developers.
 General-purpose statistics
 --------------------------
 
-Upon receiving the "stats" command without arguments, the server sents
+Upon receiving the "stats" command without arguments, the server sends
 a number of lines which look like this:
 
 STAT <name> <value>\r\n
@@ -627,6 +686,7 @@ integers separated by a colon (treat this as a floating point number).
 |                       |         | the server started                        |
 | bytes                 | 64u     | Current number of bytes used              |
 |                       |         | to store items                            |
+| max_connections       | 32u     | Max number of simultaneous connections    |
 | curr_connections      | 32u     | Number of open connections                |
 | total_connections     | 32u     | Total number of connections opened since  |
 |                       |         | the server started running                |
@@ -803,9 +863,9 @@ other stats command.
 | track_sizes       | bool     | If yes, a "stats sizes" histogram is being   |
 |                   |          | dynamically tracked.                         |
 | inline_ascii_response                                                       |
-|                   | bool     | If yes, stores numbers from VALUE response   |
-|                   |          | inside an item, using up to 24 bytes.        |
-|                   |          | Small slowdown for ASCII get, faster sets.   |
+|                   | bool     | Does nothing as of 1.5.15                    |
+| drop_privileges   | bool     | If yes, and available, drop unused syscalls  |
+|                   |          | (see seccomp on Linux, pledge on OpenBSD)    |
 |-------------------+----------+----------------------------------------------|
 
 
@@ -1103,6 +1163,21 @@ quit\r\n
 Upon receiving this command, the server closes the
 connection. However, the client may also simply close the connection
 when it no longer needs it, without issuing this command.
+
+Security restrictions
+---------------------
+
+In the debug build the following commands are available for testing the
+security restrictions:
+
+"misbehave" is a command with no arguments:
+
+misbehave\r\n
+
+This command causes the worker thread to attempt a) opening a new socket, and
+b) executing a shell command. If either one is successful, an error is
+returned. Otherwise memcached returns OK.
+The check is available only in Linux builds with seccomp enabled.
 
 
 UDP protocol
