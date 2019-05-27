@@ -10,7 +10,7 @@ help() {
 
 trace-kernel() {
     make clean
-    rawtrace=$(mktemp cozart-XXXXX)
+    rawtrace=$(mktemp --tmpdir=/tmp cozart-XXXXX)
 	$qemubin -trace exec_tb_block -smp $cores -m $mem -cpu $cpu \
 		-drive file="$workdir/qemu-disk.ext4,if=ide,format=raw" \
 		-kernel $distro.bzImage -nographic -no-reboot \
