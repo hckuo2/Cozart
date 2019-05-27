@@ -15,7 +15,6 @@ if __name__ == '__main__':
             if line[0] == "#":
                 if "is not set" in line:
                     cols = line.split()
-                    vanilla[cols[1]] = "is not set"
                     print(line)
             else:
                 cols = line.split("=")

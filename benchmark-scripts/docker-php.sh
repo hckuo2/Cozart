@@ -1,5 +1,5 @@
 #!/bin/bash
-itr=1
+itr=20
 
 source benchmark-scripts/general-helper.sh
 source benchmark-scripts/docker-helper.sh
