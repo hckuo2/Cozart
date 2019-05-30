@@ -1,0 +1,235 @@
+#this file will be Include-d by @ServerRoot@/httpd.conf
+
+# Adjust PerlInterpMax and PerlInterpMaxSpare if the requirements change
+# at the moment all tests require only 1 interprter
+<IfDefine PERL_USEITHREADS>
+    PerlInterpStart         1
+    PerlInterpMax           1
+    PerlInterpMinSpare      1
+    PerlInterpMaxSpare      1
+</IfDefine>
+
+# make sure that we test under Taint and warnings mode enabled
+PerlSwitches -wT
+
+PerlSwitches -I@ServerRoot@/../lib                  \
+             -I@ServerRoot@/../../Apache-Test/lib   \
+             -I@ServerRoot@/../../lib               \
+             -I@ServerRoot@/../../blib/lib          \
+             -I@ServerRoot@/../../blib/arch
+
+# run on startup
+PerlRequire @ServerRoot@/conf/modperl_extra_startup.pl
+
+PerlSetVar ModPerl::RegistryCooker::DEBUG 2
+
+PerlModule ModPerl::RegistryCooker
+PerlModule ModPerl::Util
+
+#############################
+### Normal registry setup ###
+#############################
+<IfModule mod_alias.c>
+    Alias /registry/         @ServerRoot@/cgi-bin/
+    Alias /dirindex/         @ServerRoot@/cgi-bin/
+    Alias /registry_bb/      @ServerRoot@/cgi-bin/
+    Alias /registry_oo_conf/ @ServerRoot@/cgi-bin/
+    Alias /registry_prefork/ @ServerRoot@/cgi-bin/
+    Alias /perlrun/          @ServerRoot@/cgi-bin/
+    Alias /perlrun_prefork/  @ServerRoot@/cgi-bin/
+    Alias /nph/              @ServerRoot@/cgi-bin/
+    Alias /registry_modperl_handler/  @ServerRoot@/cgi-bin/
+    Alias /rewrite_env/      @ServerRoot@/cgi-bin/
+
+    ScriptAlias /cgi-bin/ @ServerRoot@/cgi-bin/
+</IfModule>
+
+PerlModule ModPerl::RegistryBB
+<Location /registry_bb>
+    PerlOptions +GlobalRequest
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::RegistryBB
+    PerlOptions +ParseHeaders
+</Location>
+
+PerlModule ModPerl::Registry
+<Location /registry>
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::Registry
+    PerlOptions +ParseHeaders
+</Location>
+
+<IfModule mod_dir.c>
+    <Location /dirindex>
+        AddHandler perl-script .pl
+        Options +ExecCGI
+        PerlResponseHandler ModPerl::Registry
+        PerlOptions +ParseHeaders
+        DirectoryIndex cgi.pl
+    </Location>
+</IfModule>
+
+<Location /registry_modperl_handler>
+    SetHandler modperl
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::Registry
+    PerlOptions +ParseHeaders
+</Location>
+
+<Location /registry_oo_conf>
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::Registry->handler
+    PerlOptions +ParseHeaders
+</Location>
+
+<Location /nph>
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::Registry
+</Location>
+
+# don't preload ModPerl::RegistryPrefork as it won't load under
+# threaded MPMs
+<Location /registry_prefork>
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::RegistryPrefork
+    PerlOptions +ParseHeaders
+</Location>
+
+# don't preload ModPerl::PerlRunPrefork as it won't load under
+# threaded MPMs
+<Location /perlrun_prefork>
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::PerlRunPrefork
+    PerlOptions +ParseHeaders
+</Location>
+
+PerlModule ModPerl::PerlRun
+<Location /perlrun>
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::PerlRun
+    PerlOptions +ParseHeaders
+</Location>
+
+#######################################
+### Same interpreter registry setup ###
+#######################################
+<IfModule mod_alias.c>
+    Alias /same_interp/registry/         @ServerRoot@/cgi-bin/
+    Alias /same_interp/registry_bb/      @ServerRoot@/cgi-bin/
+    Alias /same_interp/registry_oo_conf/ @ServerRoot@/cgi-bin/
+    Alias /same_interp/perlrun/          @ServerRoot@/cgi-bin/
+</IfModule>
+
+PerlModule Apache::TestHandler
+
+<Location /same_interp/registry_bb>
+    PerlOptions +GlobalRequest
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlFixupHandler Apache::TestHandler::same_interp_fixup
+    PerlResponseHandler ModPerl::RegistryBB
+    PerlOptions +ParseHeaders
+</Location>
+
+<Location /same_interp/registry>
+  #  PerlOptions +GlobalRequest
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlFixupHandler Apache::TestHandler::same_interp_fixup
+    PerlResponseHandler ModPerl::Registry
+    PerlOptions +ParseHeaders
+</Location>
+
+<Location /same_interp/registry_oo_conf>
+    PerlOptions +GlobalRequest
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlFixupHandler Apache::TestHandler::same_interp_fixup
+    PerlResponseHandler ModPerl::Registry->handler
+    PerlOptions +ParseHeaders
+</Location>
+
+<Location /same_interp/perlrun>
+    PerlOptions +GlobalRequest
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlFixupHandler Apache::TestHandler::same_interp_fixup
+    PerlResponseHandler ModPerl::PerlRun
+    PerlOptions +ParseHeaders
+</Location>
+
+### the 404 test ###
+<IfModule mod_alias.c>
+    Alias /error_document/ @ServerRoot@/cgi-bin/
+</IfModule>
+
+<Location /error_document>
+    ErrorDocument 404 /error_document/404.pl
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::Registry
+</Location>
+
+### deflate tests ###
+<IfModule mod_alias.c>
+    Alias /registry_bb_deflate/ @ServerRoot@/cgi-bin/
+</IfModule>
+
+#PerlOutputFilterHandler ModPerl::TestFilterDebug::snoop_connection
+PerlModule ModPerl::RegistryBB
+<Location /registry_bb_deflate>
+    PerlOptions +GlobalRequest
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::RegistryBB
+    PerlOptions +ParseHeaders
+    #PerlOutputFilterHandler ModPerl::TestFilterDebug::snoop_request
+    <IfModule mod_deflate.c>
+        SetOutputFilter DEFLATE
+    </IfModule>
+</Location>
+
+# <sandbox-friendly>
+# keep everything self-contained, to avoid problems with sandboxes
+# which break when things try to run off /tmp
+#
+# XXX: consider folding the the following two settings into
+# Apache-Test's autogenerated httpd.conf
+<IfModule mod_cgid.c>
+    ScriptSock logs/cgisock
+</IfModule>
+#
+# XXX: would be nice to have Apache-Test support a new 'tmp' token
+# (similar to t_logs) which will map onto t/tmp by default and provide
+# a new -tmp option to override this default
+<IfModule mod_env.c>
+    SetEnv TMPDIR @t_logs@
+</IfModule>
+# </sandbox-friendly>
+
+
+<IfModule mod_rewrite.c>
+
+    RewriteEngine On
+    <IfVersion < 2.4.0>
+        RewriteLogLevel 9
+        RewriteLog @ServerRoot@/logs/rewrite_log
+    </IfVersion>
+    RewriteRule /rewritetest /rewrite_env/env_val.pl?REWRITE_TEST [E=REWRITE_TEST:GOTCHA,PT,NS,L]
+
+    <Location /rewrite_env>
+        SetHandler perl-script
+        PerlResponseHandler ModPerl::Registry
+        Options +ExecCGI
+        PerlOptions +ParseHeaders
+    </Location>
+</IfModule>
+
+

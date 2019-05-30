@@ -1,0 +1,69 @@
+require Carp;
+require Carp::Heavy;
+
+use APR::Util ();
+
+use overload
+    nomethod => \&fatal,
+    'bool'   => \&str,
+    '=='     => \&num_cmp,
+    '!='     => \&num_cmp_not,
+    '0+'     => \&num,
+    '""'     => \&str;
+
+sub fatal {  die __PACKAGE__ . ": Can't handle '$_[3]'" }
+
+# normally the object is created on the C side, but if you want to
+# create one from Perl, you can. just pass a hash with args:
+# rc, file, line, func
+sub new {
+    my $class = shift;
+    my %args = @_;
+    bless \%args, $class;
+}
+
+#
+# - even though most of the time the error id is not useful to the end
+#   users, developers may need to know it. For example in case of a
+#   non-english user locale setting, the error string could be
+#   incomprehensible to a developer, but by having the error id it's
+#   possible to find the english equivalent
+# - the filename and line number are needed because perl doesn't
+#   provide that info when exception objects are involved
+sub str {
+    return sprintf "%s: (%d) %s at %s line %d", $_[0]->{func},
+        $_[0]->{rc}, APR::Error::strerror($_[0]->{rc}),
+        $_[0]->{file}, $_[0]->{line};
+}
+
+sub num { $_[0]->{rc} }
+
+sub num_cmp     { $_[0]->{rc} == $_[1] }
+sub num_cmp_not { $_[0]->{rc} != $_[1] }
+
+# skip the wrappers from this package from the long callers trace
+$Carp::CarpInternal{+__PACKAGE__}++;
+
+# XXX: Carp::(confess|cluck) see no calls stack when Perl_croak is
+# called with (char *)NULL (which is the way exception objects are
+# returned), so we fixup it here (doesn't quite work for croak
+# caller).
+sub cluck {
+    if (ref $_[0] eq __PACKAGE__) {
+        Carp::cluck("$_[0]->{func}: ($_[0]->{rc}) " .
+                    APR::Error::strerror($_[0]->{rc}));
+    }
+    else {
+        &Carp::cluck;
+    }
+}
+
+sub confess {
+    if (ref $_[0] eq __PACKAGE__) {
+        Carp::confess("$_[0]->{func}: ($_[0]->{rc}) " .
+                    APR::Error::strerror($_[0]->{rc}));
+    }
+    else {
+        &Carp::confess;
+    }
+}

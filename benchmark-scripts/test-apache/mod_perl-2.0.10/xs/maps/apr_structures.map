@@ -1,0 +1,189 @@
+##########  APR structures  ##########
+
+# for mapping see %ModPerl::MapUtil::disabled_map in
+# lib/ModPerl/MapUtil.pm
+
+IGNORE: apr_pool_t apr_os_ apr_vformatter_buff_t apr_pool_t \
+apr_table_t apr_in_addr_t apr_bucket_ apr_md5_ctx_t apr_sha1_ctx_t \
+apr_md4_ctx_t apr_sdbm_datum_t apr_memnode_t \
+apr_uuid_t apr_datum_t apr_mmap_t apr_hdtr_t apr_ipsubnet_t \
+apr_strmatch_pattern apr_version_t
+
+#buckets
+
+<apr_bucket_type_t>
+<  name
+-  num_func
+-  destroy
+-  read
+-  setaside
+-  split
+-  copy
+</apr_bucket_type_t>
+
+<apr_bucket>
+>  link
+<  type
+<  length
+<  start
+<  data
+>  free
+>  list
+</apr_bucket>
+
+<apr_bucket_brigade>
+~  pool
+>  list
+<  bucket_alloc
+</apr_bucket_brigade>
+
+<apr_finfo_t>
+-  pool
+<  valid
+<  protection
+<  filetype
+<  user
+<  group
+<  inode
+<  device
+<  nlink
+<  size
+<  csize
+<  atime
+<  mtime
+<  ctime
+<  fname
+<  name
+-  filehand
+</apr_finfo_t>
+
+<apr_sockaddr_t>
+-  pool
+-  hostname
+-  servname
+<  port
+-  sa
+-  salen
+-  ipaddr_len
+-  addr_str_len
+-  ipaddr_ptr
+-  next
+-  family
+</apr_sockaddr_t>
+
+!<apr_proc_t>
+   pid
+   in
+   out
+   err
+</apr_proc_t>
+
+!<apr_time_exp_t>
+   tm_usec
+   tm_sec
+   tm_min
+   tm_hour
+   tm_mday
+   tm_mon
+   tm_year
+   tm_wday
+   tm_yday
+   tm_isdst
+   tm_gmtoff
+</apr_time_exp_t>
+
+#generic data structures
+
+!<apr_array_header_t>
+>  pool
+>  elt_size
+   nelts
+>  nalloc
+   elts
+</apr_array_header_t>
+
+!<apr_table_entry_t>
+   key
+   val
+>  key_checksum
+</apr_table_entry_t>
+
+#getopt
+
+!<apr_getopt_t>
+-  cont
+-  errfn
+   errarg
+   ind
+-  opt
+-  reset
+   argc
+   argv
+-  place
+-  interleave
+-  skip_start
+-  skip_end
+</apr_getopt_t>
+
+!<apr_getopt_option_t>
+   name
+-  optch
+-  has_arg
+   description
+</apr_getopt_option_t>
+
+#XML
+
+!<apr_xml_elem>
+   name
+   ns
+   lang
+   first_cdata
+   following_cdata
+   parent
+   next
+   first_child
+   attr
+   last_child
+   ns_scope
+   priv
+</apr_xml_elem>
+
+<apr_xml_doc>
+   root
+   namespaces
+</apr_xml_doc>
+
+<apr_text_header>
+   first
+   last
+</apr_text_header>
+
+<apr_xml_attr>
+   name
+   ns
+   value
+   next
+</apr_xml_attr>
+
+<apr_text>
+   text
+   next
+</apr_text>
+
+<apr_uri_t>
+&  scheme
+   hostinfo
+&  user
+&  password
+&  hostname
+-  port_str
+&  path
+&  query
+&  fragment
+   hostent
+~  port
+-  is_initialized
+-  dns_looked_up
+-  dns_resolved
+</apr_uri_t>

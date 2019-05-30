@@ -1,0 +1,261 @@
+=head1 NAME
+
+ModPerl::RegistryCooker - Cook mod_perl 2.0 Registry Modules
+
+=head1 Synopsis
+
+  # shouldn't be used as-is but sub-classed first
+  # see ModPerl::Registry for an example
+
+=head1 Description
+
+C<ModPerl::RegistryCooker> is used to create flexible and overridable
+registry modules which emulate mod_cgi for Perl scripts. The concepts
+are discussed in the manpage of the following modules:
+C<L<ModPerl::Registry>>, C<L<ModPerl::Registry>> and
+C<L<ModPerl::RegistryBB>>.
+
+C<ModPerl::RegistryCooker> has two purposes:
+
+=over
+
+=item *
+
+Provide ingredients that can be used by registry sub-classes
+
+=item *
+
+Provide a default behavior, which can be overriden in sub-classed
+
+META: in the future this functionality may move into a separate class.
+
+=back
+
+Here are the current overridable methods:
+
+META: these are all documented in RegistryCooker.pm, though not using
+pod. please help to port these to pod and move the descriptions here.
+
+=over
+
+=item * new()
+
+create the class's object, bless it and return it
+
+  my $obj = $class->new($r);
+
+C<$class> -- the registry class, usually C<__PACKAGE__> can be used.
+
+C<$r> -- C<Apache2::Request> object.
+
+default: new()
+
+=item * init()
+
+initializes the data object's fields: C<REQ>, C<FILENAME>,
+C<URI>. Called from the new().
+
+default: init()
+
+=item * default_handler()
+
+default:  default_handler()
+
+=item * run()
+
+default: run()
+
+=item * can_compile()
+
+default: can_compile()
+
+=item * make_namespace()
+
+default: make_namespace()
+
+=item * namespace_root()
+
+default: namespace_root()
+
+
+=item * namespace_from()
+
+If C<namespace_from_uri> is used and the script is called from the
+virtual host, by default the virtual host name is prepended to the uri
+when package name for the compiled script is created. Sometimes this
+behavior is undesirable, e.g., when the same (physical) script is
+accessed using the same path_info but different virtual hosts. In that
+case you can make the script compiled only once for all vhosts, by
+specifying:
+
+  $ModPerl::RegistryCooker::NameWithVirtualHost = 0;
+
+The drawback is that it affects the global environment and all other
+scripts will be compiled ignoring virtual hosts.
+
+default: namespace_from()
+
+=item * is_cached()
+
+default: is_cached()
+
+=item * should_compile()
+
+default: should_compile()
+
+=item * flush_namespace()
+
+default: flush_namespace()
+
+
+=item * cache_table()
+
+default: cache_table()
+
+=item * cache_it()
+
+default: cache_it()
+
+=item * read_script()
+
+default: read_script()
+
+=item * shebang_to_perl()
+
+default: shebang_to_perl()
+
+=item * get_script_name()
+
+default: get_script_name()
+
+=item * chdir_file()
+
+default: chdir_file()
+
+=item * get_mark_line()
+
+default: get_mark_line()
+
+=item * compile()
+
+default: compile()
+
+
+=item * error_check()
+
+default: error_check()
+
+=item * strip_end_data_segment()
+
+default: strip_end_data_segment()
+
+=item * convert_script_to_compiled_handler()
+
+default: convert_script_to_compiled_handler()
+
+=back
+
+
+
+
+=head2 Special Predefined Functions
+
+The following functions are implemented as constants.
+
+=over
+
+=item * NOP()
+
+Use when the function shouldn't do anything.
+
+=item * TRUE()
+
+Use when a function should always return a true value.
+
+=item * FALSE()
+
+Use when a function should always return a false value.
+
+=back
+
+
+
+
+=head1 Sub-classing Techniques
+
+To override the default C<ModPerl::RegistryCooker> methods, first,
+sub-class C<ModPerl::RegistryCooker> or one of its existing
+sub-classes, using C<use base>. Second, override the methods.
+
+Those methods that weren't overridden will be resolved at run time
+when used for the first time and cached for the future requests. One
+way to to shortcut this first run resolution is to use the symbol
+aliasing feature. For example to alias C<ModPerl::MyRegistry::flush_namespace>
+as C<ModPerl::RegistryCooker::flush_namespace>, you can do:
+
+  package ModPerl::MyRegistry;
+  use base qw(ModPerl::RegistryCooker);
+  *ModPerl::MyRegistry::flush_namespace =
+      \&ModPerl::RegistryCooker::flush_namespace;
+  1;
+
+In fact, it's a good idea to explicitly alias all the methods so you
+know exactly what functions are used, rather then relying on the
+defaults. For that purpose C<ModPerl::RegistryCooker> class method
+install_aliases() can be used. Simply prepare a hash with method names
+in the current package as keys and corresponding fully qualified
+methods to be aliased for as values and pass it to
+install_aliases(). Continuing our example we could do:
+
+  package ModPerl::MyRegistry;
+  use base qw(ModPerl::RegistryCooker);
+  my %aliases = (
+      flush_namespace => 'ModPerl::RegistryCooker::flush_namespace',
+  );
+  __PACKAGE__->install_aliases(\%aliases);
+  1;
+
+The values use fully qualified packages so you can mix methods from
+different classes.
+
+=head1 Examples
+
+The best examples are existing core registry modules:
+C<L<ModPerl::Registry>>, C<L<ModPerl::Registry>> and
+C<L<ModPerl::RegistryBB>>. Look at the source code and their manpages
+to see how they subclass C<ModPerl::RegistryCooker>.
+
+For example by default C<L<ModPerl::Registry>> uses the script's path
+when creating a package's namespace. If for example you want to use a
+uri instead you can override it with:
+
+  *ModPerl::MyRegistry::namespace_from =
+      \&ModPerl::RegistryCooker::namespace_from_uri;
+  1;
+
+Since the C<namespace_from_uri> component already exists in
+C<ModPerl::RegistryCooker>. If you want to write your own method,
+e.g., that creates a namespace based on the inode, you can do:
+
+  sub namespace_from_inode {
+      my $self = shift;
+      return (stat $self->[FILENAME])[1];
+  }
+
+META: when $r-E<gt>finfo will be ported it'll be more effecient. 
+(stat $r-E<gt>finfo)[1]
+
+
+=head1 Authors
+
+Doug MacEachern
+
+Stas Bekman
+
+=head1 See Also
+
+C<L<ModPerl::Registry|docs::2.0::api::ModPerl::Registry>>,
+C<L<ModPerl::RegistryBB|docs::2.0::api::ModPerl::RegistryBB>> and
+C<L<ModPerl::PerlRun|docs::2.0::api::ModPerl::PerlRun>>.
+
+=cut

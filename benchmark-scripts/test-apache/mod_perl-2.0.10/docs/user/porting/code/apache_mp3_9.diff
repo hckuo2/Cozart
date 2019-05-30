@@ -1,0 +1,71 @@
+--- Apache/MP3.pm.9	2003-06-06 17:27:45.000000000 +1000
++++ Apache/MP3.pm	2003-06-06 17:55:14.000000000 +1000
+@@ -82,8 +82,8 @@
+   $new->{'r'} ||= $r if $r;
+ 
+   my @lang_tags;
+-  push @lang_tags,split /,\s+/,$r->header_in('Accept-language') 
+-    if $r->header_in('Accept-language');
++  push @lang_tags,split /,\s+/,$r->headers_in->{'Accept-language'} 
++    if $r->headers_in->{'Accept-language'};
+   push @lang_tags,$new->get_config('DefaultLanguage') || 'en-US';
+ 
+   $new->{'lh'} ||=
+@@ -272,7 +272,7 @@
+     my $uri = $self->r->uri;
+     my $query = $self->r->args;
+     $query = "?" . $query if defined $query;
+-    $self->r->header_out(Location => "$uri/$query");
++    $self->r->headers_out->{Location} = "$uri/$query";
+     return Apache::REDIRECT;
+   }
+ 
+@@ -310,7 +310,7 @@
+   }
+ 
+   if ($self->check_stream_client and !$self->is_stream_client) {
+-    my $useragent = $r->header_in('User-Agent');
++    my $useragent = $r->headers_in->{'User-Agent'};
+     $r->log_reason("CheckStreamClient is true and $useragent is not a streaming client");
+     return Apache::FORBIDDEN;
+   }
+@@ -472,9 +472,9 @@
+ 
+   my $last_modified = (stat(_))[9];
+ 
+-  $self->r->header_out('ETag' => sprintf("%lx-%s", $last_modified, $VERSION));
++  $self->r->headers_out->{'ETag'} = sprintf("%lx-%s", $last_modified, $VERSION);
+ 
+-  if (my $check = $self->r->header_in("If-None-Match")) {
++  if (my $check = $self->r->headers_in->{"If-None-Match"}) {
+     my ($time, $ver) = $check =~ /^([a-f0-9]+)-([0-9.]+)$/;
+ 
+     if ($check eq '*' or (hex($time) == $last_modified and $ver == $VERSION)) {
+@@ -1283,8 +1283,8 @@
+   my $genre       = $info->{genre} || $self->lh->maketext('unknown');
+ 
+   my $range = 0;
+-  $r->header_in("Range")
+-    and $r->header_in("Range") =~ m/bytes=(\d+)/
++  $r->headers_in->{"Range"}
++    and $r->headers_in->{"Range"} =~ m/bytes=(\d+)/
+     and $range = $1
+     and seek($fh,$range,0);
+ 
+@@ -1383,11 +1383,11 @@
+ # return true if client can stream
+ sub is_stream_client {
+   my $r = shift->r;
+-  $r->header_in('Icy-MetaData')   # winamp/xmms
+-    || $r->header_in('Bandwidth')   # realplayer
+-      || $r->header_in('Accept') =~ m!\baudio/mpeg\b!  # mpg123 and others
+-	|| $r->header_in('User-Agent') =~ m!^NSPlayer/!  # Microsoft media player
+-	  || $r->header_in('User-Agent') =~ m!^xmms/!;
++  $r->headers_in->{'Icy-MetaData'}   # winamp/xmms
++    || $r->headers_in->{'Bandwidth'}   # realplayer
++      || $r->headers_in->{'Accept'} =~ m!\baudio/mpeg\b!  # mpg123 and others
++	|| $r->headers_in->{'User-Agent'} =~ m!^NSPlayer/!  # Microsoft media player
++	  || $r->headers_in->{'User-Agent'} =~ m!^xmms/!;
+ }
+ 
+ # whether to read info for each MP3 file (might take a long time)

@@ -1,0 +1,59 @@
+this is a very simple document that outlines some of the important
+details about the mod_perl svn repository.
+
+
+LAYOUT
+
+the mod_perl project at the Apache Software Foundation lives here
+
+  http://svn.apache.org/repos/asf/perl/
+
+and uses the following structure
+
+  modperl/trunk           # equivalent to cvs HEAD - currently
+                          # the mod_perl 2.0 development branch
+
+  modperl/tags            # every official mod_perl release
+
+  modperl/docs/trunk      # the mod_perl documentation project
+
+modperl/trunk includes the following svn:externals properties:
+
+  % cd modperl
+  % svn propedit svn:externals .
+  [vi pops up]
+Apache-Test https://svn.apache.org/repos/asf/perl/Apache-Test/trunk
+Apache-Reload https://svn.apache.org/repos/asf/perl/Apache-Reload/trunk
+Apache-SizeLimit https://svn.apache.org/repos/asf/perl/Apache-SizeLimit/trunk
+docs        https://svn.apache.org/repos/asf/perl/modperl/docs/trunk/src/docs/2.0
+
+DEVELOPER ACCESS
+
+assuming that you have already been granted commit access to the repository,
+you should follow the following steps to checkout mod_perl
+
+Change your password via:
+https://svn.apache.org/change-password
+
+  $ svn checkout https://svn.apache.org/repos/asf/perl/modperl/trunk/ mod_perl-2.0
+
+if you want to test that your commit access is working, this file is
+an acceptable place to take a test drive.
+
+
+FURTHER READING
+
+for more details, see
+
+  http://perl.apache.org/docs/2.0/user/install/install.html
+
+for information on getting httpd and mod_perl from svn, as well as
+
+  http://svnbook.red-bean.com/
+
+for svn information in general. 
+
+svn for cvs users (including migration tools):
+
+  http://svnbook.red-bean.com/en/1.0/apa.html
+

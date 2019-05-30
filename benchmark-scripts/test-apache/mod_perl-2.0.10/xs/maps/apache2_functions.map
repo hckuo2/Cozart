@@ -1,0 +1,568 @@
+##########  Apache functions  ##########
+
+#keywords:
+# MODULE  = the module name
+#           e.g. Apache2::Connection -> Apache2/Connection.{pm,xs}
+#
+# PACKAGE = the package name functions belong to, defaults to MODULE
+#           value of 'guess' indicates that package name should be
+#           guessed based on first argument found that maps to a Perl class
+#           fallsback on the prefix (ap_ -> Apache2, apr_ -> APR)
+#
+# PREFIX  = prefix to be stripped
+#           defaults to PACKAGE, converted to C name convention, e.g.
+#           APR::Base64 -> apr_base64_
+#           if the converted prefix does not match, defaults to ap_ or apr_
+
+#format of entries:
+# C function name | dispatch function name | argspec | Perl alias
+
+# dispatch function name defaults to C function name
+# if the dispatch name is just a prefix (mpxs_, MPXS_)
+# the C function name is appended to it
+# the return type can be specified before the C function name,
+# defaults to return_type in {Apache2,ModPerl}::FunctionTable
+
+# the argspec defaults to arguments in {Apache2,ModPerl}::FunctionTable
+# argument types can be specified to override those in the FunctionTable
+# default values can be specified, e.g. arg=default_value
+# argspec of '...' indicates passthru, calling the function with
+# (aTHX_ I32 items, SP **sp, SV **MARK)
+
+# the alias will be created in the current PACKAGE
+
+# function names that do not begin with /^\w/ are skipped
+# for details see: %ModPerl::MapUtil::disabled_map
+# in lib/ModPerl/MapUtil.pm
+
+MODULE=Apache2::RequestUtil
+ ap_get_status_line
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } > 2003000
+ ap_register_auth_provider | mpxs_ | ...
+#_end_
+
+MODULE=Apache2::RequestUtil   PACKAGE=guess
+ ap_psignature | | r, prefix
+>ap_finalize_request_protocol
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } < 2003000
+ ap_default_type
+#_end_
+ ap_get_server_name
+ ap_get_server_port
+!ap_content_type_tolower
+ ap_is_initial_req
+>ap_method_registry_init
+>ap_process_request_internal
+?ap_get_mime_headers
+>ap_rgetline_core
+?ap_get_request_note
+?ap_register_request_note
+~ap_set_content_type
+
+#MODULE=Apache2::RequestConfig
+~ap_document_root
+ ap_get_limit_req_body
+?ap_get_limit_xml_body
+>ap_core_translate
+
+>MODULE=Apache2::Core
+ ap_basic_http_header
+ ap_http_filter
+ ap_send_http_options
+ ap_send_http_trace
+ ap_response_code_string
+ ap_add_file_conf
+ ap_add_per_dir_conf
+ ap_add_per_url_conf
+ ap_limit_section
+ ap_setup_make_content_type
+
+>MODULE=Apache2::Listen
+ ap_set_listenbacklog
+ ap_set_listener
+ ap_set_send_buffer_size
+ ap_setup_listeners
+
+MODULE=Apache2::SubRequest   PACKAGE=Apache2::RequestRec
+?ap_sub_req_output_filter
+>ap_set_sub_req_protocol
+-ap_finalize_sub_req_protocol
+ ap_internal_redirect         | | r, new_uri
+ ap_internal_redirect_handler | | r, new_uri
+ ap_internal_fast_redirect    | | r, sub_req
+ ap_sub_req_lookup_dirent     | | r, finfo, subtype=AP_SUBREQ_NO_ARGS, next_filter=NULL | lookup_dirent
+
+subrequest_rec *:ap_sub_req_lookup_file | | \
+ r, new_file, next_filter=r->proto_output_filters | lookup_file
+
+subrequest_rec *:ap_sub_req_lookup_uri  | | \
+ r, new_uri, next_filter=r->proto_output_filters | lookup_uri
+
+subrequest_rec *:ap_sub_req_method_uri  | | \
+ r, method, new_uri, next_filter=r->proto_output_filters | lookup_method_uri
+
+PACKAGE=Apache2::SubRequest   ISA=Apache2::RequestRec
+ ap_destroy_sub_req  | | r | DESTROY
+ ap_run_sub_req      | mpxs_ | | run
+
+MODULE=Apache2::RequestIO   PACKAGE=Apache2::RequestRec
+ ap_discard_request_body
+!ap_getline
+ ap_get_client_block   | mpxs_ | r, SV *:buffer, bufsiz
+ ap_setup_client_block |       | r, read_policy=REQUEST_CHUNKED_ERROR
+ ap_should_client_block
+PREFIX=ap_r
+~ap_rwrite
+ ap_rprintf | mpxs_ | ...
+!ap_rputc
+~ap_rputs
+ ap_rvputs | mpxs_ | ... | puts
+-ap_vrprintf
+
+MODULE=Apache2::Response   PACKAGE=guess
+ ap_make_etag | | r, force_weak=0
+ ap_set_content_length | | r, length=r->finfo.csize
+ ap_set_etag
+ ap_meets_conditions
+ ap_rationalize_mtime
+ ap_update_mtime | | r, dependency_mtime=0
+ ap_send_error_response
+~ap_send_fd
+ ap_send_mmap | | r, mm, offset, length
+ ap_set_keepalive
+-ap_set_last_modified
+ ap_custom_response
+
+MODULE=Apache2::Access   PACKAGE=Apache2::RequestRec
+ ap_allow_methods | mpxs_ | ...
+ ap_allow_options
+ ap_allow_overrides
+!ap_allow_standard_methods
+ ap_get_remote_logname
+ SV *:ap_requires | mpxs_
+ ap_satisfies
+
+#MODULE=Apache2::Auth
+ mpxs_Apache2__RequestRec_auth_name | | r, name=NULL
+ mpxs_Apache2__RequestRec_auth_type | | r, type=NULL
+ ap_get_basic_auth_pw | MPXS_ | r
+ ap_note_auth_failure
+ ap_note_basic_auth_failure
+ ap_note_digest_auth_failure
+ ap_some_auth_required
+
+!MODULE=Apache2::ScriptUtil   PACKAGE=guess
+ ap_add_cgi_vars
+ ap_add_common_vars
+ ap_create_environment
+ ap_find_path_info
+-ap_scan_script_header_err
+-ap_scan_script_header_err_core
+-ap_scan_script_header_err_strs
+-ap_scan_script_header_err_brigade
+
+MODULE=Apache2::ServerUtil   PACKAGE=Apache2::ServerRec BOOT=1
+~ap_method_register
+ int:DEFINE_method_register | | server_rec *:s, const char *:methname
+~add_version_component
+ void:DEFINE_add_version_component | | server_rec *:s, const char *:component
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } > 2003000
+ mpxs_Apache2__ServerRec_loglevel | | server_rec *:s, loglevel=0
+#_end_
+
+MODULE=Apache2::ServerUtil   PACKAGE=Apache2::ServerUtil
+ ap_exists_config_define
+ ap_server_root_relative | | p, fname=""
+ ap_get_server_banner
+ ap_get_server_description
+ ap_get_server_version
+
+MODULE=Apache2::ServerUtil   PACKAGE=guess
+ ap_error_log2stderr
+?ap_replace_stderr_log
+
+#MODULE=Apache2::ServerConfig
+#XXX: thought this might be useful
+#however it is not exported on win32
+!ap_get_local_host
+~ap_get_server_built
+~ap_server_root
+
+
+MODULE=Apache2::Connection   PACKAGE=guess
+#XXX: thought this might be useful for protocol modules
+#however it is not exported on win32
+!ap_read_request
+>ap_update_vhost_given_ip
+ mpxs_Apache2__Connection_get_remote_host | | c, type=REMOTE_NAME, dir_config=NULL
+
+MODULE=Apache2::Log   PACKAGE=guess
+?ap_log_assert
+~ap_log_error
+-ap_log_perror
+~ap_log_rerror
+>ap_open_stderr_log
+>ap_open_logs
+
+PACKAGE=Apache2::Log    PREFIX=ap_
+ ap_log_pid
+
+MODULE=Apache2::Module
+ module *:DEFINE_top_module
+-ap_add_loaded_module
+-ap_add_module
+-ap_add_named_module
+ ap_find_linked_module
+-ap_find_module_name
+ap_remove_loaded_module
+-ap_remove_module
+>ap_single_module_configure
+>ap_setup_prelinked_modules
+>ap_show_directives
+>ap_show_modules
+>ap_register_hooks
+ mpxs_Apache2__Module_loaded
+ mpxs_Apache2__Module_add
+ #ap_get_module_config
+ mpxs_Apache2__Module_get_config | | pmodule, s, v=NULL
+ mpxs_Apache2__Module_ap_api_major_version
+ mpxs_Apache2__Module_ap_api_minor_version
+
+MODULE=Apache2::Directive
+ ap_directive_t *:DEFINE_conftree
+!ap_add_node
+!ap_build_config
+!ap_build_cont_config
+!ap_walk_config
+>ap_process_config_tree
+
+MODULE=Apache2::Filter PACKAGE=guess
+~ap_add_output_filter
+~ap_add_input_filter
+-ap_add_input_filter_handle
+-ap_get_input_filter_handle
+-ap_add_output_filter_handle
+-ap_get_output_filter_handle
+>ap_add_ouput_filters_by_type
+~ap_get_brigade
+ mpxs_Apache2__Filter_get_brigade | | \
+               f, bb, mode=AP_MODE_READBYTES, \
+               block=APR_BLOCK_READ, \
+               readbytes=8192
+~ap_pass_brigade
+ mpxs_Apache2__Filter_pass_brigade
+!ap_register_input_filter
+!ap_register_output_filter
+-ap_remove_output_filter
+-ap_remove_input_filter
+!ap_save_brigade
+ ap_filter_flush
+~ap_fflush
+ mpxs_Apache2__Filter_fflush
+-ap_fputstrs
+#int:DEFINE_ap_fputs | | \
+#     ap_filter_t *:f, apr_bucket_brigade *:bb, const char *:str
+-ap_fprintf
+>ap_byterange_filter
+>ap_http_header_filter
+>ap_content_length_filter
+>ap_old_write_filter
+
+!MODULE=Apache2::Bucket
+ ap_bucket_error_create
+ ap_bucket_error_make
+
+!MODULE=Apache2::Base64
+ ap_pbase64decode
+ ap_pbase64encode
+
+!MODULE=Apache2::ConfigFile
+ ap_cfg_closefile
+ ap_cfg_getc
+ ap_cfg_getline
+ ap_pcfg_open_custom
+ ap_pcfg_openfile
+>ap_read_config
+>ap_merge_per_dir_configs
+>ap_create_conn_config
+>ap_parse_htaccess
+>ap_process_resource_config
+
+MODULE=Apache2::Command
+ command_rec *:DEFINE_next | | command_rec *:cmd
+-ap_soak_end_container
+-ap_set_int_slot
+-ap_set_file_slot
+-ap_set_flag_slot
+-ap_set_string_slot
+-ap_set_string_slot_lower
+-ap_set_deprecated
+
+MODULE=Apache2::Util 
+ ap_ht_time | | p, t=TIME_NOW, fmt=DEFAULT_TIME_FORMAT, gmt=1
+!ap_rfc1413
+!ap_escape_html | | s, p
+ #escape_uri
+ ap_os_escape_path | | path, p, partial=TRUE | escape_path
+!ap_explode_recent_gmt
+!ap_explode_recent_localtime
+!ap_recent_ctime
+!ap_recent_rfc822_date
+
+MODULE=Apache2::URI   PACKAGE=guess
+ ap_parse_uri
+ ap_construct_url    | | r, uri=r->uri, p=r->pool
+ ap_construct_server | | r, hostname=ap_get_server_name(r), \
+                         port=ap_get_server_port(r), p=r->pool
+PACKAGE=Apache2::URI
+ char *:ap_unescape_url | mpxs_ | SV *:url
+
+PACKAGE=Apache2::RequestRec
+ mpxs_Apache2__RequestRec_parsed_uri
+
+!MODULE=Apache2::StringUtil   PACKAGE=guess
+ ap_count_dirs
+ ap_escape_path_segment
+ ap_escape_quotes
+ ap_escape_shell_cmd
+ ap_field_noparam
+ ap_find_last_token
+ ap_find_list_item
+ ap_find_token
+ ap_get_list_item
+ ap_size_list_item
+ ap_getparents
+ ap_get_token
+-ap_getword
+-ap_getword_conf
+-ap_getword_conf_nc
+-ap_getword_nc
+-ap_getword_nulls
+-ap_getword_nulls_nc
+-ap_getword_white
+-ap_getword_white_nc
+-ap_ind
+-ap_rind
+ ap_is_directory
+ ap_is_matchexp
+ ap_is_rdirectory
+ ap_is_url
+ ap_make_dirstr_parent
+ ap_make_dirstr_prefix
+ ap_make_full_path
+ ap_no2slash
+ ap_os_is_path_absolute
+ ap_resolve_env
+-ap_strcasecmp_match
+-ap_strcasestr
+-ap_strcmp_match
+ ap_stripprefix
+-ap_str_tolower
+
+!MODULE=Apache2::MethodList
+ ap_clear_method_list
+-ap_copy_method_list
+ ap_make_method_list
+ ap_method_in_list
+ ap_method_list_add
+ ap_method_list_do
+ ap_method_list_remove
+ ap_method_list_vdo
+ ap_method_name_of
+ ap_method_number_of
+
+!MODULE=Apache2::PipedLog
+ ap_close_piped_log
+ ap_open_piped_log
+
+!MODULE=Apache2::Scoreboard
+ ap_exists_scoreboard_image
+-ap_update_child_status
+-ap_time_process_request
+-ap_create_scoreboard
+ ap_cleanup_scoreboard
+ ap_increment_counts
+ ap_calc_scoreboard_size
+ ap_create_sb_handle
+ ap_get_scoreboard_global
+ ap_get_scoreboard_process
+ ap_get_scoreboard_worker
+>ap_init_scoreboard
+>ap_reopen_scoreboard
+ ap_update_child_status_from_indexes
+
+!MODULE=Apache2::Hooks
+ ap_location_walk
+ ap_directory_walk
+ ap_file_walk
+ ap_hook_access_checker
+ ap_hook_auth_checker
+ ap_hook_check_user_id
+ ap_hook_child_init
+>ap_hook_create_connection
+>ap_hook_get_create_connection
+ ap_hook_default_port
+ ap_hook_fixups
+ ap_hook_handler
+ ap_hook_header_parser
+ ap_hook_http_method
+ ap_hook_insert_filter
+ ap_hook_log_transaction
+ ap_hook_open_logs
+ ap_hook_optional_fn_retrieve
+ ap_hook_post_config
+ ap_hook_post_read_request
+ ap_hook_pre_config
+ ap_hook_pre_connection
+ ap_hook_process_connection
+ ap_hook_translate_name
+ ap_hook_type_checker
+!ap_hook_quick_handler
+ ap_hook_map_to_storage
+ ap_hook_create_request
+ ap_hook_error_log
+>ap_hook_pre_mpm
+-ap_hook_get_suexec_identity
+-ap_hook_get_access_checker
+-ap_hook_get_auth_checker
+-ap_hook_get_check_user_id
+-ap_hook_get_child_init
+-ap_hook_get_create_request
+-ap_hook_get_default_port
+-ap_hook_get_error_log
+-ap_hook_get_fixups
+-ap_hook_get_get_mgmt_items
+-ap_hook_get_get_suexec_identity
+-ap_hook_get_handler
+-ap_hook_get_header_parser
+-ap_hook_get_http_method
+-ap_hook_get_insert_filter
+-ap_hook_get_log_transaction
+-ap_hook_get_map_to_storage
+-ap_hook_get_mgmt_items
+-ap_hook_get_open_logs
+-ap_hook_get_optional_fn_retrieve
+-ap_hook_get_post_config
+-ap_hook_get_post_read_request
+-ap_hook_get_pre_config
+-ap_hook_get_pre_connection
+-ap_hook_get_pre_mpm
+-ap_hook_get_process_connection
+-ap_hook_get_quick_handler
+-ap_hook_get_translate_name
+-ap_hook_get_type_checker
+
+MODULE=Apache2::HookRun   PACKAGE=guess
+-ap_run_get_suexec_identity
+-ap_run_optional_fn_retrieve
+>ap_run_pre_config
+>ap_run_open_logs
+>ap_run_post_config
+>ap_run_insert_filter
+>ap_run_child_init
+?ap_run_default_port
+?ap_run_http_method
+>ap_run_create_connection
+>ap_run_pre_connection
+>ap_run_process_connection
+ ap_run_post_read_request
+ ap_run_translate_name
+ ap_run_header_parser
+ ap_run_access_checker
+ ap_run_check_user_id
+ ap_run_auth_checker
+ ap_run_type_checker
+ ap_run_fixups
+ ap_run_handler
+ ap_run_log_transaction
+>ap_run_rewrite_args
+?ap_run_create_request
+>ap_run_error_log
+>ap_run_get_mgmt_items
+ ap_run_map_to_storage
+>ap_run_pre_mpm
+!ap_run_quick_handler
+ ap_invoke_handler
+ ap_die | | r, type
+
+!MODULE=Apache2::MD5
+ ap_md5
+ ap_md5_binary
+ ap_md5contextTo64
+ ap_md5digest
+
+-MODULE=Apache2::Regexp
+ ap_pregcomp
+ ap_pregfree
+ ap_pregsub
+ ap_regerror
+ ap_regexec
+
+!MODULE=Apache2::VHost
+-ap_set_name_virtual_host
+-ap_fini_vhost_config
+-ap_init_vhost_config
+ ap_matches_request_vhost
+ ap_parse_vhost_addrs
+-ap_update_vhost_from_headers
+-ap_fixup_virtual_hosts
+
+!MODULE=Apache2::HTTPCore
+>ap_process_request
+>ap_make_content_type
+>ap_core_reorder_directories
+>ap_index_of_response
+
+!MODULE=Apache2::XML
+ ap_xml_parse_input
+
+MODULE=Apache2::MPM   PACKAGE=Apache2::MPM   BOOT=1
+~ap_mpm_query
+~ap_show_mpm
+>ap_mpm_run
+?ap_os_create_privileged_process
+?ap_wait_or_timeout
+?ap_graceful_stop_signalled
+?ap_process_child_status
+?ap_reclaim_child_processes
+?ap_sock_disable_nagle
+?ap_gname2id
+?ap_uname2id
+?ap_lingering_close
+?ap_mpm_pod_check
+?ap_mpm_pod_close
+?ap_mpm_pod_killpg
+?ap_mpm_pod_open
+?ap_mpm_pod_signal
+?ap_mpm_set_accept_lock_mech
+?ap_mpm_set_coredumpdir
+?ap_mpm_set_lockfile
+?ap_mpm_set_max_requests
+?ap_mpm_set_pidfile
+?ap_mpm_set_scoreboard
+?ap_listen_pre_config
+
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } > 2003000
+MODULE=Apache2::Provider
+ ap_register_provider
+#_end_

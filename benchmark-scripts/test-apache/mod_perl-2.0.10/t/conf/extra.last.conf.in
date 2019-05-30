@@ -1,0 +1,139 @@
+PerlModule Apache2::Module
+
+PerlPostConfigRequire @ServerRoot@/conf/post_config_startup.pl
+
+### --------------------------------- ###
+<Perl >
+use Apache::Test ();
+if (Apache::Test::have_module('mod_alias.c')) {
+    push @Alias, ['/perl_sections', '@DocumentRoot@'];
+    $Location{'/perl_sections'} = {
+        'PerlInitHandler' => 'ModPerl::Test::add_config',
+        'AuthType' => 'Basic',
+        'AuthName' => 'PerlSection',
+        'PerlAuthenHandler' => 'TestHooks::authen_basic',
+    };
+}
+</Perl>
+
+<Perl >
+#Test tied %Location
+use TestCommon::TiePerlSection ();
+tie %Location, 'TestCommon::TiePerlSection';
+$Location{'/tied'} = 'test_tied';
+
+$Apache2::PerlSections::Save = 1;
+$Location{'/perl_sections_saved'} = {
+    'AuthName' => 'PerlSection',
+    };
+#This is a comment
+$TestDirective::perl::comments="yes";
+$TestDirective::perl::PACKAGE = __PACKAGE__;
+</Perl>
+
+<Perl >
+$Apache2::PerlSections::Save = 1;
+$TestDirective::perl::filename = __FILE__;
+$TestDirective::perl::dollar_zero = $0;
+$TestDirective::perl::line =  __LINE__;
+</Perl>
+
+#Handle re-entrant <Perl> sections
+<Perl >
+    use File::Spec;
+    my $file = File::Spec->catfile('@ServerRoot@', 'conf', 'perlsection.conf');
+    open my $fh, ">$file" or die "Can't open $file: $!";
+    print $fh join "\n", ('<Perl >', '$TestDirective::perl::Included++;', '</Perl>');
+    close $fh;
+    $Include = $file;
+</Perl>
+
+#Deprecated access to Apache2::ReadConfig:: still works
+<Perl >
+use Apache::Test ();
+if (Apache::Test::have_module('mod_alias.c')) {
+    push @Apache2::ReadConfig::Alias, 
+        ['/perl_sections_readconfig', '@DocumentRoot@'];
+    $Apache2::ReadConfig::Location{'/perl_sections_readconfig'} = {
+        'PerlInitHandler'   => 'ModPerl::Test::add_config',
+        'AuthType'          => 'Basic',
+        'AuthName'          => 'PerlSection',
+        'PerlAuthenHandler' => 'TestHooks::authen_basic',
+    };
+}
+</Perl>
+
+<Perl >
+$TestDirective::perl::base_server = Apache2::PerlSections->server;
+</Perl>
+
+<Perl >
+# make sure that these are set at the earliest possible time
+die '$ENV{MOD_PERL} not set!' unless $ENV{MOD_PERL};
+die '$ENV{MOD_PERL_API_VERSION} not set!'
+    unless $ENV{MOD_PERL_API_VERSION} == 2;
+</Perl>
+
+<VirtualHost perlsections>
+  <Perl >
+    $TestDirective::perl::vhost_server = Apache2::PerlSections->server;
+  </Perl>
+</VirtualHost>
+
+### --------------------------------- ###
+Perl $TestDirective::perl::worked="yes";
+
+### --------------------------------- ###
+=pod
+
+The following line is not seen by Apache
+
+PerlSetVar TestDirective__pod_hidden whatever
+
+=over apache
+
+PerlSetVar TestDirective__pod_over_worked yes
+
+=back
+
+This is some more pod
+
+=cut
+
+PerlSetVar TestDirective__pod_cut_worked yes
+
+#This used to trigger a segfault on startup
+#See http://thread.gmane.org/gmane.comp.apache.mod-perl/22750
+<IfDefine PERL_USEITHREADS>
+<VirtualHost inherit>
+   PerlSwitches +inherit
+   PerlOptions +Parent
+   Perl 1
+</VirtualHost>
+</IfDefine>
+
+#Single-line $PerlConfig
+<Perl>
+if (Apache::Test::have_module('mod_alias.c')) {
+  $PerlConfig = "Alias /perl_sections_perlconfig_scalar @DocumentRoot@";
+}
+</Perl>
+
+#Multi-line $PerlConfig
+<Perl>
+if (Apache::Test::have_module('mod_alias.c')) {
+  $PerlConfig = "Alias /perl_sections_perlconfig_scalar1 @DocumentRoot@
+                 Alias /perl_sections_perlconfig_scalar2 @DocumentRoot@
+                ";
+}
+</Perl>
+
+#@PerlConfig
+<Perl>
+if (Apache::Test::have_module('mod_alias.c')) {
+  @PerlConfig = ("Alias /perl_sections_perlconfig_array1 @DocumentRoot@",
+                 "Alias /perl_sections_perlconfig_array2 @DocumentRoot@",
+                );
+}
+</Perl>
+

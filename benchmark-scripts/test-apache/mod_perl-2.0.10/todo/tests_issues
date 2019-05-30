@@ -1,0 +1,25 @@
+######################################
+# test suite issues and improvements #
+######################################
+
+- As the number of tests grows it takes longer to start the test
+  suite. Under threaded mpms it can take a very long time on a loaded
+  machine (10 minutes and more). At the moment we keep on bumping the
+  startup timeout, but there is always someone with a slower/more
+  loaded machine, for whom this timeout is too low, and the tests
+  suite misleadingly fails to start. So may be we must start thinking
+  to split the existing test suite into several smaller suites (for
+  example we already have a separate ModPerl-Registry test suite). If
+  we do perl/ithreads* and any tests definging +Clone/+Parent tests
+  should definitely be moved out from the main suite, as they cause
+  the biggest overhead (due to perl_clone).
+
+- TestDirective::perlloadmodule6 should be the first perlloadmodule
+  test to run, so we can test how mod_perl starts from vhost (there
+  was a segfault before). But since other tests define PerlSwitches
+  TestDirective::perlloadmodule6 must be configured afer them. so if
+  we introduce new tests suites, this test needs to be moved there
+  (may be its own test suite or co-existing with other tests which
+  don't use PerlSwitches and trigger early server startup.
+
+

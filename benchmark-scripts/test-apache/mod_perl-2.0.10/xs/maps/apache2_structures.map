@@ -1,0 +1,336 @@
+##########  Apache structures  ##########
+
+# for mapping see %ModPerl::MapUtil::disabled_map in
+# lib/ModPerl/MapUtil.pm
+# the mapping happens in lib/ModPerl/StructureMap.pm: sub parse
+#    '<' => 'auto-generated but gives only a read-only access'
+#    '&' => 'RDWR accessor to a char* field, supporting undef arg'
+#    '$' => 'RONLY accessor, with WRITE accessor before child_init'
+#    '%' => like $, but makes sure that for the write accessor the
+#           original perl scalar can change or go away w/o affecting
+#           the object
+# my %disabled_map = (
+#     '!' => 'disabled or not yet implemented',
+#     '~' => 'implemented but not auto-generated',
+#     '-' => 'likely never be available to Perl',
+#     '>' => '"private" to apache',
+#     '?' => 'unclassified',
+# );
+
+IGNORE: ap_LINK_ ap_filter_func ap_bucket_error ap_listen_rec core_net_rec
+
+<request_rec>
+<  pool
+<  connection
+<  server
+<  next
+<  prev
+<  main
+   the_request
+   assbackwards
+~  proxyreq
+<  header_only
+<  protocol
+<  proto_num
+   hostname
+<  request_time
+   status_line
+   status
+   method
+   method_number
+   allowed
+   allowed_xmethods
+   allowed_methods
+>  sent_bodyct
+   bytes_sent
+   mtime
+>  chunked
+>  range
+>  clength
+-  remaining
+>  read_length
+>  read_body
+>  read_chunked
+>  expecting_100
+   headers_in
+   headers_out
+   err_headers_out
+~  subprocess_env
+   notes
+~  content_type
+~  handler
+   content_encoding
+~  content_languages
+>  vlist_validator
+   user
+   ap_auth_type
+~  no_cache
+   no_local_copy
+<  unparsed_uri
+   uri
+   filename
+-  canonical_filename
+   path_info
+   args
+~  finfo
+~  parsed_uri
+   used_path_info
+<  per_dir_config
+<  request_config
+!  htaccess
+   output_filters
+   input_filters
+   proto_output_filters
+   proto_input_filters
+?  eos_sent
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } > 2003000
+<  useragent_addr
+   useragent_ip
+#_end_
+</request_rec>
+
+<server_rec>
+<  process
+<  next
+-  defn_name
+-  defn_line_number
+%  server_admin
+%  server_hostname
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } > 2003000
+%  server_scheme
+#_end_
+$  port
+%  error_fname
+$  error_log
+$  loglevel
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } > 2003000
+~  is_virtual
+#_else_
+<  is_virtual
+#_end_
+<  module_config
+<  lookup_defaults
+<  addrs
+$  timeout
+$  keep_alive_timeout
+$  keep_alive_max
+$  keep_alive
+%  path
+-  pathlen
+%  names
+%  wild_names
+$  limit_req_line
+$  limit_req_fieldsize
+$  limit_req_fields
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } > 2003000
+   context
+#_end_
+</server_rec>
+
+<conn_rec>
+<  pool
+<  base_server
+>  vhost_lookup_data
+<  local_addr
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } > 2003000
+<  client_addr
+   client_ip
+#_end_
+<  local_ip
+<  local_host
+<  remote_addr
+   remote_ip
+<  remote_host
+-  remote_logname
+<  aborted
+   keepalive
+?  double_reverse
+   keepalives
+<  id
+<  conn_config
+   notes
+   input_filters
+   output_filters
+<  sbh
+<  bucket_alloc
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } > 2003000
+<  log
+<  log_id
+#_end_
+</conn_rec>
+
+!<server_addr_rec>
+   next
+   host_addr
+   host_port
+   virthost
+</server_addr_rec>
+
+<module>
+~  version
+~  minor_version
+<  module_index
+<  name
+!  dynamic_load_handle
+<  next
+>  magic
+-  rewrite_args
+>  create_dir_config
+>  merge_dir_config
+>  create_server_config
+>  merge_server_config
+<  cmds
+>  register_hooks
+</module>
+
+<process_rec>
+<  pool
+<  pconf
+-  argc
+!  argv
+<  short_name
+</process_rec>
+
+<command_rec>
+<  name
+!  func
+!  cmd_data
+<  req_override
+<  args_how
+<  errmsg
+</command_rec>
+
+<ap_filter_rec_t>
+<  name
+-  filter_func
+!  ftype
+-  next
+</ap_filter_rec_t>
+
+<ap_filter_t>
+<  frec
+~  ctx
+   next
+   r
+   c
+</ap_filter_t>
+
+!<ap_method_list_t>
+   method_mask
+   method_list
+</ap_method_list_t>
+
+<ap_directive_t>
+<  directive
+<  args
+<  next
+<  first_child
+<  parent
+!  data
+<  filename
+<  line_num
+</ap_directive_t>
+
+!<ap_configfile_t>
+   getch
+   getstr
+   close
+   param
+   name
+   line_number
+</ap_configfile_t>
+
+!<ap_unix_identity_t>
+   uid
+   gid
+   userdir
+</ap_unix_identity_t>
+
+!<unixd_config_rec>
+   user_name
+   user_id
+   group_id
+   suexec_enabled
+</unixd_config_rec>
+
+!<htaccess_result>
+   dir
+   override
+   htaccess
+   next
+</htaccess_result>
+
+!<piped_log>
+   p
+   fds
+   program
+   pid
+</piped_log>
+
+<cmd_parms>
+-  info
+<  override
+!  limited
+!  limited_xmethods
+!  xlimited
+!  config_file
+<  directive
+<  pool
+<  temp_pool
+<  server
+<  path
+<  cmd
+<  context
+!  err_directive
+-  override_opts
+</cmd_parms>
+
+!<ap_mgmt_item_t>
+   description
+   name
+   vtype
+   v
+</ap_mgmt_item_t>
+
+!<ap_mgmt_value>
+   s_value
+   i_value
+   h_value
+</ap_mgmt_value>
+
+!<ap_pod_t>
+   pod_in
+   pod_out
+   p
+   sa
+</ap_pod_t>

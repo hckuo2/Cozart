@@ -1,0 +1,81 @@
+This doc explains how to create/work/re-merge svn branches
+
+#######################################
+### PREREQUISITE                    ###
+#######################################
+
+You need to have svnmerge installed and working
+before you can proceed with rest of the instructions.
+
+You can find it here:
+
+http://www.orcaware.com/svn/wiki/Svnmerge.py
+
+#######################################
+### make a new branch               ###
+#######################################
+
+we will create a branch mybranch
+
+branch:
+
+  svn copy https://svn.apache.org/repos/asf/perl/modperl/trunk \
+    https://svn.apache.org/repos/asf/perl/modperl/branches/mybranch \
+    -m "creating mybranch"
+
+check out:
+
+  svn co https://svn.apache.org/repos/asf/perl/modperl/branches/mybranch
+
+change externals to point to the new A-T branch (if one was done)
+
+  svn propedit svn:externals .
+
+initialize svnmerge tracking in the branch (if you plan to pull trunk/ changes into the branch)
+
+mybranch/ $> svnmerge init
+property 'svnmerge-integrated' set on '.'
+mybranch/ $> svn ci -F svnmerge-commit-message.txt 
+
+
+initialize svnmerge tracking on the trunk:
+
+trunk/ $> svnmerge init https://svn.apache.org/repos/asf/perl/modperl/branches/mybranch
+property 'svnmerge-integrated' set on '.'
+mybranch/ $> svn ci -F svnmerge-commit-message.txt
+
+
+##############################################
+### merging changes from branch to brahch  ###
+##############################################
+
+Work from a clean checkout of the branch you want to merge *to*
+
+Check on the availability of changes to merge
+
+$> svnmerge avail -b -l
+
+------------------------------------------------------------------------
+r584362 | gozer | 2007-10-12 21:00:47 -0700 (Fri, 12 Oct 2007) | 1 line
+Changed paths:
+   A /perl/modperl/branches/mybranch (from /perl/modperl/trunk:584361)
+
+creating mybranch
+------------------------------------------------------------------------
+r584363 | gozer | 2007-10-12 21:05:32 -0700 (Fri, 12 Oct 2007) | 3 lines
+Changed paths:
+   M /perl/modperl/branches/mybranch
+
+Initialized merge tracking via "svnmerge" with revisions "1-584361" from 
+https://svn.apache.org/repos/asf/perl/modperl/trunk
+
+Then merge the ones you want to merge
+
+$> svnmerge -r 584362-584363
+
+review the changes, fix conflicts, etc
+
+Check in the merged version
+
+$> svn ci -F svnmerge-commit-message.txt
+

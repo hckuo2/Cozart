@@ -1,0 +1,73 @@
+=head1 NAME
+
+Preventive Measures for Performance Enhancement
+
+=head1 Description
+
+This chapter explains what should or should not be done in order to
+keep the performance high
+
+=head1 Memory Leakage
+
+L<Memory leakage in 1.0 docs|docs::1.0::guide::performance/Memory_leakage>.
+
+=head2 Proper Memory Pools Usage
+
+Several mod_perl 2.0 APIs are using Apache memory pools for memory
+management. Mainly because the underlying C API requires that. So
+every time Apache needs to allocate memory it allocates it using the
+pool object that is passed as an argument. Apache doesn't frees
+allocated memory, this happens automatically when a pool ends its
+life.
+
+Different pools have different life lengths. Request pools
+(C<$r-E<gt>pool>) are destroyed at the end of each request. Connection
+pools (C<$c-E<gt>pool>) are destroyed when the connection is
+closed. Server pools C<$s-E<gt>pool>) and the global pools (accessible
+in the server startup phases, like C<PerlOpenLogsHandler> handlers)
+are destroyed only when the server exits.
+
+Therefore always use the pool of the shortest possible life if you
+can. Never use server pools during request, when you can use a request
+pool. For example inside an HTTP handler, don't call:
+
+  my $dir = Apache2::ServerUtil::server_root_relative($s->process->pool, 'conf');
+
+when you should call:
+
+  my $dir = Apache2::ServerUtil::server_root_relative($r->pool, 'conf');
+
+Of course on special occasions, you may want to have something
+allocated off the server pool if you want the allocated memory to
+survive through several subsequent requests or connections. But this
+is normally doesn't apply to the core mod_perl 2.0, but rather for 3rd
+party extensions.
+
+
+=head1 Maintainers
+
+Maintainer is the person(s) you should contact with updates,
+corrections and patches.
+
+=over
+
+=item *
+
+Stas Bekman [http://stason.org/]
+
+=back
+
+=head1 Authors
+
+=over
+
+=item *
+
+Stas Bekman [http://stason.org/]
+
+=back
+
+Only the major authors are listed above. For contributors see the
+Changes file.
+
+=cut

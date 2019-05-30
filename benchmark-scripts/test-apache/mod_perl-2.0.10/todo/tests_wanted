@@ -1,0 +1,17 @@
+#################
+# wanted tests #
+#################
+
+- test that we properly set the error-notes tably entry on 
+  HTTP_INTERNAL_SERVER_ERROR (is sub-request check REDIRECT_ERROR_NOTES)
+  o test with plain handlers
+  o test with registry (as we set it twice? once in registry and once
+    more in the handlers?)
+
+  mp1 has some sort of related test in t/net/perl/server_error.pl:
+  my $note = $r->prev->notes('error-notes')
+
+- We can put Apache::Scoreboard to a good use for Apache::Test. For
+  example we can test with it Apache::SizeLimit or
+  Apache::Watchdog::RunAway, since both kill processes, and we need to
+  make sure that the process went away.

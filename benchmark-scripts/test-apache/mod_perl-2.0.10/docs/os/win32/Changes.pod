@@ -1,0 +1,22 @@
+=head1 NAME
+
+CHANGES
+
+=head1 Description
+
+Refer to this document to learn what changes were made to the
+documents, since you've read these last time.
+
+The most recent changes are listed first.
+
+=head1 Thu May 30 16:44:02  SGT 2002
+
+* split modperl2 into config and install
+  [Randy Kobes E<lt>randy@theoryx5.uwinnipeg.caE<gt>]
+
+=head1 Thu May 30 12:20:02  SGT 2002
+
+* win32::modperl2 initial docs
+  submitted by Randy Kobes E<lt>randy@theoryx5.uwinnipeg.caE<gt>
+
+=cut

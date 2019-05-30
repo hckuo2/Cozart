@@ -1,0 +1,92 @@
+# This gdb startup script allows to break at the very first invocation
+# of mod_perl initialization, just after it was loaded. When the
+# perl_module is loaded, and its pointer struct is added via
+# ap_add_module(), the first hook that will be called is
+# modperl_register_hooks().
+#
+# Invoke as:
+# gdb -command=.debug-modperl-register
+#
+# see ADJUST notes for things that may need to be adjusted
+
+define sharedap
+    sharedlibrary apr
+    sharedlibrary aprutil
+    #sharedlibrary mod_ssl.so
+end
+
+define sharedperl
+    sharedlibrary libperl
+end
+
+### Run ###
+
+# ADJUST: the path to the httpd executable if needed
+file ~/httpd/prefork/bin/httpd
+handle SIGPIPE nostop
+handle SIGPIPE pass
+set auto-solib-add 0
+
+tbreak main
+
+# assuming that mod_dso is compiled in
+b load_module 
+
+
+# ADJUST: the httpd.conf file's path if needed
+# ADJUST: add -DPERL_USEITHREADS to debug threaded mpms
+run -d `pwd`/t -f `pwd`/t/conf/httpd.conf \
+-DONE_PROCESS -DNO_DETACH -DAPACHE2
+
+# skip over 'tbreak main'
+continue
+
+# In order to set the breakpoint in mod_perl.so, we need to get to
+# the point where it's loaded.
+#
+# With static mod_perl, the bp can be set right away
+#
+
+# With DSO mod_perl, mod_dso's load_module() loads the mod_perl.so
+# object and it immediately calls ap_add_module(), which calls
+# modperl_register_hooks(). So if we want to bp at the latter, we need
+# to stop at load_module(), set the 'bp modperl_register_hooks' and
+# then continue.
+
+# Assuming that 'LoadModule perl_module' is the first LoadModule
+# directive in httpd.conf, you need just one 'continue' after
+# 'ap_add_module'. If it's not the first one, you need to add as many
+# 'continue' commands as the number of 'LoadModule foo' before
+# perl_module, but before setting the 'ap_add_module' bp.
+#
+# If mod_perl is compiled statically, everything is already preloaded,
+# so you can set modperl_* the breakpoints right away
+
+b ap_add_module
+continue
+
+sharedlibrary mod_perl
+b modperl_register_hooks
+continue
+
+#b modperl_hook_init
+#b modperl_config_srv_create
+#b modperl_startup
+#b modperl_init_vhost
+#b modperl_dir_config
+#b modperl_cmd_load_module
+#modperl_config_apply_PerlModule
+
+# ADJUST: uncomment next line to debug threaded mpms
+#sharedlibrary libpthread
+
+# ADJUST: uncomment if you need to step through the code in apr libs
+#sharedap
+
+# ADJUST: uncomment if you need to step through the code in perlib
+#sharedperl
+
+
+
+
+

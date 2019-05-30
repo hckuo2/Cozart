@@ -1,0 +1,17 @@
+.*CVS.*
+^Makefile$
+\.\#.*
+~$
+MANIFEST.SKIP
+.*\.tar\.gz
+.bak$
+^blib/
+.*\.svn.*
+\#.*
+t/TEST.*
+t/apache.*
+t/conf.*
+t/htdocs.*
+t/logs.*
+t/response.*
+RELEASE

@@ -1,0 +1,236 @@
+=head1 NAME
+
+Apache2::Status - Embedded interpreter status information
+
+
+
+
+=head1 Synopsis
+
+  <Location /perl-status>
+
+      # disallow public access
+      Order Deny, Allow
+      Deny from all
+      Allow from 127.0.0.1
+
+      SetHandler modperl
+      PerlOptions +GlobalRequest
+      PerlResponseHandler Apache2::Status
+  </Location>
+
+  or
+
+  <Location /perl-status>
+
+      # disallow public access
+      Order Deny, Allow
+      Deny from all
+      Allow from 127.0.0.1
+
+      SetHandler perl-script
+      PerlResponseHandler Apache2::Status
+  </Location>
+
+
+
+
+=head1 Description
+
+The C<Apache2::Status> module provides some information
+about the status of the Perl interpreter embedded in the server.
+
+Configure like so:
+
+  <Location /perl-status>
+
+      # disallow public access
+      Order Deny, Allow
+      Deny from all
+      Allow from 127.0.0.1
+
+      SetHandler modperl
+      PerlOptions +GlobalRequest
+      PerlResponseHandler Apache2::Status
+  </Location>
+
+Notice that under the
+C<L<"modperl"|docs::2.0::user::config::config/C_modperl_>> core
+handler the I<Environment> menu option will show only the environment
+under that handler. To see the environment seen by handlers running
+under the
+C<L<"perl-script"|docs::2.0::user::config::config/C_perl_script_>>
+core handler, configure C<Apache2::Status> as:
+
+  <Location /perl-status>
+
+      # disallow public access
+      Order Deny, Allow
+      Deny from all
+      Allow from 127.0.0.1
+
+      SetHandler perl-script
+      PerlResponseHandler Apache2::Status
+  </Location>
+
+Other modules can "plugin" a menu item like so:
+
+  require Apache2::Module;
+  Apache2::Status->menu_item(
+      'DBI' => "DBI connections", #item for Apache::DBI module
+      sub {
+          my ($r, $q) = @_; #request and CGI objects
+          my (@strings);
+          push @strings,  "blobs of html";
+          return \@strings;     #return an array ref
+      }
+  ) if Apache2::Module::loaded('Apache2::Status');
+
+B<WARNING>: C<Apache2::Status> must be loaded before these modules via
+the C<PerlModule> or C<PerlRequire> directives (or from
+F<startup.pl>).
+
+A very common setup might be:
+  Perl Module B::TerseSize
+
+  <Location /perl-status>
+      SetHandler perl-script
+      PerlResponseHandler Apache2::Status
+      PerlSetVar StatusOptionsAll On
+      PerlSetVar StatusDeparseOptions "-p -sC"
+  </Location>
+
+due to the implementation of Apache2::Status::noh_fileline in B::TerseSize,
+you must load B::TerseSize first.
+
+=head1 Options
+
+=head2 C<StatusOptionsAll>
+
+This single directive will enable all of the options described below.
+
+  PerlSetVar StatusOptionsAll On
+
+=head2 C<StatusDumper>
+
+When browsing symbol tables, the values of arrays, hashes and scalars
+can be viewed via C<Data::Dumper> if this configuration variable is
+set to C<On>:
+
+  PerlSetVar StatusDumper On
+
+=head2 C<StatusPeek>
+
+With this option C<On> and the C<Apache::Peek> module installed,
+functions and variables can be viewed ala C<Devel::Peek> style:
+
+  PerlSetVar StatusPeek On
+
+=head2 C<StatusLexInfo>
+
+With this option C<On> and the C<B::LexInfo> module installed,
+subroutine lexical variable information can be viewed.
+
+  PerlSetVar StatusLexInfo On
+
+=head2 C<StatusDeparse>
+
+With this option C<On> subroutines can be "deparsed".
+
+  PerlSetVar StatusDeparse On
+
+Options can be passed to C<B::Deparse::new> like so:
+
+  PerlSetVar StatusDeparseOptions "-p -sC"
+
+See the C<B::Deparse> manpage for details.
+
+=head2 C<StatusTerse>
+
+With this option C<On>, text-based op tree graphs of subroutines can
+be displayed, thanks to C<B::Terse>.
+
+  PerlSetVar StatusTerse On
+
+=head2 C<StatusTerseSize>
+
+With this option C<On> and the C<B::TerseSize> module installed,
+text-based op tree graphs of subroutines and their size can be
+displayed.  See the C<B::TerseSize> docs for more info.
+
+  PerlSetVar StatusTerseSize On
+
+=head2 C<StatusTerseSizeMainSummary>
+
+With this option C<On> and the C<B::TerseSize> module installed, a
+I<"Memory Usage"> will be added to the C<Apache2::Status> main menu.
+This option is disabled by default, as it can be rather cpu intensive
+to summarize memory usage for the entire server.  It is strongly
+suggested that this option only be used with a development server
+running in C<-X> mode, as the results will be cached.
+
+  PerlSetVar StatusTerseSizeMainSummary On
+
+=head2 C<StatusGraph>
+
+When C<StatusDumper> is enabled, another link I<"OP Tree Graph"> will
+be present with the dump if this configuration variable is set to
+C<On>:
+
+  PerlSetVar StatusGraph
+
+This requires the B module (part of the Perl compiler kit) and
+C<B::Graph> (version 0.03 or higher) module to be installed along with
+the C<dot> program.
+
+Dot is part of the graph visualization toolkit from AT&T:
+http://www.graphviz.org/.
+
+B<WARNING>: Some graphs may produce very large images, some graphs may
+produce no image if C<B::Graph>'s output is incorrect.
+
+=head2 C<Dot>
+
+Location of the dot program for C<StatusGraph>,
+if other than I</usr/bin> or I</usr/local/bin>
+
+=head2 C<GraphDir>
+
+Directory where C<StatusGraph> should write it's temporary image
+files.  Default is C<$ServerRoot/logs/b_graphs>.
+
+
+
+
+
+
+=head1 Prerequisites
+
+The C<Devel::Symdump> module, version C<2.00> or higher.
+
+Other optional functionality requirements: C<B::Deparse> - 0.59,
+C<B::Fathom> - 0.05, C<C<B::Graph>> - 0.03.
+
+
+
+=head1 Copyright
+
+mod_perl 2.0 and its core modules are copyrighted under
+The Apache Software License, Version 2.0.
+
+
+
+
+=head1 See Also
+
+perl(1), Apache(3), Devel::Symdump(3), Data::Dumper(3), B(3),
+C<B::Graph>(3), L<mod_perl 2.0 documentation|docs::2.0::index>.
+
+
+
+
+=head1 Authors
+
+Doug MacEachern with contributions from Stas Bekman
+
+=cut

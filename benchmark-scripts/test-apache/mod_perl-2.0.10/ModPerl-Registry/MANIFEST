@@ -1,0 +1,19 @@
+MANIFEST			This list of files
+Makefile.PL
+README
+TODO
+lib/ModPerl/PerlRun.pm
+lib/ModPerl/Registry.pm
+lib/ModPerl/RegistryBB.pm
+lib/ModPerl/RegistryCooker.pm
+t/TEST.PL
+t/basic.t
+t/closure.t
+t/cgi-bin/basic.pl
+t/cgi-bin/closure.pl
+t/cgi-bin/env.pl
+t/cgi-bin/local-conf.pl
+t/cgi-bin/not_executable.pl
+t/cgi-bin/require.pl
+t/conf/extra.conf.in
+

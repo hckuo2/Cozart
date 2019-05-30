@@ -1,0 +1,101 @@
+#!C:/Perl/bin/perl
+###################################################################
+# apxs, apr-config, and apu-config are Apache utilities used      #
+# to both get certain configuration information and also to       #
+# assist in building Apache modules. These utilities have not     #
+# yet been officially ported to Win32. The following will fetch   #
+# and install a development version of these scripts which can    #
+# be used in both mod_perl 2 and Apache C modules.                #
+#                                                                 #
+# Please report problems in installing or using these utilties to #
+# Randy Kobes <randy@theoryx5.uwinnipeg.ca>                       #
+###################################################################
+use strict;
+use warnings;
+use Getopt::Long;
+use File::Spec::Functions;
+use File::Path;
+use ExtUtils::MakeMaker qw(prompt);
+use Cwd;
+
+die "This is intended for Win32" unless ($^O =~ /Win32/i);
+
+my $prefix;
+GetOptions( 'with-apache2=s' => \$prefix);
+unless ($prefix and -d $prefix) {
+    die << 'END';
+
+I could not determine a valid Apache2 directory. Please
+run this script specifying the option
+   --with-apache2=/Path/to/Apache2
+where /Path/to/Apache2 is the location of your installed
+Apache2 top-level directory.
+
+END
+}
+
+exit 0 if (-e catfile($prefix, 'bin', 'apxs.bat'));
+
+print << 'END';
+
+----------------------------------------------------------------------
+I could not find an apxs utility, which will be used in certain parts 
+of the build, if present. This utility (and the apr-config and 
+apu-config utilities) have not yet been ported to Apache2 on Win32, 
+but a development port is available. You can either
+
+- ignore installing apxs by answering "no" at the prompt below
+  (mod_perl will still build),
+- install apxs by answering "yes" at the prompt below,
+- quit now, run the "fetch_win32_apxs.pl" script in the build/ directory 
+  to fetch and install the utilities, and then rebuild mod_perl,
+- quit now, and from http://apache.org/dist/perl/win32-bin/ grab 
+  apxs_win32.tar.gz; when unpacked, this contains a README explaining 
+  how to install the utilities. Afterwards, rebuild mod_perl.
+----------------------------------------------------------------------
+
+END
+
+my $ans = prompt('Install apxs now?', 'yes');
+exit 0 unless $ans =~ /^y/i;
+
+my $prog;
+for my $trial(qw(Apache.exe httpd.exe)) {
+    next unless -e File::Spec->catfile($prefix, 'bin', $trial);
+    $prog = $trial;
+    last;
+}
+die "Could not determine the Apache2 binary name" unless $prog;
+
+require LWP::Simple;
+LWP::Simple->import(qw(is_success getstore));
+
+my $file = 'apxs_win32.tar.gz';
+unless (-e $file) {
+    my $remote = 'http://apache.org/dist/perl/win32-bin/' . $file;
+    print "Fetching $remote ... ";
+    die "Download of $remote failed" 
+        unless (is_success(getstore($remote, $file)));
+    print " done!\n";
+}
+
+require Archive::Tar;
+my $cwd = getcwd;
+my $dir = 'apxs';
+my $arc = Archive::Tar->new($file, 1);
+$arc->extract($arc->list_files());
+die "Unpacking $file failed" unless (-d $dir);
+
+print "chdir $dir\n";
+chdir $dir or die "chdir to $dir failed: $!";
+
+my @args = ($^X, 'Configure.pl',
+	    "--with-apache2=$prefix",
+	    "--with-apache-prog=$prog");
+print "@args\n";
+system(@args) == 0 or die "system @args failed: $?";
+
+chdir $cwd;
+#rmtree($dir, 1, 1) or warn "rmtree of $dir failed: $!";
+#print "unlink $file\n\n";
+#unlink $file or warn "unlink of $file failed: $!";

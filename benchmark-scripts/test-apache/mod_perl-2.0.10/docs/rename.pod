@@ -1,0 +1,197 @@
+=head1 NAME
+
+mod_perl 2.0 renaming
+
+=head1 Description
+
+This document discusses the effects of the decision to rename
+parts of the mod_perl API.
+
+=head1 Synopsis
+
+During a sequence of release candidates leading up to
+the official release of mod_perl 2, 
+in late December, 2004 there was considerable discussion
+regarding the choice of namespaces for the 2.0 API.
+The main concern expressed was that some of the
+C<Apache::*> modules used in mod_perl 2 had the same names
+as those in mod_perl 1. After a lively and, at times,
+heated debate, a proposal was made to rename parts of
+the mod_perl 2 API - see the thread at
+L<http://marc.theaimsgroup.com/?t=111135037100002&r=1&w=2>.
+This proposal was subsequently voted on and then adopted.
+
+=head1 Changes
+
+The main changes involved in this renaming are as follows.
+
+=over
+
+=item *
+
+Rename all C<Apache::*> modules to C<Apache2::*>, save for
+the following exceptions:
+
+=over 4
+
+=item *
+
+The C<Apache::Test*> modules in the C<Apache-Test> distribution
+are unaffected by this rename.
+
+=item *
+
+Constants under the C<Apache::*> namespace,
+such as C<Apache::OK>, are now called as C<Apache2::Const::*>
+(for example, C<Apache2::Const::OK>).
+
+=item *
+
+Constants under the C<APR::*> namespace,
+such as C<APR::SUCCESS>, are now called as C<APR::Const::*>
+(for example, C<APR::Const::SUCCESS>).
+
+=back
+
+=item *
+
+C<Apache-E<gt>request()> has been renamed to 
+C<Apache2::RequestUtil-E<gt>request()>.
+
+=item *
+
+C<Apache-E<gt>server()> has been renamed to 
+C<Apache2::ServerUtil-E<gt>server()>.
+
+=item *
+
+Rename C<mod_perl.pm> to C<mod_perl2.pm>
+
+=item *
+
+Discontinue the practice of installing mod_perl in a
+relative F<Apache2> subdirectory, so that the use
+of C<Apache2.pm> to adjust C<@INC> is no longer needed.
+
+=back
+
+Concurrent with these changes, a decision was also made to
+refuse to install mod_perl 2 in the same Perl tree as any
+installed mod_perl 2 package of version prior to 1.999_22.
+
+=head1 Effects
+
+The mod_perl developers did not take lightly the effects of
+changing the API at such a late stage in the development cycle.
+For most users the change to the new API should be relatively
+straightforward:
+
+=over
+
+=item *
+
+Before installing mod_perl 2, either remove an earlier
+mod_perl 2 installation (prior to 1.999022), or else choose
+to install the new version in a different area. To remove
+enough of a prior installation of mod_perl 2 in order to
+satisfy this requirement, one can do, on Unix,
+
+  % find /usr/lib/perl5 -name 'Apache2*' -exec rm -rf {} \;
+
+where F</usr/lib/perl5> is the top-level root of your Perl tree.
+Note that this will also remove any 3rd party Apache modules
+installed under an F<Apache2> subdirectory. In many situations 
+you would want to do this, as such modules will need porting to the
+new API. However, if there are modules under this location
+that you want to keep, you can use
+
+  % find /usr/lib/perl5 -name 'Apache2*' -exec ls -lR {} \;
+
+to list the files under this tree.
+
+For Win32 ppm users, the command
+
+  ppm> remove mod_perl
+
+within the ppm shell will remove an installed C<mod_perl>
+ppm package.
+
+=item *
+
+If building mod_perl 2 from source, the C<Makefile.PL> argument
+of C<MP_INST_APACHE2> is no longer supported.
+
+=item *
+
+Replace the use of
+
+    use Apache::SomeCoreModule;
+
+in a script or module by
+
+    use Apache2::SomeCoreModule;
+
+Similarly, an Apache directive
+
+    PerlModule Apache::SomeCoreModule
+
+in an F<httpd.conf> file should be replaced by
+
+    PerlModule Apache2::SomeCoreModule
+
+and C<mod_perl> should be replaced by C<mod_perl2> 
+in the same places.
+
+Note that "core modules" are defined as those that ship with the 
+mod_perl 2 distribution.  Other CPAN modules in the C<Apache::> namespace 
+may not follow the same conventions.
+
+=item *
+
+Replace the use of constants C<Apache::*> by C<Apache2::Const::*>
+and C<APR::*> by C<APR::Const::*>.
+
+=item *
+
+Remove any occurrences of
+
+    use Apache2;
+
+in a script or module, as well as
+
+    PerlModule Apache2
+
+in an Apache configuration file.
+
+=item *
+
+In a script or module, replace
+C<Apache-E<gt>request()> by C<Apache2::RequestUtil-E<gt>request()>
+and C<Apache-E<gt>server()> by C<Apache2::ServerUtil-E<gt>server()>.
+
+=item *
+
+If using C<CGI.pm> you will need to upgrade to version 3.11 - versions
+3.10 and older contain bugs and versions 3.07 and older do not support
+support the new mod_perl API.  you can get
+C<CGI.pm> from L<http://search.cpan.org/dist/CGI.pm/>.
+
+=back
+
+Beginning with mod_perl-1.999_22, an environment variable
+C<$ENV{MOD_PERL_API_VERSION}> has been added to specify
+which mod_perl version is being used.
+
+=head1 See Also
+
+The directions for 
+L<installing mod_perl 2.0 |docs::2.0::user::install::install>.
+Help is also available through the archives of and subscribing to
+the L<mod_perl mailing list|maillist::modperl>.
+
+=head1 Authors
+
+L<The mod_perl development team and numerous
+contributors|about::contributors::people>.
+
+=cut

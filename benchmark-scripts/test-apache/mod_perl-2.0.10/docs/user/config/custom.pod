@@ -1,0 +1,1412 @@
+=head1 NAME
+
+Apache Server Configuration Customization in Perl
+
+=head1 Description
+
+This chapter explains how to create custom Apache configuration
+directives in Perl.
+
+=head1 Incentives
+
+mod_perl provides several ways to pass custom configuration
+information to the modules.
+
+The simplest way to pass custom information from the configuration
+file to the Perl module is to use the
+C<L<PerlSetVar|docs::2.0::user::config::config/C_PerlSetVar_>> and
+C<L<PerlAddVar|docs::2.0::user::config::config/C_PerlAddVar_>>
+directives. For example:
+
+  PerlSetVar Secret "Matrix is us"
+
+and in the mod_perl code this value can be retrieved as:
+
+  my $secret = $r->dir_config("Secret");
+
+Another alternative is to add custom configuration directives. There
+are several reasons for choosing this approach:
+
+=over
+
+=item *
+
+When the expected value is not a simple argument, but must be supplied
+using a certain syntax, Apache can verify at startup time that this
+syntax is valid and abort the server start up if the syntax is
+invalid.
+
+=item *
+
+Custom configuration directives are faster because their values are
+parsed at the startup time, whereas C<PerlSetVar> and C<PerlAddVar>
+values are parsed at the request time.
+
+=item *
+
+It's possible that some other modules have accidentally chosen to use
+the same key names but for absolutely different needs. So the two now
+can't be used together. Of course this collision can be avoided if a
+unique to your module prefix is used in the key names. For example:
+
+    PerlSetVar ApacheFooSecret "Matrix is us"
+
+=back
+
+Finally, modules can be configured in pure Perl using
+C<L<E<lt>PerlE<gt>
+Sections|docs::2.0::user::config::config/C_E_lt_PerlE_gt___Sections>>
+or L<a startup
+file|docs::2.0::user::handlers::server/Startup_File>, by simply
+modifying the global variables in the module's package. This approach
+could be undesirable because it requires a use of globals, which we
+all try to reduce. A bigger problem with this approach is that you
+can't have different settings for different sections of the site
+(since there is only one version of a global variable), something that
+the previous two approaches easily achieve.
+
+=head1 Creating and Using Custom Configuration Directives
+
+In mod_perl 2.0, adding new configuration directives is a piece of
+cake, because it requires no XS code and I<Makefile.PL>, needed in
+case of mod_perl 1.0. In mod_perl 2.0, custom directives are
+implemented in pure Perl.
+
+Here is a very basic module that declares two new configuration
+directives: C<MyParameter>, which accepts one or more arguments, and
+C<MyOtherParameter> which accepts a single argument. C<MyParameter>
+validates that its arguments are valid strings.
+
+  #file:MyApache2/MyParameters.pm
+  #-----------------------------
+  package MyApache2::MyParameters;
+  
+  use strict;
+  use warnings FATAL => 'all';
+  
+  use Apache::Test;
+  use Apache::TestUtil;
+  
+  use Apache2::Const -compile => qw(OR_ALL ITERATE);
+  
+  use Apache2::CmdParms ();
+  use Apache2::Module ();
+  use Apache2::Directive ();
+  
+  my @directives = (
+      {
+       name         => 'MyParameter',
+       func         => __PACKAGE__ . '::MyParameter',
+       req_override => Apache2::Const::OR_ALL,
+       args_how     => Apache2::Const::ITERATE,
+       errmsg       => 'MyParameter Entry1 [Entry2 ... [EntryN]]',
+      },
+      {
+       name         => 'MyOtherParameter',
+      },
+  );
+  Apache2::Module::add(__PACKAGE__, \@directives);
+  
+  sub MyParameter {
+      my ($self, $parms, @args) = @_;
+      $self->{MyParameter} = \@args;
+  
+      # validate that the arguments are strings
+      for (@args) {
+          unless (/^\w+$/) {
+              my $directive = $parms->directive;
+              die sprintf "error: MyParameter at %s:%d expects " .
+                  "string arguments: ('$_' is not a string)\n",
+                  $directive->filename, $directive->line_num;
+          }
+      }
+  }
+  1;
+
+And here is how to use it in I<httpd.conf>:
+
+  # first load the module so Apache will recognize the new directives
+  PerlLoadModule MyApache2::MyParameters
+  
+  MyParameter one two three
+  MyOtherParameter Foo
+  <Location /perl>
+    MyParameter eleven twenty
+    MyOtherParameter Bar
+  </Location>
+
+The following sections discuss this and more advanced modules in
+detail.
+
+A minimal configuration module is comprised of three groups of elements:
+
+=over
+
+=item * An array C<L<@directives|/C__CMDS_>> for declaring the new
+directives and their behavior.
+
+=item * A call to
+C<L<Apache2::Module::add()|docs::2.0::api::Apache2::Module/C_add_>> to
+register the new directives with apache.
+
+=item * A subroutine per each new directive, which is called when the
+directive is seen
+
+=back
+
+
+
+=head2 C<@directives>
+
+C<@directives> is an array of hash references. Each
+hash represents a separate new configuration directive. In our example
+we had:
+
+  my @directives = (
+      {
+       name         => 'MyParameter',
+       func         => __PACKAGE__ . '::MyParameter',
+       req_override => Apache2::Const::OR_ALL,
+       args_how     => Apache2::Const::ITERATE,
+       errmsg       => 'MyParameter Entry1 [Entry2 ... [EntryN]]',
+      },
+      {
+       name         => 'MyOtherParameter',
+      },
+  );
+
+This structure declares two new directives: C<MyParameter> and
+C<MyOtherParameter>. You have to declare at least the name of the new
+directive, which is how we have declared the C<MyOtherParameter>
+directive. mod_perl will fill in the rest of the configuration using
+the defaults described next.
+
+These are the attributes that can be used to define the directives
+behavior: I<L<name|/C_name_>>, I<L<func|/C_func_>>,
+I<L<args_how|/C_args_how_>>, I<L<req_override|/C_req_override_>> and
+I<L<errmsg|/C_errmsg_>>. They are discussed in the following sections.
+
+It is worth noting that in previous versions of mod_perl, it was
+necessary to call this variable @APACHE_MODULE_COMMANDS. It is not
+the case anymore, and we consistently use the name @directives in 
+the documentation for clarity. It can be named anything at all.
+
+=head3 C<name>
+
+This is the only required attribute. And it declares the name of the
+new directive as it'll be used in I<httpd.conf>.
+
+=head3 C<func>
+
+The I<func> attribute expects a reference to a function or a function
+name. This function is called by httpd every time it encounters the
+directive that is described by this entry while parsing the
+configuration file. Therefore it's invoked once for every instance of
+the directive at the server startup, and once per request per instance
+in the I<.htaccess> file.
+
+This function accepts two or more arguments, L<depending on the
+I<args_how> attribute's value|/Directive_Syntax_Definition_Constants>.
+
+This attribute is optional. If not supplied, mod_perl will try to use
+a function in the current package whose name is the same as of the
+directive in question. In our example with C<MyOtherParameter>,
+mod_perl will use:
+
+  __PACKAGE__ . '::MyOtherParameter'
+
+as a name of a subroutine and it anticipates that it exists in that
+package.
+
+=head3 C<req_override>
+
+The I<> attribute defines the valid scope in which this directive can
+appear. There are L<several
+constants|/Directive_Scope_Definition_Constants> which map onto the
+corresponding Apache macros. These constants should be imported from
+the C<L<Apache2::Const|docs::2.0::api::Apache2::Const>>
+package.
+
+For example, to use the C<OR_ALL> constant, which allows directives to
+be defined anywhere, first, it needs to be imported:
+
+  use Apache2::Const -compile => qw(OR_ALL);
+
+and then assigned to the I<req_override> attribute:
+
+  req_override => Apache2::Const::OR_ALL,
+
+It's possible to combine several options using the unary
+operators. For example, the following setting:
+
+  req_override => Apache2::Const::RSRC_CONF | Apache2::Const::ACCESS_CONF
+
+will allow the directive to appear anywhere in I<httpd.conf>, but
+forbid it from ever being used in I<.htaccess> files:
+
+This attribute is optional. If not supplied, the default value of
+C<L<Apache2::Const::OR_ALL|/C_Apache2__OR_ALL_>> is used.
+
+=head3 C<args_how>
+
+Directives can receive zero, one or many arguments. In order to help
+Apache validate that the number of arguments is valid, the I<args_how>
+attribute should be set to the desired value. Similar to the
+I<L<req_override|/C_req_override_>> attribute, the
+C<L<Apache2::Const|docs::2.0::api::Apache2::Const>> package provides a
+special C<L<:cmd_how|docs::2.0::api::Apache2::Const/C__cmd_how_>>
+constants group which maps to the corresponding Apache macros.  There
+are L<several
+constants|/Directive_Syntax_Definition_Constants> to choose from.
+
+In our example, the directive C<MyParameter> accepts one or more
+arguments, therefore we have the
+C<L<Apache2::Const::ITERATE|/C_Apache2__ITERATE_>> constant:
+
+       args_how => Apache2::Const::ITERATE,
+
+This attribute is optional. If not supplied, the default value of
+C<L<Apache2::Const::TAKE1|/C_Apache2__TAKE1_>> is used.
+
+
+=head3 C<errmsg>
+
+The I<errmsg> attribute provides a short but succinct usage statement
+that summarizes the arguments that the directive takes. It's used by
+Apache to generate a descriptive error message, when the directive is
+configured with a wrong number of arguments.
+
+In our example, the directive C<MyParameter> accepts one or more
+arguments, therefore we have chosen the following usage string:
+
+       errmsg => 'MyParameter Entry1 [Entry2 ... [EntryN]]',
+
+This attribute is optional. If not supplied, the default value of will
+be a string based on the directive's I<L<name|/C_name_>> and
+I<L<args_how|/C_args_how_>> attributes.
+
+=head3 C<cmd_data>
+
+Sometimes it is useful to pass information back to the directive
+handler callback.  For instance, if you use the I<func> parameter
+to specify the same callback for two different directives you 
+might want to know which directive is being called currently.
+To do this, you can use the I<cmd_data> parameter, which allows
+you to store arbitrary strings for later retrieval from your
+directive handler.  For instance:
+
+  my @directives = (
+      {
+       name         => '<Location',
+       # func defaults to Location()
+       req_override => Apache2::Const::RSRC_CONF,
+       args_how     => Apache2::Const::RAW_ARGS,
+      },
+      {
+       name         => '<LocationMatch',
+       func         => Location,
+       req_override => Apache2::Const::RSRC_CONF,
+       args_how     => Apache2::Const::RAW_ARGS,
+       cmd_data     => '1',
+      },
+  );
+
+Here, we are using the C<Location()> function to process both
+the C<Location> and C<LocationMatch> directives.  In the
+C<Location()> callback we can check the data in the I<cmd_data> slot
+to see whether the directive being processed is C<LocationMatch>
+and alter our logic accordingly.  How? Through the 
+C<info()> method exposed by the C<Apache2::CmdParms> class.
+
+  use Apache2::CmdParms ();
+  
+  sub Location {
+  
+    my ($cfg, $parms, $data) = @_;
+  
+    # see if we were called via LocationMatch
+    my $regex = $parms->info;
+  
+    # continue along
+  }
+
+In case you are wondering, C<Location> and C<LocationMatch> were
+chosen for a reason - this is exactly how httpd core handles these
+two directives.
+
+=head2 Registering the new directives
+
+Once the C<L<@directives|/C__CMDS_>> array is populated, it needs to be
+registered with apache using 
+C<L<Apache2::Module::add()|docs::2.0::api::Apache2::Module/C_add_>>
+
+  Apache2::Module::add(__PACKAGE__, \@directives);
+
+=head2 Directive Scope Definition Constants
+
+The I<L<req_override|/C_req_override_>> attribute specifies the
+configuration scope in which it's valid to use a given configuration
+directive. This attribute's value can be any of or a combination of
+the following constants:
+
+(these constants are declared in I<httpd-2.0/include/http_config.h>.)
+
+=head3 C<Apache2::Const::OR_NONE>
+
+The directive cannot be overridden by any of the C<AllowOverride>
+options.
+
+=head3 C<Apache2::Const::OR_LIMIT>
+
+The directive can appear within directory sections, but not outside
+them.  It is also allowed within I<.htaccess> files, provided that
+C<AllowOverride Limit> is set for the current directory.
+
+=head3 C<Apache2::Const::OR_OPTIONS>
+
+The directive can appear anywhere within I<httpd.conf>, as well as
+within I<.htaccess> files provided that C<AllowOverride Options> is
+set for the current directory.
+
+=head3 C<Apache2::Const::OR_FILEINFO>
+
+The directive can appear anywhere within I<httpd.conf>, as well as
+within I<.htaccess> files provided that C<AllowOverride FileInfo> is
+set for the current directory.
+
+=head3 C<Apache2::Const::OR_AUTHCFG>
+
+The directive can appear within directory sections, but not outside
+them.  It is also allowed within I<.htaccess> files, provided that
+C<AllowOverride AuthConfig> is set for the current directory.
+
+=head3 C<Apache2::Const::OR_INDEXES>
+
+The directive can appear anywhere within I<httpd.conf>, as well as
+within I<.htaccess> files provided that C<AllowOverride Indexes> is
+set for the current directory.
+
+=head3 C<Apache2::Const::OR_UNSET>
+
+META: details? "unset a directive (in Allow)"
+
+=head3 C<Apache2::Const::ACCESS_CONF>
+
+The directive can appear within directory sections.  The directive is
+not allowed in I<.htaccess> files.
+
+=head3 C<Apache2::Const::RSRC_CONF>
+
+The directive can appear in I<httpd.conf> outside a directory section
+(C<E<lt>DirectoryE<gt>>, C<E<lt>LocationE<gt>> or C<E<lt>FilesE<gt>>;
+also C<E<lt>FilesMatchE<gt>> and kin).  The directive is not allowed
+in I<.htaccess> files.
+
+=head3 C<Apache2::Const::EXEC_ON_READ>
+
+Force directive to execute a command which would modify the
+configuration (like including another file, or C<IFModule>).
+
+Normally, Apache first parses the configuration tree and then executes
+the directives it has encountered (e.g., C<SetEnv>). But there are
+directives that must be executed during the initial parsing, either
+because they affect the configuration tree (e.g., C<Include> may load
+extra configuration) or because they tell Apache about new directives
+(e.g., C<IfModule> or C<PerlLoadModule>, may load a module, which
+installs handlers for new directives). These directives must have the
+C<Apache2::Const::EXEC_ON_READ> turned on.
+
+=head3 C<Apache2::Const::OR_ALL>
+
+The directive can appear anywhere.  It is not limited in any way.
+
+
+
+
+=head2 Directive Callback Subroutine
+
+Depending on the value of the I<L<args_how|/C_args_how_>> attribute
+the callback subroutine, specified with the I<L<func|/C_func_>>
+attribute, will be called with two or more arguments. The first two
+arguments are always C<$self> and C<$parms>. A typical callback
+function which expects a single value
+(C<L<Apache2::Const::TAKE1|/C_Apache2__TAKE1_>>) might look like the following:
+
+  sub MyParam {
+      my ($self, $parms, $arg) = @_;
+      $self->{MyParam} = $arg;
+  }
+
+In this function we store the passed single value in the configuration
+object, using the directive's name (assuming that it was C<MyParam>)
+as the key.
+
+Let's look at the subroutine arguments in detail:
+
+=over
+
+=item 1
+
+C<$self> is the current container's configuration object.
+
+This configuration object is a reference to a hash, in which you can
+store arbitrary key/value pairs. When the directive callback function
+is invoked it may already include several key/value pairs inserted by
+other directive callbacks or during the
+C<L<SERVER_CREATE|/C_SERVER_CREATE_>> and
+C<L<DIR_CREATE|/C_DIR_CREATE_>> functions, which will be explained
+later.
+
+Usually the callback function stores the passed argument(s), which
+later will be read by C<L<SERVER_MERGE|/C_SERVER_MERGE_>> and
+C<L<DIR_MERGE|/C_DIR_MERGE_>>, which will be explained later, and of
+course at request time.
+
+The convention is use the name of the directive as the hash key, where
+the received values are stored. The value can be a simple scalar, or a
+reference to a more complex structure. So for example you can store a
+reference to an array, if there is more than one value to store.
+
+This object can be later retrieved at request time via:
+
+  my $dir_cfg = $self->get_config($s, $r->per_dir_config);
+
+You can retrieve the server configuration object via:
+
+  my $srv_cfg = $self->get_config($s);
+
+if invoked inside the virtual host, the virtual host's configuration
+object will be returned.
+
+=item 2
+
+C<$parms> is an
+C<L<Apache2::CmdParms|docs::2.0::api::Apache2::CmdParms>>
+object from which you can retrieve various other information about the
+configuration. For example to retrieve the server object:
+
+  my $s = $parms->server;
+
+See
+C<L<Apache2::CmdParms|docs::2.0::api::Apache2::CmdParms>>
+for more information.
+
+=item 3
+
+The rest of the arguments whose number depends on the
+I<L<args_how|/C_args_how_>>'s value are covered in L<the next
+section|/Directive_Syntax_Definition_Constants>.
+
+=back
+
+
+
+=head2 Directive Syntax Definition Constants
+
+The following values of the I<L<args_how|/C_args_how_>> attribute
+define how many arguments and what kind of arguments directives can
+accept. These values are constants that can be imported from the
+C<L<Apache2::Const|docs::2.0::api::Apache2::Const>> package
+(C<L<:cmd_how constants
+group|docs::2.0::api::Apache2::Const/C__cmd_how_>>).
+
+For example:
+
+  use Apache2::Const -compile => qw(TAKE1 TAKE23);
+
+
+
+
+
+=head3 C<Apache2::Const::NO_ARGS>
+
+The directive takes no arguments.  The callback will be invoked once
+each time the directive is encountered.  For example:
+
+  sub MyParameter {
+      my ($self, $parms) = @_;
+      $self->{MyParameter}++;
+  }
+
+
+
+
+
+=head3 C<Apache2::Const::TAKE1>
+
+The directive takes a single argument.  The callback will be invoked
+once each time the directive is encountered, and its argument will be
+passed as the third argument. For example:
+
+  sub MyParameter {
+      my ($self, $parms, $arg) = @_;
+      $self->{MyParameter} = $arg;
+  }
+
+
+
+
+
+=head3 C<Apache2::Const::TAKE2>
+
+The directive takes two arguments.  They are passed to the callback as
+the third and fourth arguments. For example:
+
+  sub MyParameter {
+      my ($self, $parms, $arg1, $arg2) = @_;
+      $self->{MyParameter} = {$arg1 => $arg2};
+  }
+
+
+
+
+
+=head3 C<Apache2::Const::TAKE3>
+
+This is like C<L<Apache2::Const::TAKE1|/C_Apache2__TAKE1_>> and
+C<L<Apache2::Const::TAKE2|/C_Apache2__TAKE2_>>, but the directive takes three
+mandatory arguments. For example:
+
+  sub MyParameter {
+      my ($self, $parms, @args) = @_;
+      $self->{MyParameter} = \@args;
+  }
+
+
+
+
+
+=head3 C<Apache2::Const::TAKE12>
+
+This directive takes one mandatory argument, and a second optional
+one.  This can be used when the second argument has a default value
+that the user may want to override.  For example:
+
+  sub MyParameter {
+      my ($self, $parms, $arg1, $arg2) = @_;
+      $self->{MyParameter} = {$arg1 => $arg2||'default'};
+  }
+
+
+
+
+
+=head3 C<Apache2::Const::TAKE23>
+
+C<L<Apache2::Const::TAKE23|/C_Apache2__TAKE23_>> is just like
+C<L<Apache2::Const::TAKE12|/C_Apache2__TAKE12_>>, except now there are two
+mandatory arguments and an optional third one.
+
+
+
+
+
+=head3 C<Apache2::Const::TAKE123>
+
+In the C<Apache2::Const::TAKE123> variant, the first argument is mandatory and
+the other two are optional.  This is useful for providing defaults for
+two arguments.
+
+
+
+
+
+
+=head3 C<Apache2::Const::ITERATE>
+
+C<Apache2::Const::ITERATE> is used when a directive can take an unlimited
+number of arguments.  The callback is invoked repeatedly with a single
+argument, once for each argument in the list.  It's done this way for
+interoperability with the C API, which doesn't have the flexible
+argument passing that Perl provides. For example:
+
+  sub MyParameter {
+      my ($self, $parms, $args) = @_;
+      push @{ $self->{MyParameter} }, $arg;
+  }
+
+
+
+
+
+
+=head3 C<Apache2::Const::ITERATE2>
+
+C<Apache2::Const::ITERATE2> is used for directives that take a mandatory first
+argument followed by a list of arguments to be applied to the first.
+A familiar example is the C<AddType> directive, in which a series of
+file extensions are applied to a single MIME type:
+
+  AddType image/jpeg JPG JPEG JFIF jfif
+
+Apache will invoke your callback once for each item in the list.  Each
+time Apache runs your callback, it passes the routine the constant
+first argument (I<"image/jpeg"> in the example above), and the current
+item in the list (I<"JPG"> the first time around, I<"JPEG"> the second
+time, and so on).  In the example above, the configuration processing
+routine will be run a total of four times.
+
+For example:
+
+  sub MyParameter {
+      my ($self, $parms, $key, $val) = @_;
+      push @{ $self->{MyParameter}{$key} }, $val;
+  }
+
+
+
+
+
+=head3 C<Apache2::Const::RAW_ARGS>
+
+An I<L<args_how|/C_args_how_>> of C<Apache2::Const::RAW_ARGS> instructs
+Apache to turn off parsing altogether.  Instead it simply passes your
+callback function the line of text following the directive.  Leading
+and trailing whitespace is stripped from the text, but it is not
+otherwise processed.  Your callback can then do whatever processing it
+wishes to perform.
+
+This callback receives three arguments (similar to
+C<L<Apache2::Const::TAKE1|/C_Apache2__TAKE1_>>), the third of which is a
+string-valued scalar containing the remaining text following the
+directive line.
+
+  sub MyParameter {
+      my ($self, $parms, $val) = @_;
+      # process $val
+  }
+
+If this mode is used to implement a custom "container" directive, the
+attribute I<L<req_override|/C_req_override_>> needs to OR
+C<L<Apache2::Const::EXEC_ON_READ|/C_Apache2__Const__EXEC_ON_READ_>>. e.g.:
+
+  req_override => Apache2::Const::OR_ALL | Apache2::Const::EXEC_ON_READ,
+
+META: complete the details, which are new to 2.0.
+
+To retrieve the contents of a custom "container" directive, use the
+C<L<Apache2::Directive|docs::2.0::api::Apache2::Directive>> object's methods 
+C<L<as_hash|docs::2.0::api::Apache2::Directive/C_as_hash_>>
+or C<L<as_string|docs::2.0::api::Apache2::Directive/C_as_string_>> :
+
+  sub MyParameter {
+      my ($self, $parms, $val) = @_;
+      my $directive = $parms->directive;
+      my $content = $directive->as_string;
+  }
+
+There is one other trick to making configuration containers work.  In
+order to be recognized as a valid directive, the I<L<name|/C_name_>>
+attribute must contain the leading C<E<lt>>.  This token will be
+stripped by the code that handles the custom directive callbacks to
+Apache. For example:
+
+  name     => '<MyContainer',
+
+One other trick that is not required, but can provide some more user
+friendliness is to provide a handler for the container end token.  In
+our example, the Apache configuration gears will never see the
+C<E<lt>/MyContainerE<gt>> token, as our
+C<L<Apache2::Const::RAW_ARGS|/C_Apache2__RAW_ARGS_>> handler will read in that
+line and stop reading when it is seen.  However in order to catch
+cases in which the C<E<lt>/MyContainerE<gt>> text appears without a
+preceding C<E<lt>MyContainerE<gt>> opening section, we need to turn
+the end token into a directive that simply reports an error and
+exits. For example:
+
+  {
+    name         => '</MyContainer>',
+    func         => __PACKAGE__ . "::MyContainer_END",
+    errmsg       => 'end of MyContainer without beginning?',
+    args_how     => Apache2::Const::NO_ARGS,
+    req_override => Apache2::Const::OR_ALL,
+  },
+  ...
+  my $EndToken = "</MyContainer>";
+  sub MyContainer_END {
+      die "$EndToken outside a <MyContainer> container\n";
+  }
+
+Now, should the server administrator misplace the container end token, the
+server will not start, complaining with this error message:
+
+  Syntax error on line 54 of httpd.conf:
+  </MyContainer> outside a <MyContainer> container
+
+
+
+
+=head3 C<Apache2::Const::FLAG>
+
+When C<Apache2::Const::FLAG> is used, Apache will only allow the argument to
+be one of two values, C<On> or C<Off>.  This string value will be
+converted into an integer, C<1> if the flag is C<On>, C<0> if it is
+C<Off>.  If the configuration argument is anything other than C<On> or
+C<Off>, Apache will complain:
+
+  Syntax error on line 73 of httpd.conf:
+  MyFlag must be On or Off
+
+For example:
+
+  sub MyFlag {
+      my ($self, $parms, $arg) = @_;
+      $self->{MyFlag} = $arg; # 1 or 0
+  }
+
+
+
+
+
+
+
+
+
+
+=head2 Enabling the New Configuration Directives
+
+As seen in the first example, the module needs to be loaded before the
+new directives can be used. A special directive C<PerlLoadModule> is
+used for this purpose. For example:
+
+  PerlLoadModule MyApache2::MyParameters
+
+This directive is similar to C<PerlModule>, but it require()'s the
+Perl module immediately, causing an early mod_perl startup. After
+loading the module it let's Apache know of the new directives and
+installs the callbacks to be called when the corresponding directives
+are encountered.
+
+=head2 Creating and Merging Configuration Objects
+
+By default mod_perl creates a simple hash to store each container's
+configuration values, which are populated by directive callbacks,
+invoked when the I<httpd.conf> and the I<.htaccess> files are parsed
+and the corresponding directive are encountered. It's possible to
+pre-populate the hash entries when the data structure is created, e.g.,
+to provide reasonable default values for cases where they weren't set
+in the configuration file. To accomplish that the optional
+C<L<SERVER_CREATE|/C_SERVER_CREATE_>> and
+C<L<DIR_CREATE|/C_DIR_CREATE_>> functions can be supplied.
+
+When a request is mapped to a container, Apache checks if that
+container has any ancestor containers. If that's the case, it allows
+mod_perl to call special merging functions, which decide whether
+configurations in the parent containers should be inherited, appended
+or overridden in the child container. The custom configuration module
+can supply custom merging functions
+C<L<SERVER_MERGE|/C_SERVER_MERGE_>> and C<L<DIR_MERGE|/C_DIR_MERGE_>>,
+which can override the default behavior. If these functions are not
+supplied the following default behavior takes place: The child
+container inherits its parent configuration, unless it specifies its
+own and then it overrides its parent configuration.
+
+=head3 C<SERVER_CREATE>
+
+C<SERVER_CREATE> is called once for the main server, and once more for
+each virtual host defined in I<httpd.conf>. It's called with two
+arguments: C<$class>, the package name it was created in and C<$parms>
+the already familiar
+C<L<Apache2::CmdParms|docs::2.0::api::Apache2::CmdParms>>
+object. The object is expected to return a reference to a blessed
+hash, which will be used by configuration directives callbacks to set
+the values assigned in the configuration file. But it's possible to
+preset some values here:
+
+For example, in the following example the object assigns a default
+value, which can be overridden during merge if a the directive was used
+to assign a custom value:
+
+  package MyApache2::MyParameters;
+  ...
+  use Apache2::Module ();
+  use Apache2::CmdParms ();
+  my @directives = (...);
+  Apache2::Module::add(__PACKAGE__, \@directives);
+  ...
+  sub SERVER_CREATE {
+      my ($class, $parms) = @_;
+      return bless {
+  	  name => __PACKAGE__,
+      }, $class;
+  }
+
+To retrieve that value later, you can use:
+
+  use Apache2::Module ();
+  ...
+  my $srv_cfg = Apache2::Module::get_config('MyApache2::MyParameters', $s);
+  print $srv_cfg->{name};
+
+If a request is made to a resource inside a virtual host, C<$srv_cfg>
+will contain the object of the virtual host's server. To reach the
+main server's configuration object use:
+
+  use Apache2::Module ();
+  use Apache2::ServerRec ();
+  use Apache2::ServerUtil ();
+  ...
+  if ($s->is_virtual) {
+      my $base_srv_cfg = Apache2::Module::get_config('MyApache2::MyParameters',
+                                                    Apache2::ServerUtil->server);
+      print $base_srv_cfg->{name};
+  }
+
+If the function C<SERVER_CREATE> is not supplied by the module, a
+function that returns a blessed into the current package reference to
+a hash is used.
+
+=head3 C<SERVER_MERGE>
+
+During the configuration parsing virtual hosts are given a chance to
+inherit the configuration from the main host, append to or override
+it. The C<SERVER_MERGE> subroutine can be supplied to override the
+default behavior, which simply overrides the main server's
+configuration.
+
+The custom subroutine accepts two arguments: C<$base>, a blessed
+reference to the main server configuration object, and C<$add>, a
+blessed reference to a virtual host configuration object. It's
+expected to return a blessed object after performing the merge of the
+two objects it has received. Here is the skeleton of a merging
+function:
+
+  sub merge {
+      my ($base, $add) = @_;
+      my %mrg = ();
+      # code to merge %$base and %$add
+      return bless \%mrg, ref($base);
+  }
+
+The section L<Merging at Work|/Merging_at_Work> provides an extensive
+example of a merging function.
+
+=head3 C<DIR_CREATE>
+
+Similarly to C<L<SERVER_CREATE|/C_SERVER_CREATE_>>, this optional
+function, is used to create an object for the directory resource. If
+the function is not supplied mod_perl will use an empty hash variable
+as an object.
+
+Just like C<L<SERVER_CREATE|/C_SERVER_CREATE_>>, it's called once for
+the main server and one more time for each virtual host. In addition
+it'll be called once more for each resource (C<E<lt>LocationE<gt>>,
+C<E<lt>DirectoryE<gt>> and others). All this happens during the
+startup. At request time it might be called for each parsed
+I<.htaccess> file and for each resource defined in it.
+
+The C<DIR_CREATE> function's skeleton is identical to
+C<SERVER_CREATE>. Here is an example:
+
+  package MyApache2::MyParameters;
+  ...
+  use Apache2::Module ();
+  use Apache2::CmdParms ();
+  my @directives = (...);
+  Apache2::Module::add(__PACKAGE__, \@directives);
+  ...
+  sub DIR_CREATE {
+      my ($class, $parms) = @_;
+      return bless {
+  	  foo => 'bar',
+      }, $class;
+  }
+
+To retrieve that value later, you can use:
+
+  use Apache2::Module ();
+  ...
+  my $dir_cfg = Apache2::Module::get_config('MyApache2::MyParameters',
+                                           $s, $r->per_dir_config);
+  print $dir_cfg->{foo};
+
+The only difference in the retrieving the directory configuration
+object. Here the third argument C<$r-E<gt>per_dir_config> tells
+C<L<Apache2::Module|docs::2.0::api::Apache2::Module>> to
+get the directory configuration object.
+
+=head3 C<DIR_MERGE>
+
+Similarly to C<L<SERVER_MERGE|/C_SERVER_MERGE_>>, C<DIR_MERGE> merges
+the ancestor and the current node's directory configuration objects.
+At the server startup C<DIR_MERGE> is called once for each virtual
+host. At request time, the merging of the objects of resources, their
+sub-resources and the virtual host/main server merge happens. Apache
+caches the products of merges, so you may see certain merges happening
+only once.
+
+The section L<Merging Order Consequences|/Merging_Order_Consequences>
+discusses in detail the merging order.
+
+The section L<Merging at Work|/Merging_at_Work> provides an extensive
+example of a merging function.
+
+=head1 Examples
+
+=head2 Merging at Work
+
+In the following example we are going to demonstrate in details how
+merging works, by showing various merging techniques.
+
+Here is an example Perl module, which, when loaded, installs four
+custom directives into Apache.
+
+  #file:MyApache2/CustomDirectives.pm
+  #---------------------------------
+  package MyApache2::CustomDirectives;
+  
+  use strict;
+  use warnings FATAL => 'all';
+  
+  use Apache2::CmdParms ();
+  use Apache2::Module ();
+  use Apache2::ServerUtil ();
+  
+  use Apache2::Const -compile => qw(OK);
+  
+  my @directives = (
+      { name => 'MyPlus' },
+      { name => 'MyList' },
+      { name => 'MyAppend' },
+      { name => 'MyOverride' },
+  );
+  Apache2::Module::add(__PACKAGE__, \@directives);
+  
+  sub MyPlus     { set_val('MyPlus',     @_) }
+  sub MyAppend   { set_val('MyAppend',   @_) }
+  sub MyOverride { set_val('MyOverride', @_) }
+  sub MyList     { push_val('MyList',    @_) }
+  
+  sub DIR_MERGE    { merge(@_) }
+  sub SERVER_MERGE { merge(@_) }
+  
+  sub set_val {
+      my ($key, $self, $parms, $arg) = @_;
+      $self->{$key} = $arg;
+      unless ($parms->path) {
+          my $srv_cfg = Apache2::Module::get_config($self,
+                                                   $parms->server);
+          $srv_cfg->{$key} = $arg;
+      }
+  }
+  
+  sub push_val {
+      my ($key, $self, $parms, $arg) = @_;
+      push @{ $self->{$key} }, $arg;
+      unless ($parms->path) {
+          my $srv_cfg = Apache2::Module::get_config($self,
+                                                   $parms->server);
+          push @{ $srv_cfg->{$key} }, $arg;
+      }
+  }
+  
+  sub merge {
+      my ($base, $add) = @_;
+  
+      my %mrg = ();
+      for my $key (keys %$base, keys %$add) {
+          next if exists $mrg{$key};
+          if ($key eq 'MyPlus') {
+              $mrg{$key} = ($base->{$key}||0) + ($add->{$key}||0);
+          }
+          elsif ($key eq 'MyList') {
+              push @{ $mrg{$key} },
+                  @{ $base->{$key}||[] }, @{ $add->{$key}||[] };
+          }
+          elsif ($key eq 'MyAppend') {
+              $mrg{$key} = join " ", grep defined, $base->{$key},
+                                                   $add->{$key};
+          }
+          else {
+              # override mode
+              $mrg{$key} = $base->{$key} if exists $base->{$key};
+              $mrg{$key} = $add->{$key}  if exists $add->{$key};
+          }
+      }
+  
+      return bless \%mrg, ref($base);
+  }
+  
+  1;
+  __END__
+
+It's probably a good idea to specify all the attributes for the
+C<@directives> entries, but here for simplicity we have
+only assigned to the I<L<name|/C_name_>> directive, which is a
+must. Since all our directives take a single argument,
+C<L<Apache2::Const::TAKE1|/C_Apache2__TAKE1_>>, the default
+I<L<args_how|/C_args_how_>>, is what we need. We also allow the
+directives to appear anywhere, so
+C<L<Apache2::Const::OR_ALL|/C_Apache2__OR_ALL_>>, the default for
+I<L<req_override|/C_req_override_>>, is good for us as well.
+
+We use the same callback for the directives C<MyPlus>, C<MyAppend> and
+C<MyOverride>, which simply assigns the specified value to the hash
+entry with the key of the same name as the directive.
+
+The C<MyList> directive's callback stores the value in the list, a
+reference to which is stored in the hash, again using the name of the
+directive as the key. This approach is usually used when the directive
+is of type C<L<Apache2::Const::ITERATE|/C_Apache2__ITERATE_>>, so you may have
+more than one value of the same kind inside a single container. But in
+our example we choose to have it of the type
+C<L<Apache2::Const::TAKE1|/C_Apache2__TAKE1_>>.
+
+In both callbacks in addition to storing the value in the current
+I<directory> configuration, if the value is configured in the main
+server or the virtual host (which is when C<$parms-E<gt>path> is
+false), we also store the data in the same way in the server
+configuration object. This is done in order to be able to query the
+values assigned at the server and virtual host levels, when the
+request is made to one of the sub-resources. We will show how to
+access that information in a moment.
+
+Finally we use the same merge function for merging directory and
+server configuration objects. For the key C<MyPlus> (remember we have
+used the same key name as the name of the directive), the merging
+function performs, the obvious, summation of the ancestor's merged
+value (base) and the current resource's value (add). C<MyAppend> joins
+the values into a string, C<MyList> joins the lists and finally
+C<MyOverride> (the default) overrides the value with the current one
+if any. Notice that all four merging methods take into account that
+the values in the ancestor or the current configuration object might
+be unset, which is the case when the directive wasn't used by all
+ancestors or for the current resource.
+
+At the end of the merging, a blessed reference to the merged hash is
+returned. The reference is blessed into the same class, as the base or
+the add objects, which is C<MyApache2::CustomDirectives> in our
+example. That hash is used as the merged ancestor's object for a
+sub-resource of the resource that has just undergone merging.
+
+Next we supply the following I<httpd.conf> configuration section, so
+we can demonstrate the features of this example:
+
+  PerlLoadModule MyApache2::CustomDirectives
+  MyPlus 5
+  MyList     "MainServer"
+  MyAppend   "MainServer"
+  MyOverride "MainServer"
+  Listen 8081
+  <VirtualHost _default_:8081>
+      MyPlus 2
+      MyList     "VHost"
+      MyAppend   "VHost"
+      MyOverride "VHost"
+      <Location /custom_directives_test>
+          MyPlus 3
+          MyList     "Dir"
+          MyAppend   "Dir"
+          MyOverride "Dir"
+          SetHandler modperl
+          PerlResponseHandler MyApache2::CustomDirectivesTest
+      </Location>
+      <Location /custom_directives_test/subdir>
+          MyPlus 1
+          MyList     "SubDir"
+          MyAppend   "SubDir"
+          MyOverride "SubDir"
+      </Location>
+  </VirtualHost>
+  <Location /custom_directives_test>
+      SetHandler modperl
+      PerlResponseHandler MyApache2::CustomDirectivesTest
+  </Location>
+
+C<PerlLoadModule> loads the Perl module C<MyApache2::CustomDirectives>
+and then installs a new Apache module named
+C<MyApache2::CustomDirectives>, using the callbacks provided by the
+Perl module.  In our example functions C<SERVER_CREATE> and
+C<DIR_CREATE> aren't provided, so by default an empty hash will be
+created to represent the configuration object for the merging
+functions. If we don't provide merging functions, Apache will simply
+skip the merging. Though you must provide a callback function for each
+directive you add.
+
+After installing the new module, we add a virtual host container,
+containing two resources (which at other times called locations,
+directories, sections, etc.), one being a sub-resource of the other,
+plus one another resource which resides in the main server.
+
+We assign different values in all four containers, but the last
+one. Here we refer to the four containers as I<MainServer>, I<VHost>,
+I<Dir> and I<SubDir>, and use these names as values for all
+configuration directives, but C<MyPlus>, to make it easier understand
+the outcome of various merging methods and the merging order. In the
+last container used by C<E<lt>Location /custom_directives_testE<gt>>,
+we don't specify any directives so we can verify that all the values
+are inherited from the main server.
+
+For all three resources we are going to use the same response handler,
+which will dump the values of configuration objects that in its
+reach. As we will see that different resources will see see certain
+things identically, while others differently. So here it the handler:
+
+  #file:MyApache2/CustomDirectivesTest.pm
+  #-------------------------------------
+  package MyApache2::CustomDirectivesTest;
+  
+  use strict;
+  use warnings FATAL => 'all';
+  
+  use Apache2::RequestRec ();
+  use Apache2::RequestIO ();
+  use Apache2::ServerRec ();
+  use Apache2::ServerUtil ();
+  use Apache2::Module ();
+  
+  use Apache2::Const -compile => qw(OK);
+  
+  sub get_config {
+      Apache2::Module::get_config('MyApache2::CustomDirectives', @_);
+  }
+  
+  sub handler {
+      my ($r) = @_;
+      my %secs = ();
+  
+      $r->content_type('text/plain');
+  
+      my $s = $r->server;
+      my $dir_cfg = get_config($s, $r->per_dir_config);
+      my $srv_cfg = get_config($s);
+  
+      if ($s->is_virtual) {
+          $secs{"1: Main Server"}  = get_config(Apache2::ServerUtil->server);
+          $secs{"2: Virtual Host"} = $srv_cfg;
+          $secs{"3: Location"}     = $dir_cfg;
+      }
+      else {
+          $secs{"1: Main Server"}  = $srv_cfg;
+          $secs{"2: Location"}     = $dir_cfg;
+       }
+  
+      $r->printf("Processing by %s.\n", 
+          $s->is_virtual ? "virtual host" : "main server");
+  
+      for my $sec (sort keys %secs) {
+          $r->print("\nSection $sec\n");
+          for my $k (sort keys %{ $secs{$sec}||{} }) {
+              my $v = exists $secs{$sec}->{$k}
+                  ? $secs{$sec}->{$k}
+                  : 'UNSET';
+              $v = '[' . (join ", ", map {qq{"$_"}} @$v) . ']'
+                  if ref($v) eq 'ARRAY';
+              $r->printf("%-10s : %s\n", $k, $v);
+          }
+      }
+  
+      return Apache2::Const::OK;
+  }
+  
+  1;
+  __END__
+
+The handler is relatively simple. It retrieves the current resource
+(directory) and the server's configuration objects. If the server is a
+virtual host, it also retrieves the main server's configuration
+object. Once these objects are retrieved, we simply dump the contents
+of these objects, so we can verify that our merging worked
+correctly. Of course we nicely format the data that we print, taking a
+special care of array references, which we know is the case with the
+key I<MyList>, but we use a generic code, since Perl tells us when a
+reference is a list.
+
+It's a show time. First we issue a request to a resource residing in
+the main server:
+
+  % GET http://localhost:8002/custom_directives_test/
+  
+  Processing by main server.
+  
+  Section 1: Main Server
+  MyAppend   : MainServer
+  MyList     : ["MainServer"]
+  MyOverride : MainServer
+  MyPlus     : 5
+  
+  Section 2: Location
+  MyAppend   : MainServer
+  MyList     : ["MainServer"]
+  MyOverride : MainServer
+  MyPlus     : 5
+
+Since we didn't have any directives in that resource's configuration,
+we confirm that our merge worked correctly and the directory
+configuration object contains the same data as its ancestor, the main
+server. In this case the merge has simply inherited the values from
+its ancestor.
+
+The next request is for the resource residing in the virtual host:
+
+  % GET http://localhost:8081/custom_directives_test/
+  
+  Processing by virtual host.
+  
+  Section 1: Main Server
+  MyAppend   : MainServer
+  MyList     : ["MainServer"]
+  MyOverride : MainServer
+  MyPlus     : 5
+  
+  Section 2: Virtual Host
+  MyAppend   : MainServer VHost
+  MyList     : ["MainServer", "VHost"]
+  MyOverride : VHost
+  MyPlus     : 7
+  
+  Section 3: Location
+  MyAppend   : MainServer VHost Dir
+  MyList     : ["MainServer", "VHost", "Dir"]
+  MyOverride : Dir
+  MyPlus     : 10
+
+That's where the real fun starts. We can see that the merge worked
+correctly in the virtual host, and so it did inside the
+C<E<lt>LocationE<gt>> resource. It's easy to see that C<MyAppend> and
+C<MyList> are correct, the same for C<MyOverride>. For C<MyPlus>, we
+have to work harder and perform some math. Inside the virtual host we
+have main(5)+vhost(2)=7, and inside the first resource
+vhost_merged(7)+resource(3)=10.
+
+So far so good, the last request is made to the sub-resource of the
+resource we have requested previously:
+
+  % GET http://localhost:8081/custom_directives_test/subdir/
+  
+  Processing by virtual host.
+  
+  Section 1: Main Server
+  MyAppend   : MainServer
+  MyList     : ["MainServer"]
+  MyOverride : MainServer
+  MyPlus     : 5
+  
+  Section 2: Virtual Host
+  MyAppend   : MainServer VHost
+  MyList     : ["MainServer", "VHost"]
+  MyOverride : VHost
+  MyPlus     : 7
+  
+  Section 3: Location
+  MyAppend   : MainServer VHost Dir SubDir
+  MyList     : ["MainServer", "VHost", "Dir", "SubDir"]
+  MyOverride : SubDir
+  MyPlus     : 11
+
+No surprises here. By comparing the configuration sections and the
+outcome, it's clear that the merging is correct for most
+directives. The only harder verification is for C<MyPlus>, all we need
+to do is to add 1 to 10, which was the result we saw in the previous
+request, or to do it from scratch, summing up all the ancestors of
+this sub-resource: 5+2+3+1=11.
+
+
+=head3 Merging Entries Whose Values Are References
+
+When merging entries whose values are references and not scalars, it's
+important to make a deep copy and not a shallow copy, when the
+references gets copied. In our example we merged two references to
+lists, by explicitly extracting the values of each list:
+
+  push @{ $mrg{$key} },
+      @{ $base->{$key}||[] }, @{ $add->{$key}||[] };
+
+While seemingly the following snippet is doing the same:
+
+  $mrg{$key} = $base->{$key};
+  push @{ $mrg{$key} }, @{ $add->{$key}||[] };
+
+it won't do what you expect if the same merge (with the same C<$base>
+and C<$add> arguments) is called more than once, which is the case in
+certain cases. What happens in the latter implementation, is that the
+first line makes both C<$mrg{$key}> and C<$base-E<gt>{$key}> point to
+the same reference. When the second line expands the C<@{ $mrg{$key}
+}>, it also affects C<@{ $base-E<gt>{$key} }>. Therefore when the same
+merge is called second time, the C<$base> argument is not the same
+anymore.
+
+Certainly we could workaround this problem in the mod_perl core, by
+freezing the arguments before the merge call and restoring them
+afterwards, but this will incur a performance hit. One simply has to
+remember that the arguments and the references they point to, should
+stay unmodified through the function call, and then the right code can
+be supplied.
+
+=head3 Merging Order Consequences
+
+Sometimes the merging logic can be influenced by the order of merging.
+It's desirable that the logic will work properly regardless of the
+merging order.
+
+In Apache 1.3 the merging was happening in the following order:
+
+  (((base_srv -> vhost) -> section) -> subsection)
+
+Whereas as of this writing Apache 2.0 performs:
+
+  ((base_srv -> vhost) -> (section -> subsection))
+
+A product of subsections merge (which happen during the request) is
+merged with the product of the server and virtual host merge (which happens
+at the startup time). This change was done to improve the
+configuration merging performance.
+
+So for example, if you implement a directive C<MyExp> which performs
+the exponential: C<$mrg=$base**$add>, and let's say there directive is
+used four times in I<httpd.conf>:
+
+  MyExp 5
+  <VirtualHost _default_:8001>
+       MyExp 4
+       <Location /section>
+           MyExp 3
+       </Location>
+       <Location /section/subsection>
+           MyExp 2
+       </Location>
+
+The merged configuration for a request
+I<http://localhost:8001/section/subsection> will see:
+
+  (5 ** 4) ** (3 ** 2)  = 1.45519152283669e+25
+
+under Apache 2.0, whereas under Apache 1.3 the result would be:
+
+  ( (5 ** 4) ** 3) ** 2 = 5.96046447753906e+16
+
+which is not quite the same.
+
+Chances are that your merging rules work identically, regardless of
+the merging order. But you should be aware of this behavior.
+
+
+=head1 Maintainers
+
+Maintainer is the person(s) you should contact with updates,
+corrections and patches.
+
+=over
+
+=item *
+
+Stas Bekman [http://stason.org/]
+
+=back
+
+=head1 Authors
+
+=over
+
+=item *
+
+Stas Bekman [http://stason.org/]
+
+=back
+
+Only the major authors are listed above. For contributors see the
+Changes file.
+
+=cut
+
+

@@ -1,0 +1,76 @@
+This is mod_perl version 2.0
+
+*** Prerequisites ***
+
+Apache:
+  Dynamic mod_perl (DSO):    Apache 2.0.47 - 2.4.23.
+  Static mod_perl:           Apache 2.0.51 - 2.4.23.
+
+  Newer Apache versions may work with this version of mod_perl.  If
+  not, the svn version likely will, which can be obtained from:
+  http://perl.apache.org/download/source.html#Development_mod_perl_2_0_Source_Distribution
+
+Perl: 
+  Any stable version of Perl currently in support by the Perl community,
+  as described in recent Perl distributions' "perlpolicy.pod" document.
+
+  Newer Perl versions may work with this version of mod_perl.  If not,
+  the svn version likely will (see above).
+
+  Many older Perl versions also work with this version of mod_perl:
+  Perls back to version 5.8.2 (and possibly earlier in some build
+  configurations) are currently believed to work, but this is not
+  guaranteed to be the case, either now or in the future.
+
+*** Status ***
+
+mod_perl is currently considered stable.
+
+There is currently a known test failure on Windows when using Perls built
+with the PERL_IMPLICIT_SYS build option enabled (which it is by default):
+
+  t/modperl/env.t (Fails many tests)
+
+Four other test scripts are also known to fail with Apache 2.4.x on
+Windows, with or without PERL_IMPLICIT_SYS:
+
+  t/protocol/echo_block.t (Fails tests 2-3)
+  t/protocol/echo_nonblock.t (Fails test 2)
+  t/protocol/echo_timeout.t (Fails tests 2-5)
+  t/protocol/pseudo_http.t (Fails tests 3-8 and 11-13)
+
+*** Documentation ***
+
+Documentation can be found in the docs/ directory. Currently they
+don't get installed on 'make install'. Certain API documentation can
+be found in docs/api/.  The online version is at
+http://perl.apache.org/docs/2.0/.
+
+*** Todo ***
+
+mod_perl-2.0 is not 100% feature complete with the 1.xx version.
+See the files in the todo/ directory for what remains to be done. Some
+of those features will be implemented after 2.0 is released. The goal
+is to empty the file todo/release and document/test/verify the API
+that's going to be supported by 2.0. More API will be supported post
+2.0 release.
+
+*** Support ***
+
+For comments, questions, bug-reports, etc., join the mod_perl users
+list by sending mail to modperl-subscribe@perl.apache.org.
+
+When reporting bugs please follow the instructions at:
+http://perl.apache.org/docs/2.0/user/help/help.html#Reporting_Problems
+
+For announcements join the mod_perl announce list by sending mail to
+announce-subscribe@perl.apache.org.
+
+*** Developers ***
+
+Development discussion takes place on dev (at) perl.apache.org
+
+*** Authors ***
+
+mod_perl-2.0 was designed and written by Doug MacEachern, with
+contributions from many others (see Changes files).

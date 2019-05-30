@@ -1,0 +1,817 @@
+=head1 NAME
+
+APR::Socket - Perl API for APR sockets
+
+
+
+
+=head1 Synopsis
+
+  use APR::Socket ();
+  
+  ### set the socket to the blocking mode if it isn't already
+  ### and read in the loop and echo it back
+  use APR::Const -compile => qw(SO_NONBLOCK);
+  if ($sock->opt_get(APR::Const::SO_NONBLOCK)) {
+      $sock->opt_set(APR::Const::SO_NONBLOCK => 0);
+  }
+  # read from/write to the socket (w/o handling possible failures)
+  my $wanted = 1024;
+  while ($sock->recv(my $buff, $wanted)) {
+      $sock->send($buff);
+  }
+
+  ### get/set IO timeout and try to read some data
+  use APR::Const -compile => qw(TIMEUP);
+  # timeout is in usecs!
+  my $timeout = $sock->timeout_get();
+  if ($timeout < 10_000_000) {
+      $sock->timeout_set(20_000_000); # 20 secs
+  }
+  # now read, while handling timeouts
+  my $wanted = 1024;
+  my $buff;
+  my $rlen = eval { $sock->recv($buff, $wanted) };
+  if ($@ && ref $@ && $@ == APR::Const::TIMEUP) {
+      # timeout, do something, e.g.
+      warn "timed out, will try again later";
+  }
+  else {
+      warn "asked for $wanted bytes, read $rlen bytes\n";
+      # do something with the data
+  }
+
+  # non-blocking io poll
+  $sock->opt_set(APR::Const::SO_NONBLOCK => 1);
+  my $rc = $sock->poll($c->pool, 1_000_000, APR::Const::POLLIN);
+  if ($rc == APR::Const::SUCCESS) {
+      # read the data
+  }
+  else {
+      # handle the condition
+  }
+
+  # fetch the operating level socket
+  my $fd=$sock->fileno;
+
+
+=head1 Description
+
+C<APR::Socket> provides the Perl interface to APR sockets.
+
+
+
+
+=head1 API
+
+C<APR::Socket> provides the following methods:
+
+
+
+
+
+
+
+
+
+
+=head2 C<fileno>
+
+Get the operating system socket, the file descriptor on UNIX.
+
+  $fd = $sock->fileno;
+
+=over 4
+
+=item obj: C<$sock>
+( C<L<APR::Socket object|docs::2.0::api::APR::Socket>> )
+
+The socket
+
+=item ret: C<$fd> ( integer )
+
+The OS-level file descriptor.
+
+=item since: 2.0.5 (not implemented on Windows)
+
+=back
+
+
+
+
+
+
+
+
+
+
+
+=head2 C<opt_get>
+
+Query socket options for the specified socket
+
+  $val = $sock->opt_get($opt);
+
+=over 4
+
+=item obj: C<$sock>
+( C<L<APR::Socket object|docs::2.0::api::APR::Socket>> )
+
+the socket object to query
+
+=item arg1: C<$opt>
+( C<L<APR::Const constant|docs::2.0::api::APR::Const/C__socket_>> )
+
+the socket option we would like to configure.  Here are the
+L<available socket options|docs::2.0::api::APR::Const/C__socket_>.
+
+=item ret: C<$val> ( integer )
+
+the currently set value for L<the socket
+option|docs::2.0::api::APR::Const/C__socket_> you've queried for
+
+=item excpt: C<L<APR::Error|docs::2.0::api::APR::Error>>
+
+=item since: 2.0.00
+
+=back
+
+Examples can be found in L<the socket options constants
+section|docs::2.0::api::APR::Const/C__socket_>. For example L<setting 
+the IO to the blocking
+mode|docs::2.0::api::APR::Const/C_APR__Const__SO_NONBLOCK_>.
+
+
+
+
+=head2 C<opt_set>
+
+Setup socket options for the specified socket
+
+  $sock->opt_set($opt, $val);
+
+=over 4
+
+=item obj: C<$sock>
+( C<L<APR::Socket object|docs::2.0::api::APR::Socket>> object )
+
+the socket object to set up.
+
+=item arg1: C<$opt>
+( C<L<APR::Const|docs::2.0::api::APR::Const/C__socket_>> constant )
+
+the socket option we would like to configure.  Here are the
+L<available socket options|docs::2.0::api::APR::Const/C__socket_>.
+
+=item arg2: C<$val> ( integer )
+
+value for the option. Refer to the L<socket
+options|docs::2.0::api::APR::Const/C__socket_> section to learn about
+the expected values.
+
+=item ret: no return value
+
+=item excpt: C<L<APR::Error|docs::2.0::api::APR::Error>>
+
+=item since: 2.0.00
+
+=back
+
+Examples can be found in L<the socket options constants
+section|docs::2.0::api::APR::Const/C__socket_>. For example L<setting 
+the IO to the blocking
+mode|docs::2.0::api::APR::Const/C_APR__Const__SO_NONBLOCK_>.
+
+
+
+=head2 C<poll>
+
+Poll the socket for events:
+
+    $rc = $sock->poll($pool, $timeout, $events);
+
+=over 4
+
+=item obj: C<$sock>
+( C<L<APR::Socket object|docs::2.0::api::APR::Socket>> )
+
+The socket to poll
+
+=item arg1: C<$pool>
+( C<L<APR::Pool object|docs::2.0::api::APR::Pool>> )
+
+usually C<L<$c-E<gt>pool|docs::2.0::api::Apache2::Connection/C_pool_>>.
+
+=item arg2: C<$timeout> ( integer )
+
+The amount of time to wait (in milliseconds) for the specified events
+to occur.
+
+=item arg3: C<$events> ( C<L<APR::Const :poll
+constants|docs::2.0::api::APR::Const/C__poll_>> )
+
+The events for which to wait.
+
+For example use
+C<L<APR::Const::POLLIN|docs::2.0::api::APR::Const/C_APR__Const__POLLIN_>> to wait
+for incoming data to be available,
+C<L<APR::Const::POLLOUT|docs::2.0::api::APR::Const/C_APR__Const__POLLOUT_>> to wait
+until it's possible to write data to the socket and
+C<L<APR::Const::POLLPRI|docs::2.0::api::APR::Const/C_APR__Const__POLLPRI_>> to wait
+for priority data to become available.
+
+=item ret: C<$rc>
+( C<L<APR::Const constant|docs::2.0::api::APR::Const>> )
+
+If C<APR::Const::SUCCESS> is received than the polling was successful. If not
+-- the error code is returned, which can be converted to the error
+string with help of
+C<L<APR::Error::strerror|docs::2.0::api::APR::Error/C_strerror_>>.
+
+=item since: 2.0.00
+
+=back
+
+For example poll a non-blocking socket up to 1 second when reading
+data from the client:
+
+  use APR::Socket ();
+  use APR::Connection ();
+  use APR::Error ();
+  
+  use APR::Const -compile => qw(SO_NONBLOCK POLLIN SUCCESS TIMEUP);
+  
+  $sock->opt_set(APR::Const::SO_NONBLOCK => 1);
+  
+  my $rc = $sock->poll($c->pool, 1_000_000, APR::Const::POLLIN);
+  if ($rc == APR::Const::SUCCESS) {
+      # Data is waiting on the socket to be read.
+      # $sock->recv(my $buf, BUFF_LEN)
+  }
+  elsif ($rc == APR::Const::TIMEUP) {
+      # One second elapsed and still there is no data waiting to be
+      # read. for example could try again.
+  }
+  else {
+      die "poll error: " . APR::Error::strerror($rc);
+  }
+
+
+
+
+
+
+
+
+
+=head2 C<recv>
+
+Read incoming data from the socket
+
+  $len = $sock->recv($buffer, $wanted);
+
+=over 4
+
+=item obj: C<$sock>
+( C<L<APR::SockAddr object|docs::2.0::api::APR::SockAddr>> object )
+
+The socket to read from
+
+=item arg1: C<$buffer> ( SCALAR )
+
+The buffer to fill. All previous data will be lost.
+
+=item arg2: C<$wanted> ( int )
+
+How many bytes to attempt to read.
+
+=item ret: C<$len> ( number )
+
+How many bytes were actually read.
+
+C<$buffer> gets populated with the string that is read. It will
+contain an empty string if there was nothing to read.
+
+=item excpt: C<L<APR::Error|docs::2.0::api::APR::Error>>
+
+If you get the C<'(11) Resource temporarily unavailable'> error
+(exception
+C<L<APR::Const::EAGAIN|docs::2.0::api::APR::Const/C_APR__Const__EAGAIN_>>)
+(or another equivalent, which might be different on non-POSIX
+systems), then you didn't ensure that the socket is in L<a blocking IO
+mode|/C_opt_set_> before using it. Note that you should use 
+C<L<APR::Status::is_EAGAIN|docs::2.0::api::APR::Status/C_is_EAGAIN_>>
+to perform this check (since different error codes may be returned for
+the same event on different OSes). For example if the socket is set to
+the non-blocking mode and there is no data right away, you may get
+this exception thrown. So here is how to check for it and retry a few
+times after short delays:
+
+  use APR::Status ();
+  $sock->opt_set(APR::Const::SO_NONBLOCK, 1);
+  # ....
+  my $tries = 0;
+  my $buffer;
+  RETRY: my $rlen = eval { $socket->recv($buffer, SIZE) };
+  if ($@)
+      die $@ unless ref $@ && APR::Status::is_EAGAIN($@);
+      if ($tries++ < 3) {
+          # sleep 250msec
+          select undef, undef, undef, 0.25;
+          goto RETRY;
+      }
+      else {
+          # do something else
+      }
+  }
+  warn "read $rlen bytes\n"
+
+
+If timeout was set via C<timeout_set|/C_timeout_set_>, you may need to
+catch the
+C<L<APR::Const::TIMEUP|docs::2.0::api::APR::Const/C_APR__Const__TIMEUP_>>
+exception. For example:
+
+  use APR::Const -compile => qw(TIMEUP);
+  $sock->timeout_set(1_000_000); # 1 sec
+  my $buffer;
+  eval { $sock->recv($buffer, $wanted) };
+  if ($@ && $@ == APR::Const::TIMEUP) {
+      # timeout, do something, e.g.
+  }
+
+If not handled -- you may get the error C<'70007: The timeout
+specified has expired'>.
+
+Another error condition that may occur is the C<'(104) Connection
+reset by peer'> error, which is up to your application logic to decide
+whether it's an error or not. This error usually happens when the
+client aborts the connection.
+
+  use APR::Const -compile => qw(ECONNABORTED);
+  my $buffer;
+  eval { $sock->recv($buffer, $wanted) };
+  if ($@ == APR::Const::ECONNABORTED) {
+      # ignore it or deal with it
+  }
+
+=item since: 2.0.00
+
+=back
+
+Here is the quick prototype example, which doesn't handle any errors
+(mod_perl will do that for you):
+
+  use APR::Socket ();
+  
+  # set the socket to the blocking mode if it isn't already
+  use APR::Const -compile => qw(SO_NONBLOCK);
+  if ($sock->opt_get(APR::Const::SO_NONBLOCK)) {
+      $sock->opt_set(APR::Const::SO_NONBLOCK => 0);
+  }
+  # read from/write to the socket (w/o handling possible failures)
+  my $wanted = 1024;
+  while ($sock->recv(my $buffer, $wanted)) {
+      $sock->send($buffer);
+  }
+
+If you want to handle errors by yourself, the loop may look like:
+
+  use APR::Const -compile => qw(ECONNABORTED);
+  # ...
+  while (1) {
+      my $buf;
+      my $len = eval { $sock->recv($buf, $wanted) };
+      if ($@) {
+          # handle the error, e.g. to ignore aborted connections but
+          # rethrow any other errors:
+          if ($@ == APR::Const::ECONNABORTED) {
+              # ignore
+              last;
+          }
+          else {
+              die $@; # retrow
+          }
+      }
+  
+      if ($len) {
+          $sock->send($buffer);
+      }
+      else {
+          last;
+      }
+  }
+
+
+
+
+
+
+
+
+=head2 C<send>
+
+Write data to the socket
+
+  $wlen = $sock->send($buf, $opt_len);
+
+=over 4
+
+=item obj: C<$sock>
+( C<L<APR::Socket object|docs::2.0::api::APR::Socket>> )
+
+The socket to write to
+
+=item arg1: C<$buf> ( scalar )
+
+The data to send
+
+=item opt arg2: C<$opt_len> ( int )
+
+There is no need to pass this argument, unless you want to send less
+data than contained in C<$buf>.
+
+=item ret: C<$wlen> ( integer )
+
+How many bytes were sent
+
+=item since: 2.0.00
+
+=back
+
+For examples see the C<L<recv|/C_recv_>> item.
+
+
+
+
+
+
+
+
+
+
+
+=head2 C<timeout_get>
+
+Get socket timeout settings
+
+  $usecs = $sock->timeout_get();
+
+=over 4
+
+=item obj: C<$sock>
+( C<L<APR::Socket object|docs::2.0::api::APR::Socket>> )
+
+The socket to set up.
+
+=item ret: C<$usecs> ( number)
+
+Currently set timeout in microseconds (and also the blocking IO
+behavior). See (C<L<APR::timeout_set|/C__timeout_set_>>) for possible
+values and their meaning.
+
+=item excpt: C<L<APR::Error|docs::2.0::api::APR::Error>>
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=head2 C<timeout_set>
+
+Setup socket timeout.
+
+  $sock->timeout_set($usecs);
+
+=over 4
+
+=item obj: C<$sock>
+( C<L<APR::Socket object|docs::2.0::api::APR::Socket>> )
+
+The socket to set up.
+
+=item arg1: C<$usecs> ( number )
+
+Value for the timeout in microseconds and also the blocking IO
+behavior.
+
+The possible values are:
+
+=over
+
+=item t E<gt> 0
+
+C<L<send()|/C__send_>> and C<L<recv()|/C__recv_)>> throw
+(C<L<APR::Const::TIMEUP|docs::2.0::api::APR::Const/C__APR__TIMEUP_>>
+exception) if specified time elapses with no data sent or received.
+
+Notice that the positive value is in micro seconds. So if you want to
+set the timeout for 5 seconds, the value should be: 5_000_000.
+
+This mode sets the socket into a non-blocking IO mode.
+
+=item t == 0
+
+C<L<send()|/C__send_>> and C<L<recv()|/C__recv_)>> calls never block.
+
+=item t E<lt> 0
+
+C<L<send()|/C__send_>> and C<L<recv()|/C__recv_)>> calls block.
+
+Usually just -1 is used for this case, but any negative value will do.
+
+This mode sets the socket into a blocking IO mode.
+
+=item ret: no return value
+
+=back
+
+=item excpt: C<L<APR::Error|docs::2.0::api::APR::Error>>
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=head1 Unsupported API
+
+C<APR::Socket> also provides auto-generated Perl interface for a few
+other methods which aren't tested at the moment and therefore their
+API is a subject to change. These methods will be finalized later as a
+need arises. If you want to rely on any of the following methods
+please contact the L<the mod_perl development mailing
+list|maillist::dev> so we can help each other take the steps necessary
+to shift the method to an officially supported API.
+
+
+
+
+
+=head2 C<bind>
+
+META: Autogenerated - needs to be reviewed/completed
+
+Bind the socket to its associated port
+
+  $ret = $sock->bind($sa);
+
+=over 4
+
+=item obj: C<$sock>
+( C<L<APR::Socket object|docs::2.0::api::APR::Socket>> )
+
+The socket to bind
+
+=item arg1: C<$sa>
+( C<L<APR::SockAddr object|docs::2.0::api::APR::SockAddr>> )
+
+The socket address to bind to
+
+=item ret: C<$ret> ( integer )
+
+=item since: subject to change
+
+=back
+
+This may be where we will find out if there is any other process
+using the selected port.
+
+
+
+
+
+
+=head2 C<close>
+
+META: Autogenerated - needs to be reviewed/completed
+
+Close a socket.
+
+  $ret = $sock->close();
+
+=over 4
+
+=item obj: C<$sock>
+( C<L<APR::Socket object|docs::2.0::api::APR::Socket>> )
+
+The socket to close
+
+=item ret: C<$ret> ( integer )
+
+
+=item since: subject to change
+
+
+=back
+
+
+
+
+
+=head2 C<connect>
+
+META: Autogenerated - needs to be reviewed/completed
+
+Issue a connection request to a socket either on the same machine
+or a different one.
+
+  $ret = $sock->connect($sa);
+
+=over 4
+
+=item obj: C<$sock>
+( C<L<APR::Socket object|docs::2.0::api::APR::Socket>> )
+
+The socket we wish to use for our side of the connection 
+
+=item arg1: C<$sa>
+( C<L<APR::SockAddr object|docs::2.0::api::APR::SockAddr>> )
+
+The address of the machine we wish to connect to.  If NULL,
+APR assumes that the sockaddr_in in the apr_socket is
+completely filled out.
+
+=item ret: C<$ret> ( integer )
+
+=item since: subject to change
+
+
+=back
+
+
+
+
+
+=head2 C<listen>
+
+META: Autogenerated - needs to be reviewed/completed
+
+Listen to a bound socket for connections.
+
+  $ret = $sock->listen($backlog);
+
+=over 4
+
+=item obj: C<$sock>
+( C<L<APR::Socket object|docs::2.0::api::APR::Socket>> )
+
+The socket to listen on
+
+=item arg1: C<$backlog> ( integer )
+
+The number of outstanding connections allowed in the sockets
+listen queue.  If this value is less than zero, the listen
+queue size is set to zero.
+
+=item ret: C<$ret> ( integer )
+
+=item since: subject to change
+
+
+=back
+
+
+
+
+
+
+
+
+
+
+=head2 C<recvfrom>
+
+META: Autogenerated - needs to be reviewed/completed
+
+  $ret = $from->recvfrom($sock, $flags, $buf, $len);
+
+=over 4
+
+=item obj: C<$from>
+( C<L<APR::SockAddr object|docs::2.0::api::APR::SockAddr>> )
+
+The apr_sockaddr_t to fill in the recipient info
+
+=item arg1: C<$sock>
+( C<L<APR::SockAddr object|docs::2.0::api::APR::SockAddr>> )
+
+The socket to use
+
+=item arg2: C<$flags> ( integer )
+
+The flags to use
+
+=item arg3: C<$buf> ( integer )
+
+The buffer to use
+
+=item arg4: C<$len> ( string )
+
+The length of the available buffer
+
+=item ret: C<$ret> ( integer )
+
+=item since: subject to change
+
+
+=back
+
+
+
+
+
+=head2 C<sendto>
+
+META: Autogenerated - needs to be reviewed/completed
+
+  $ret = $sock->sendto($where, $flags, $buf, $len);
+
+=over 4
+
+=item obj: C<$sock>
+( C<L<APR::Socket object|docs::2.0::api::APR::Socket>> )
+
+The socket to send from
+
+=item arg1: C<$where>
+( C<L<APR::Socket object|docs::2.0::api::APR::Socket>> )
+
+The apr_sockaddr_t describing where to send the data
+
+=item arg2: C<$flags> ( integer )
+
+The flags to use
+
+=item arg3: C<$buf> ( scalar )
+
+The data to send
+
+=item arg4: C<$len> ( string )
+
+The length of the data to send
+
+=item ret: C<$ret> ( integer )
+
+=item since: subject to change
+
+=back
+
+
+
+
+
+
+
+
+=head1 See Also
+
+L<mod_perl 2.0 documentation|docs::2.0::index>.
+
+
+
+
+=head1 Copyright
+
+mod_perl 2.0 and its core modules are copyrighted under
+The Apache Software License, Version 2.0.
+
+
+
+
+=head1 Authors
+
+L<The mod_perl development team and numerous
+contributors|about::contributors::people>.
+
+=cut
+

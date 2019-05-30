@@ -1,0 +1,30 @@
+Simple install:
+
+  % perl Makefile.PL MP_APXS=/usr/local/apache2/bin/apxs
+  % make && make test
+  % make install
+
+Simple config:
+
+  LoadModule perl_module modules/mod_perl.so
+  #PerlModule Apache::compat
+  # your config comes here
+
+For a more detailed version (including more options) refer to:
+
+  docs/user/intro/start_fast.pod
+
+or online:
+
+  http://perl.apache.org/docs/2.0/user/intro/start_fast.html
+
+For an even more detailed documentation refer to:
+
+  docs/user/install/install.pod
+  docs/user/config/config.pod
+
+or online:
+
+  http://perl.apache.org/docs/2.0/user/install/install.pod
+  http://perl.apache.org/docs/2.0/user/config/config.pod
+

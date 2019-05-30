@@ -1,0 +1,67 @@
+=head1 NAME
+
+Changes - Apache::Reload change logfile
+
+=head1 CHANGES
+
+=over 1
+
+=item 0.13 May 09, 2015
+
+Fix reload.t. Reported in CPAN RT#96656.
+[Steve Hay]
+
+=item 0.12 March 31, 2012
+
+Set the -apxs argument correctly when building from mod_perl.
+[Steve Hay]
+
+Doc spelling fix
+[Nicholas Bamber]
+
+Add Apache-Test 1.34 dependency.
+[Phred]
+
+=item 0.11 August 21, 2010
+
+Ignore require-hooks which exist in %INC
+[Ryan Gies <ryan@livesite.net>]
+
+Reloads by file, not module name
+[Ryan Gies <ryan@livesite.net>]
+
+Add a no Apache::Reload directive which skips reloading for modules
+that have it included (useful for Moose compatibility).
+[Graham Barr, <gbarr@pobox.com>]
+
+Add Empty NOTICE file
+http://rt.cpan.org/Ticket/Display.html?id=34786
+[Niko Tyni (Debian Perl Group) <ntyni@debian.org>]
+
+=item 0.10 February 25, 2008
+
+Add make disttest procedure to RELEASE document - fred
+
+Check for Apache::Test version 1.30, needed to run tests - fred
+
+Apache::Reload and Apache2::Reload bundled for CPAN release
+This release incorporates unreleased changes in 0.08 and 0.09
+[Fred Moyer <fred@redhotpenguin.com>]
+
+=item 0.09
+
+Apache2::Reload was part of mod_perl2 core in this version
+
+=item 0.08
+
+Remove modified modules before reloading them
+[Javier Ureuen Val]
+
+Imported from v0.07 into ASF SVN
+[Philip M. Gollucci <pgollucci@p6m7g8.com>]
+
+Matt Sergeant <matt@sergeant.org> has donated Apache-Reload
+to the ASF.
+
+=back
+

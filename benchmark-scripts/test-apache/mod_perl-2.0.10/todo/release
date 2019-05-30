@@ -1,0 +1,57 @@
+##################################################
+# Things to be resolved for mod_perl 2.0 release #
+##################################################
+
+-- see also todo/api_status
+-- see also todo/release-checklist
+
+someone has asked to make $r->request_time settable
+
+-------------
+
+The following items need more work in order to work with blead-perl:
+
+http://svn.apache.org/viewcvs?rev=209859&view=rev
+perl blead fix: in 5.9.3 HvPMROOT was completely removed, temporary
+using Perl_Imodglobal_ptr(thx)))->xmg_magic (which fails on perl_clone
+from ithreads, but otherwise works). this must be replaced with a
+better solution once we find it.
+
+http://svn.apache.org/viewcvs?rev=209861&view=rev
+blead perl temp fix: some recent change introduced tainting problems,
+will remove the workaround once blead perl is fixed
+
+
+
+
+-------------
+
+MP_STATIC_EXTS=1 must link all extensions but APR.so. At the moment
+the following are not linked:
+
+  APR/Const.so APR/PerlIO.so Apache/Const.so ModPerl/Const.so
+
+owner: ???
+
+note: when testing MP_STATIC_EXTS=1 build we must ensure that there is
+no preinstalled mod_perl2. Since if there is a preinstall of a normal
+build, MP_STATIC_EXTS=1 will be not properly tested, as the
+preinstalled .so modules will be loaded. A potential solution: when
+MP_STATIC_EXTS=1 is used change .pm files not to load the .xs
+extensions!
+
+-------------
+
+When running as root and A-T figures it can't run the test suite
+(perms) it'll ask users if she wants to skip the test suite, if this
+happens:
+
+  Skip the test suite? [No] yes
+  Skipping the test suite execution, while returning success status
+  cd ModPerl-Registry && make test
+
+she gets to run the registry test suite anyway, since the top level
+test suite was successful (needed to make cpan/plus installers
+happy). Not sure what's the best solution here.
+
+---------------

@@ -1,0 +1,2035 @@
+=head1 NAME
+
+Apache2::RequestRec - Perl API for Apache request record accessors
+
+
+
+
+=head1 Synopsis
+
+  use Apache2::RequestRec ();
+  
+  # set supported by the handler HTTP methods
+  $allowed = $r->allowed();
+  
+  # auth type
+  $auth_type = $r->ap_auth_type();
+  
+  # QUERY_STRING
+  $args = $r->args();
+  
+  # non-parsed-headers handler
+  $status = $r->assbackwards();
+  
+  # how many bytes were sent
+  $bytes_sent = $r->bytes_sent();
+  
+  # client connection record
+  $c = $r->connection();
+  
+  # "Content-Encoding" HTTP response header
+  $r->content_encoding("gzip");
+  
+  # the languages of the content
+  $languages = $r->content_languages();
+  
+  # "Content-Encoding" HTTP response header
+  $r->content_type('text/plain');
+  
+  # special response headers table
+  $err_headers_out = $r->err_headers_out();
+  
+  # request mapped filename
+  $filename = $r->filename();
+  
+  # request finfo
+  $finfo = $r->finfo();
+  
+  # 'SetHandler perl-script' equivalent
+  $r->handler('perl-script');
+  
+  # was it a HEAD request?
+  $status = $r->header_only();
+  
+  # request input headers table
+  $headers_in = $r->headers_in();
+  
+  # request output headers table
+  $headers_out = $r->headers_out();
+  
+  # hostname
+  $hostname = $r->hostname();
+  
+  # input filters stack
+  $input_filters = $r->input_filters();
+  
+  # get the main request obj in a sub-request
+  $main_r = $r->main();
+  
+  # what's the current request (GET/POST/etc)?
+  $method = $r->method();
+  
+  # what's the current method number?
+  $methnum = $r->method_number();
+  
+  # current resource last modified time
+  $mtime = $r->mtime();
+  
+  # next request object (in redirect)
+  $next_r = $r->next();
+  
+  # there is no local copy
+  $r->no_local_copy();
+  
+  # Apache ascii notes table
+  $notes = $r->notes();
+  
+  # output filters stack
+  $output_filters = $r->output_filters();
+  
+  # PATH_INFO
+  $path_info = $r->path_info();
+  
+  # used in configuration directives modules
+  $per_dir_config = $r->per_dir_config();
+  
+  # pool with life span of the current request
+  $p = $r->pool();
+  
+  # previous request object in the internal redirect
+  $prev_r = $r->prev();
+  
+  # connection level input filters stack
+  $proto_input_filters = $r->proto_input_filters();
+  
+  # HTTP protocol version number
+  $proto_num = $r->proto_num();
+  
+  # connection level output filters stack
+  $proto_output_filters = $r->proto_output_filters();
+  
+  # the protocol, the client speaks: "HTTP/1.0", "HTTP/1.1", etc.
+  $protocol = $r->protocol();
+  
+  # is it a proxy request
+  $status = $r->proxyreq($val);
+  
+  # Time when the request started
+  $request_time = $r->request_time();
+  
+  # server object
+  $s = $r->server();
+  
+  # response status
+  $status = $r->status();
+  
+  # response status line
+  $status_line = $r->status_line();
+  
+  # manipulate %ENV of the subprocess
+  $r->subprocess_env;
+  $r->subprocess_env($key => $val);
+  
+  # first HTTP request header
+  $request = $r->the_request();
+  
+  # the URI without any parsing performed
+  $unparsed_uri = $r->unparsed_uri();
+  
+  # The path portion of the URI
+  $uri = $r->uri();
+  
+  # auth username
+  $user = $r->user();
+
+
+
+
+=head1 Description
+
+C<Apache2::RequestRec> provides the Perl API for Apache request_rec
+object.
+
+The following packages extend the C<Apache2::RequestRec> functionality:
+C<L<Apache2::Access|docs::2.0::api::Apache2::Access>>,
+C<L<Apache2::Log|docs::2.0::api::Apache2::Log>>,
+C<L<Apache2::RequestIO|docs::2.0::api::Apache2::RequestIO>>,
+C<L<Apache2::RequestUtil|docs::2.0::api::Apache2::RequestUtil>>,
+C<L<Apache2::Response|docs::2.0::api::Apache2::Response>>,
+C<L<Apache2::SubRequest|docs::2.0::api::Apache2::SubRequest>> and
+C<L<Apache2::URI|docs::2.0::api::Apache2::URI>>.
+
+
+
+
+
+=head1 API
+
+C<Apache2::RequestRec> provides the following functions and/or methods:
+
+
+
+=head2 C<allowed>
+
+Get/set the allowed methods bitmask.
+
+  $allowed      = $r->allowed();
+  $prev_allowed = $r->allowed($new_allowed);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_allowed> ( bitmask )
+
+Set the bitvector.
+
+=item ret: C<$allowed> ( bitmask )
+
+returns C<$allowed>, which is a bitvector of the allowed methods.
+
+If the C<$new_allowed> argument is passed, the value before the change
+is returned.
+
+=item since: 2.0.00
+
+=back
+
+A handler must ensure that the request method is one that it is
+capable of handling.  Generally modules should C<Apache2::DECLINE> any
+request methods they do not handle.  Prior to aborting the handler
+like this the handler should set C<$r-E<gt>allowed> to the list of
+methods that it is willing to handle.  This bitvector is used to
+construct the C<"Allow:"> header required for C<OPTIONS> requests, and
+C<Apache2::Const::HTTP_METHOD_NOT_ALLOWED> (405) and
+C<Apache2::Const::HTTP_NOT_IMPLEMENTED> (501) status codes.
+
+Since the default Apache handler deals with the C<OPTIONS> method, all
+response handlers can usually decline to deal with C<OPTIONS>. For
+example if the response handler handles only C<GET> and C<POST>
+methods, and not C<OPTIONS>, it may want to say:
+
+   use Apache2::Const -compile => qw(OK DECLINED M_GET M_POST M_OPTIONS);
+   if ($r->method_number == Apache2::Const::M_OPTIONS) {
+       $r->allowed($r->allowed | (1<<Apache2::Const::M_GET) | (1<<Apache2::Const::M_POST));
+       return Apache2::Const::DECLINED;
+   }
+
+C<TRACE> is always allowed, modules don't need to set it explicitly.
+
+Since the default_handler will always handle a C<GET>, a module which
+does *not* implement C<GET> should probably return
+C<Apache2::Const::HTTP_METHOD_NOT_ALLOWED>.  Unfortunately this means that a
+script C<GET> handler can't be installed by mod_actions.
+
+For example, if the module can handle only POST method it could start
+with:
+
+   use Apache2::Const -compile => qw(M_POST HTTP_METHOD_NOT_ALLOWED);
+   unless ($r->method_number == Apache2::Const::M_POST) {
+       $r->allowed($r->allowed | (1<<Apache2::Const::M_POST));
+       return Apache2::Const::HTTP_METHOD_NOT_ALLOWED;
+   }
+
+
+
+
+=head2 C<ap_auth_type>
+
+If an authentication check was made, get or set the I<ap_auth_type>
+slot in the request record
+
+  $auth_type = $r->ap_auth_type();
+  $r->ap_auth_type($newval);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$newval> (string)
+
+If this argument is passed then a new auth type is assigned. For example:
+
+  $r->auth_type('Basic');
+
+=item ret: C<$auth_type> (string)
+
+If C<$newval> is passed, nothing is returned. Otherwise the current
+auth type is returned.
+
+=item since: 2.0.00
+
+=back
+
+I<ap_auth_type> holds the authentication type that has been negotiated
+between the client and server during the actual request.  Generally,
+I<ap_auth_type> is populated automatically when you call
+C<$r-E<gt>get_basic_auth_pw> so you don't really need to worry too
+much about it, but if you want to roll your own authentication
+mechanism then you will have to populate I<ap_auth_type> yourself.
+
+Note that C<$r-E<gt>ap_auth_type> was
+C<$r-E<gt>connection-E<gt>auth_type> in the mod_perl 1.0 API.
+
+
+
+
+
+
+
+=head2 C<args>
+
+Get/set the request QUERY string
+
+  $args      = $r->args();
+  $prev_args = $r->args($new_args);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_args> ( string )
+
+Optionally set the new QUERY string
+
+=item ret: C<$args> ( string )
+
+The current QUERY string
+
+If C<$new_args> was passed, returns the value before the change.
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+
+
+
+=head2 C<assbackwards>
+
+When set to a true value, Apache won't send any HTTP response headers
+allowing you to send any headers.
+
+  $status      = $r->assbackwards();
+  $prev_status = $r->assbackwards($newval);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$newval> (integer)
+
+assign a new state.
+
+=item ret: C<$status> (integer)
+
+current state.
+
+=item since: 2.0.00
+
+=back
+
+If you send your own set of headers, which includes the C<Keep-Alive>
+HTTP response header, you must make sure to increment the number of
+requests served over this connection (which is normally done by the
+core connection output filter C<ap_http_header_filter>, but skipped
+when C<assbackwards> is enabled).
+
+  $r->connection->keepalives($r->connection->keepalives + 1);
+
+otherwise code relying on the value of
+C<L<$r-E<gt>connection-E<gt>keepalives|docs::2.0::api::Apache2::Connection/C_keepalives_>>
+may malfunction. For example, this counter is used to tell when a new
+request is coming in over the same connection to a filter that wants
+to parse only HTTP headers (like
+C<Apache2::Filter::HTTPHeadersFixup>). Of course you will need to set
+C<L<$r-E<gt>connection-E<gt>keepalive(1)|docs::2.0::api::Apache2::Connection/C_keepalive_>>
+) as well.
+
+
+
+
+
+
+
+=head2 C<bytes_sent>
+
+The number of bytes sent to the client, handy for logging, etc.
+
+  $bytes_sent = $r->bytes_sent();
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item ret: C<$bytes_sent> (integer)
+
+=item since: 2.0.00
+
+=back
+
+Though as of this writing in Apache 2.0 it doesn't really do what it
+did in Apache 1.3. It's just set to the size of the response body.
+The issue is that buckets from one request may get buffered and not
+sent during the lifetime of the request, so it's not easy to give a
+truly accurate count of "bytes sent to the network for this response".
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=head2 C<connection>
+
+Get the client connection record
+
+  $c = $r->connection();
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item ret: C<$c>
+( C<L<Apache2::Connection object|docs::2.0::api::Apache2::Connection>> )
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+
+=head2 C<content_encoding>
+
+Get/set content encoding (the "Content-Encoding" HTTP header).
+Content encodings are string like I<"gzip"> or I<"compress">.
+
+  $ce      = $r->content_encoding();
+  $prev_ce = $r->content_encoding($new_ce);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_ce> ( string )
+
+If passed, sets the content encoding to a new value. It must be a
+lowercased string.
+
+=item ret: C<$ce> ( string )
+
+The current content encoding.
+
+If C<$new_ce> is passed, then the previous value is returned.
+
+=item since: 2.0.00
+
+=back
+
+For example, here is how to send a gzip'ed response:
+
+  require Compress::Zlib;
+  $r->content_type("text/plain");
+  $r->content_encoding("gzip");
+  $r->print(Compress::Zlib::memGzip("some text to be gzipped));
+
+
+
+
+
+
+
+
+=head2 C<content_languages>
+
+Get/set content languages (the C<"Content-Language"> HTTP header).
+Content languages are string like I<"en"> or I<"fr">.
+
+  $languages = $r->content_languages();
+  $prev_lang = $r->content_languages($nev_lang);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_lang> ( ARRAY ref )
+
+If passed, sets the content languages to new values. It must be an
+ARRAY reference of language names, like I<"en"> or I<"fr">
+
+=item ret: C<$languages> ( ARRAY ref )
+
+The current list of content languages, as an ARRAY reference.
+
+If C<$new_lang> is passed, then the previous value is returned.
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+
+
+=head2 C<content_type>
+
+Get/set the HTTP response I<Content-type> header value.
+
+  my $content_type      = $r->content_type();
+  my $prev_content_type = $r->content_type($new_content_type);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_content_type> (MIME type string)
+
+Assign a new HTTP response content-type. It will affect the response
+only if HTTP headers weren't sent yet.
+
+=item ret: C<$content_type>
+
+The current content-type value.
+
+If C<$new_content_type> was passed, the previous value is returned
+instead.
+
+=item since: 2.0.00
+
+=back
+
+For example, set the C<Content-type> header to I<text/plain>.
+
+  $r->content_type('text/plain');
+
+If you set this header via the
+C<L<headers_out|docs::2.0::api::Apache2::RequestRec/C_headers_out_>>
+table directly, it will be ignored by Apache. So do not do that.
+
+
+
+
+
+
+
+
+=head2 C<err_headers_out>
+
+Get/set MIME response headers, printed even on errors and persist
+across internal redirects.
+
+  $err_headers_out = $r->err_headers_out();
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item ret: C<$err_headers_out>
+( C<L<APR::Table object|docs::2.0::api::APR::Table>> )
+
+=item since: 2.0.00
+
+=back
+
+The difference between C<L<headers_out|/C_headers_out_>> and
+C<err_headers_out>, is that the latter are printed even on error, and
+persist across internal redirects (so the headers printed for
+C<ErrorDocument> handlers will have them).
+
+For example, if a handler wants to return a 404 response, but
+nevertheless to set a cookie, it has to be:
+
+  $r->err_headers_out->add('Set-Cookie' => $cookie);
+  return Apache2::Const::NOT_FOUND;
+
+If the handler does:
+
+  $r->headers_out->add('Set-Cookie' => $cookie);
+  return Apache2::Const::NOT_FOUND;
+
+the C<Set-Cookie> header won't be sent.
+
+
+
+
+
+
+=head2 C<filename>
+
+Get/set the filename on disk corresponding to this response (the
+result of the I<URI --E<gt> filename> translation).
+
+  $filename      = $r->filename();
+  $prev_filename = $r->filename($new_filename);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_filename> ( string )
+
+new value
+
+=item ret: C<$filename> ( string )
+
+the current filename, or the previous value if the optional
+C<$new_filename> argument was passed
+
+=item since: 2.0.00
+
+=back
+
+Note that if you change the filename after the
+C<L<PerlMapToStorageHandler|docs::2.0::user::handlers::http/PerlMapToStorageHandler>>
+phase was run and expect Apache to serve it, you need to update its
+C<stat> record, like so:
+
+  use Apache2::RequestRec ();
+  use APR::Finfo ();
+  use APR::Const -compile => qw(FINFO_NORM);
+  $r->filename($newfile);
+  $r->finfo(APR::Finfo::stat($newfile, APR::Const::FINFO_NORM, $r->pool));
+
+if you don't, Apache will still try to use the previously cached
+information about the previously set value of the filename.
+
+
+
+
+
+
+
+=head2 C<finfo>
+
+Get and set the I<finfo> request record member:
+
+  $finfo = $r->finfo();
+  $r->finfo($finfo);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$finfo>
+( C<L<APR::Finfo object|docs::2.0::api::APR::Finfo>> )
+
+=item ret: C<$finfo>
+( C<L<APR::Finfo object|docs::2.0::api::APR::Finfo>> )
+
+Always returns the current object.
+
+Due to the internal Apache implementation it's not possible to have
+two different objects originating from C<$r-E<gt>finfo> at the same
+time. Whenever C<$r-E<gt>finfo> is updated all objects will be updated
+too to the latest value.
+
+=item since: 2.0.00
+
+=back
+
+Most of the time, this method is used to get the C<finfo> member. The
+only reason you may want to set it is you need to use it before the
+Apache's default map_to_storage phase is called.
+
+Examples:
+
+=over
+
+=item *
+
+What Apache thinks is the current request filename (post the
+C<L<PerlMapToStorageHandler|docs::2.0::user::handlers::http/PerlMapToStorageHandler>>
+phase):
+
+  use Apache2::RequestRec ();
+  use APR::Finfo ();
+  print $r->finfo->fname;
+
+=item *
+
+Populate the C<finfo> member (normally, before the
+C<L<PerlMapToStorageHandler|docs::2.0::user::handlers::http/PerlMapToStorageHandler>>
+phase):
+
+  use APR::Finfo ();
+  use APR::Const -compile => qw(FINFO_NORM);
+  
+  my $finfo = APR::Finfo::stat(__FILE__, APR::Const::FINFO_NORM, $r->pool);
+  $r->finfo($finfo);
+
+=back
+
+
+
+
+
+
+=head2 C<handler>
+
+Get/set the equivalent of the C<SetHandler> directive.
+
+  $handler      = $r->handler();
+  $prev_handler = $r->handler($new_handler);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_handler> ( string )
+
+the new handler.
+
+=item ret: C<$handler> ( string )
+
+the current handler.
+
+If C<$new_handler> is passed, the previous value is returned.
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+
+=head2 C<header_only>
+
+Did the client has asked for headers only? e.g. if the request method
+was B<HEAD>.
+
+  $status = $r->header_only();
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item ret: C<$status> ( boolean )
+
+Returns true if the client is asking for headers only, false otherwise
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+=head2 C<headers_in>
+
+Get/set the request MIME headers:
+
+  $headers_in = $r->headers_in();
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item ret: C<$headers_in>
+( C<L<APR::Table object|docs::2.0::api::APR::Table>> )
+
+=item since: 2.0.00
+
+=back
+
+This table is available starting from the
+C<L<PerlHeaderParserHandler|docs::2.0::user::handlers::http/PerlHeaderParserHandler>>
+phase.
+
+For example you can use it to retrieve the cookie value sent by the
+client, in the C<Cookie:> header:
+
+    my $cookie = $r->headers_in->{Cookie} || '';
+
+
+
+
+
+
+
+=head2 C<headers_out>
+
+Get/set MIME response headers, printed only on 2xx responses.
+
+  $headers_out = $r->headers_out();
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item ret: C<$headers_out>
+( C<L<APR::Table object|docs::2.0::api::APR::Table>> )
+
+=item since: 2.0.00
+
+=back
+
+See also C<L<err_headers_out|/C_err_headers_out_>>, which allows to
+set headers for non-2xx responses and persist across internal
+redirects.
+
+
+
+
+
+
+
+
+=head2 C<hostname>
+
+Host, as set by full URI or Host:
+
+  $hostname = $r->hostname();
+  $prev_hostname = $r->hostname($new_hostname);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_hostname> ( string )
+
+new value
+
+=item ret: C<$hostname> ( string )
+
+the current hostname, or the previous value if the optional
+C<$new_hostname> argument was passed
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+
+
+
+=head2 C<input_filters>
+
+Get/set the first filter in a linked list of request level input
+filters:
+
+  $input_filters      = $r->input_filters();
+  $prev_input_filters = $r->input_filters($new_input_filters);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_input_filters>
+
+Set a new value
+
+=item ret: C<$input_filters>
+( C<L<Apache2::Filter object|docs::2.0::api::Apache2::Filter>> )
+
+The first filter in the request level input filters chain.
+
+If C<$new_input_filters> was passed, returns the previous value.
+
+=item since: 2.0.00
+
+=back
+
+For example instead of using
+C<L<$r-E<gt>read()|docs::2.0::api::Apache2::RequestIO/C_read_>> to read
+the POST data, one could use an explicit walk through incoming bucket
+brigades to get that data. The following function C<read_post()> does
+just that (in fact that's what
+C<L<$r-E<gt>read()|docs::2.0::api::Apache2::RequestIO/C_read_>> does
+behind the scenes):
+
+  use APR::Brigade ();
+  use APR::Bucket ();
+  use Apache2::Filter ();
+  
+  use Apache2::Const -compile => qw(MODE_READBYTES);
+  use APR::Const    -compile => qw(SUCCESS BLOCK_READ);
+  
+  use constant IOBUFSIZE => 8192;
+  
+  sub read_post {
+      my $r = shift;
+  
+      my $bb = APR::Brigade->new($r->pool,
+                                 $r->connection->bucket_alloc);
+  
+      my $data = '';
+      my $seen_eos = 0;
+      do {
+          $r->input_filters->get_brigade($bb, Apache2::Const::MODE_READBYTES,
+                                         APR::Const::BLOCK_READ, IOBUFSIZE);
+  
+          for (my $b = $bb->first; $b; $b = $bb->next($b)) {
+              if ($b->is_eos) {
+                  $seen_eos++;
+                  last;
+              }
+  
+              if ($b->read(my $buf)) {
+                  $data .= $buf;
+              }
+  
+              $b->remove; # optimization to reuse memory
+          }
+  
+      } while (!$seen_eos);
+  
+      $bb->destroy;
+  
+      return $data;
+  }
+
+As you can see C<$r-E<gt>input_filters> gives us a pointer to the last
+of the top of the incoming filters stack.
+
+
+
+
+
+
+
+=head2 C<main>
+
+Get the main request record
+
+  $main_r = $r->main();
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item ret: C<$main_r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+If the current request is a sub-request, this method returns a blessed
+reference to the main request structure. If the current request is the
+main request, then this method returns C<undef>.
+
+To figure out whether you are inside a main request or a
+sub-request/internal redirect, use
+C<L<$r-E<gt>is_initial_req|docs::2.0::api::Apache2::RequestUtil/C_is_initial_req_>>.
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+=head2 C<method>
+
+Get/set the current request method (e.g. C<GET>, C<HEAD>, C<POST>, etc.):
+
+  $method     = $r->method();
+  $pre_method = $r->method($new_method);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_method> ( string )
+
+a new value
+
+=item ret: C<$method> ( string )
+
+The current method as a string
+
+if C<$new_method> was passed the previous value is returned.
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+=head2 C<method_number>
+
+Get/set the HTTP method, issued by the client (C<Apache2::Const::M_GET>,
+C<Apache2::Const::M_POST>, etc.)
+
+  $methnum      = $r->method_number();
+  $prev_methnum = $r->method_number($new_methnum);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_methnum> ( C<L<Apache2::Const :methods
+constant|docs::2.0::api::Apache2::Const/C__methods_>> )
+
+a new value
+
+=item ret: C<$methnum> ( C<L<Apache2::Const :methods
+constant|docs::2.0::api::Apache2::Const/C__methods_>> )
+
+The current method as a number
+
+if C<$new_methnum> was passed the previous value is returned.
+
+=item since: 2.0.00
+
+=back
+
+See the C<L<$r-E<gt>allowed|/C_allowed_>> entry for examples.
+
+
+
+
+
+
+
+
+
+=head2 C<mtime>
+
+Last modified time of the requested resource
+
+  $mtime      = $r->mtime();
+  $prev_mtime = $r->mtime($new_mtime);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_mtime> (epoch seconds).
+
+a new value
+
+=item ret: C<$mtime> (epoch seconds).
+
+the current value
+
+if C<$new_mtime> was passed the previous value is returned.
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+
+
+=head2 C<next>
+
+Pointer to the redirected request if this is an external redirect
+
+  $next_r = $r->next();
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item ret: C<$next_r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+returns a blessed reference to the next (internal) request structure
+or C<undef> if there is no next request.
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+=head2 C<no_local_copy>
+
+There is no local copy of this response
+
+  $status = $r->no_local_copy();
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item ret: C<$status> (integer)
+
+=item since: 2.0.00
+
+=back
+
+Used internally in certain sub-requests to prevent sending
+C<Apache2::Const::HTTP_NOT_MODIFIED> for a fragment or error documents. For
+example see the implementation in F<modules/filters/mod_include.c>.
+
+Also used internally in
+C<L<$r-E<gt>meets_conditions|docs::2.0::api::Apache2::Response/C_meets_conditions_>>
+-- if set to a true value, the conditions are always met.
+
+
+
+
+
+
+
+
+
+=head2 C<notes>
+
+Get/set text notes for the duration of this request. These notes can
+be passed from one module to another (not only mod_perl, but modules
+in any other language):
+
+  $notes      = $r->notes();
+  $prev_notes = $r->notes($new_notes);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_notes>
+( C<L<APR::Table object|docs::2.0::api::APR::Table>> )
+
+=item ret: C<$notes>
+( C<L<APR::Table object|docs::2.0::api::APR::Table>> )
+
+the current notes table.
+
+if the C<$new_notes> argument was passed, returns the previous value.
+
+=item since: 2.0.00
+
+=back
+
+If you want to pass Perl structures, you can use
+C<L<$r-E<gt>pnotes|docs::2.0::api::Apache2::RequestUtil/C_pnotes_>>.
+
+Also see
+C<L<$c-E<gt>notes|docs::2.0::api::Apache2::Connection/C_notes_>>
+
+
+
+
+
+
+
+=head2 C<output_filters>
+
+Get the first filter in a linked list of request level output filters:
+
+  $output_filters      = $r->output_filters();
+  $prev_output_filters = $r->output_filters($new_output_filters);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_output_filters>
+
+Set a new value
+
+=item ret: C<$output_filters>
+( C<L<Apache2::Filter object|docs::2.0::api::Apache2::Filter>> )
+
+The first filter in the request level output filters chain.
+
+If C<$new_output_filters> was passed, returns the previous value.
+
+=item since: 2.0.00
+
+=back
+
+For example instead of using
+C<L<$r-E<gt>print()|docs::2.0::api::Apache2::RequestIO/C_print_>> to
+send the response body, one could send the data directly to the first
+output filter. The following function C<send_response_body()> does
+just that:
+
+  use APR::Brigade ();
+  use APR::Bucket ();
+  use Apache2::Filter ();
+  
+  sub send_response_body {
+      my ($r, $data) = @_;
+  
+      my $bb = APR::Brigade->new($r->pool,
+                                 $r->connection->bucket_alloc);
+  
+      my $b = APR::Bucket->new($bb->bucket_alloc, $data);
+      $bb->insert_tail($b);
+      $r->output_filters->fflush($bb);
+      $bb->destroy;
+  }
+
+In fact that's what
+C<L<$r-E<gt>read()|docs::2.0::api::Apache2::RequestIO/C_read_>> does
+behind the scenes. But it also knows to parse HTTP headers passed
+together with the data and it also implements buffering, which the
+above function does not.
+
+
+
+
+
+
+
+
+
+=head2 C<path_info>
+
+Get/set the C<PATH_INFO>, what is left in the path after the I<URI
+--E<gt> filename> translation:
+
+  $path_info      = $r->path_info();
+  $prev_path_info = $r->path_info($path_info);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$path_info> ( string )
+
+Set a new value
+
+=item ret: C<$path_info> ( string )
+
+Return the current value.
+
+If the optional argument C<$path_info> is passed, the previous value
+is returned.
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+=head2 C<per_dir_config>
+
+Get the dir config vector:
+
+  $per_dir_config = $r->per_dir_config();
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item ret: C<$per_dir_config>
+( C<L<Apache2::ConfVector object|docs::2.0::api::Apache2::RequestRec/C_per_dir_config_>> )
+
+=item since: 2.0.00
+
+=back
+
+For an indepth discussion, refer to the L<Apache Server Configuration
+Customization in Perl chapter|docs::2.0::user::config::custom>.
+
+
+
+
+
+
+
+
+=head2 C<pool>
+
+The pool associated with the request
+
+  $p = $r->pool();
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item ret: C<$p> ( C<L<APR::Pool object|docs::2.0::api::APR::Pool>> )
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+
+
+=head2 C<prev>
+
+Pointer to the previous request if this is an internal redirect
+
+  $prev_r = $r->prev();
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item ret: C<$prev_r> ( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+a blessed reference to the previous (internal) request structure or
+C<undef> if there is no previous request.
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+
+=head2 C<proto_input_filters>
+
+Get the first filter in a linked list of protocol level input filters:
+
+  $proto_input_filters      = $r->proto_input_filters();
+  $prev_proto_input_filters = $r->proto_input_filters($new_proto_input_filters);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_proto_input_filters>
+
+Set a new value
+
+=item ret: C<$proto_input_filters>
+( C<L<Apache2::Filter object|docs::2.0::api::Apache2::Filter>> )
+
+The first filter in the protocol level input filters chain.
+
+If C<$new_proto_input_filters> was passed, returns the previous value.
+
+=item since: 2.0.00
+
+=back
+
+C<$r-E<gt>proto_input_filters> points to the same filter as
+C<L<$r-E<gt>connection-E<gt>input_filters|docs::2.0::api::Apache2::Connection/C_input_filters_>>.
+
+
+
+
+
+
+
+=head2 C<proto_num>
+
+Get current request's HTTP protocol version number
+
+  $proto_num = $r->proto_num();
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item ret: C<$proto_num> (integer)
+
+current request's HTTP protocol version number, e.g.: HTTP/1.0 ==
+1000, HTTP/1.1 = 1001
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+
+=head2 C<proto_output_filters>
+
+Get the first filter in a linked list of protocol level output
+filters:
+
+  $proto_output_filters      = $r->proto_output_filters();
+  $prev_proto_output_filters = $r->proto_output_filters($new_proto_output_filters);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_proto_output_filters>
+
+Set a new value
+
+=item ret: C<$proto_output_filters>
+( C<L<Apache2::Filter object|docs::2.0::api::Apache2::Filter>> )
+
+The first filter in the protocol level output filters chain.
+
+If C<$new_proto_output_filters> was passed, returns the previous value.
+
+=item since: 2.0.00
+
+=back
+
+C<$r-E<gt>proto_output_filters> points to the same filter as
+C<L<$r-E<gt>connection-E<gt>output_filters|docs::2.0::api::Apache2::Connection/C_output_filters_>>.
+
+
+
+
+
+
+
+=head2 C<protocol>
+
+Get a string identifying the protocol that the client speaks.
+
+  $protocol = $r->protocol();
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item ret: C<$protocl> ( string )
+
+Typical values are C<"HTTP/1.0"> or C<"HTTP/1.1">.
+
+If the client didn't specify the protocol version, the default is
+C<"HTTP/0.9">
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+=head2 C<proxyreq>
+
+Get/set the I<proxyrec> request record member and optionally adjust
+other related fields.
+
+  $status = $r->proxyreq($val);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$val> ( integer )
+
+PROXYREQ_NONE, PROXYREQ_PROXY, PROXYREQ_REVERSE, PROXYREQ_RESPONSE
+
+=item ret: C<$status> ( integer )
+
+If C<$val> is defined the I<proxyrec> member will be set to that value
+and previous value will be returned.
+
+If C<$val> is not passed, and C<$r-E<gt>proxyreq> is not true, and the
+proxy request is matching the current vhost (scheme, hostname and
+port), the I<proxyrec> member will be set to PROXYREQ_PROXY and that value
+will be returned. In addition C<$r-E<gt>uri> is set to C<$r-E<gt>unparsed_uri>
+and C<$r-E<gt>filename> is set to C<"modperl-proxy:".$r-E<gt>uri>. If
+those conditions aren't true 0 is returned.
+
+=item since: 2.0.00
+
+=back
+
+For example to turn a normal request into a proxy request to be
+handled on the same server in the C<PerlTransHandler> phase run:
+
+  my $real_url = $r->unparsed_uri;
+  $r->proxyreq(Apache2::Const::PROXYREQ_PROXY);
+  $r->uri($real_url);
+  $r->filename("proxy:$real_url");
+  $r->handler('proxy-server');
+
+Also remember that if you want to turn a proxy request into a
+non-proxy request, it's not enough to call:
+
+  $r->proxyreq(Apache2::Const::PROXYREQ_NONE);
+
+You need to adjust C<$r-E<gt>uri> and C<$r-E<gt>filename> as well if
+you run that code in C<PerlPostReadRequestHandler> phase, since if you
+don't -- C<mod_proxy>'s own post_read_request handler will override
+your settings (as it will run after the mod_perl handler).
+
+And you may also want to add
+
+  $r->set_handlers(PerlResponseHandler => []);
+
+so that any response handlers which match apache directives
+will not run in addition to the mod_proxy content handler.
+
+
+
+
+
+
+
+=head2 C<request_time>
+
+Time when the request started
+
+  $request_time = $r->request_time();
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item ret: C<$request_time> (epoch seconds).
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+
+=head2 C<server>
+
+Get the C<L<Apache2::Server|docs::2.0::api::Apache2::ServerRec>> object for
+the server the request C<$r> is running under.
+
+  $s = $r->server();
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item ret: C<$s>
+( C<L<Apache2::ServerRec object|docs::2.0::api::Apache2::ServerRec>> )
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+
+=head2 C<status>
+
+Get/set the reply status for the client request.
+
+  $status      = $r->status();
+  $prev_status = $r->status($new_status);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_status> ( integer )
+
+If C<$new_status> is passed the new status is assigned.
+
+Normally you would use some C<L<Apache2::Const
+constant|docs::2.0::api::Apache2::Const>>, e.g. C<Apache2::Const::REDIRECT>.
+
+=item ret: C<$newval> ( integer )
+
+The current value.
+
+If C<$new_status> is passed the old value is returned.
+
+=item since: 2.0.00
+
+=back
+
+Usually you will set this value indirectly by returning the status
+code as the handler's function result.  However, there are rare
+instances when you want to trick Apache into thinking that the module
+returned an C<Apache2::Const::OK> status code, but actually send the browser a
+non-OK status. This may come handy when implementing an HTTP proxy
+handler.  The proxy handler needs to send to the client, whatever
+status code the proxied server has returned, while returning
+C<Apache2::Const::OK> to Apache. e.g.:
+
+  $r->status($some_code);
+  return Apache2::Const::OK
+
+See also C<L<$r-E<gt>status_line|/C_status_line_>>, which. if set,
+overrides C<$r-E<gt>status>.
+
+
+
+
+
+
+
+=head2 C<status_line>
+
+Get/set the response status line.  The status line is a string like
+"200 Document follows" and it will take precedence over the value
+specified using the C<$r-E<gt>status()> described above.
+
+  $status_line      = $r->status_line();
+  $prev_status_line = $r->status_line($new_status_line);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_status_line> ( string )
+
+=item ret: C<$status_line> ( string )
+
+=item since: 2.0.00
+
+=back
+
+When discussing C<L<$r-E<gt>status|/C_status_>> we have mentioned that
+sometimes a handler runs to a successful completion, but may need to
+return a different code, which is the case with the proxy
+server. Assuming that the proxy handler forwards to the client
+whatever response the proxied server has sent, it'll usually use
+C<status_line()>, like so:
+
+  $r->status_line($response->code() . ' ' . $response->message());
+  return Apache2::Const::OK;
+
+In this example C<$response> could be for example an C<HTTP::Response>
+object, if C<LWP::UserAgent> was used to implement the proxy.
+
+This method is also handy when you extend the HTTP protocol and add
+new response codes. For example you could invent a new error code and
+tell Apache to use that in the response like so:
+
+  $r->status_line("499 We have been FooBared");
+  return Apache2::Const::OK;
+
+Here C<499> is the new response code, and I<We have been FooBared> is
+the custom response message.
+
+
+
+
+
+
+
+
+=head2 C<subprocess_env>
+
+Get/set the Apache C<subprocess_env> table, or optionally set the
+value of a named entry.
+
+               $r->subprocess_env;
+  $env_table = $r->subprocess_env;
+  
+         $r->subprocess_env($key => $val);
+  $val = $r->subprocess_env($key);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$key> ( string )
+
+=item opt arg2: C<$val> ( string )
+
+=item ret: C<...>
+
+=item since: 2.0.00
+
+=back
+
+When called in VOID context with no arguments, it populate C<%ENV>
+with special variables (e.g. C<$ENV{QUERY_STRING}>) like mod_cgi
+does.
+
+When called in a non-VOID context with no arguments, it returns an
+C<L<APR::Table object|docs::2.0::api::APR::Table>>.
+
+When the C<$key> argument (string) is passed, it returns the
+corresponding value (if such exists, or C<undef>. The following two
+lines are equivalent:
+
+  $val = $r->subprocess_env($key);
+  $val = $r->subprocess_env->get($key);
+
+When the C<$key> and the C<$val> arguments (strings) are passed, the
+value is set. The following two lines are equivalent:
+
+  $r->subprocess_env($key => $val);
+  $r->subprocess_env->set($key => $val);
+
+The C<subprocess_env> C<L<table|docs::2.0::api::APR::Table>> is used
+by C<L<Apache2::SubProcess|docs::2.0::api::Apache2::SubProcess>>, to
+pass environment variables to externally spawned processes. It's also
+used by various Apache modules, and you should use this table to pass
+the environment variables. For example if in
+C<PerlHeaderParserHandler> you do:
+
+   $r->subprocess_env(MyLanguage => "de");
+
+you can then deploy C<mod_include> and write in I<.shtml> document:
+
+   <!--#if expr="$MyLanguage = en" -->
+   English
+   <!--#elif expr="$MyLanguage = de" -->
+   Deutsch
+   <!--#else -->
+   Sorry
+   <!--#endif -->
+
+
+
+
+
+
+
+
+
+
+=head2 C<the_request>
+
+First HTTP request header
+
+  $request = $r->the_request();
+  $old_request = $r->uri($new_request);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_request> ( string )
+
+=item ret: C<$request> ( string )
+
+For example:
+
+  GET /foo/bar/my_path_info?args=3 HTTP/1.0
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+
+
+
+=head2 C<unparsed_uri>
+
+The URI without any parsing performed
+
+  $unparsed_uri = $r->unparsed_uri();
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item ret: C<$unparsed_uri> ( string )
+
+=item since: 2.0.00
+
+=back
+
+If for example the request was:
+
+  GET /foo/bar/my_path_info?args=3 HTTP/1.0
+
+C<L<$r-E<gt>uri|/C_uri_>> returns:
+
+  /foo/bar/my_path_info
+
+whereas C<$r-E<gt>unparsed_uri> returns:
+
+  /foo/bar/my_path_info?args=3
+
+
+
+
+
+
+
+=head2 C<uri>
+
+The path portion of the URI
+
+  $uri         = $r->uri();
+  my $prec_uri = $r->uri($new_uri);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_uri> ( string )
+
+=item ret: C<$uri> ( string )
+
+=item since: 2.0.00
+
+=back
+
+See the example in the C<L<$r-E<gt>unparsed_uri|/C_unparsed_uri_>>
+section.
+
+
+
+
+
+
+
+
+=head2 C<user>
+
+Get the user name, if an authentication process was successful. Or
+set it.
+
+  $user      = $r->user();
+  $prev_user = $r->user($new_user);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$new_user> ( string )
+
+Pass C<$new_user> to set a new value
+
+=item ret: C<$user> ( string )
+
+The current username if an authentication process was successful.
+
+If C<$new_user> was passed, the previous value is returned.
+
+=item since: 2.0.00
+
+=back
+
+For example, let's print the username passed by the client:
+
+  my ($res, $sent_pw) = $r->get_basic_auth_pw;
+  return $res if $res != Apache2::Const::OK;
+  print "User: ", $r->user;
+
+
+
+
+
+
+
+
+=head1 Unsupported API
+
+C<Apache2::RequestRec> also provides auto-generated Perl interface for
+a few other methods which aren't tested at the moment and therefore
+their API is a subject to change. These methods will be finalized
+later as a need arises. If you want to rely on any of the following
+methods please contact the L<the mod_perl development mailing
+list|maillist::dev> so we can help each other take the steps necessary
+to shift the method to an officially supported API.
+
+
+
+=head2 C<allowed_methods>
+
+META: Autogenerated - needs to be reviewed/completed
+
+List of allowed methods
+
+  $list = $r->allowed_methods();
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item ret: C<$list>
+( C<L<Apache2::MethodList object|docs::2.0::api::Apache2::MethodList>> )
+
+=item since: 2.0.00
+
+=back
+
+META: Apache2::MethodList is not available at the moment
+
+
+
+
+
+
+
+=head2 C<allowed_xmethods>
+
+META: Autogenerated - needs to be reviewed/completed
+
+Array of extension methods
+
+  $array = $r->allowed_xmethods();
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item ret: C<$array>
+( C<L<APR::ArrayHeader object|docs::2.0::api::APR::ArrayHeader>> )
+
+=item since: 2.0.00
+
+=back
+
+META: APR::ArrayHeader is not available at the moment
+
+
+
+
+
+
+
+=head2 C<request_config>
+
+Config vector containing pointers to request's per-server config
+structures
+
+  $ret = $r->request_config($newval);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item opt arg1: C<$newval>
+( C<L<Apache2::ConfVector object|docs::2.0::api::Apache2::RequestRec/C_per_dir_config_>> )
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+=head2 C<used_path_info>
+
+META: Autogenerated - needs to be reviewed/completed
+
+Flag for the handler to accept or reject path_info on
+the current request.  All modules should respect the
+AP_REQ_ACCEPT_PATH_INFO and AP_REQ_REJECT_PATH_INFO
+values, while AP_REQ_DEFAULT_PATH_INFO indicates they
+may follow existing conventions.  This is set to the
+user's preference upon HOOK_VERY_FIRST of the fixups.
+
+  $ret = $r->used_path_info($newval);
+
+=over 4
+
+=item obj: C<$r>
+( C<L<Apache2::RequestRec object|docs::2.0::api::Apache2::RequestRec>> )
+
+=item arg1: C<$newval> (integer)
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+
+=head1 See Also
+
+L<mod_perl 2.0 documentation|docs::2.0::index>.
+
+
+
+
+=head1 Copyright
+
+mod_perl 2.0 and its core modules are copyrighted under
+The Apache Software License, Version 2.0.
+
+
+
+
+=head1 Authors
+
+L<The mod_perl development team and numerous
+contributors|about::contributors::people>.
+
+=cut
+

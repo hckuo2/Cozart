@@ -1,0 +1,128 @@
+Instructions for Apache-SizeLimit Release Manager
+
+0.  Ask the PMC to verify that you have the appropriate CPAN permissions
+    on dev@perl.
+
+    make sure your public key is in the KEYS file in the mod_perl docs.
+    you should only need to do this if this is your first time playing
+    Release Manager
+
+     $ cd mod_perl-docs
+     $ grep $USER src/dist/KEYS
+
+    note that the KEYS file itself contains all the instructions you
+    need on how to add your key.  if you need further help on gpg
+    (like how to create a key in the first place) you can look here
+
+      http://people.apache.org/~geoff/gpghowto.html
+
+    Copy the KEYS file into place:
+    % scp KEYS www.apache.org:/www/www.apache.org/dist/perl/KEYS
+
+    If this is your first release, ask someone with APML karma on PAUSE
+    to verify you have the appropriate permissions.  Likely someone on
+    the PMC can do this.
+
+    a. login into https://pause.perl.org
+    b. menu click: Select Mailinglist/Action
+    c. choose APML and share_perms and click go
+    d. click 3.5 Make somebody else co-maintainer
+    e. choose the modules to give the perms to
+       type the username of the new co-maintainer
+    f. if you happen to know that packages were added this release,
+       make sure you give the correct permissions to them.
+
+TODO:
+1/2. run pod2text to update the README and commit any changes if neccessary.
+     Decide what to do about having almost identical pod in Apache::SizeLimit
+     and Apache2::SizeLimit
+
+3/4. Configure 
+
+     MAINTAINER_BUILDING_RELEASE=1 perl Makefile.PL
+
+1. 'make dist' - to make sure nothing is missing from the manifest,
+   etc. Now test this generated package (not svn) with as many
+   configurations as possible on as many platforms as possible.
+
+  a. edit ./Changes:
+     - find lib -type f \( -name "*.pm" -o -name "Changes" \) | \
+         xargs perl -pi -e 's,0.95-dev,0.96-rc1,g'
+
+     - don't commit these (see dev@ archives)
+
+  b. nuke any preinstalled Apache-SizeLimit libs and run 'make test'
+
+  c. test that you can 'make install' and then run 'make test' again
+
+  d. test whether we still 100% OK on systems with no LWP:
+
+     % APACHE_TEST_PRETEND_NO_LWP=1 make test
+
+2. once confident that the package is good, upload a release candidate
+   to people.apache.org/~username and post 24 hour-ish candidate alert
+   to the various lists
+
+     o dev/perl.apache.org
+     o modperl/perl.apache.org
+
+  Subject: [RELEASE CANDIDATE] Apache-SizeLimit 0.96 RC\d+
+
+   (or maybe longer to give most people a chance to catch up). no need
+   to tag this package
+
+  a. if problems are detected during stage 2, repeat stages 1 and 2.
+
+  $ md5 Apache-SizeLimit-0.96-rc1.tar.gz > Apache-SizeLimit-0.96-rc1.tar.gz.md5
+  $ sha256 Apache-SizeLimit-0.96-rc1.tar.gz > Apache-SizeLimit-0.96-rc1.tar.gz.sha256
+  $ gpg --detach-sign --armor Apache-SizeLimit-0.96-rc1.tar.gz
+
+3. when the package has been reported to be good, prepare a new
+   package to be released
+
+  a. edit ./Changes:
+     - remove -rc\d+ (also remove this from modules)
+     - add release date
+
+  b. rerun:
+     % perl Makefile.PL
+     make sure tag looks right
+     % make -n tag
+
+  c. commit Changes and modules
+     % svn ci Changes lib/
+
+  d. tag
+     % make tag
+
+  e. create the final package
+     % make dist
+
+  f. test the final package again at least once
+
+4. Upload the package to CPAN
+
+5. Announce the package
+
+  a. post ... to the modperl, announce lists
+  Subject: [ANNOUNCE] Apache-SizeLimit 0.96
+     include 
+  - MD5 sig (as it comes from CPAN upload announce).
+  - the latest Changes
+
+6. Prepare for the next cycle
+
+  a. increment version in lib/Apache/SizeLimit.pm
+
+  b. edit ./Changes:
+     - start a new item with incremented version + '-dev'
+
+  =item 0.97-dev
+
+  c. bump up version numbers in this file to make it easier to do the
+     next release.
+
+     $ perl -pi -e 's/(\d+)\.(\d+)/join(".", $1, $2+1)/eg' RELEASE
+
+  d. commit Changes
+     % svn ci -m "start 0.97-dev cycle" Changes RELEASE lib/Apache/SizeLimit.pm lib/Apache2/SizeLimit.pm lib/Apache/SizeLimit/Core.pm

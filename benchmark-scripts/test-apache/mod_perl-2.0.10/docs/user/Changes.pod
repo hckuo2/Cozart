@@ -1,0 +1,30 @@
+=head1 NAME
+
+CHANGES
+
+=head1 Description
+
+Refer to this document to learn what changes were made to the
+documents, since you've read these last time.
+
+The most recent changes are listed first.
+
+=head1 ...
+
+Replaced the idiom of using $mod_perl::VERSION as a test for whether
+or not you're running under mod_perl 1.x or mod_perl 2.x with a more
+accurate and general test. By Frank Wiles E<lt>frankE<lt>atE<gt>wiles.orgE<gt>.
+
+A new troubleshooting section on how to resolve can't locate file foo,
+when there is a system limit on the maximum open files. By Ken Simpson
+E<lt>ksimpsonE<lt>atE<gt>larch.mailchannels.comE<gt>.
+
+A few corrections in the config chapter by Jean-Sébastien Guay
+E<lt>jean_seb E<lt>atE<gt> videotron.caE<gt>.
+
+A new troubleshooting section on how to resolve "undefined symbol"
+problems by Matisse Enzer E<lt>matisse E<lt>atE<gt> hamparts.comE<gt>.
+
+
+
+=cut

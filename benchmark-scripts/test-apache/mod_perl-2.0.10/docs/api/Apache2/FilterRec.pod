@@ -1,0 +1,104 @@
+=head1 NAME
+
+Apache2::FilterRec - Perl API for manipulating the Apache filter record
+
+
+
+
+=head1 Synopsis
+
+  use Apache2::Filter ();
+  use Apache2::FilterRec ();
+  
+  my $frec = $filter->frec;
+  print "filter name is:", $frec->name;
+
+
+
+
+=head1 Description
+
+C<Apache2::FilterRec> provides an access to the filter record
+structure.
+
+The C<Apache2::FilterRec> object is retrieved by calling
+C<L<frec()|docs::2.0::api::Apache2::Filter/C_frec_>>:
+
+  $frec = $filter->frec;
+
+
+
+
+
+
+=head1 API
+
+C<Apache2::FilterRec> provides the following functions and/or methods:
+
+
+
+
+=head2 C<name>
+
+The registered name for this filter
+
+  $name = $frec->name();
+
+=over 4
+
+=item obj: C<$frec>
+( C<L<Apache2::FilterRec object|docs::2.0::api::Apache2::FilterRec>> )
+
+=item ret: C<$name> (string)
+
+=item since: 2.0.00
+
+=back
+
+mod_perl filters have four names:
+
+  modperl_request_output
+  modperl_request_input
+  modperl_connection_output
+  modperl_connection_input
+
+You can see the names of the non-mod_perl filters as well. By calling
+C<L<$filter-E<gt>next-E<gt>frec-E<gt>name|docs::2.0::api::Apache2::Filter/C_next_>>
+you can get the name of the next filter in the chain.
+
+Example:
+
+Let's print the name of the current and the filter that follows it:
+
+  use Apache2::Filter ();
+  use Apache2::FilterRec ();
+  for my $frec ($filter->frec, $filter->next->frec) {
+      print "Name: ", $frec->name;
+  }
+
+
+
+
+
+=head1 See Also
+
+L<mod_perl 2.0 documentation|docs::2.0::index>.
+
+
+
+
+=head1 Copyright
+
+mod_perl 2.0 and its core modules are copyrighted under
+The Apache Software License, Version 2.0.
+
+
+
+
+=head1 Authors
+
+L<The mod_perl development team and numerous
+contributors|about::contributors::people>.
+
+=cut
+

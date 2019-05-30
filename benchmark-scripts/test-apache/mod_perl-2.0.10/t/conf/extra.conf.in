@@ -1,0 +1,114 @@
+# needed to test $r->psignature
+ServerSignature On
+
+# The following tests require more than one interpreter during the
+# same request:
+#
+# perls  Test
+# ----------- 
+#     2  t/modules/apache_status
+#     2  t/filter/both_str_req_proxy
+#     2  t/modules/proxy
+#
+# the following tests will clone a new perl interpreter via
+# ithreads.pm regardless of how many interpreters mod_perl has:
+#
+# t/perl/ithreads
+# t/perl/ithreads2
+#
+# therefore we need at most 2 interpreters, the missing one loading on
+# demand, but we start only with 1, so the startup is quick,
+# especially since we immediately restart. We also want MaxSpare to be
+# the same as Max, since we have more than one test that requires more
+# than one interpreter, so don't waste time to kill and start a new
+# one later -- keep it around once spawned
+#
+# Adjust PerlInterpMax and PerlInterpMaxSpare if the requirements change
+<IfDefine PERL_USEITHREADS>
+    PerlInterpStart         1
+    PerlInterpMax           2
+    PerlInterpMinSpare      1
+    PerlInterpMaxSpare      2
+</IfDefine>
+
+# make sure that we test under Taint and warnings mode enabled
+PerlSwitches -wT
+
+PerlChildExitHandler ModPerl::Test::exit_handler
+PerlModule TestExit::FromPerlModule
+
+#for t/modules/include.t
+<Directory @ServerRoot@/htdocs/includes>
+    <IfModule mod_mime.c>
+        AddOutputFilter INCLUDES .shtml
+    </IfModule>
+    # #virtual include of a script that sets content type is
+    # considered the same as #cmd by mod_include, 
+    # therefore can't use IncludesNOEXEC here
+    Options Indexes FollowSymLinks Includes
+</Directory>
+
+<Directory @ServerRoot@/htdocs/includes-registry>
+    SetHandler perl-script
+    Options +ExecCGI +IncludesNoExec
+    PerlResponseHandler ModPerl::Registry
+    PerlOptions +ParseHeaders +GlobalRequest
+    <IfModule mod_mime.c>
+        AddOutputFilter INCLUDES .spl
+    </IfModule>
+</Directory>
+
+<IfModule mod_perl.c>
+    <IfDefine !MODPERL2>
+        # This should not be touched, since we're running with mod_perl 2
+        PerlModule Doesnt::Exist
+    </IfDefine>
+</IfModule>
+
+# <sandbox-friendly>
+# keep everything self-contained, to avoid problems with sandboxes
+# which break when things try to run off /tmp
+<IfModule mod_cgid.c>
+    ScriptSock logs/cgisock
+</IfModule>
+<IfModule mod_env.c>
+    SetEnv TMPDIR @t_logs@
+
+    # pass ld_library_path for non standard lib locations
+    # [rt.cpan.org #66085]
+    PassEnv LD_LIBRARY_PATH
+</IfModule>
+# </sandbox-friendly>
+
+<Location /status/perl>
+#    PerlSetVar StatusOptionsAll On
+#    PerlSetVar StatusDumper On
+#    PerlSetVar StatusPeek On
+#    PerlSetVar StatusLexInfo On
+#    PerlSetVar StatusDeparse On
+#    PerlSetVar StatusDeparseOptions "-p -sC"
+    PerlSetVar StatusTerse On
+#    PerlSetVar StatusTerseSize On
+#    PerlSetVar StatusTerseSizeMainSummary On
+    SetHandler modperl
+    PerlResponseHandler Apache2::Status
+</Location>
+
+# for TestApache::util
+PerlPassEnv LC_CTYPE
+PerlPassEnv LC_TIME
+
+# for TestCompat::apache_file
+PerlPassEnv TMPDIR
+PerlPassEnv TEMP
+
+# see t/filter/out_apache.t
+<VirtualHost filter_out_apache>
+    <IfModule mod_include.c>
+        # this filter is on purpose configured outside the Location
+        PerlSetOutputFilter INCLUDES
+        <Location />
+            Options +Includes
+        </Location>
+    </IfModule>
+</VirtualHost>

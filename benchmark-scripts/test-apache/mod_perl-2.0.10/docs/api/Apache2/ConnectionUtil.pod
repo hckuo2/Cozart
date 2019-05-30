@@ -1,0 +1,120 @@
+=head1 NAME
+
+Apache2::ConnectionUtil - Perl API for Apache connection utils
+
+
+
+
+=head1 Synopsis
+
+   use Apache2::Connection     ();
+   use Apache2::ConnectionUtil ();
+   use Apache2::RequestRec     ();
+
+   # grab the connection object;
+   my $c = $r->connection;
+
+   # share perl objects like $r->pnotes
+   $old_val = $c->pnotes($key => $value);
+
+
+
+
+
+
+=head1 Description
+
+C<Apache2::ConnectionUtil> provides the
+L<Apache connection record object|docs::2.0::api::Apache2::Connection>
+utilities API.
+
+
+
+
+
+=head1 API
+
+C<Apache2::ConnectionUtil> provides the following functions and/or
+methods:
+
+
+
+
+
+
+
+
+=head2 C<pnotes>
+
+Share Perl variables between requests over the lifetime of the
+connection.
+
+   $old_val  = $c->pnotes($key => $val);
+   $val      = $c->pnotes($key);
+   $hash_ref = $c->pnotes();
+
+
+
+=over 4
+
+=item obj: C<$c>
+( C<L<Apache2::Connection object|docs::2.0::api::Apache2::Connection>> )
+
+=item opt arg1: C<$key> ( string )
+
+A key value
+
+=item opt arg2: C<$val> ( SCALAR )
+
+Any scalar value (e.g. a reference to an array)
+
+=item ret: (3 different possible values)
+
+if both, C<$key> and C<$val> are passed the previous value for C<$key> is
+returned if such existed, otherwise undef is returned.
+
+if only C<$key> is passed, the current value for the given key is returned.
+
+if no arguments are passed, a hash reference is returned, which can then 
+be directly accessed without going through the C<pnotes()> interface.
+
+=item since: 2.0.3
+
+=back
+
+See 
+(C<L<Apache2::RequestUtil::pnotes|docs::2.0::api::Apache2::RequestUtil/C_pnotes_>>)
+for the details of the C<pnotes> method usage.  The usage is identical
+except for a few differences.  First is the use of C<$c> instead of 
+C<$r> as
+the invocant.  The second is that the the data persists for the lifetime of
+the connection instead of the lifetime of the request.  If the connection is
+lost, so is the data stored in C<pnotes>.
+
+
+
+=head1 See Also
+
+L<Apache2::Connection|docs::2.0::api::Apache2::Connection>.
+
+L<Apache2::RequestUtil::pnotes|docs::2.0::api::Apache2::RequestUtil/C_pnotes_>.
+
+L<mod_perl 2.0 documentation|docs::2.0::index>.
+
+
+=head1 Copyright
+
+mod_perl 2.0 and its core modules are copyrighted under
+The Apache Software License, Version 2.0.
+
+
+
+
+=head1 Authors
+
+L<The mod_perl development team and numerous
+contributors|about::contributors::people>.
+
+=cut
+
+

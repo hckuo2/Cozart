@@ -1,0 +1,1005 @@
+=head1 NAME
+
+Apache2::ServerUtil - Perl API for Apache server record utils
+
+
+
+
+=head1 Synopsis
+
+  use Apache2::ServerUtil ();
+  $s = Apache2::ServerUtil->server;
+  
+  # push config
+  $s->add_config(['ServerTokens off']);
+  
+  # add components to the Server signature
+  $s->add_version_component("MyModule/1.234");
+  
+  # access PerlSetVar/PerlAddVar values
+  my $srv_cfg = $s->dir_config;
+  
+  # check command line defines
+  print "this is mp2"
+      if Apache2::ServerUtil::exists_config_define('MODPERL2');
+  
+  # get PerlChildExitHandler configured handlers
+  @handlers = @{ $s->get_handlers('PerlChildExitHandler') || []};
+  
+  # server build and version info:
+  $when_built = Apache2::ServerUtil::get_server_built(); 
+  $description = Apache2::ServerUtil::get_server_description(); 
+  $version = Apache2::ServerUtil::get_server_version();
+  $banner = Apache2::ServerUtil::get_server_banner(); 
+  
+  # ServerRoot value
+  $server_root = Apache2::ServerUtil::server_root();
+  
+  # get 'conf/' dir path (avoid using this function!)
+  my $dir = Apache2::ServerUtil::server_root_relative($r->pool, 'conf');
+  
+  # set child_exit handlers
+  $r->set_handlers(PerlChildExitHandler => \&handler);
+  
+  # server level PerlOptions flags lookup
+  $s->push_handlers(ChildExit => \&child_exit)
+      if $s->is_perl_option_enabled('ChildExit');
+  
+  # extend HTTP to support a new method
+  $s->method_register('NEWGET');
+  
+  # register server shutdown callback
+  Apache2::ServerUtil::server_shutdown_register_cleanup(sub { Apache2::Const::OK });
+  
+  # do something only when the server restarts
+  my $cnt = Apache2::ServerUtil::restart_count();
+  do_something_once() if $cnt > 1;
+  
+  # get the resolved ids from Group and User entries
+  my $user_id  = Apache2::ServerUtil->user_id;
+  my $group_id = Apache2::ServerUtil->group_id;
+
+
+=head1 Description
+
+C<Apache2::ServerUtil> provides the L<Apache server
+object|docs::2.0::api::Apache2::ServerRec> utilities API.
+
+
+
+
+=head1 Methods API
+
+C<Apache2::ServerUtil> provides the following functions and/or methods:
+
+
+
+
+
+=head2 C<add_config>
+
+Dynamically add Apache configuration:
+
+  $s->add_config($lines);
+
+=over 4
+
+=item obj: C<$s>
+( C<L<Apache2::ServerRec object|docs::2.0::api::Apache2::ServerRec>> )
+
+=item arg1: C<$lines> ( ARRAY ref )
+
+An ARRAY reference containing configuration lines per element, without
+the new line terminators.
+
+=item ret: no return value
+
+=item since: 2.0.00
+
+=back
+
+See also:
+C<L<$r-E<gt>add_config|docs::2.0::api::Apache2::RequestUtil/C_add_config_>>
+
+For example:
+
+Add a configuration section at the server startup (e.g. from
+I<startup.pl>):
+
+  use Apache2::ServerUtil ();
+  my $conf = <<'EOC';
+  PerlModule Apache2::MyExample
+  <Location /perl>
+    SetHandler perl-script
+    PerlResponseHandler Apache2::MyExample
+  </Location>
+  EOC
+  Apache2::ServerUtil->server->add_config([split /\n/, $conf]);
+
+
+
+
+
+
+
+=head2 C<add_version_component>
+
+Add a component to the version string
+
+  $s->add_version_component($component);
+
+=over 4
+
+=item obj: C<$s>
+( C<L<Apache2::ServerRec object|docs::2.0::api::Apache2::ServerRec>> )
+
+=item arg1: C<$component> ( string )
+
+The string component to add
+
+=item ret: no return value
+
+=item since: 2.0.00
+
+=back
+
+This function is usually used by modules to advertise themselves to
+the world. It's picked up by such statistics collectors, like
+netcraft.com, which accomplish that by connecting to various servers
+and grabbing the server version response header (C<Server>). Some
+servers choose to fully or partially conceal that header.
+
+This method should be invoked in the
+C<L<PerlPostConfigHandler|docs::2.0::user::handlers::server/C_PerlPostConfigHandler_>>
+phase, which will ensure that the Apache core version number will
+appear first.
+
+For example let's add a component I<"Hikers, Inc/0.99999"> to the
+server string at the server startup:
+
+  use Apache2::ServerUtil ();
+  use Apache2::Const -compile => 'OK';
+  
+  Apache2::ServerUtil->server->push_handlers(
+      PerlPostConfigHandler => \&add_my_version);
+  
+  sub add_my_version {
+      my ($conf_pool, $log_pool, $temp_pool, $s) = @_;
+      $s->add_version_component("Hikers, Inc/0.99999");
+      return Apache2::Const::OK;
+  }
+
+or of course you could register the
+C<L<PerlPostConfigHandler|docs::2.0::user::handlers::server/C_PerlPostConfigHandler_>>
+handler directly in F<httpd.conf>
+
+Now when the server starts, you will something like:
+
+  [Thu Jul 15 12:15:28 2004] [notice] Apache/2.0.51-dev (Unix)
+  mod_perl/1.99_15-dev Perl/v5.8.5 Hikers, Inc/0.99999
+  configured -- resuming normal operations
+
+Also remember that the C<ServerTokens> directive value controls
+whether the component information is displayed or not.
+
+
+
+
+
+
+
+
+
+
+=head2 C<dir_config>
+
+C<$s-E<gt>dir_config()> provides an interface for the per-server
+variables specified by the C<PerlSetVar> and C<PerlAddVar> directives,
+and also can be manipulated via the
+C<L<APR::Table|docs::2.0::api::APR::Table>> methods.
+
+  $table  = $s->dir_config();
+  $value  = $s->dir_config($key);
+  @values = $s->dir_config->get($key);
+  $s->dir_config($key, $val);
+
+=over 4
+
+=item obj: C<$s>
+( C<L<Apache2::ServerRec object|docs::2.0::api::Apache2::ServerRec>> )
+
+=item opt arg2: C<$key> ( string )
+
+Key string
+
+=item opt arg3: C<$val> ( string )
+
+Value string
+
+=item ret: ...
+
+Depends on the passed arguments, see further discussion
+
+=item since: 2.0.00
+
+=back
+
+The keys are case-insensitive.
+
+  $t = $s->dir_config();
+
+dir_config() called in a scalar context without the C<$key> argument
+returns a I<HASH> reference blessed into the I<APR::Table> class. This
+object can be manipulated via the I<APR::Table> methods. For available
+methods see I<APR::Table>.
+
+  @values = $s->dir_config->get($key);
+
+To receive a list of values you must use C<get()> method from the
+C<L<APR::Table|docs::2.0::api::APR::Table>> class.
+
+  $value = $s->dir_config($key);
+
+If the C<$key> argument is passed in the scalar context only a single
+value will be returned. Since the table preserves the insertion order,
+if there is more than one value for the same key, the oldest value
+assosiated with the desired key is returned. Calling in the scalar
+context is also much faster, as it'll stop searching the table as soon
+as the first match happens.
+
+  $s->dir_config($key => $val);
+
+If the C<$key> and the C<$val> arguments are used, the set() operation
+will happen: all existing values associated with the key C<$key> (and
+the key itself) will be deleted and C<$value> will be placed instead.
+
+  $s->dir_config($key => undef);
+
+If C<$val> is I<undef> the unset() operation will happen: all existing
+values associated with the key C<$key> (and the key itself) will be
+deleted.
+
+
+
+
+
+
+
+=head2 C<exists_config_define>
+
+Check for a definition from the server startup command line
+(e.g. C<-DMODPERL2>)
+
+  $result = Apache2::ServerUtil::exists_config_define($name);
+
+=over 4
+
+=item arg1: C<$name> ( string )
+
+The define string to check for
+
+=item ret: C<$result> ( boolean )
+
+true if defined, false otherwise
+
+=item since: 2.0.00
+
+=back
+
+For example:
+
+  print "this is mp2"
+      if Apache2::ServerUtil::exists_config_define('MODPERL2');
+
+
+
+
+
+
+
+
+=head2 C<get_handlers>
+
+Returns a reference to a list of handlers enabled for
+a given phase.
+
+  $handlers_list = $s->get_handlers($hook_name);
+
+=over 4
+
+=item obj: C<$s>
+( C<L<Apache2::ServerRec object|docs::2.0::api::Apache2::ServerRec>> )
+
+=item arg1: C<$hook_name> ( string )
+
+a string representing the phase to handle.
+
+=item ret: C<$handlers_list> (ref to an ARRAY of CODE refs)
+
+a list of references to the handler subroutines
+
+=item since: 2.0.00
+
+=back
+
+See also:
+C<L<$r-E<gt>add_config|docs::2.0::api::Apache2::RequestUtil/C_get_handlers_>>
+
+For example:
+
+A list of handlers configured to run at the I<child_exit> phase:
+
+  @handlers = @{ $s->get_handlers('PerlChildExitHandler') || []};
+
+
+
+
+
+
+
+=head2 C<get_server_built>
+
+Get the date and time that the server was built
+
+  $when_built = Apache2::ServerUtil::get_server_built();
+
+=over 4
+
+=item ret: C<$when_built> ( string )
+
+The server build time string
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+
+=head2 C<get_server_version>
+
+Get the server version string
+
+  $version = Apache2::ServerUtil::get_server_version();
+
+=over 4
+
+=item ret: C<$version> ( string )
+
+The server version string
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+=head2 C<get_server_banner>
+
+Get the server banner
+
+ $banner = Apache2::ServerUtil::get_server_banner();
+
+=over 4
+
+=item ret: C<$banner> ( string )
+
+The server banner
+
+=item since: 2.0.4
+
+=back
+
+
+
+
+
+
+
+
+
+=head2 C<get_server_description>
+
+Get the server description
+
+ $description = Apache2::ServerUtil::get_server_description();
+
+=over 4
+
+=item ret: C<$description> ( string )
+
+The server description
+
+=item since: 2.0.4
+
+=back
+
+
+
+
+
+
+
+
+
+
+
+=head2 C<group_id>
+
+Get the group id corresponding to the C<Group> directive in
+F<httpd.conf>:
+
+  $gid = Apache2::ServerUtil->group_id;
+
+=over 4
+
+=item obj: C<Apache2::ServerUtil> (class name)
+
+=item ret: C<$gid> ( integer )
+
+On Unix platforms returns the gid corresponding to the value used in
+the C<Group> directive in F<httpd.conf>. On other platforms returns 0.
+
+=item since: 2.0.03
+
+=back
+
+
+
+
+
+
+
+
+
+
+=head2 C<is_perl_option_enabled>
+
+check whether a server level C<PerlOptions> flag is enabled or not.
+
+  $result = $s->is_perl_option_enabled($flag);
+
+=over 4
+
+=item obj: C<$s>
+( C<L<Apache2::ServerRec object|docs::2.0::api::Apache2::ServerRec>> )
+
+=item arg1: C<$flag> ( string )
+
+=item ret: C<$result> ( boolean )
+
+=item since: 2.0.00
+
+=back
+
+For example to check whether the C<ChildExit> hook is enabled (which
+can be disabled with C<PerlOptions -ChildExit>) and configure some
+handlers to run if enabled:
+
+  $s->push_handlers(ChildExit => \&child_exit)
+      if $s->is_perl_option_enabled('ChildExit');
+
+See also:
+L<PerlOptions|docs::2.0::user::config::config/C_PerlOptions_> and
+L<the equivalent function for directory level PerlOptions
+flags|docs::2.0::api::Apache2::RequestUtil/C_is_perl_option_enabled_>.
+
+
+
+
+
+
+
+
+
+=head2 C<method_register>
+
+Register a new request method, and return the offset that will be
+associated with that method.
+
+  $offset = $s->method_register($methname);
+
+=over 4
+
+=item obj: C<$s>
+( C<L<Apache2::ServerRec object|docs::2.0::api::Apache2::ServerRec>> )
+
+=item arg1: C<$methname> ( string )
+
+The name of the new method to register (in addition to the already
+supported C<GET>, C<HEAD>, etc.)
+
+=item ret: C<$offset> ( integer )
+
+An int value representing an offset into a bitmask. You can probably
+ignore it.
+
+=item since: 2.0.00
+
+=back
+
+This method allows you to extend the HTTP protocol to support new
+methods, which fit the HTTP paradigm.  Of course you will need to
+write a client that understands that protocol extension.  For a good
+example, refer to the C<MyApache2::SendEmail> example presented in
+C<L<the PerlHeaderParserHandler
+section|docs::2.0::user::handlers::http/PerlHeaderParserHandler>>,
+which demonstrates how a new method C<EMAIL> is registered and used.
+
+
+
+
+
+
+
+=head2 C<push_handlers>
+
+Add one or more handlers to a list of handlers to be called for a
+given phase.
+
+  $ok = $s->push_handlers($hook_name => \&handler);
+  $ok = $s->push_handlers($hook_name => [\&handler, \&handler2]);
+
+=over 4
+
+=item obj: C<$s>
+( C<L<Apache2::ServerRec object|docs::2.0::api::Apache2::ServerRec>> )
+
+=item arg1: C<$hook_name> ( string )
+
+the phase to add the handlers to
+
+=item arg2: C<$handlers> ( CODE ref or SUB name or an ARRAY ref )
+
+a single handler CODE reference or just a name of the subroutine
+(fully qualified unless defined in the current package).
+
+if more than one passed, use a reference to an array of CODE refs
+and/or subroutine names.
+
+=item ret: C<$ok> ( boolean )
+
+returns a true value on success, otherwise a false value
+
+=item since: 2.0.00
+
+=back
+
+See also:
+C<L<$r-E<gt>add_config|docs::2.0::api::Apache2::RequestUtil/C_push_handlers_>>
+
+Examples:
+
+A single handler:
+
+  $s->push_handlers(PerlChildExitHandler => \&handler);
+
+Multiple handlers:
+
+  $s->push_handlers(PerlChildExitHandler => ['Foo::Bar::handler', \&handler2]);
+
+Anonymous functions:
+
+  $s->push_handlers(PerlLogHandler => sub { return Apache2::Const::OK });
+
+
+
+
+
+
+
+=head2 C<restart_count>
+
+How many times the server was restarted.
+
+  $restart_count = Apache2::ServerUtil::restart_count();
+
+=over 4
+
+=item ret: C<restart_count> ( number )
+
+=item since: 2.0.00
+
+=back
+
+The following demonstration should make it clear what values to expect
+from this function. Let's add the following code to F<startup.pl>, so
+it's run every time F<httpd.conf> is parsed:
+
+  use Apache2::ServerUtil ();
+  my $cnt = Apache2::ServerUtil::restart_count();
+  open my $fh, ">>/tmp/out" or die "$!";
+  print $fh "cnt: $cnt\n";
+  close $fh;
+
+Now let's run a series of server starts and restarts and look at what
+is logged into F</tmp/out>:
+
+  % httpd -k start
+  cnt: 1
+  cnt: 2
+  
+  % httpd -k graceful
+  cnt: 1
+  cnt: 3
+  
+  % httpd -k graceful
+  cnt: 1
+  cnt: 4
+  
+  % httpd -k stop
+  cnt: 1
+
+Remembering that L<Apache restarts itself immediately after
+starting|docs::2.0::user::handlers::server/Server_Life_Cycle>, we can
+see that the C<restart_count> goes from 1 to 2 during the server
+start. Moreover we can see that every operation forces the parsing of
+F<httpd.conf> and therefore reinitialization of mod_perl (and running
+all the code found in F<httpd.conf>). This happens even when the
+server is shutdown via C<httpd -k stop>.
+
+What conclusions can be drawn from this demonstration:
+
+=over
+
+=item *
+
+C<Apache2::ServerUtil::restart_count()> returns 1 every time some C<-k>
+command is passed to Apache (or C<kill -USR1> or some alternative
+signal is received).
+
+=item *
+
+At all other times the count will be 2 or higher. So for example on
+graceful restart the count will be 3 or higher.
+
+=back
+
+For example if you want to run something every time C<httpd -k> is run
+you just need to check whether C<restart_count()> returns 1:
+
+  my $cnt = Apache2::ServerUtil::restart_count();
+  do_something() if $cnt == 1;
+
+To do something only when server restarts (C<httpd -k start> or
+C<httpd -k graceful)>, check whether C<restart_count()> is bigger than
+1:
+
+  my $cnt = Apache2::ServerUtil::restart_count();
+  do_something() if $cnt > 1;
+
+
+
+
+
+
+
+=head2 C<server>
+
+Get the main server's object
+
+  $main_s = Apache2::ServerUtil->server();
+
+=over 4
+
+=item obj: C<Apache2::ServerUtil> (class name)
+
+=item ret: C<$main_s>
+( C<L<Apache2::ServerRec object|docs::2.0::api::Apache2::ServerRec>> )
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+
+=head2 C<server_root>
+
+returns the value set by the top-level C<ServerRoot> directive.
+
+  $server_root = Apache2::ServerUtil::server_root();
+
+=over 4
+
+=item ret: C<$server_root> ( string )
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+
+
+=head2 C<server_root_relative>
+
+Returns the canonical form of the filename made absolute to
+C<ServerRoot>:
+
+  $path = Apache2::ServerUtil::server_root_relative($pool, $fname);
+
+=over 4
+
+=item arg1: C<$pool>
+( C<L<APR::Pool object|docs::2.0::api::APR::Pool>> )
+
+Make sure that you read the following explanation and understand well
+which pool object you need to pass before using this function.
+
+=item opt arg2: C<$fname> ( string )
+
+=item ret: C<$path> ( string )
+
+The concatenation of C<ServerRoot> and the C<$fname>.
+
+If C<$fname> is not specified, the value of C<ServerRoot> is returned
+with a trailing C</>. (it's the same as using C<''> as C<$fname>'s
+value).
+
+=item since: 2.0.00
+
+=back
+
+C<$fname> is appended to the value of C<ServerRoot> and returned. For
+example:
+
+  my $dir = Apache2::ServerUtil::server_root_relative($r->pool, 'logs');
+
+You must be extra-careful when using this function. If you aren't sure
+what you are doing don't use it.
+
+It's much safer to build the path by yourself using use
+C<L<Apache2::ServerUtil::server_root()|/C_Apache2__server_root_>>, For
+example:
+
+  use File::Spec::Functions qw(catfile);
+  my $path = catfile Apache2::ServerUtil::server_root, qw(t logs);
+
+In this example, no memory allocation happens on the Apache-side and
+you aren't risking to get a memory leak.
+
+The problem with C<server_root_relative> is that Apache allocates
+memory to concatenate the path string. The memory is allocated from
+the pool object. If you call this method on the server pool object
+it'll allocate the memory from it.  If you do that at the server
+startup, it's perfectly right, since you will do that only
+once. However if you do that from within a request or a connection
+handler, you create a memory leak every time it is called -- as the
+memory gets allocated from the server pool, it will be freed only when
+the server is shutdown. Therefore if you need to build a relative to
+the root server path for the duration of the request, use the request
+pool:
+
+  use Apache2::RequestRec ();
+  Apache2::ServerUtil::server_root_relative($r->pool, $fname);
+
+If you need to have the path for the duration of a connection
+(e.g. inside a protocol handler), you should use:
+
+  use Apache2::Connection ();
+  Apache2::ServerUtil::server_root_relative($c->pool, $fname);
+
+And if you want it for the scope of the server file:
+
+  use Apache2::Process ();
+  use Apache2::ServerUtil ();
+  Apache2::ServerUtil::server_root_relative($s->process->pool, $fname);
+
+Moreover, you could have encountered the opposite problem, where you
+have used a short-lived pool object to construct the path, but tried
+to use the resulting path variable, when that pool has been destructed
+already. In order to avoid mysterious segmentation faults, mod_perl
+does a wasteful copy of the path string when returning it to you --
+another reason to avoid using this function.
+
+
+
+
+
+
+
+=head2 C<server_shutdown_cleanup_register>
+
+Register server shutdown cleanup callback:
+
+  Apache2::ServerUtil::server_shutdown_cleanup_register($sub);
+
+=over 4
+
+=item arg1: C<$sub> ( CODE ref or SUB name )
+
+=item ret: no return value
+
+=item since: 2.0.00
+
+=back
+
+This function can be used to register a callback to be run once at the
+server shutdown (compared to
+C<L<PerlChildExitHandler|docs::2.0::user::handlers::server/C_PerlChildExitHandler_>>
+which will execute the callback for each exiting child process).
+
+For example in order to arrange the function C<do_my_cleanups()> to be
+run every time the server shuts down (or restarts), run the following
+code at the server startup:
+
+  Apache2::ServerUtil::server_shutdown_cleanup_register(\&do_my_cleanups);
+
+It's necessary to run this code at the server startup (normally
+F<startup.pl>). The function will croak if run after the
+C<L<PerlPostConfigHandler|docs::2.0::user::handlers::server/C_PerlPostConfigHandler_>>
+phase.
+
+Values returned from cleanup functions are ignored. If a cleanup dies the
+exception is stringified and passed to C<warn()>. Usually, this results in
+printing it to the F<error_log>.
+
+
+
+
+
+=head2 C<set_handlers>
+
+Set a list of handlers to be called for a given phase. Any previously
+set handlers are forgotten.
+
+  $ok = $s->set_handlers($hook_name => \&handler);
+  $ok = $s->set_handlers($hook_name => [\&handler, \&handler2]);
+  $ok = $s->set_handlers($hook_name => []);
+  $ok = $s->set_handlers($hook_name => undef);
+
+=over 4
+
+=item obj: C<$s>
+( C<L<Apache2::ServerRec object|docs::2.0::api::Apache2::ServerRec>> )
+
+=item arg1: C<$hook_name> ( string )
+
+the phase to set the handlers in
+
+=item arg2: C<$handlers> ( CODE ref or SUB name or an ARRAY ref )
+
+a reference to a single handler CODE reference or just a name of the
+subroutine (fully qualified unless defined in the current package).
+
+if more than one passed, use a reference to an array of CODE refs
+and/or subroutine names.
+
+if the argument is C<undef> or C<[]> the list of handlers is reset to
+zero.
+
+=item ret: C<$ok> ( boolean )
+
+returns a true value on success, otherwise a false value
+
+=item since: 2.0.00
+
+=back
+
+See also:
+C<L<$r-E<gt>add_config|docs::2.0::api::Apache2::RequestUtil/C_set_handlers_>>
+
+Examples:
+
+A single handler:
+
+  $r->set_handlers(PerlChildExitHandler => \&handler);
+
+Multiple handlers:
+
+  $r->set_handlers(PerlFixupHandler => ['Foo::Bar::handler', \&handler2]);
+
+Anonymous functions:
+
+  $r->set_handlers(PerlLogHandler => sub { return Apache2::Const::OK });
+
+Reset any previously set handlers:
+
+  $r->set_handlers(PerlCleanupHandler => []);
+
+or
+
+  $r->set_handlers(PerlCleanupHandler => undef);
+
+
+
+
+=head2 C<user_id>
+
+Get the user id corresponding to the C<User> directive in
+F<httpd.conf>:
+
+  $uid = Apache2::ServerUtil->user_id;
+
+=over 4
+
+=item obj: C<Apache2::ServerUtil> (class name)
+
+=item ret: C<$uid> ( integer )
+
+On Unix platforms returns the uid corresponding to the value used in
+the C<User> directive in F<httpd.conf>. On other platforms returns 0.
+
+=item since: 2.0.03
+
+=back
+
+
+
+
+
+
+
+
+=head1 Unsupported API
+
+C<Apache2::ServerUtil> also provides auto-generated Perl interface for
+a few other methods which aren't tested at the moment and therefore
+their API is a subject to change. These methods will be finalized
+later as a need arises. If you want to rely on any of the following
+methods please contact the L<the mod_perl development mailing
+list|maillist::dev> so we can help each other take the steps necessary
+to shift the method to an officially supported API.
+
+
+=head2 C<error_log2stderr>
+
+Start sending STDERR to the error_log file
+
+  $s->error_log2stderr();
+
+=over 4
+
+=item obj: C<$s>
+( C<L<Apache2::ServerRec object|docs::2.0::api::Apache2::ServerRec>> )
+
+The current server
+
+=item ret: no return value
+
+=item since: 2.0.00
+
+=back
+
+This method may prove useful if you want to start redirecting STDERR
+to the error_log file before Apache does that on the startup.
+
+
+
+
+
+
+
+=head1 See Also
+
+L<mod_perl 2.0 documentation|docs::2.0::index>.
+
+
+
+
+=head1 Copyright
+
+mod_perl 2.0 and its core modules are copyrighted under
+The Apache Software License, Version 2.0.
+
+
+
+
+=head1 Authors
+
+L<The mod_perl development team and numerous
+contributors|about::contributors::people>.
+
+=cut
+

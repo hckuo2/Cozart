@@ -1,0 +1,11 @@
+PKG="ASFhttpd"
+NAME="httpd"
+ARCH="x86_64"
+VERSION="2.4.39"
+CATEGORY="application"
+VENDOR="Apache Software Foundation"
+EMAIL="dev@httpd.apache.org"
+PSTAMP="dev@httpd.apache.org"
+BASEDIR="/home/hckuo2/test-apache/httpd-2.4.39/httpd-build"
+CLASSES="none"
+

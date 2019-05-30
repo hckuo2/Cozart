@@ -1,0 +1,63 @@
+#Extra stuff
+
+our $DEFAULT_UNLOAD_METHOD ||= "unload_package_pp";
+
+sub unload_package {
+    goto &$DEFAULT_UNLOAD_METHOD;
+}
+
+sub unload_package_pp {
+    my $package = shift;
+    no strict 'refs';
+    my $tab = \%{ $package . '::' };
+
+    # below we assign to a symbol first before undef'ing it, to avoid
+    # nuking aliases. If we undef directly we may undef not only the
+    # alias but the original function as well
+
+    for (keys %$tab) {
+        #Skip sub stashes
+        next if /::$/;
+
+        my $fullname = join '::', $package, $_;
+        # code/hash/array/scalar might be imported make sure the gv
+        # does not point elsewhere before undefing each
+        if (%$fullname) {
+            *{$fullname} = {};
+            undef %$fullname;
+        }
+        if (@$fullname) {
+            *{$fullname} = [];
+            undef @$fullname;
+        }
+        if ($$fullname) {
+            my $tmp; # argh, no such thing as an anonymous scalar
+            *{$fullname} = \$tmp;
+            undef $$fullname;
+        }
+        if (defined &$fullname) {
+            no warnings;
+            local $^W = 0;
+            if (defined(my $p = prototype $fullname)) {
+                *{$fullname} = eval "sub ($p) {}";
+            }
+            else {
+                *{$fullname} = sub {};
+            }
+            undef &$fullname;
+        }
+        if (*{$fullname}{IO}) {
+            local $@;
+            eval {
+                if (fileno $fullname) {
+                    close $fullname;
+                }
+            };
+        }
+    }
+
+    #Wipe from %INC
+    $package =~ s[::][/]g;
+    $package .= '.pm';
+    delete $INC{$package};
+}

@@ -1,0 +1,85 @@
+#######################
+# Build/Startup Issue #
+#######################
+
+
+OS      Ver Mod Comments
+----------------------------------------------------------------------
+OpenBSD 2.9 DSO Builds but won't start, with segfaults in the
+                Perl lexer. I wasn't even able to start mp1-dso with
+                the customly built perl (tried 5.6.1 .. 5.9.0)
+                -- the segfault is again in lexer. It seems that
+                the standard OpenBSD perl package has been heavily
+                patched, when the core system perl 5.6.0 package was
+                built, since I can run 'make test' on mp1-dso, but not
+                with a customly built 5.6.0 with the same
+                options. Since 2.9 is no longer supported by OpenBSD,
+                there is no 5.6.1 or higher to try, so at this moment
+                we simply give up on 2.9. We think that the static mp2
+                build should work just fine (once it's available).
+
+AIX     3.3 DSO Works with -berok to ignore linking errors (symbol
+                resolution).  Should replace -berok with a proper
+                symbol resolution at linking time, but I had not much
+                success with using this approach (dlopen fails).
+
+AIX   4.3.3 DSO reported to work with mod_perl_1.99_12 and 
+                Apache 2.0.48/prefork mpm 
+                but doesn't start with worker:
+                http://marc.theaimsgroup.com/?t=106894906200003&r=1&w=2
+
+FreeBSD ??  DSO Works with non-threaded perl (4.8-RELEASE-5.2-RELEASE, 6.0-CURRENT)
+                http://marc.theaimsgroup.com/?l=apache-modperl&m=106399870822612&w=2
+                The following combo is known to work:
+                  http://gossamer-threads.com/lists/modperl/modperl/82887  
+                  FreeBSD 5.4-RELEASE
+                  gcc 3.4.2
+                  perl 5.8.7 WITH ithreads
+                  httpd 2.0.54 apr IS THREADED (worker mpm)
+                  mod_perl2.0.1 
+
+HPUX11i     DSO
+                PA-RISC2.0-thread-multi-LP64
+                hp-ux loire b.11.11 u 9000800 1756907651 unlimited-user license 
+                Cannot load .../modules/mod_perl.so into server: Error 0
+                http://marc.theaimsgroup.com/?t=108325310800002&r=1&w=2
+                Bill Rowe gives some hints here
+                http://marc.theaimsgroup.com/?l=apache-modperl&m=108334017416318&w=2
+                Static works OK!
+
+* Does not compile with bleedperl (5.9.x) due to modperl_error.c and Perl_croak()
+  on FreeBSD.  This is a PERL bug, but p5p and myself, and not sure where the problem is yet.
+
+* gcc 4.x and higher compiles break under -Werror
+[pgollucci volunteers]
+
+* AAA changes in httpd break httpd 2.3.x+ (svn trunk) builds terribly on all platforms.
+
+* Need to cleanup functions only needed for certain build flavors
+  (perlio/threads/etc) out of lib/ModPerl/WrapXS.pm:$ithread_exports
+  and use the newer, simpler #ifdef technique (see modperl_io_apache_init
+  for an example)
+
+* we should stop generating xs/apache_*, at least for a reason that
+  it's incomplete and will be never complete as we don't keep up with
+  changes with ap_/apr_ namespace. Also we don't have the logic to
+  handle cases where functions aren't available on certain
+  platforms. Importing these unavailable functions may cause loading
+  problems on some platforms (aix?). If developers need to import
+  symbols from ap_/apr_ namespace they should use .exp files installed
+  by httpd/apr/aprutil.
+
+* we have a dependency check problem when xs/*/*.h use code from
+  xs/modperl_xs*.h, when the latter change 'make' won't rebuild the
+  dependant files
+
+* Testing:
+  Need to put Philippe's smoking test into the core
+  -- shouldn't forget to test with perlio enabled and disabled
+
+* source_scan won't create Wrap/Foo/Bar.xs if
+  xs/maps/modperl_functions.map defines only a boot section:
+  MODULE=APR::IO PACKAGE=APR::IO BOOT=1 
+  unless there is at least one function added to the .map file
+  http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=100702825506778&w=2
+

@@ -1,0 +1,203 @@
+#########################
+# Nice to have features #
+#########################
+
+* If Apache::SubRequest::DESTROY gets invoked more than once on the
+  same object (directly and indirectly via object's exit of scope),
+  memory gets corrupted and some later unrelated requests get affected
+  badly (segfaults in unrelated areas). So we probably need to do the
+  same handling as APR::Pool, where we make sure that no matter how
+  DESTROY is called, it's always called only once, any consequent
+  calls can be made a NOP or assert. BTW, it's easy to reproduce the
+  problem, by simply calling $subrequest->DESTROY 3 times or so in a
+  raw, the server just hangs...
+
+* 'apachectl configtest' will not test perl modules, unless <perl>
+  section or PerlLoadModule has happeneded to be loaded (since by
+  default we start perl in the post-config phase. A possible solution
+  is to try to detect 'apachectl configtest' and force the interpreter
+  loading during the config phase, so that configtest will actually
+  work for mp2 too.  there is also an opinion that there is no
+  problem, and configtest just checks the config file syntax. But the
+  problem is that users might be mislead and think that it tests
+  modperl too, and when doing a restart it may fail, even though
+  configtest said it's OK.
+
+* PerlPreConnectionHandler is implemented, but the 'void *csd' arg in
+  the callback is ignored. will require a modification of
+  modperl_callback_run_handlers to pass yet another optional argument.
+
+  Status: most likely nobody will ever want to use this option, so
+  don't waste time working on it.
+
+* Apache::FakeRequest:
+  since APR can be used outside of httpd, and we can alloc request_rec
+  and similar structures, it should be possible to bootstrap an
+  inside-httpd interface and outside-httpd interface.  its not really
+  worthwhile looking at until APR actually installs its *.so or *.a
+  libraries somewhere apxs can find them.  and, there's a bunch of util
+  functions (e.g. URI stuff) that is supposed to move from httpd into
+  apr-util.
+
+* could add support for embedding apache directives into perl
+  directives values, e.g. interpolating $ServerRoot
+
+  PerlSwitches -I$ServerRoot/lib/perl
+
+* Since now we have protocol modules, it'd be nice to have a similar
+  thing to PerlCleanupHandler, which works only for HTTP requests. 
+  It should probably be called PerlConnectionCleanupHandler.
+
+  If we add it we should probably rename PerlCleanupHadndler to
+  PerlRequestCleanupHandler and keep the old name as a deprecated alias.
+
+  We could also have PerlServerCleanupHandler, but that's exactly what
+  PerlChildExitHandler does. Consider having ServerCleanup as an alias.
+
+config features:
+----------------
+
+- tie %ENV to r->subprocess_env so stores are added to
+  r->subprocess_env and fetches are looked up in there and elsewhere
+  (e.g. HTTP_* from r->headers_in).  see modperl_env.c, current
+  implementation is not threadsafe and requires 5.7.2+
+ 
+- make 'PerlSetVar $Foo value' work like 'local $Foo = value' 
+  for the given location
+
+- allow Perl*Handler's to have arguments in config files
+
+- allow <Perl></Perl> configuration sections to have read access to internal
+  configuration structures (would be nice if we could tie a %namespace::) 
+
+- setuid/gid before running any Perl code
+
+- implement PerlINC (or similar) as a nicer interface for the working
+  PerlSwitches -Mlib=/home/dev1/lib/perl, to set different @INC for
+  different virtual hosts.
+  See the thread: http://marc.theaimsgroup.com/?t=100554858800001&r=1&w=2
+
+- a possible implementation of PerlOptions +Inherit, similar to
+  +Parent but which allows virtual hosts to inherit everything that
+  was loaded by the main server, at the point of their definition in
+  the config file. This can make it easier to write configuration
+  files where there is a common base of modules to be loaded in all
+  servers. Of course this can be done by putting all these common
+  modules and code into foo.pl and running it from the base server and
+  all virtual hosts.
+
+-  PerlModule can be made more efficient using Perl_load_module
+
+  Status: it's possible to implement, but currently there is no way to
+          prevent from Perl logging the loading error messages to the
+          console
+  http://www.xray.mpe.mpg.de/mailing-lists/perl5-porters/2003-03/msg00319.html
+
+perl language features:
+----------------------
+
+- @ARGV magic, tie to query string
+
+- sub handler : method ($) {}
+  call $class->new($r) and pass the returned object as the first and
+  only arg to the method handler
+
+- some mod_perlIO/PerlIO type methods for xs modules? (e.g. Apache::Peek)
+
+- possible to support BEGIN,CHECK,INIT blocks similar to how END is
+  supported via ModPerl::Global::special_list_{call,clear}
+
+
+
+optimization features:
+---------------------
+
+- copy-on-write SvPVX
+
+- hook Perl malloc into apr_pool
+
+- for "compiled handlers" w/ ithreads manage SV allocation via
+  server-lifetime apr_pool_t
+
+- "garbage collector" thread to walk padlists looking for certain things
+   worth releasing.
+
+- "mip manager" thread to watch # of active interpreters,
+  cloning/destroying when needed (rather than waiting for a request to
+  trigger)
+
+- use subpools per-callback/handler (might trim some memory bloat)
+  note: creating subpools requires a malloc mutex lock with threaded
+  mpms
+
+api:
+---
+
+- improve the "stacked handlers" implementation, including:
+  + allow push_handlers to have an additional argument, an array ref,
+    which will be passed to the handler as arguments, e.g.
+    $r->push_handlers("PerlHandler", \&some_sub, ['one', 'two', 'etc']);
+
+- might add an alias for $filter->connection (now we have $filter->c), to be
+  more intuitive since we have $r->connection.
+
+modules:
+-------
+
+- core Apache::SubProcess w/ proper CORE::GLOBAL::{fork,exec} support
+  + currently works only with $] >= 5.007003 (see the
+    apache/subprocess test)
+
+- It's possible that we will add:
+
+  #ifdef MP_APACHE_COMPAT
+       modperl_require_module("Apache::compat");
+  #endif
+
+  if MP_APACHE_COMPAT Makefile.PL option is true. But this adds bloat,
+  so this is just an option to consider.
+
+- Apache::File->tmpfile now lives only in compat. Consider adding
+  APR::File->mktemp (apr_file_mktemp) and a perlio layer
+  defined in terms of apr_file_t to use it.
+
+- Apache::MethodList was implemented but was not usefull enough. 
+    Thread: http://marc.theaimsgroup.com/?t=109269086600003&r=1&w=2
+    Patch:  http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=109278475112976&q=p6
+
+new modules:
+-----------
+
+- apache.pm: use apache '1.3b3';
+
+misc new stuff:
+--------------
+
+- 'make html'
+
+- 'make test_report'
+
+apache features that would be neat for mod_perl:
+-----------------------------------------------
+
+- "autoload" hook for configuration directives
+
+tools that may help us develop/maintain mp2 
+-------------------------------------------
+- B::Xref
+
+- gcov: test code coverage
+  http://apr.apache.org/coverage/index.html
+  http://gozer.ectoplasm.org/mod_perl/coverage/report.html
+
+- valgrind (currently valgrind chokes when running apache, long before
+  we get to mod_perl). I've heard that we could use some special
+  #define controls to tell valgrind where to look and where not.
+
+- gprof
+
+- lxr
+
+- tinderbox
+
+

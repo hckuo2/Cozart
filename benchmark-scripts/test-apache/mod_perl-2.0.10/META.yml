@@ -1,0 +1,24 @@
+name:         mod_perl
+version: 2.0.10
+installdirs:  site
+distribution_type: module
+no_index:
+    directory:
+          # A-T and others have their own CPAN distros
+        - Apache-Test
+        - Apache-Reload
+        - Apache-SizeLimit
+    package:
+          # Internally redefined module
+        - C::Preprocessed
+          # Fake packages
+        - Apache::Status::_version
+        - perlrun_decl
+          # Apache::compat redefines
+        - Apache
+        - Apache::Constants
+        - Apache::File
+        - Apache::SIG
+        - Apache::Server
+        - Apache::Table
+        - Apache::Util

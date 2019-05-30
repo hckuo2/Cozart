@@ -1,0 +1,149 @@
+##########  APR types  ##########
+
+struct apr_xlate_t      | UNDEFINED
+struct apr_pool_t       | APR::Pool
+apr_abortfunc_t         | UNDEFINED
+
+#socket stuff
+struct apr_sockaddr_t   | APR::SockAddr
+apr_os_sock_info_t      | APR::SockInfo
+struct apr_os_sock_t    | UNDEFINED
+struct apr_in_addr_t    | APR::InAddr
+apr_port_t              | IV
+struct apr_socket_t     | APR::Socket
+struct sockaddr         | UNDEFINED
+struct hostent          | UNDEFINED
+apr_shutdown_how_e      | UNDEFINED
+apr_interface_e         | UNDEFINED
+
+struct apr_ipsubnet_t   | APR::IpSubnet
+
+#bucket stuff
+struct apr_bucket           | APR::Bucket
+struct apr_bucket_brigade   | APR::Brigade
+struct apr_bucket_alloc_t   | APR::BucketAlloc
+apr_brigade_flush           | UNDEFINED
+struct apr_bucket_type_t    | APR::BucketType
+apr_read_type_e             | IV
+apr_bucket_file             | UNDEFINED
+apr_bucket_pool             | UNDEFINED
+apr_bucket_heap             | UNDEFINED
+apr_bucket_mmap             | UNDEFINED
+apr_bucket_refcount         | UNDEFINED
+apr_bucket_list             | UNDEFINED
+#apr_bucket_simple           | UNDEFINED
+#apr_bucket_shared           | UNDEFINED
+
+#uri
+struct apr_uri_t        | APR::URI
+
+#uuid
+struct apr_uuid_t       | APR::UUID
+
+#crypto stuff
+struct apr_md5_ctx_t    | APR::MD5
+struct apr_md4_ctx_t    | UNDEFINED
+struct apr_sha1_ctx_t   | APR::SHA1
+
+#getopt
+struct apr_getopt_t           | APR::Getopt
+struct apr_getopt_option_t    | APR::GetoptOption
+
+#dso
+struct apr_dso_handle_t       | UNDEFINED
+struct apr_dso_handle_sym_t   | UNDEFINED
+struct apr_os_dso_handle_t    | UNDEFINED
+
+#file stuff
+struct apr_file_t        | UNDEFINED
+struct apr_os_file_t     | UNDEFINED
+struct apr_dir_t         | UNDEFINED
+struct apr_os_dir_t      | UNDEFINED
+apr_seek_where_t         | UNDEFINED
+struct apr_pollfd_t      | UNDEFINED
+apr_fileperms_t          | IV
+struct apr_finfo_t       | APR::Finfo
+apr_filetype_e           | IV
+apr_dev_t                | NV
+apr_ino_t                | IV
+
+#process stuff
+struct apr_proc_t        | APR::Process
+struct apr_procattr_t    | UNDEFINED
+enum kill_conditions
+apr_os_proc_t            | UNDEFINED
+apr_cmdtype_e            | UNDEFINED
+apr_wait_how_e           | UNDEFINED
+apr_other_child_rec_t    | UNDEFINED
+
+#time stuff
+struct apr_time_exp_t    | APR::ExplodedTime
+struct apr_os_exp_time_t      | UNDEFINED
+struct apr_os_imp_time_t      | NOTIMPL
+
+#data structure stuff
+struct apr_array_header_t   | APR::ArrayHeader
+struct apr_table_t          | APR::Table
+apr_table_entry_t           | APR::TableEntry
+struct apr_hash_t           | APR::Hash
+apr_hash_index_t            | APR::HashIndex
+
+#lock stuff
+apr_locktype_e       | IV
+apr_lockmech_e       | IV
+
+#thread stuff
+struct apr_threadkey_t       | UNDEFINED
+struct apr_os_threadkey_t    | UNDEFINED
+typedef apr_os_thread_t      | UNDEFINED
+struct apr_thread_t          | UNDEFINED
+apr_thread_start_t           | UNDEFINED
+struct apr_threadattr_t      | UNDEFINED
+struct apr_thread_mutex_t    | APR::ThreadMutex
+struct apr_thread_once_t     | UNDEFINED
+struct apr_thread_cond_t     | UNDEFINED
+struct apr_thread_rwlock_t   | APR::ThreadRWLock
+
+#signal stuff
+apr_signum_t                 | UNDEFINED
+apr_sigfunc_t                | UNDEFINED
+
+#shared memory stuff
+struct apr_mmap_t      | APR::Mmap
+
+#xml stuff
+struct apr_text          | UNDEFINED
+struct apr_text_header   | UNDEFINED
+struct apr_xml_elem      | UNDEFINED
+struct apr_xml_doc       | UNDEFINED
+struct apr_xml_attr      | UNDEFINED
+struct apr_xml_ns_scope  | UNDEFINED
+struct apr_xml_parser    | UNDEFINED
+
+#integer stuff
+apr_int16_t            | IV
+apr_int32_t            | IV
+apr_int64_t            | NV
+apr_uint16_t           | IV
+apr_uint32_t           | IV
+apr_uint64_t           | NV
+apr_socklen_t          | IV
+apr_ssize_t            | IV
+apr_size_t             | UV
+apr_time_t             | NV
+apr_interval_time_t    | NV
+apr_gid_t              | IV
+apr_uid_t              | IV
+apr_off_t              | IV
+apr_byte_t             | CHAR
+apr_status_t           | IV #dualvar?
+
+#misc stuff
+apr_hdtr_t             | NOTIMPL #sendfile
+apr_vformatter_buff_t  | NOTIMPL
+
+#dbm stuff
+apr_datum_t            | NOTIMPL #sdbm
+struct apr_dbm_t       | NOTIMPL #sdbm
+struct apr_sdbm_t      | NOTIMPL
+struct apr_sdbm_datum_t| NOTIMPL

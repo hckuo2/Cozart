@@ -1,0 +1,93 @@
+##########  Apache types  ##########
+
+struct server_rec       | Apache2::ServerRec
+struct server_addr_rec  | Apache2::ServerAddr
+struct conn_rec         | Apache2::Connection
+struct request_rec      | Apache2::RequestRec
+struct subrequest_rec   | Apache2::SubRequest
+struct process_rec      | Apache2::Process
+struct ap_method_list_t | Apache2::MethodList
+struct piped_log        | Apache2::PipedLog
+
+struct module           | Apache2::Module
+struct module_struct    | Apache2::Module
+
+ap_conn_keepalive_e     | IV
+
+#config stuff
+struct command_rec      | Apache2::Command
+enum cmd_how            | IV
+cmd_func                | UNDEFINED
+struct cmd_parms        | Apache2::CmdParms
+struct ap_configfile_t  | Apache2::ConfigFile
+struct htaccess_result  | UNDEFINED
+struct ap_directive_t   | Apache2::Directive
+struct ap_conf_vector_t | Apache2::ConfVector
+
+#system-ish stuff
+ap_mgmt_type_e          | IV
+ap_mgmt_value           | UNDEFINED
+ap_scoreboard_e         | IV
+struct process_score    | UNDEFINED
+struct worker_score     | UNDEFINED
+struct ap_pod_t         | UNDEFINED
+ap_unix_identity_t      | UNDEFINED
+
+#filters
+struct ap_filter_t	| Apache2::Filter
+struct ap_filter_rec_t  | Apache2::FilterRec
+ap_filter_type          | Apache2::FilterType
+ap_filter_func          | UNDEFINED
+ap_out_filter_func      | UNDEFINED
+ap_in_filter_func       | UNDEFINED
+ap_input_mode_t         | IV
+
+##########  Standard types  ##########
+
+int             | IV
+int *           | PTR
+unsigned int    | UV
+signed int      | IV
+long            | IV
+long int        | IV
+unsigned long   | UV
+unsigned        | UV
+double          | NV
+
+char *                   | PV
+const char *             | PV
+const char **            | UNDEFINED
+char const *             | PV
+unsigned char *          | PV
+const unsigned char *    | PV
+char **                  | UNDEFINED
+char ***                 | UNDEFINED
+const char * const *     | UNDEFINED
+
+char                   | CHAR
+const char             | CHAR
+const unsigned char    | U_CHAR
+unsigned char          | U_CHAR
+
+void *           | PTR
+void **          | UNDEFINED
+const void *     | PTR
+const void **    | UNDEFINED
+void             | VOID
+
+...              | UNDEFINED #varargs
+va_list          | UNDEFINED
+
+##########  Misc types  ##########
+
+time_t          | NV
+uid_t           | IV
+gid_t           | IV
+pid_t           | IV
+size_t          | IV
+size_t *        | UNDEFINED
+
+struct regex_t
+regmatch_t
+struct pthread_mutex_t
+struct iovec | NOTIMPL

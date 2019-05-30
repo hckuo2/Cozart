@@ -1,0 +1,20 @@
+##########################
+# Registry specific bugs #
+##########################
+
+
+* An open issue with chdir, which is process-scoped. Arthur Bergman
+  has started the work on ex::threads::safecwd, which is discussed
+  here: http://www.perl.com/pub/a/2002/06/11/threads.html?page=2
+
+RegistryLoader:
+
+- chdir() needs to be adjusted when RegistryCooker implements it
+
+RegistryCooker:
+
+- consider not to use $$ in debug tracing. Not all platforms give out
+  a different pid for different threads.
+
+- some problems with setting the DEBUG() constant based on the value of 
+  Apache->server->dir_config('ModPerl::RegistryCooker::DEBUG')

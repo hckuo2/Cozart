@@ -1,0 +1,6 @@
+# htaccess file for t/response/TestModperl/merge.pm
+
+PerlSetEnv   MergeSetEnv3  SetEnv3Merge3Val
+PerlSetVar   MergeSetVar3  SetVar3Merge3Val
+PerlSetVar   MergeAddVar3  AddVar3Merge3Val1
+PerlAddVar   MergeAddVar3  AddVar3Merge3Val2

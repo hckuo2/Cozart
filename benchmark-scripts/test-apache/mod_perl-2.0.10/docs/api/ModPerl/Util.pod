@@ -1,0 +1,263 @@
+=head1 NAME
+
+ModPerl::Util - Helper mod_perl Functions
+
+
+
+
+=head1 Synopsis
+
+  use ModPerl::Util;
+  
+  # e.g. PerlResponseHandler
+  $callback = ModPerl::Util::current_callback;
+  
+  # exit w/o killing the interpreter
+  ModPerl::Util::exit();
+  
+  # untaint a string (do not use it! see the doc)
+  ModPerl::Util::untaint($string);
+  
+  # removes a stash (.so, %INC{$stash}, etc.) as best as it can
+  ModPerl::Util::unload_package($stash);
+  
+  # current perl's address (0x92ac760 or 0x0 under non-threaded perl)
+  ModPerl::Util::current_perl_id();
+
+
+
+
+
+=head1 Description
+
+C<ModPerl::Util> provides mod_perl utilities API.
+
+
+
+
+
+=head1 API
+
+C<ModPerl::Util> provides the following functions and/or methods:
+
+
+
+
+
+
+
+=head2 C<current_callback>
+
+Returns the currently running callback name,
+e.g. C<'PerlResponseHandler'>.
+
+  $callback = ModPerl::Util::current_callback();
+
+=over 4
+
+=item ret: C<$callback> ( string )
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+=head2 C<current_perl_id>
+
+Return the memory address of the perl interpreter
+
+  $perl_id = ModPerl::Util::current_perl_id();
+
+=over 4
+
+=item ret: C<$perl_id> ( string )
+
+Under threaded perl returns something like: C<0x92ac760>
+
+Under non-thread perl returns C<0x0>
+
+=item since: 2.0.00
+
+=back
+
+Mainly useful for debugging applications running under threaded-perl.
+
+
+
+
+
+
+
+=head2 C<exit>
+
+Terminate the request, but not the current process (or not the current
+Perl interpreter with threaded mpms).
+
+  ModPerl::Util::exit($status);
+
+=over 4
+
+=item opt arg1: C<$status> ( integer )
+
+The exit status, which as of this writing is ignored. (it's accepted
+to be compatible with the core C<exit> function.)
+
+=item ret: no return value
+
+=item since: 2.0.00
+
+=back
+
+Normally you will use the plain C<exit()> in your code. You don't need
+to use C<ModPerl::Util::exit> explicitly, since mod_perl overrides
+C<exit()> by setting C<CORE::GLOBAL::exit> to
+C<ModPerl::Util::exit>. Only if you redefine C<CORE::GLOBAL::exit>
+once mod_perl is running, you may want to use this function.
+
+The original C<exit()> is still available via C<CORE::exit()>.
+
+C<ModPerl::Util::exit> is implemented as a special C<die()> call,
+therefore if you call it inside C<eval BLOCK> or C<eval "STRING">,
+while an exception is being thrown, it is caught by C<eval>. For
+example:
+
+  exit;
+  print "Still running";
+
+will not print anything. But:
+
+  eval {
+     exit;
+  }
+  print "Still running";
+
+will print I<Still running>. So you either need to check whether L<the
+exception|docs::2.0::api::APR::Error> is specific to C<exit> and call
+C<exit()> again:
+
+  use ModPerl::Const -compile => 'EXIT';
+  eval {
+     exit;
+  }
+  exit if $@ && ref $@ eq 'APR::Error' && $@ == ModPerl::EXIT;
+  print "Still running";
+
+or use C<CORE::exit()>:
+
+  eval {
+     CORE::exit;
+  }
+  print "Still running";
+
+and nothing will be printed. The problem with the latter is the
+current process (or a Perl Interpreter) will be killed; something that
+you really want to avoid under mod_perl.
+
+
+
+
+
+
+=head2 C<unload_package>
+
+Unloads a stash from the current Perl interpreter in the safest way
+possible.
+
+  ModPerl::Util::unload_package($stash);
+
+=over 4
+
+=item arg1: C<$stash> ( string )
+
+The Perl stash to unload. e.g. C<MyApache2::MyData>.
+
+=item ret: no return value
+
+=item since: 2.0.00
+
+=back
+
+Unloading a Perl stash (package) is a complicated business. This
+function tries very hard to do the right thing. After calling this
+function, it should be safe to C<use()> a new version of the module
+that loads the wiped package.
+
+References to stash elements (functions, variables, etc.) taken from
+outside the unloaded package will still be valid.
+
+This function may wipe off things loaded by other modules, if the
+latter have inserted things into the C<$stash> it was told to unload.
+
+If a stash had a corresponding XS shared object (.so) loaded it will
+be unloaded as well.
+
+If the stash had a corresponding entry in C<%INC>, it will be removed
+from there.
+
+C<unload_package()> takes care to leave sub-stashes intact while
+deleting the requested stash. So for example if C<CGI> and
+C<CGI::Carp> are loaded, calling C<unload_package('CGI')> won't affect
+C<CGI::Carp>.
+
+
+
+
+
+
+
+=head2 C<untaint>
+
+Untaint the variable, by turning its tainted SV flag off (used
+internally).
+
+  ModPerl::Util::untaint($tainted_var);
+
+=over 4
+
+=item arg1: C<$tainted_var> (scalar)
+
+=item ret: no return value
+
+C<$tainted_var> is untainted.
+
+=item since: 2.0.00
+
+=back
+
+Do not use this function unless you know what you are doing. To learn
+how to properly untaint variables refer to the I<perlsec> manpage.
+
+
+
+
+
+
+
+=head1 See Also
+
+L<mod_perl 2.0 documentation|docs::2.0::index>.
+
+
+
+
+
+
+=head1 Copyright
+
+mod_perl 2.0 and its core modules are copyrighted under
+The Apache Software License, Version 2.0.
+
+
+
+
+=head1 Authors
+
+L<The mod_perl development team and numerous
+contributors|about::contributors::people>.
+
+=cut
+

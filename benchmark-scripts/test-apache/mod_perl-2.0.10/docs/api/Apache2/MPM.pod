@@ -1,0 +1,157 @@
+=head1 NAME
+
+Apache2::MPM - Perl API for accessing Apache MPM information
+
+
+
+
+=head1 Synopsis
+
+  use Apache2::MPM ();
+  
+  # check whether Apache MPM is threaded
+  if (Apache2::MPM->is_threaded) { do_something() }
+  
+  # which mpm is used
+  my $mpm = lc Apache2::MPM->show;
+  
+  # query mpm properties
+  use Apache2::Const -compile => qw(:mpmq);
+  if (Apache2::MPM->query(Apache2::Const::MPMQ_STATIC)) { ... }
+
+
+
+
+=head1 Description
+
+C<Apache2::MPM> provides the Perl API for accessing Apache MPM
+information.
+
+
+
+
+
+=head1 API
+
+C<Apache2::MPM> provides the following functions and/or methods:
+
+
+
+
+
+=head2 C<query>
+
+Query various attributes of the MPM
+
+  my $query = Apache2::MPM->query($const);
+
+=over 4
+
+=item obj: C<$class>
+( C<L<Apache2::MPM class|docs::2.0::api::Apache2::MPM>> )
+
+the class name
+
+=item arg1: C<$const> ( C<L<Apache2::Const :mpmq group
+constant|docs::2.0::api::Apache2::Const/C__mpmq_>> )
+
+The MPM attribute to query.
+
+=item ret: C<$query> ( boolean )
+
+the result of the query
+
+=item since: 2.0.00
+
+=back
+
+For example to test whether the mpm is static:
+
+  use Apache2::Const -compile => qw(MPMQ_STATIC);
+  if (Apache2::MPM->query(Apache2::Const::MPMQ_STATIC)) { ... }
+
+
+
+
+
+
+
+=head2 C<is_threaded>
+
+Check whether the running Apache MPM is threaded.
+
+  my $is_threaded = Apache2::MPM->is_threaded;
+
+=over 4
+
+=item obj: C<$class>
+( C<L<Apache2::MPM class|docs::2.0::api::Apache2::MPM>> )
+
+the class name
+
+=item ret: C<$is_threaded> ( boolean )
+
+threaded or not
+
+=item since: 2.0.00
+
+=back
+
+Note that this functionality is just a shortcut for:
+
+  use Apache2::Const -compile => qw(MPMQ_IS_THREADED);
+  my $is_threaded = Apache2::MPM->query(Apache2::Const::MPMQ_IS_THREADED);
+
+
+
+
+
+
+=head2 C<show>
+
+What mpm is used
+
+  my $mpm = Apache2::MPM->show();
+
+=over 4
+
+=item obj: C<$class>
+( C<L<Apache2::MPM class|docs::2.0::api::Apache2::MPM>> )
+
+the class name
+
+=item ret: C<$mpm> ( string )
+
+the name of the MPM. e.g., "Prefork".
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+=head1 See Also
+
+L<mod_perl 2.0 documentation|docs::2.0::index>.
+
+
+
+
+=head1 Copyright
+
+mod_perl 2.0 and its core modules are copyrighted under
+The Apache Software License, Version 2.0.
+
+
+
+
+=head1 Authors
+
+L<The mod_perl development team and numerous
+contributors|about::contributors::people>.
+
+=cut
+

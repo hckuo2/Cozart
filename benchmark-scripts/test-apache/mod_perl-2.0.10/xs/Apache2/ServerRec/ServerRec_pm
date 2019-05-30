@@ -1,0 +1,4 @@
+use Exporter ();
+use Apache2::Log (); # Apache2::ServerRec::loads warn
+@Apache2::ServerRec::EXPORT_OK = qw(warn);
+*Apache2::ServerRec::import = \&Exporter::import;

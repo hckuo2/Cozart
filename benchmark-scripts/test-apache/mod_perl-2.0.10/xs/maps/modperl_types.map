@@ -1,0 +1,24 @@
+##########  mod_perl types  ##########
+
+struct modperl_filter_t        | Apache2::OutputFilter
+
+#_if_ do {use Apache2::Build; Apache2::Build::PERL_HAS_ITHREADS}
+
+struct modperl_interp_t        | ModPerl::Interpreter
+struct modperl_interp_pool_t   | ModPerl::InterpPool
+struct modperl_tipool_t        | ModPerl::TiPool
+struct modperl_tipool_config_t | ModPerl::TiPoolConfig
+PerlInterpreter *              | IV
+
+#_end_
+
+##########  Perl types  ##########
+
+SV *  | SV
+I32   | IV
+I32 * | IV
+U16   | UV
+U16 * | UV
+U32   | UV
+U32 * | UV
+

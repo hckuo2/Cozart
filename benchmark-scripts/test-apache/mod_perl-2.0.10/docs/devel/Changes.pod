@@ -1,0 +1,49 @@
+=head1 NAME
+
+CHANGES
+
+=head1 Description
+
+Refer to this document to learn what changes were made to the
+documents, since you've read these last time.
+
+The most recent changes are listed first.
+
+=head1 ???
+
+* porting.pod:
+
+ o Reworking and extending the porting perl modules sections [Nick
+   Tonkin E<lt>nick (at) tonkinresolutions.comE<gt>]
+
+* Started the following docs:
+
+  o mod_perl internals: Apache 2.0 Integration
+
+  o Which Coding Technique is Faster
+
+* Reshuffled the dir/file structure to make more sense, as new docs
+  are getting added.
+
+=head1 Wed Mar 20 21:20:20 SGT 2002
+
+* docs::general::testing::testing:
+
+   o add the info for differentiating between httpd-1.x and httpd-2.x
+     in C code. [Gary Benson E<lt>gbenson@redhat.comE<gt>]
+
+* devel::debug_c::debug_c:
+
+  o Add Solaris core dumping instructions [Kyle Oppenheim
+    E<lt>kyleo@tellme.comE<gt>]
+
+* devel::benchmark::benchmark:
+
+  o 'sv_catpvn vs. fprintf' and 'backticks vs XS' benchmarks [Doug
+    MacEachern]
+
+* devel::modperl_style::modperl_style
+
+  o Corrections from Tim Henigan [E<lt>t.henigan@verizon.netE<gt>]
+
+=cut

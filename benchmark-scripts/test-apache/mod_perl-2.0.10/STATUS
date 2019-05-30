@@ -1,0 +1,41 @@
+mod_perl 2.0 STATUS:                                       -*-text-*-
+   Last modified at [$Date: 2015-06-18 23:27:44 +0100 (Thu, 18 Jun 2015) $]
+
+Release:
+--------
+   2.000.09   : Released Jun 18, 2015
+   2.000.08   : Released Apr 17, 2013
+   2.000.07   : Released Jun 05, 2012
+   2.000.06   : Released Apr 24, 2012
+   2.000.05   : Released Feb 07, 2011
+   2.000.04   : Released Apr 16, 2008
+   2.000.03   : Released Nov 29, 2006
+   2.000.02   : Released Oct 20, 2005
+   2.000.01   : Released Jun 17, 2005
+   2.000.00   : Released May 20, 2005
+   1.999.23   : Released May 03, 2005
+   1.999.22   : Released Apr 14, 2005
+   1.999.21   : Released Jan 22, 2005
+   1.999.20   : Released Jan 05, 2005
+   1.99_19    : Released Dec 22, 2004
+   1.99_18    : Released Dec 12, 2004
+   1.99_17    : Released Oct 22, 2004
+   1.99_16    : Released Aug 22, 2004
+   1.99_15    : Released Aug 20, 2004
+   1.99_14    : Released May 21, 2004
+   1.99_13    : Released Mar 08, 2004
+   1.99_12    : Released Dec 22, 2003
+   1.99_11    : Released Nov 10, 2003
+   1.99_10    : Released Sep 30, 2003
+   1.99_09    : Released Apr 28, 2003
+   1.99_08    : Released Jan 10, 2003
+   1.99_07    : Released Sep 27, 2002
+   1.99_06    : Not released
+   1.99_05    : Released Aug 20, 2002
+   1.99_04    : Released Jun 21, 2002
+   1.99_03    : Released Jun 16, 2002
+   1.99_02    : Released Jun 01, 2002
+   1.99_01    : Released Apr 06, 2002
+
+Issues, bugs and features and their implementation status are spread
+across several files under the todo/ directory

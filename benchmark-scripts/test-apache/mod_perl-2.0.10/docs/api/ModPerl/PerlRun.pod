@@ -1,0 +1,82 @@
+=head1 NAME
+
+ModPerl::PerlRun - Run unaltered CGI scripts under mod_perl
+
+=head1 Synopsis
+
+  # httpd.conf
+  PerlModule ModPerl::PerlRun
+  Alias /perl-run/ /home/httpd/perl/
+  <Location /perl-run>
+      SetHandler perl-script
+      PerlResponseHandler ModPerl::PerlRun
+      PerlOptions +ParseHeaders
+      Options +ExecCGI
+  </Location>
+
+
+=head1 Description
+
+META: document that for now we don't chdir() into the script's dir,
+because it affects the whole process under
+threads. C<L<ModPerl::PerlRunPrefork|docs::2.0::api::ModPerl::PerlRunPrefork>>
+should be used by those who run only under prefork MPM.
+
+
+=head1 Special Blocks
+
+
+=head2 C<BEGIN> Blocks
+
+When running under the C<ModPerl::PerlRun> handler C<BEGIN> blocks
+behave as follows:
+
+=over
+
+=item *
+
+C<BEGIN> blocks defined in scripts running under the
+C<ModPerl::PerlRun> handler are executed on each and every request.
+
+=item *
+
+C<BEGIN> blocks defined in modules loaded from scripts running under
+C<ModPerl::PerlRun> (and which weren't already loaded prior to the
+request) are executed on each and every request only if those modules
+declare no package. If a package is declared C<BEGIN> blocks will be
+run only the first time each module is loaded, since those modules
+don't get reloaded on subsequent requests.
+
+=back
+
+See also L<C<BEGIN> blocks in mod_perl
+handlers|docs::2.0::user::coding::coding/C_BEGIN__Blocks>.
+
+
+=head2 C<CHECK> and C<INIT> Blocks
+
+Same as normal L<mod_perl
+handlers|docs::2.0::user::coding::coding/C_CHECK__and_C_INIT__Blocks>.
+
+
+
+=head2 C<END> Blocks
+
+Same as
+C<L<ModPerl::Registry|docs::2.0::api::ModPerl::Registry/C_BEGIN__Blocks>>.
+
+
+=head1 Authors
+
+Doug MacEachern
+
+Stas Bekman
+
+
+
+=head1 See Also
+
+C<L<ModPerl::RegistryCooker|docs::2.0::api::ModPerl::RegistryCooker>>
+and C<L<ModPerl::Registry|docs::2.0::api::ModPerl::Registry>>.
+
+=cut

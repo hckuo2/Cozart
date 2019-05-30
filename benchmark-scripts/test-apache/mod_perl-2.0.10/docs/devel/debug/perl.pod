@@ -1,0 +1,71 @@
+=head1 NAME
+
+Debugging mod_perl Perl Internals
+
+=head1 Description
+
+This document explains how to debug Perl code under mod_perl.
+
+Most of the L<mod_perl 1.0 debug
+documentation|docs::1.0::guide::debug> applies to mod_perl 2.0:
+
+
+
+
+
+=head2 Detecting Hanging Processes
+
+See L<Hanging Processes: Detection and
+Diagnostics|docs::1.0::guide::debug/Hanging_Processes__Detection_and_Diagnostics>
+for the explanation, but under mp2 to use signals to detect where the
+process is spinning, you can't use C<$SIG{USR2}>, you have to use
+POSIX signals. i.e. the code becomes:
+
+  use Carp ();
+  use POSIX qw(SIGUSR2);
+  my $mask      = POSIX::SigSet->new( SIGUSR2 );
+  my $action    = POSIX::SigAction->new(\&tell_where_spinning, $mask);
+  my $oldaction = POSIX::SigAction->new();
+  POSIX::sigaction(SIGUSR2, $action, $oldaction );
+  
+  sub tell_where_spinning {
+      Carp::confess("caught SIGUSR2!");
+  };
+
+and then:
+
+  % kill USR2 <pid_of_the_spinning_process>
+
+and watch for the trace in F<error_log>.
+
+
+
+
+
+=head1 Maintainers
+
+Maintainer is the person(s) you should contact with updates,
+corrections and patches.
+
+=over
+
+=item *
+
+Stas Bekman [http://stason.org/]
+
+=back
+
+=head1 Authors
+
+=over
+
+=item *
+
+Stas Bekman [http://stason.org/]
+
+=back
+
+Only the major authors are listed above. For contributors see the
+Changes file.
+
+=cut

@@ -1,0 +1,28 @@
+these features with either:
+a) never be in 2.0
+b) only be in #ifdef MP_DEPRECATED
+c) be a form that was nothing like 1.xx (e.g. Apache::Leak)
+d) split off into something standalone on cpan
+
+- MaxModPerlRequestsPerChild
+
+- $r->seqno, $r->sent_header, 
+  $r->query_string, $r->basic_http_header, $r->new_read,
+  $r->write_client, $r->read_client_block, $r->translate_name
+
+- $r->content, $r->args in-a-list-context (exist in Apache::compat)
+
+- $Apache::Server::Starting, $Apache::Server::ReStarting
+
+- modules: 
+  + Apache::SIG: dead
+  + Apache::Symbol: unknown
+  + Apache::Leak: could be made useful
+  + Apache::RedirectLogFix: dead
+  + Apache::Include: was just an example
+  + Apache::Debug: could be make useful
+  + Apache::FakeRequest: should be built in
+  + Apache::httpd_conf: dead (to be replaced by new test framework)
+  + Apache::Symdump: unknown
+  + Apache::Opcode: was experimental, needs much attention to be
+    useful

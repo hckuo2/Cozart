@@ -1,0 +1,66 @@
+=head1 NAME
+
+APR - Perl Interface for Apache Portable Runtime (libapr and
+libaprutil Libraries)
+
+
+
+
+
+=head1 Synopsis
+
+  use APR ();
+
+
+
+
+
+
+=head1 Description
+
+On load this modules prepares the APR enviroment (initializes memory
+pools, data structures, etc.)
+
+You don't need to use this module explicitly, since it's already
+loaded internally by all C<APR::*> modules.
+
+
+
+
+
+
+=head1 Using APR modules outside mod_perl 2.0
+
+You'd use the C<APR::*> modules outside mod_perl 2.0, just like you'd
+use it with mod_perl 2.0. For example to get a random unique string
+you could call:
+
+  % perl -MAPR::UUID -le 'print APR::UUID->new->format'
+
+
+
+
+
+
+=head1 See Also
+
+L<mod_perl 2.0 documentation|docs::2.0::index>.
+
+
+
+
+=head1 Copyright
+
+mod_perl 2.0 and its core modules are copyrighted under
+The Apache Software License, Version 2.0.
+
+
+
+
+=head1 Authors
+
+L<The mod_perl development team and numerous
+contributors|about::contributors::people>.
+
+
+=cut

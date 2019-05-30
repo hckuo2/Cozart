@@ -1,0 +1,104 @@
+2.0 docs todo:
+---
+
+mp2 Utilities need to be documented (a separate document?):
+
+mp2bug - (should also be mentioned in user/help/help.pod)
+
+*** General items ***
+
+---
+
+Add a note somewhere that explains the layout of the documentation, in
+particular:
+
+ api/ - documents the API, fully covering all options.
+
+ user/ and devel/ are tutorials and don't necessarely cover all the
+ features of a discussed module. but should instead point to the API
+ manpage for a complete info.
+
+The point is that we want to avoid duplication of the documenation, in
+order to make it easier to maintain the docs and keep them in sync.
+
+---
+
+under
+
+  SetHandler modperl
+
+the
+
+  Options +SetupEnv
+
+has no effect. Instead either use perl-script or call
+$r->subprocess_env in the void context.
+
+---
+
+On the cleanups from Bill Rowe's email (need to integrate this into
+the cleanup docs, the hook that we don't have yet):
+
+Cleanups are a LIFO stack.  When a pool is freed, first all sub-pools
+are freed.  Then all cleanups within that pool are run (the cleanups
+in the sub-pool already ran when those sub-pools were freed.)
+
+So if you register a cleanup, then create an apr object in the same
+pool, those apr object's cleanup runs before your registered cleanup.
+
+If you create an apr object and register your own cleanup, you still
+have that object until your registered cleanup is finished.
+
+---
+
+
+
+* this is probably a documenation issue. Several phases are of type VOID
+  and docs say:
+
+    Handlers of the type C<VOID> will be I<all> executed in the order they
+    have been registered disregarding their return values. Though in
+    mod_perl they are expected to return C<Apache::OK>.
+
+  may be we shouldn't mark them as VOID then, but RUN_ALL? this is in
+  user/handlers/intro.pod
+
+
+---
+
+
+* the issue with crypt_r: in 5.8.0's each perl clone allocates 128K
+  for crypt_data. This fixed in 5.8.1 and 5.9.0 (#19119 (maint) and 
+  #19122 (blead)), however this could be quite a waste for those using
+  5.8.0. perhaps adding a note to performance chapter will do. For
+  more info see the thread:
+  http://archive.develooper.com/perl5-porters@perl.org/msg93846.html
+
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---

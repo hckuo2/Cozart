@@ -1,0 +1,23 @@
+use strict;
+
+#XXX: this test needs to be more robust.
+#various output buffers spread across multiple prints
+#more mod_include features mixed and checking that the output
+#is *exactly* what we expected, not just matching a few patterns.
+
+print "Content-type: text/html\n\n";
+
+my $r = shift;
+
+my $test_string = 'Perl-SSI';
+
+$r->subprocess_env->set(MY_TEST => $test_string);
+
+print <<EOF;
+Hello World from <!--#echo var="SERVER_ADMIN" --><br>
+Local date is <!--#echo var="DATE_LOCAL" --><br>
+Brought to you by <!--#echo var="MY_TEST" -->
+<!--#echo var="SERVER_SOFTWARE" -->
+<br>
+EOF
+

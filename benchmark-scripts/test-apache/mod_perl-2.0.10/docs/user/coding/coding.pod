@@ -1,0 +1,915 @@
+=head1 NAME
+
+Writing mod_perl Handlers and Scripts
+
+=head1 Description
+
+This chapter covers the mod_perl coding specifics, different from
+normal Perl coding. Most other perl coding issues are covered in the
+perl manpages and rich literature.
+
+=head1 Prerequisites
+
+=head1 Where the Methods Live
+
+mod_perl 2.0 has all its methods spread across many modules. In order
+to use these methods the modules containing them have to be loaded
+first. If you don't do that mod_perl will complain that it can't find
+the methods in question. The module
+C<L<ModPerl::MethodLookup|docs::2.0::api::ModPerl::MethodLookup>> can
+be used to find out which modules need to be used.
+
+
+=head1 Techniques
+
+
+=head2 Method Handlers
+
+In addition to function handlers method handlers can be used.  Method
+handlers are useful when you want to write code that takes advantage
+of inheritance. To make the handler act as a method under mod_perl 2,
+use the C<method> attribute.
+
+See the Perl I<attributes> manpage for details on the attributes
+syntax (C<perldoc attributes>).
+
+For example:
+
+  package Bird::Eagle;
+  @ISA = qw(Bird);
+  
+  sub handler : method {
+      my ($class_or_object, $r) = @_;
+      ...;
+  }
+  
+  sub new { bless {}, __PACKAGE__ }
+
+and then register it as:
+
+  PerlResponseHandler Bird::Eagle
+
+When mod_perl sees that the handler has a method attribute, it passes
+two arguments to it: the calling object or a class, depending on how
+it was called, and the request object, as shown above.
+
+If C<Class-E<gt>method> syntax is used for a C<Perl*Handler>, e.g.:
+
+  PerlResponseHandler Bird::Eagle->handler;
+
+the C<:method> attribute is not required.
+
+In the preceding configuration example, the C<handler()> method will
+be called as a class (static) method.
+
+Also, you can use objects created at startup to call methods. For example:
+
+  <Perl>
+      use Bird::Eagle;
+      $Bird::Global::object = Bird::Eagle->new();
+  </Perl>
+  ...
+  PerlResponseHandler $Bird::Global::object->handler
+
+In this example, the C<handler()> method will be called as an instance
+method on the global object $C<Bird::Global::object>.
+
+
+
+
+=head2 Cleaning up
+
+It's possible to arrange for cleanups to happen at the end of various
+phases. One can't rely on C<END> blocks to do the job, since these
+L<don't get executed|/C_END__Blocks> until the interpreter quits, with
+an exception to the
+L<Registry|docs::2.0::api::ModPerl::Registry/C_END__Blocks> handlers.
+
+Module authors needing to run cleanups after each HTTP request, should
+use
+C<L<PerlCleanupHandler|docs::2.0::user::handlers::http/PerlCleanupHandler>>.
+
+Module authors needing to run cleanups at other times can always
+register a cleanup callback via
+C<L<cleanup_register|docs::2.0::api::APR::Pool/C_cleanup_register_>>
+on the pool object of choice. Here are some examples of its usage:
+
+To run something at the server shutdown and restart use a cleanup
+handler registered on
+C<L<server_shutdown_cleanup_register()|docs::2.0::api::Apache2::ServerUtil/C_server_shutdown_cleanup_register_>>
+in F<startup.pl>:
+
+  #PerlPostConfigRequire startup.pl
+  use Apache2::ServerUtil ();
+  use APR::Pool ();
+  
+  warn "parent pid is $$\n";
+  Apache2::ServerUtil::server_shutdown_cleanup_register((\&cleanup);
+  sub cleanup { warn "server cleanup in $$\n" }
+
+This is usually useful when some server-wide cleanup should be
+performed when the server is stopped or restarted.
+
+To run a cleanup at the end of each connection phase, assign a cleanup
+callback to the connection pool object:
+
+  use Apache2::Connection ();
+  use APR::Pool ();
+  
+  my $pool = $c->pool;
+  $pool->cleanup_register(\&my_cleanup);
+  sub my_cleanup { ... }
+
+You can also create your own pool object, register a cleanup callback
+and it'll be called when the object is destroyed:
+
+  use APR::Pool ();
+  
+  {
+      my @args = 1..3;
+      my $pool = APR::Pool->new;
+      $pool->cleanup_register(\&cleanup, \@args);
+  }
+  
+  sub cleanup {
+      my @args = @{ +shift };
+      warn "cleanup was called with args: @args";
+  }
+
+In this example the cleanup callback gets called, when C<$pool> goes
+out of scope and gets destroyed. This is very similar to OO C<DESTROY>
+method.
+
+
+
+
+
+=head1 Goodies Toolkit
+
+
+
+=head2 Environment Variables
+
+mod_perl sets the following environment variables:
+
+=over
+
+=item * 
+
+C<$ENV{MOD_PERL}> - is set to the mod_perl version the server is
+running under. e.g.:
+
+  mod_perl/2.000002
+
+If C<$ENV{MOD_PERL}> doesn't exist, most likely you are not running
+under mod_perl.
+
+  die "I refuse to work without mod_perl!" unless exists $ENV{MOD_PERL};
+
+However to check which version is used it's better to use the
+following technique:
+
+  use mod_perl;
+  use constant MP2 => ( exists $ENV{MOD_PERL_API_VERSION} and 
+                        $ENV{MOD_PERL_API_VERSION} >= 2 ); 
+
+  # die "I want mod_perl 2.0!" unless MP2;
+
+=back
+
+mod_perl passes (exports) the following shell environment variables
+(if they are set) :
+
+=over
+
+=item * 
+
+C<PATH> - Executables search path.
+
+=item * 
+
+C<TZ> - Time Zone.
+
+=back
+
+Any of these environment variables can be accessed via C<%ENV>.
+
+
+
+
+
+
+=head2 Threaded MPM or not?
+
+If the code needs to behave differently depending on whether it's
+running under one of the threaded MPMs, or not, the class method
+C<Apache2::MPM-E<gt>is_threaded> can be used. For example:
+
+  use Apache2::MPM ();
+  if (Apache2::MPM->is_threaded) {
+      require APR::OS;
+      my $tid = APR::OS::current_thread_id();
+      print "current thread id: $tid (pid: $$)";
+  }
+  else {
+      print "current process id: $$";
+  }
+
+This code prints the current thread id if running under a threaded
+MPM, otherwise it prints the process id.
+
+
+
+
+
+=head2 Writing MPM-specific Code
+
+If you write a CPAN module it's a bad idea to write code that won't
+run under all MPMs, and developers should strive to write a code that
+works with all mpms. However it's perfectly fine to perform different
+things under different mpms.
+
+If you don't develop CPAN modules, it's perfectly fine to develop your
+project to be run under a specific MPM.
+
+  use Apache2::MPM ();
+  my $mpm = lc Apache2::MPM->show;
+  if ($mpm eq 'prefork') {
+      # prefork-specific code
+  }
+  elsif ($mpm eq 'worker') {
+      # worker-specific code
+  }
+  elsif ($mpm eq 'winnt') {
+      # winnt-specific code
+  }
+  else {
+      # others...
+  }
+
+
+
+
+
+=head1 Code Developing Nuances
+
+
+
+=head2 Auto-Reloading Modified Modules with Apache2::Reload
+
+META: need to port Apache2::Reload notes from the guide here. but the
+gist is:
+
+  PerlModule Apache2::Reload
+  PerlInitHandler Apache2::Reload
+  #PerlPreConnectionHandler Apache2::Reload
+  PerlSetVar ReloadAll Off
+  PerlSetVar ReloadModules "ModPerl::* Apache2::*"
+
+Use:
+
+  PerlInitHandler Apache2::Reload
+
+if you need to debug HTTP protocol handlers. Use:
+
+  PerlPreConnectionHandler Apache2::Reload
+
+for any handlers.
+
+Though notice that we have started to practice the following style in
+our modules:
+
+  package Apache2::Whatever;
+  
+  use strict;
+  use warnings FATAL => 'all';
+
+C<FATAL =E<gt> 'all'> escalates all warnings into fatal errors. So
+when C<Apache2::Whatever> is modified and reloaded by C<Apache2::Reload>
+the request is aborted. Therefore if you follow this very healthy
+style and want to use C<Apache2::Reload>, flex the strictness by
+changing it to:
+
+  use warnings FATAL => 'all';
+  no warnings 'redefine';
+
+but you probably still want to get the I<redefine> warnings, but
+downgrade them to be non-fatal. The following will do the trick:
+
+  use warnings FATAL => 'all';
+  no warnings 'redefine';
+  use warnings 'redefine';
+
+Perl 5.8.0 allows to do all this in one line:
+
+  use warnings FATAL => 'all', NONFATAL => 'redefine';
+
+but if your code may be used with older perl versions, you probably
+don't want to use this new functionality.
+
+Refer to the I<perllexwarn> manpage for more information.
+
+
+
+
+=head1 Integration with Apache Issues
+
+In the following sections we discuss the specifics of Apache behavior
+relevant to mod_perl developers.
+
+
+
+
+
+=head2 HTTP Response Headers
+
+
+
+
+=head3 Generating HTTP Response Headers
+
+The best approach for generating HTTP response headers is by using the
+L<mod_perl API|docs::2.0::api::Apache2::RequestRec>. Some common
+headers have dedicated methods, others are set by manipulating the
+C<L<headers_out|docs::2.0::api::Apache2::RequestRec/C_headers_out_>>
+table directly.
+
+For example to set the I<Content-type> header you should call
+C<L<$r-E<gt>content_type|docs::2.0::api::Apache2::RequestRec/C_content_type_>>:
+
+  use Apache2::RequestRec ();
+  $r->content_type('text/html');
+
+To C<L<set|docs::2.0::api::APR::Table/C_set_>> a custom header
+I<My-Header> you should call:
+
+  use Apache2::RequestRec ();
+  use APR::Table;
+  $r->headers_out->set(My-Header => "SomeValue");
+
+If you are inside a registry script L<you can still
+access|docs::2.0::user::coding::coding/Getting_the_C__r__Object> the
+C<L<Apache2::RequestRec|docs::2.0::api::Apache2::RequestRec>> object.
+
+Howerever you can choose a slower method of generating headers by just
+printing them out before printing any response. This will work only if
+C<L<PerlOptions
++ParseHeaders|docs::2.0::user::config::config/C_ParseHeaders_>> is
+in effect. For example:
+
+   print "Content-type: text/html\n";
+   print "My-Header: SomeValue\n";
+   print "\n";
+
+This method is slower since Apache needs to parse the text to identify
+certain headers it needs to know about. It also has several
+limitations which we will now discuss.
+
+When using this approach you must make sure that the C<STDOUT>
+filehandle is not set to flush the data after each print (which is set
+by the value of a special perl variable C<$|>). Here we assume that
+STDOUT is the currently C<select()>ed filehandle and C<$|> affects it.
+
+For example this code won't work:
+
+   local $| = 1;
+   print "Content-type: text/html\n";
+   print "My-Header: SomeValue\n";
+   print "\n";
+
+Having a true C<$|> causes the first print() call to flush its data
+immediately, which is sent to the internal HTTP header parser, which
+will fail since it won't see the terminating C<"\n\n">. One solution
+is to make sure that STDOUT won't flush immediately, like so:
+
+   local $| = 0;
+   print "Content-type: text/html\n";
+   print "My-Header: SomeValue\n";
+   print "\n";
+
+Notice that we C<local()>ize that change, so it L<won't affect any
+other
+code|docs::general::perl_reference::perl_reference/The_Scope_of_the_Special_Perl_Variables>.
+
+If you send headers line by line and their total length is bigger than
+8k, you will have the header parser problem again, since mod_perl will
+flush data when the 8k buffer gets full. In which case the solution is
+not to print the headers one by one, but to buffer them all in a
+variable and then print the whole set at once.
+
+Notice that you don't have any of these problems with mod_cgi, because
+it ignores any of the flush attempts by Perl. mod_cgi simply opens a
+pipe to the external process and reads any output sent from that
+process at once.
+
+If you use C<$r> to set headers as explained at the beginning of this
+section, you won't encounter any of these problems.
+
+Finally, if you don't want Apache to send its own headers and you want 
+to send your own set of headers (non-parsed headers handlers) use the
+C<L<$r-E<gt>assbackwards|docs::2.0::api::Apache2::RequestRec/C_assbackwards_>>
+method. Notice that registry handlers will do that for you if the
+script's name start with the C<nph-> prefix.
+
+
+
+
+
+
+=head3 Forcing HTTP Response Headers Out
+
+Apache 2.0 doesn't provide a method to force HTTP response headers
+sending (what used to be done by C<send_http_header()> in Apache
+1.3). HTTP response headers are sent as soon as the first bits of the
+response body are seen by the special core output filter that
+generates these headers. When the response handler sends the first
+chunks of body it may be cached by the mod_perl internal buffer or
+even by some of the output filters. The response handler needs to
+flush the output in order to tell all the components participating in
+the sending of the response to pass the data out.
+
+For example if the handler needs to perform a relatively long-running
+operation (e.g. a slow db lookup) and the client may timeout if it
+receives nothing right away, you may want to start the handler by
+setting the I<Content-Type> header, following by an immediate flush:
+
+  sub handler {
+      my $r = shift;
+      $r->content_type('text/html');
+      $r->rflush; # send the headers out
+  
+      $r->print(long_operation());
+      return Apache2::Const::OK;
+  }
+
+If this doesn't work, check whether you have configured any
+third-party output filters for the resource in question. L<Improperly
+written
+filter|docs::2.0::user::handlers::filters/Writing_Well_Behaving_Filters>
+may ignore the command to flush the data.
+
+
+
+
+
+
+=head2 Sending HTTP Response Body
+
+In mod_perl 2.0 a response body can be sent only during the response
+phase. Any attempts to do that in the earlier phases will fail with an
+appropriate explanation logged into the I<error_log> file.
+
+This happens due to the Apache 2.0 HTTP architecture specifics. One of
+the issues is that the HTTP response filters are not setup before the
+response phase.
+
+
+
+
+
+=head2 Using Signal Handlers
+
+3rd party Apache 2 modules should avoid using code relying on
+signals. This is because typical signal use is not thread-safe and
+modules which rely on signals may not work portably. Certain signals
+may still work for non-threaded mpms. For example C<alarm()> can be
+used under prefork MPM, but it won't work on any other MPM. Moreover
+the Apache developers don'tq guarantee that the signals that currently
+happen to work will continue to do so in the future Apache
+releases. So use them at your own risk.
+
+It should be possible to rework the code using signals to use an
+alternative solution, which works under threads. For example if you
+were using C<alarm()> to trap potentially long running I/O, you can
+modify the I/O logic for select/poll usage (or if you use APR I/O then
+set timeouts on the apr pipes or sockets). For example, Apache 1.3 on
+Unix made blocking I/O calls and relied on the parent process to send
+the SIGALRM signal to break it out of the I/O after a timeout expired.
+With Apache 2.0, APR support for timeouts on I/O operations is used so
+that signals or other thread-unsafe mechanisms are not necessary.
+
+CPU timeout handling is another example. It can be accomplished by
+modifying the computation logic to explicitly check for the timeout at
+intervals.
+
+Talking about C<alarm()> under prefork mpm, POSIX signals seem to
+work, but require Perl 5.8.x+. For example:
+
+  use POSIX qw(SIGALRM);
+  my $mask      = POSIX::SigSet->new( SIGALRM );
+  my $action    = POSIX::SigAction->new(sub { die "alarm" }, $mask);
+  my $oldaction = POSIX::SigAction->new();
+  POSIX::sigaction(SIGALRM, $action, $oldaction );
+  eval {
+      alarm 2;
+      sleep 10 # some real code should be here
+      alarm 0;
+  };
+  POSIX::sigaction(SIGALRM, $oldaction); # restore original
+  warn "got alarm" if $@ and $@ =~ /alarm/;
+
+For more details see:
+http://search.cpan.org/dist/perl/ext/POSIX/POSIX.pod#POSIX::SigAction.
+
+One could use the C<$SIG{ALRM}> technique, working for 5.6.x+, but it
+works B<only> under DSO modperl build. Moreover starting from 5.8.0
+Perl delays signal delivery, making signals safe. This change may
+break previously working code.  For more information please see:
+http://search.cpan.org/dist/perl/pod/perl58delta.pod#Safe_Signals and
+http://search.cpan.org/dist/perl/pod/perlipc.pod#Deferred_Signals_%28Safe_Signals%29.
+
+For example if you had the alarm code:
+
+  eval {
+      local $SIG{ALRM} = sub { die "alarm" };
+      alarm 3;
+      sleep 10; # in reality some real code should be here
+      alarm 0;
+  };
+  die "the operation was aborted" if $@ and $@ =~ /alarm/;
+
+It may not work anymore. Starting from 5.8.1 it's possible to
+circumvent the safeness of signals, by setting:
+
+  $ENV{PERL_SIGNALS} = "unsafe";
+
+as soon as you start your program (e.g. in the case of mod_perl in
+startup.pl). As of this writing, this workaround fails on MacOSX,
+POSIX signals must be used instead.
+
+For more information please refer to:
+http://search.cpan.org/dist/perl/pod/perl581delta.pod#Unsafe_signals_again_available
+and http://search.cpan.org/dist/perl/pod/perlrun.pod#PERL_SIGNALS.
+
+Though if you use perl 5.8.x+ it's preferrable to use the POSIX
+API technique explained earlier in this section.
+
+
+
+
+
+
+
+
+=head1 Perl Specifics in the mod_perl Environment
+
+In the following sections we discuss the specifics of Perl behavior
+under mod_perl.
+
+
+
+
+=head2 C<BEGIN> Blocks
+
+Perl executes C<BEGIN> blocks as soon as possible, at the time of
+compiling the code. The same is true under mod_perl. However, since
+mod_perl normally only compiles scripts and modules once, either in
+the parent server (at the server startup) or once per-child (on the
+first request using a module), C<BEGIN> blocks in that code will only
+be run once.  As the C<perlmod> manpage explains, once a C<BEGIN>
+block has run, it is immediately undefined. In the mod_perl
+environment, this means that C<BEGIN> blocks will not be run during
+the response to an incoming request unless that request happens to be
+the one that causes the compilation of the code, i.e. if it wasn't
+loaded yet.
+
+C<BEGIN> blocks in modules and files pulled in via C<require()> or
+C<use()> will be executed:
+
+=over 4
+
+=item *
+
+Only once, if pulled in by the parent process at the server startup.
+
+=item *
+
+Once per each child process or Perl interpreter if not pulled in by
+the parent process.
+
+=item *
+
+An additional time, once per each child process or Perl interpreter if
+the module is reloaded off disk again via
+C<L<Apache2::Reload|docs::2.0::api::Apache2::Reload>>.
+
+=item *
+
+Unpredictable if you fiddle with C<%INC> yourself.
+
+=back
+
+The C<BEGIN> blocks behavior is different in
+C<L<ModPerl::Registry|docs::2.0::api::ModPerl::Registry/C_BEGIN__Blocks>>
+and
+C<L<ModPerl::PerlRun|docs::2.0::api::ModPerl::PerlRun/C_BEGIN__Blocks>>
+handlers, and their subclasses.
+
+
+
+
+
+=head2 C<CHECK> and C<INIT> Blocks
+
+C<CHECK> and C<INIT> blocks run when the source code compilation is
+complete, but before the program starts. C<CHECK> can mean
+"checkpoint" or "double-check" or even just "stop". C<INIT> stands for
+"initialization". The difference is subtle; C<CHECK> blocks are run
+just after the compilation ends, C<INIT> just before the runtime
+begins. (Hence the C<-c> command-line perl option runs C<CHECK> blocks
+but not C<INIT> blocks.)
+
+Perl only calls these blocks during I<perl_parse()>, which mod_perl
+calls once at startup time. Under threaded mpm, these blocks will be
+called once per C<L<parent perl interpreter
+startup|docs::2.0::user::config::config/C_Parent_>>. Therefore
+C<CHECK> and C<INIT> blocks don't work after the server is started,
+for the same reason these code samples don't work:
+
+  % perl -e 'eval qq(CHECK { print "ok\n" })'
+  % perl -e 'eval qq(INIT  { print "ok\n" })'
+
+
+
+
+=head2 C<END> Blocks
+
+As the C<perlmod> manpage explains, an C<END> block is executed as
+late as possible, that is, when the interpreter exits. So for example
+mod_cgi will run its C<END> blocks on each invocation, since on every
+invocation it starts a new interpreter and then kills it when the
+request processing is done.
+
+In the mod_perl environment, the interpreter does not exit after
+serving a single request (unless it is configured to do so) and hence
+it will run its C<END> blocks only when it exits, which usually
+happens during the server shutdown, but may also happen earlier than
+that (e.g. a process exits because it has served a
+C<MaxRequestsPerChild> number of requests).
+
+mod_perl does L<make a special
+case|docs::2.0::api::ModPerl::Registry/C_END__Blocks>
+for scripts running under
+C<L<ModPerl::Registry|docs::2.0::api::ModPerl::Registry>> and friends.
+
+The L<Cleaning up|/Cleaning_up> section explains how to deal with
+cleanups for non-Registry handlers.
+
+C<L<ModPerl::Global|docs::2.0::api::ModPerl::Global>> API:
+C<L<special_list_register|docs::2.0::api::ModPerl::Global/C_special_list_register_>>,
+C<L<special_list_call|docs::2.0::api::ModPerl::Global/C_special_list_call_>>
+and
+C<L<special_list_clear|docs::2.0::api::ModPerl::Global/C_special_list_clear_>>,
+internally used by registry handlers, can be used to run C<END> blocks
+at arbitrary times.
+
+
+
+
+
+=head2 Request-localized Globals
+
+mod_perl 2.0 provides two types of C<SetHandler> handlers:
+C<L<modperl|docs::2.0::user::config::config/C_modperl_>> and
+C<L<perl-script|docs::2.0::user::config::config/C_perl_script_>>.
+Remember that the C<SetHandler> directive is only relevant for the
+response phase handlers, it neither needed nor affects non-response
+phases.
+
+Under the handler:
+
+  SetHandler perl-script
+
+several special global Perl variables are saved before the handler is
+called and restored afterwards. This includes: C<%ENV>, C<@INC>,
+C<$/>, C<STDOUT>'s C<$|> and C<END> blocks array (C<PL_endav>).
+
+Under:
+
+  SetHandler modperl
+
+nothing is restored, so you should be especially careful to remember
+localize all special Perl variables so the local changes won't affect
+other handlers.
+
+
+
+
+
+=head2 C<exit>
+
+In the normal Perl code exit() is used to stop the program flow and
+exit the Perl interpreter. However under mod_perl we only want the
+stop the program flow without killing the Perl interpreter.
+
+You should take no action if your code includes exit() calls and it's
+OK to continue using them. mod_perl worries to override the exit()
+function with L<its own version|docs::2.0::api::ModPerl::Util/C_exit_>
+which stops the program flow, and performs all the necessary cleanups,
+but doesn't kill the server. This is done by overriding:
+
+  *CORE::GLOBAL::exit = \&ModPerl::Util::exit;
+
+so if you mess up with C<*CORE::GLOBAL::exit> yourself you better know
+what you are doing.
+
+You can still call C<CORE::exit> to kill the interpreter, again if you
+know what you are doing.
+
+One caveat is when C<exit> is called inside C<eval> -- L<the
+ModPerl::Util::exit
+documentation|docs::2.0::api::ModPerl::Util/C_exit_> explains how to
+deal with this situation.
+
+
+
+
+
+
+=head1 C<ModPerl::Registry> Handlers Family
+
+
+
+=head2 A Look Behind the Scenes
+
+If you have a CGI script F<test.pl>:
+
+  #!/usr/bin/perl
+  print "Content-type: text/plain\n\n";
+  print "Hello";
+
+a typical registry family handler turns it into something like:
+
+  package foo_bar_baz;
+  sub handler {
+      local $0 = "/full/path/to/test.pl";
+  #line 1 test.pl
+      #!/usr/bin/perl
+      print "Content-type: text/plain\n\n";
+      print "Hello";
+  }
+
+Turning it into an almost full-fledged mod_perl handler. The only
+difference is that it handles the return status for you. (META: more
+details on return status needed.)
+
+It then executes it as:
+
+  foo_bar_baz::handler($r);
+
+passing the C<L<$r|docs::2.0::api::Apache2::RequestRec>> object as the
+only argument to the C<handler()> function.
+
+Depending on the used registry handler the package is made of the file
+path, the uri or anything else. Check the handler's documentation to
+learn which method is used.
+
+
+
+
+
+=head2 Getting the C<$r> Object
+
+As explained in L<A Look Behind the Scenes|/A_Look_Behind_the_Scenes>
+the C<$r> object is always passed to the registry script's special
+function C<handler> as the first and the only argument, so you can get
+this object by accessing C<@_>, since:
+
+  my $r = shift;
+  print "Content-type: text/plain\n\n";
+  print "Hello";
+
+is turned into:
+
+  sub handler {
+      my $r = shift;
+      print "Content-type: text/plain\n\n";
+      print "Hello";
+  }
+
+behind the scenes. Now you can use C<$r> to call various mod_perl
+methods, e.g. rewriting the script as:
+
+  my $r = shift;
+  $r->content_type('text/plain');
+  $r->print();
+
+If you are deep inside some code and can't get to the entry point to
+reach for C<$r>, you can use
+C<L<Apache2-E<gt>request|docs::2.0::api::Apache2::RequestUtil/C_request_>>.
+
+
+
+
+
+
+
+
+
+
+
+
+=head1 Threads Coding Issues Under mod_perl
+
+The following sections discuss threading issues when running mod_perl
+under a threaded MPM.
+
+
+
+
+=head2 Thread-environment Issues
+
+The "only" thing you have to worry about your code is that it's
+thread-safe and that you don't use functions that affect all threads
+in the same process.
+
+Perl 5.8.0 itself is thread-safe. That means that operations like
+C<push()>, C<map()>, C<chomp()>, C<=>, C</>, C<+=>, etc. are
+thread-safe. Operations that involve system calls, may or may not be
+thread-safe. It all depends on whether the underlying C libraries used
+by the perl functions are thread-safe.
+
+For example the function C<localtime()> is not thread-safe when the
+implementation of C<asctime(3)> is not thread-safe. Other usually
+problematic functions include C<readdir()>, C<srand()>, etc.
+
+Another important issue that shouldn't be missed is what some people
+refer to as I<thread-locality>. Certain functions executed in a single
+thread affect the whole process and therefore all other threads
+running inside that process. For example if you C<chdir()> in one
+thread, all other thread now see the current working directory of that
+thread that C<chdir()>'ed to that directory. Other functions with
+similar effects include C<umask()>, C<chroot()>, etc. Currently there
+is no cure for this problem. You have to find these functions in your
+code and replace them with alternative solutions which don't incur
+this problem.
+
+For more information refer to the I<perlthrtut>
+(I<http://perldoc.perl.org/perlthrtut.html>) manpage.
+
+
+
+
+=head2 Deploying Threads
+
+This is actually quite unrelated to mod_perl 2.0. You don't have to
+know much about Perl threads, other than L<Thread-environment
+Issues|/Thread_environment_Issues>, to have your code properly work 
+under threaded MPM mod_perl.
+
+If you want to spawn your own threads, first of all study how the new
+ithreads Perl model works, by reading the I<perlthrtut>, I<threads>
+(I<http://search.cpan.org/search?query=threads>) and
+I<threads::shared>
+(I<http://search.cpan.org/search?query=threads%3A%3Ashared>) manpages.
+
+Artur Bergman wrote an article which explains how to port pure Perl
+modules to work properly with Perl ithreads. Issues with C<chdir()>
+and other functions that rely on shared process' datastructures are
+discussed.  I<http://www.perl.com/lpt/a/2002/06/11/threads.html>.
+
+
+
+
+=head2 Shared Variables
+
+Global variables are only global to the interpreter in which they are
+created. Other interpreters from other threads can't access that
+variable. Though it's possible to make existing variables shared
+between several threads running in the same process by using the
+function C<threads::shared::share()>. New variables can be shared by
+using the I<shared> attribute when creating them. This feature is
+documented in the I<threads::shared>
+(I<http://search.cpan.org/search?query=threads%3A%3Ashared>) manpage.
+
+
+
+
+
+
+=head1 Maintainers
+
+Maintainer is the person(s) you should contact with updates,
+corrections and patches.
+
+=over
+
+=item *
+
+=back
+
+
+=head1 Authors
+
+=over
+
+=item *
+
+=back
+
+Only the major authors are listed above. For contributors see the
+Changes file.
+
+
+
+=cut

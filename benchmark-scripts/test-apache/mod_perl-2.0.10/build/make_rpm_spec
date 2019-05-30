@@ -1,0 +1,146 @@
+#!perl
+use strict;
+
+require "lib/mod_perl2.pm";
+
+my $dev_build = is_dev_build();
+my $release   = $dev_build ? svn_release() : 1;
+my $version   = $mod_perl2::VERSION_TRIPLET;
+my $path      = $dev_build ? "mod_perl-$version-$dev_build" : "mod_perl-$version";
+my $tarname   = "$path.tar.gz";
+
+my $httpd_ver = min_httpd_ver();
+
+open(my $spec, ">mod_perl.spec") || die "Can't open mod_perl.spec $!";
+
+print $spec <<"EOF";
+%define         _version $mod_perl2::VERSION_TRIPLET
+%define         _release $release
+%define         _source http://apache.org/dist/perl/$tarname
+%define         _dirname $path
+%define         _httpd_min_ver $httpd_ver
+%define         _perl_min_ver 5.6.1
+EOF
+
+print $spec <<'EOF';
+Name:           mod_perl
+Version:        %{_version}
+Release:        %{_release}
+Summary:        An embedded Perl interpreter for the Apache Web server
+Group:          System Environment/Daemons
+License:        Apache License, Version 2.0
+Packager:       mod_perl Development Team <dev@perl.apache.org>
+URL:            http://perl.apache.org/
+Source:         %{_source}
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Requires:       httpd >= %{_httpd_min_ver}
+BuildRequires:  perl >= %{_perl_min_ver}
+BuildRequires:  httpd-devel >= %{_httpd_min_ver}
+BuildRequires:  apr-devel, apr-util-devel
+
+%description
+Mod_perl incorporates a Perl interpreter into the Apache web server,
+so that the Apache web server can directly execute Perl code.
+Mod_perl links the Perl runtime library into the Apache web server and
+provides an object-oriented Perl interface for Apache's C language
+API.  The end result is a quicker CGI script turnaround process, since
+no external Perl interpreter has to be started.
+
+Install mod_perl if you're installing the Apache web server and you'd
+like for it to directly incorporate a Perl interpreter.
+
+%package devel
+Summary:        Files needed for building XS modules that use mod_perl
+Group:          Development/Libraries
+Requires:       mod_perl = %{version}-%{release}, httpd-devel
+
+%description devel 
+The mod_perl-devel package contains the files needed for building XS
+modules that use mod_perl.
+
+%prep
+%setup -q -n %{_dirname}
+
+%build
+CFLAGS="$RPM_OPT_FLAGS" %{__perl} Makefile.PL </dev/null \
+	PREFIX=$RPM_BUILD_ROOT/usr \
+	INSTALLDIRS=vendor \
+	MP_APXS=%{_sbindir}/apxs
+make %{?_smp_mflags} OPTIMIZE="$RPM_OPT_FLAGS"
+
+%install
+rm -rf $RPM_BUILD_ROOT
+install -d -m 755 $RPM_BUILD_ROOT%{_libdir}/httpd/modules
+make install \
+    MODPERL_AP_LIBEXECDIR=$RPM_BUILD_ROOT%{_libdir}/httpd/modules \
+    MODPERL_AP_INCLUDEDIR=$RPM_BUILD_ROOT%{_includedir}/httpd
+
+# Remove the temporary files.
+find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
+find $RPM_BUILD_ROOT -type f -name perllocal.pod -exec rm -f {} ';'
+find $RPM_BUILD_ROOT -type f -name '*.bs' -a -size 0 -exec rm -f {} ';'
+find $RPM_BUILD_ROOT -type d -depth -exec rmdir {} 2>/dev/null ';'
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr(-,root,root,-)
+%doc Changes LICENSE README* STATUS SVN-MOVE docs/
+%{_bindir}/*
+%{_libdir}/httpd/modules/mod_perl.so
+%{perl_vendorarch}/auto/*
+%{perl_vendorarch}/Apache/
+%{perl_vendorarch}/Apache2/
+%{perl_vendorarch}/Bundle/
+%{perl_vendorarch}/APR/
+%{perl_vendorarch}/ModPerl/
+%{perl_vendorarch}/*.pm
+%{_mandir}/man?/*
+
+%files devel
+%defattr(-,root,root,-)
+%{_includedir}/httpd/*
+
+%changelog
+EOF
+
+sub min_httpd_ver {
+    my $min_httpd_ver;
+    open my $mk, 'Makefile.PL';
+    while (<$mk>) {
+        if (/MIN_HTTPD_VERSION_DYNAMIC\s*=>\s*'(.*)'/) {
+          $min_httpd_ver = $1;
+          last;
+        }
+    }
+    close $mk;
+    $min_httpd_ver;
+}
+
+sub svn_release {
+  open my $svn, "<.svn/entries";
+  my $revision;
+  while (<$svn>) {
+    if (/revision="(\d+)"/) {
+      $revision = $1;
+      last;
+    }
+  }
+  close $svn;
+  $revision;
+}
+
+sub is_dev_build {
+    my $dev;
+    open my $fh, 'Changes';
+    while (<$fh>) {
+        if (/^=item.*-(dev|rc\d+)/) {
+            $dev = $1;
+            last;
+        }
+        last if /^=item/;
+    }
+    close $fh;
+    $dev;
+}

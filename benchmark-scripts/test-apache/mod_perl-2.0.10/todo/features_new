@@ -1,0 +1,61 @@
+#######################
+# New features in mp2 #
+#######################
+
+* extend add_config to support add_config($multi_line_config). If the
+  passed argument is not a ref to an array, but a scalar should use
+  CR?LF to do the line split
+
+* PerlFooHandler -Bar is a NOOP when 'PerlOptions AutoLoad' is in
+  effect, whereas it should prevent autloading.
+  See:
+  modperl_handler_new in modperl_handler.c
+  modperl_hash_handlers in modperl_mgv.c
+
+* filters tie handle/perlio interface
+
+  both input/output filters should provide a tiehandle and/or perlio
+  interface.
+
+  Perl tiehandle methods include the following, '+' indicates must have, '-'
+  indicates not possible / doesn't make sense (though might require noop
+  stubs), '~' indicates would be nice if possible, '?' indicates unsure:
+  
+  + TIEHANDLE
+  + PRINT
+  + PRINTF
+  + WRITE
+  + READLINE
+  + GETC
+  + READ
+  + CLOSE
+  ? UNTIE
+  ? DESTROY
+  + BINMODE (noop)
+  ? OPEN
+  ~ EOF
+  - FILENO
+  ~ SEEK
+  ~ TELL
+
+* maybe functions in xs/maps/(apache|apr)_functions.map
+
+*  Apache->request:
+  need to deal with subclass objects which are not a request_rec
+  (e.g. HASH ref)
+  Owner: gozer
+
+* Apache::SizeLimit
+  o Need to work out the details of the implementation of the garbage
+    collection thread for the threaded mpms as originally suggested by
+    doug.  The issue with threads is that there is no way to know the
+    thread's size, can we use B::Size and B::TerseSize?
+
+    prefork:
+        Apache::SizeLimit - done
+        Apache::GTopLimit - Owner: stas
+    threaded:
+        Garbage Collector thread
+
+  => Ideally the tools should work transparently with threaded and
+  non-threaded mpms, but how?

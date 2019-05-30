@@ -1,0 +1,58 @@
+=head1 NAME
+
+General Handlers Issues
+
+=head1 Description
+
+This chapter discusses issues relevant too any kind of handlers.
+
+=head1 Handlers Communication
+
+Apache handlers can communicate between themselves by writing and
+reading notes. It doesn't matter in what language the handlers were
+implemented as long as they can access the notes table.
+
+For example inside a request handler we can say:
+
+  my $r = shift;
+  my $c = $r->connection;
+  $c->notes->set(mod_perl => 'rules');
+
+and then later in a mod_perl filter handler this note can be retrieved
+with:
+
+  my $f = shift;
+  my $c = $f->c;
+  my $is = $c->notes->get("mod_perl");
+  $f->print("mod_perl $is");
+
+
+=head1 Maintainers
+
+Maintainer is the person(s) you should contact with updates,
+corrections and patches.
+
+=over
+
+=item *
+
+Stas Bekman [http://stason.org/]
+
+=back
+
+
+=head1 Authors
+
+=over
+
+=item *
+
+=back
+
+Only the major authors are listed above. For contributors see the
+Changes file.
+
+
+
+=cut
+

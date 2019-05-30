@@ -1,0 +1,73 @@
+=head1 NAME
+
+MPMs - Multi-Processing Model Modules
+
+=head1 Description
+
+Discover what are the available MPMs and how they work with mod_perl.
+
+META: This doc is under construction. Owners are wanted. -- pgollucci volunteering
+
+=head1 MPMs Overview
+
+=head1 The Worker MPM
+
+META: incomplete
+
+You can test whether running under threaded env via: C<?>
+
+  #ifdef USE_ITHREADS
+  /* whatever */
+  #endif
+
+When the server is running under the threaded mpm
+C<scfg-E<gt>threaded_mpm> is set to true.
+
+Caveats:
+
+All per-server data is shared between threads, regardless of locking,
+changing the value of something like ap_document_root changes it for
+all threads.  Not just the current process/request, the way it was in
+1.3.  So we can't really support modification of things like
+ap_document_root at request time, unless the mpm is prefork.  we could
+support modification of modperl per-server data by using
+r-E<gt>request_config in the same way push_handlers et al is
+implemented.  But it is not possible to use this approach for anything
+outside of modperl (ap_document_root for example).
+
+=head1 The Prefork MPM
+
+META: incomplete
+
+=head1 The Event MPM
+
+=head1 Maintainers
+
+Maintainer is the person(s) you should contact with updates,
+corrections and patches.
+
+=over
+
+=item *
+
+Philip M. Gollucci E<lt>pgollucci (at) p6m7g8.comE<gt>
+
+=back
+
+
+=head1 Authors
+
+=over
+
+=item *
+
+Stas Bekman [http://stason.org/]
+Philip M. Gollucci E<lt>pgollucci (at) p6m7g8.comE<gt>
+
+=back
+
+Only the major authors are listed above. For contributors see the
+Changes file.
+
+=cut
+

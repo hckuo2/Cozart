@@ -1,0 +1,21 @@
+<IfModule mod_perl.c>
+    <IfDefine APACHE2>
+        PerlModule Apache2::Reload
+        PerlModule Apache2::TestReload
+    </IfDefine>
+    <IfDefine APACHE1>
+        PerlModule Apache::Reload
+        PerlModule Apache::TestReload
+    </IfDefine>
+    <Location /reload>
+        SetHandler perl-script
+        <IfDefine APACHE2>
+            PerlInitHandler Apache2::Reload
+            PerlResponseHandler Apache2::TestReload
+        </IfDefine>
+        <IfDefine APACHE1>
+            PerlInitHandler Apache::Reload
+            PerlHandler Apache::TestReload
+        </IfDefine>
+    </Location>
+</IfModule>

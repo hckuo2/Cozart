@@ -1,0 +1,30 @@
+This file tracks the things that need to be done to accomplish the
+move of modperl projects to SVN:
+
+* missing commit template files (à là CVS)
+  PR:
+  Obtained from:
+  Submitted by:
+  Reviewed by: 
+  ...
+
+* commit messages should trim the unrelated crap in the file path
+  e.g. currently we get:
+
+  --- perl/modperl/docs/trunk/src/search/swish.conf    (original)
+  +++ perl/modperl/docs/trunk/src/search/swish.conf    Fri Nov 19 21:23:25 2004 
+and it should be:
+
+  --- src/search/swish.conf    (original)
+  +++ src/search/swish.conf    Fri Nov 19 21:23:25 2004 
+
+so it can be applied/edited easily.   
+
+* improve the commit message subject line to print only important info
+  (currently may print 100 files listed in the subject), e.g.:
+
+  Subject: svn commit: r105803 - in httpd/test/trunk/perl-framework: . Apache-Test Apache-Test/lib/Apache Apache-Test/t Apache-Test/t/conf c-modules c-modules/authany c-modules/client_add_filter c-modules/eat_post c-modules/echo_post c-modules/echo_post_chunk c-modules/input_body_filter c-modules/list_modules c-modules/nntp_like c-modules/random_chunk c-modules/test_apr_uri c-modules/test_pass_brigade c-modules/test_rwrite c-modules/test_ssl t t/conf t/conf/ssl t/htdocs/modules/access/htaccess t/htdocs/modules/cgi t/htdocs/modules/rewrite t/modules 
+
+  Proposed Subject format:
+
+  $svn_id $first_subdir/$first_file ($trunk)

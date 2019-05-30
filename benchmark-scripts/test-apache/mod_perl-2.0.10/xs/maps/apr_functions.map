@@ -1,0 +1,664 @@
+##########  APR Functions  ##########
+
+# for mapping see %ModPerl::MapUtil::disabled_map in
+# lib/ModPerl/MapUtil.pm
+
+!MODULE=APR::Poll
+ apr_poll_socket_add
+ apr_poll_socket_clear
+ apr_poll_data_get
+ apr_poll_revents_get
+ apr_poll_socket_mask
+ apr_poll
+ apr_poll_socket_remove
+ apr_poll_data_set
+ apr_poll_setup
+
+!MODULE=APR::Time
+-apr_ctime
+ apr_implode_time
+-apr_time_now
+-apr_sleep
+ apr_rfc822_date
+ apr_strftime
+ apr_time_exp_gmt_get
+ apr_time_ansi_put
+ apr_time_exp_get
+ apr_time_exp_gmt
+ apr_time_exp_lt
+ apr_time_exp_tz
+
+MODULE=APR::Date
+-apr_date_checkmask
+ apr_date_parse_http
+ apr_date_parse_rfc
+
+!MODULE=APR::Array
+ apr_array_append
+ apr_array_cat
+ apr_array_pstrcat
+ apr_array_copy
+ apr_array_copy_hdr
+ apr_array_make
+ apr_array_push
+
+MODULE=APR::Socket
+ apr_socket_bind
+!apr_socket_accept
+ apr_socket_listen
+ apr_socket_connect
+~apr_socket_recv
+ mpxs_APR__Socket_recv
+ apr_socket_recvfrom
+ apr_socket_send | mpxs_ | sock, SV *:buf, SV *:len=(SV *)NULL
+ apr_socket_sendto
+!apr_socket_shutdown
+-apr_socket_inherit_set
+-apr_socket_inherit_unset
+#_if_ $^O !~ /mswin/i
+ mpxs_APR__Socket_fileno | | apr_socket_t *:socket
+#_end_
+
+MODULE=APR::Socket
+ apr_socket_close
+!apr_socket_create
+!apr_socket_addr_get
+!apr_socket_data_get
+!apr_socket_data_set
+~apr_socket_opt_get
+ mpxs_APR__Socket_opt_get
+~apr_socket_opt_set
+ mpxs_APR__Socket_opt_set
+ apr_socket_timeout_get | mpxs_ | ...
+~apr_socket_timeout_set
+ mpxs_APR__Socket_timeout_set
+-apr_socket_sendfile
+-apr_socket_sendv
+!apr_socket_from_file
+ mpxs_APR__Socket_poll
+
+MODULE=APR::SockAddr
+!apr_sockaddr_info_get
+ char *:apr_sockaddr_ip_get | mpxs_ | sockaddr
+ apr_sockaddr_equal
+
+MODULE=APR::Brigade
+ SV *:apr_brigade_create | mpxs_ | SV *:CLASS, SV *:p_sv, list | new
+~apr_brigade_destroy
+ mpxs_APR__Brigade_destroy
+!apr_brigade_partition
+!apr_brigade_printf
+-apr_brigade_putstrs
+ apr_brigade_split
+-apr_brigade_to_iovec
+-apr_brigade_vprintf
+-apr_brigade_vputstrs
+~apr_brigade_length
+!apr_brigade_write
+!apr_brigade_puts
+-apr_brigade_putc
+~ apr_brigade_cleanup
+ mpxs_APR__Brigade_cleanup
+~apr_brigade_flatten
+~apr_brigade_pflatten
+?apr_brigade_split_line
+ mpxs_APR__Brigade_first        #APR_BRIGADE_FIRST
+ mpxs_APR__Brigade_last         #APR_BRIGADE_LAST
+ mpxs_APR__Brigade_prev         #APR_BUCKET_PREV
+ mpxs_APR__Brigade_next         #APR_BUCKET_NEXT
+ mpxs_APR__Brigade_insert_tail  #APR_BRIGADE_INSERT_TAIL
+ mpxs_APR__Brigade_insert_head  #APR_BRIGADE_INSERT_HEAD
+ mpxs_APR__Brigade_concat       #APR_BRIGADE_CONCAT
+ mpxs_APR__Brigade_is_empty     #APR_BRIGADE_EMPTY
+ mpxs_APR__Brigade_length | | bb, read_all=1
+ mpxs_APR__Brigade_flatten | | ...
+ mpxs_APR__Brigade_pool
+
+MODULE=APR::Bucket
+ mpxs_APR__Bucket_is_flush       #APR_BUCKET_IS_FLUSH
+ mpxs_APR__Bucket_is_eos         #APR_BUCKET_IS_EOS
+ mpxs_APR__Bucket_insert_after   #APR_BUCKET_INSERT_AFTER
+ mpxs_APR__Bucket_insert_before  #APR_BUCKET_INSERT_AFTER
+ mpxs_APR__Bucket_remove         #APR_BUCKET_REMOVE
+ #apr_bucket_read
+ mpxs_APR__Bucket_read | | bucket, buffer, block=APR_BLOCK_READ
+ #modperl_bucket_sv_create
+ mpxs_APR__Bucket_new  | | classname, list, sv, offset=0, len=0
+ void:DEFINE_destroy | | apr_bucket:bucket
+ void:DEFINE_delete  | | apr_bucket:bucket
+~apr_bucket_setaside
+ mpxs_APR__Bucket_setaside
+>apr_bucket_free
+!apr_bucket_copy_notimpl
+!apr_bucket_shared_copy
+ apr_bucket_eos_create
+!apr_bucket_file_create
+!apr_bucket_file_enable_mmap
+ apr_bucket_flush_create
+!apr_bucket_heap_create
+!apr_bucket_immortal_create
+!apr_bucket_mmap_create
+!apr_bucket_pipe_create
+!apr_bucket_pool_create
+!apr_bucket_socket_create
+!apr_bucket_transient_create
+!apr_bucket_shared_destroy
+!apr_bucket_eos_make
+!apr_bucket_file_make
+!apr_bucket_flush_make
+!apr_bucket_heap_make
+!apr_bucket_immortal_make
+!apr_bucket_mmap_make
+!apr_bucket_pipe_make
+!apr_bucket_pool_make
+!apr_bucket_shared_make
+!apr_bucket_socket_make
+!apr_bucket_transient_make
+!apr_bucket_setaside_notimpl
+!apr_bucket_split_notimpl
+!apr_bucket_shared_split
+!apr_bucket_simple_split
+!apr_bucket_simple_copy
+!apr_bucket_destroy_noop
+!apr_bucket_setaside_noop
+
+MODULE=APR::BucketAlloc
+>apr_bucket_alloc
+~apr_bucket_alloc_create
+ mpxs_APR__BucketAlloc_new
+ void:DEFINE_destroy | | apr_bucket_alloc_t *:ba
+
+MODULE=APR::Pool
+-apr_pool_num_bytes | | p, recurse=0 #only available with -DAPR_POOL_DEBUG
+ apr_pool_cleanup_for_exec
+~apr_pool_clear
+mpxs_APR__Pool_clear
+>apr_pool_clear_debug
+~apr_pool_destroy
+ DEFINE_destroy | mpxs_apr_pool_DESTROY | SV *:obj
+ DEFINE_DESTROY | mpxs_apr_pool_DESTROY | SV *:obj
+>apr_pool_destroy_debug
+ SV *:DEFINE_new | mpxs_apr_pool_create | SV *:parent_pool_obj
+-apr_pool_create_ex
+>apr_pool_create_ex_debug
+!apr_pool_userdata_get
+!apr_pool_userdata_set
+-apr_pool_userdata_setn
+!apr_pool_cleanup_kill
+!apr_pool_cleanup_run
+-apr_pool_cleanup_null
+ apr_pool_cleanup_register | mpxs_ | p, SV *:cv, SV *:arg=(SV *)NULL
+!apr_pool_note_subprocess
+-apr_palloc
+>apr_palloc_debug
+>apr_pcalloc_debug
+-apr_pcalloc
+-apr_pmemdup
+!apr_pool_child_cleanup_set
+!apr_pool_abort_get
+ SV *:apr_pool_parent_get | mpxs_
+ apr_pool_is_ancestor
+-apr_pool_abort_set
+>apr_pool_initialize
+>apr_pool_terminate
+ apr_pool_tag
+
+-MODULE=APR::Allocator
+ apr_allocator_alloc
+ apr_allocator_create
+ apr_allocator_destroy
+ apr_allocator_free
+ apr_allocator_mutex_get
+ apr_allocator_owner_get
+ apr_allocator_mutex_set
+ apr_allocator_owner_set
+
+-MODULE=APR::Atomic
+ apr_atomic_add
+ apr_atomic_cas
+ apr_atomic_dec
+ apr_atomic_inc
+ apr_atomic_init
+ apr_atomic_set
+
+!MODULE=APR::GlobalMutex
+ apr_global_mutex_child_init
+ apr_global_mutex_create
+ apr_global_mutex_destroy
+ apr_global_mutex_lock
+ apr_global_mutex_pool_get
+ apr_global_mutex_trylock
+ apr_global_mutex_unlock
+
+MODULE=APR::ThreadMutex   PREFIX=apr_thread_mutex_
+ SV *:apr_thread_mutex_create | mpxs_ | \
+     SV *:classname, SV *:p_sv, flags=APR_THREAD_MUTEX_DEFAULT | new
+ void:apr_thread_mutex_destroy | | | apr_thread_mutex_DESTROY
+ apr_thread_mutex_lock
+ apr_thread_mutex_trylock
+ apr_thread_mutex_unlock
+ apr_thread_mutex_pool_get
+
+!MODULE=APR::ProcMutex
+ apr_proc_mutex_child_init
+ apr_proc_mutex_create
+ apr_proc_mutex_destroy
+ apr_proc_mutex_lock
+ apr_proc_mutex_pool_get
+ apr_proc_mutex_trylock
+ apr_proc_mutex_unlock
+
+MODULE=APR::Table
+ apr_table_clear
+~apr_table_copy
+ mpxs_APR__Table_copy
+~apr_table_make
+ mpxs_APR__Table_make
+ apr_table_overlap
+~apr_table_overlay
+ mpxs_APR__Table_overlay
+ apr_table_compress
+ apr_table_add
+-apr_table_addn
+ apr_table_do | mpxs_ | ...
+ apr_table_get | MPXS_ | ...
+ apr_table_merge
+-apr_table_mergen
+ apr_table_set
+-apr_table_setn
+ apr_table_unset
+-apr_table_vdo
+ void:DEFINE_STORE | | apr_table_t *:t, const char *:key, const char *:value
+ void:DEFINE_DELETE | | apr_table_t *:t, const char *:key
+ void:DEFINE_CLEAR | | apr_table_t *:t
+ const char *:DEFINE_FIRSTKEY | mpxs_APR__Table_NEXTKEY | SV *:tsv, SV *:key=(SV *)NULL
+ mpxs_APR__Table_NEXTKEY | | SV *:tsv, SV *:key=&PL_sv_undef
+ mpxs_APR__Table_FETCH
+ mpxs_APR__Table_EXISTS
+
+!MODULE=APR::File
+-apr_file_append
+-apr_file_attrs_set
+-apr_file_copy
+-apr_file_dup2
+ apr_file_mktemp
+-apr_file_open
+-apr_file_close
+-apr_file_namedpipe_create
+ apr_file_pipe_create
+-apr_file_dup
+-apr_file_flush
+-apr_file_eof
+-apr_file_gets
+-apr_file_printf
+-apr_file_write_full
+-apr_file_read_full
+-apr_file_getc
+-apr_file_ungetc
+-apr_file_putc
+-apr_file_puts
+-apr_file_read
+-apr_file_write
+-apr_file_writev
+-apr_file_seek
+ apr_file_data_get
+ apr_file_info_get
+ apr_file_name_get
+ apr_file_pool_get
+ apr_file_pipe_timeout_get
+ apr_file_pipe_timeout_set
+ apr_file_lock
+ apr_file_unlock
+ apr_file_open_stderr
+ apr_file_open_stdout
+-apr_file_remove
+-apr_file_rename
+ apr_file_data_set
+ apr_file_perms_set
+-apr_file_flags_get
+-apr_file_open_stdin
+-apr_file_set_inherit
+-apr_file_unset_inherit
+-apr_file_trunc
+ apr_filepath_get
+ apr_filepath_merge
+ apr_filepath_root
+ apr_filepath_set
+
+MODULE=APR::Finfo
+-apr_lstat
+~apr_stat
+ mpxs_APR__Finfo_stat
+
+!MODULE=APR::String
+ apr_collapse_spaces
+-apr_cpystrn
+ apr_fnmatch
+ apr_fnmatch_test
+-apr_psprintf
+-apr_pstrcat
+-apr_pstrcatv
+-apr_pstrdup
+-apr_pstrndup
+-apr_pstrmemdup
+-apr_pvsprintf
+ apr_strnatcasecmp
+ apr_strnatcmp
+-apr_tokenize_to_argv
+-apr_strtok
+-apr_itoa
+-apr_ltoa
+-apr_off_t_toa
+
+MODULE=APR::String
+ SV *:apr_strfsize | mpxs_APR__String_strfsize | size | format_size
+
+!MODULE=APR::StrMatch
+ apr_strmatch_precompile
+
+!MODULE=APR::ProcAttr
+ apr_procattr_create
+ apr_procattr_child_err_set
+ apr_procattr_child_in_set
+ apr_procattr_child_out_set
+ apr_procattr_cmdtype_set
+ apr_procattr_detach_set
+ apr_procattr_dir_set
+ apr_procattr_io_set
+ apr_procattr_limit_set
+
+!MODULE=APR::Proc
+ apr_proc_create
+ apr_proc_fork
+ apr_proc_kill
+ apr_proc_wait
+ apr_proc_detach
+-apr_proc_other_child_read
+-apr_proc_other_child_register
+-apr_proc_other_child_unregister
+-apr_proc_other_child_check
+-apr_proc_wait_all_procs
+
+-MODULE=APR::Thread
+ apr_thread_create
+ apr_thread_data_get
+ apr_thread_data_set
+ apr_thread_detach
+ apr_thread_exit
+ apr_thread_join
+ apr_thread_once
+ apr_thread_once_init
+ apr_thread_pool_get
+ apr_thread_yield
+
+-MODULE=APR::ThreadCond
+ apr_thread_cond_broadcast
+ apr_thread_cond_create
+ apr_thread_cond_destroy
+ apr_thread_cond_signal
+ apr_thread_cond_wait
+ apr_thread_cond_pool_get
+ apr_thread_cond_timedwait
+
+MODULE=APR::ThreadRWLock   PREFIX=apr_thread_rwlock_
+ SV *:apr_thread_rwlock_create | mpxs_ | SV *:classname, SV *:p_sv | new
+ void:apr_thread_rwlock_destroy | | | apr_thread_rwlock_DESTROY
+ apr_thread_rwlock_rdlock
+ apr_thread_rwlock_tryrdlock
+ apr_thread_rwlock_trywrlock
+ apr_thread_rwlock_unlock
+ apr_thread_rwlock_wrlock
+ apr_thread_rwlock_pool_get
+
+-MODULE=APR::ThreadKey
+ apr_threadkey_data_get
+ apr_threadkey_data_set
+ apr_threadkey_private_get
+ apr_threadkey_private_set
+ apr_threadkey_private_create
+ apr_threadkey_private_delete
+
+-MODULE=APR::ThreadAttr
+ apr_threadattr_create
+ apr_threadattr_detach_set
+ apr_threadattr_detach_get
+
+!MODULE=APR::Version
+ apr_version
+ apr_version_string
+
+-MODULE=APR::DBM
+ apr_dbm_close
+ apr_dbm_delete
+ apr_dbm_exists
+ apr_dbm_fetch
+ apr_dbm_firstkey
+ apr_dbm_freedatum
+ apr_dbm_geterror
+ apr_dbm_get_usednames
+ apr_dbm_get_usednames_ex
+ apr_dbm_nextkey
+ apr_dbm_open
+ apr_dbm_open_ex
+ apr_dbm_store
+
+-MODULE=APR::SDBM
+ apr_sdbm_close
+ apr_sdbm_delete
+ apr_sdbm_fetch
+ apr_sdbm_firstkey
+ apr_sdbm_lock
+ apr_sdbm_nextkey
+ apr_sdbm_open
+ apr_sdbm_rdonly
+ apr_sdbm_store
+ apr_sdbm_unlock
+
+-MODULE=APR::Dir
+ apr_dir_close
+ apr_dir_open
+ apr_dir_read
+ apr_dir_rewind
+ apr_dir_make
+ apr_dir_remove
+
+!MODULE=APR::DSO
+ apr_dso_error
+ apr_dso_load
+ apr_dso_sym
+ apr_dso_unload
+
+MODULE=APR::Util
+ apr_filepath_name_get
+ apr_password_get
+ int:apr_password_validate | mpxs_
+-apr_snprintf
+-apr_vformatter
+-apr_vsnprintf
+# only available if APR_HAS_RANDOM
+-apr_generate_random_bytes
+
+MODULE=APR::Error
+~apr_strerror
+ char *:DEFINE_strerror | | apr_status_t:rc
+
+!MODULE=APR::General
+-apr_app_initialize
+-apr_initialize
+-apr_terminate
+-apr_terminate2
+
+MODULE=APR::Signal
+-apr_signal
+#not available on all platforms
+!apr_signal_description_get
+-apr_signal_init
+-apr_setup_signal_thread
+!apr_signal_thread
+
+MODULE=APR::UUID
+ apr_uuid_format             | MPXS_ | uuid
+ apr_uuid_t *:apr_uuid_get   | mpxs_ | SV *:CLASS | new
+ apr_uuid_t *:apr_uuid_parse | mpxs_ | SV *:CLASS,char *:buf | parse
+ apr_uuid_DESTROY            |       | uuid
+
+!MODULE=APR::Hook
+ apr_hook_deregister_all
+ apr_hook_sort_register
+-apr_register_optional_fn
+ apr_hook_debug_show
+ apr_hook_sort_all
+ apr_optional_hook_add
+ apr_optional_hook_get
+
+!MODULE=APR::User
+ apr_gid_name_get
+ apr_uid_homepath_get
+ apr_uid_name_get
+ apr_uid_get
+ apr_gid_get
+ apr_uid_current
+
+!MODULE=APR::NetLib
+-apr_gethostname
+!apr_getnameinfo
+-apr_getservbyname
+!apr_parse_addr_port
+
+MODULE=APR::IpSubnet
+ SV *:apr_ipsubnet_create | mpxs_ | \
+     SV *:CLASS, SV *:p_sv, ipstr, mask_or_numbits=NULL | new
+ apr_ipsubnet_test
+
+!MODULE=APR::Getopt
+ apr_getopt
+ apr_getopt_long
+ apr_getopt_init
+
+!MODULE=APR::Shm
+ apr_shm_create
+ apr_shm_destroy
+ apr_shm_attach
+ apr_shm_detach
+ apr_shm_baseaddr_get
+ apr_shm_size_get
+ apr_shm_pool_get
+
+!MODULE=APR::Hash
+ apr_hash_copy
+ apr_hash_count
+ apr_hash_first
+ apr_hash_get
+ apr_hash_merge
+ apr_hash_next
+ apr_hash_set
+ apr_hash_this
+ apr_hash_make
+ apr_hash_overlay
+ apr_hash_pool_get
+
+!MODULE=APR::MD5
+ apr_md5
+ apr_md5_encode
+ apr_md5_final
+ apr_md5_init
+ apr_md5_set_xlate
+ apr_md5_update
+
+!MODULE=APR::MD4
+ apr_md4
+ apr_md4_final
+ apr_md4_init
+ apr_md4_set_xlate
+ apr_md4_update
+
+!MODULE=APR::SHA1
+ apr_sha1_base64
+ apr_sha1_final
+ apr_sha1_init
+ apr_sha1_update
+ apr_sha1_update_binary
+
+MODULE=APR::Base64
+ apr_base64_decode | MPXS_ | coded_src
+ apr_base64_encode | MPXS_ | plain_src
+ int:DEFINE_encode_len | | int:len
+-apr_base64_decode_len
+-apr_base64_encode_binary
+-apr_base64_decode_binary
+
+MODULE=APR::URI
+!apr_uri_parse_hostinfo
+ SV *:apr_uri_parse | mpxs_ | SV *:classname, SV *:p_sv, uri | parse
+ apr_uri_unparse | mpxs_ | \
+                  uptr, flags=APR_URI_UNP_OMITPASSWORD | unparse
+ #special case to set both uri->port and uri->port_str
+ mpxs_APR__URI_port | | uri, portsv=(SV *)NULL
+ mpxs_APR__URI_rpath
+ apr_uri_port_of_scheme
+
+!MODULE=Apache2::XML
+ apr_text_append
+ apr_xml_parser_create
+ apr_xml_parser_feed
+ apr_xml_parser_done
+ apr_xml_parser_geterror
+ apr_xml_to_text
+ apr_xml_empty_elem
+ apr_xml_quote_string
+ apr_xml_quote_elem
+ apr_xml_insert_uri
+ apr_xml_parse_file
+
+!MODULE=APR::Mmap
+ apr_mmap_create
+ apr_mmap_delete
+ apr_mmap_offset
+ apr_mmap_dup
+
+!MODULE=APR::Xlate
+ apr_xlate_close
+ apr_xlate_conv_buffer
+ apr_xlate_conv_byte
+ apr_xlate_get_sb
+ apr_xlate_open
+
+MODULE=APR::OS
+ mpxs_APR__OS_current_thread_id
+-apr_os_dir_get
+-apr_os_exp_time_get
+-apr_os_file_get
+-apr_os_imp_time_get
+#_if_ $^O !~ /mswin/i
+~apr_os_sock_get
+#_else_
+-apr_os_sock_get
+#_end_
+-apr_os_thread_get
+-apr_os_threadkey_get
+-apr_os_sock_make
+-apr_os_dir_put
+-apr_os_exp_time_put
+-apr_os_file_put
+-apr_os_imp_time_put
+-apr_os_sock_put
+-apr_os_thread_put
+-apr_os_threadkey_put
+-apr_os_dso_handle_get
+-apr_os_dso_handle_put
+~apr_os_thread_current
+-apr_os_thread_equal
+-apr_os_global_mutex_get
+-apr_os_proc_mutex_get
+-apr_os_proc_mutex_put
+-apr_os_shm_get
+-apr_os_shm_put
+
+MODULE=APR::Status      PREFIX=mpxs_APR__STATUS_
+ int:DEFINE_is_EAGAIN       | | apr_status_t:rc
+ int:DEFINE_is_EACCES       | | apr_status_t:rc
+ int:DEFINE_is_ENOENT       | | apr_status_t:rc
+ int:DEFINE_is_EOF          | | apr_status_t:rc
+ int:DEFINE_is_ECONNABORTED | | apr_status_t:rc
+ int:DEFINE_is_ECONNRESET   | | apr_status_t:rc
+ int:DEFINE_is_TIMEUP       | | apr_status_t:rc

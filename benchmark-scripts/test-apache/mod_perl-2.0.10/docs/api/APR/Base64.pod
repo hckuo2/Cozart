@@ -1,0 +1,130 @@
+=head1 NAME
+
+APR::Base64 - Perl API for APR base64 encoding/decoding functionality
+
+
+
+
+=head1 Synopsis
+
+  use APR::Base64 ();
+  
+  my $clear   = "foo"
+  my $encoded = APR::Base64::encode($clear);
+  my $decoded = APR::Base64::decode($encoded);
+  my $len_enc = APR::Base64::encode_len(length $clear);
+
+
+
+
+=head1 Description
+
+C<APR::Base64> provides the access to APR's base64 encoding and
+decoding API.
+
+
+
+
+
+=head1 API
+
+C<APR::Base64> provides the following functions and/or methods:
+
+
+
+
+=head2 C<decode>
+
+Decode a base64 encoded string
+
+  $decoded = decode($encoded);
+
+=over 4
+
+=item arg1: C<$encoded> ( string )
+
+The encoded string.
+
+=item ret: C<$decoded> ( string )
+
+The decoded string.
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+=head2 C<encode>
+
+Encode a string to base64
+
+  $encoded = encode($clear);
+
+=over 4
+
+=item arg1: C<$clear> ( string )
+
+The unencoded string.
+
+=item ret: C<$encoded> ( string )
+
+The encoded string.
+
+=item since: 2.0.00
+
+=back
+
+
+
+=head2 C<encode_len>
+
+Given the length of an unencoded string, get the length of the encoded
+string.
+
+  $len_enc = encode_len($len_clear);
+
+=over 4
+
+=item arg1: C<$len_clear> ( integer )
+
+the length of an unencoded string.
+
+=item ret: C<$len_enc> ( integer )
+
+the length of the string after it is encoded
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+=head1 See Also
+
+L<mod_perl 2.0 documentation|docs::2.0::index>.
+
+
+
+
+=head1 Copyright
+
+mod_perl 2.0 and its core modules are copyrighted under
+The Apache Software License, Version 2.0.
+
+
+
+
+=head1 Authors
+
+L<The mod_perl development team and numerous
+contributors|about::contributors::people>.
+
+=cut
+

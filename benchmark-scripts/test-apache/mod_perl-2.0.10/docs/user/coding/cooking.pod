@@ -1,0 +1,121 @@
+=head1 NAME
+
+Cooking Recipes
+
+=head1 Description
+
+As the chapter's title implies, here you will find ready-to-go
+mod_perl 2.0 recipes.
+
+If you know a useful recipe, not yet listed here, please post it to
+L<the mod_perl mailing list|maillist::modperl> and we will add it
+here.
+
+=head1 Sending Cookies in REDIRECT Response (ModPerl::Registry)
+
+  use CGI::Cookie ();
+  use Apache2::RequestRec ();
+  use APR::Table ();
+  
+  use Apache2::Const -compile => qw(REDIRECT);
+  
+  my $location = "http://example.com/final_destination/";
+  
+  sub handler {
+      my $r = shift;
+  
+      my $cookie = CGI::Cookie->new(-name  => 'mod_perl',
+                                    -value => 'awesome');
+  
+      $r->err_headers_out->add('Set-Cookie' => $cookie);
+      $r->headers_out->set(Location => $location);
+      $r->status(Apache2::Const::REDIRECT);
+  
+      return Apache2::Const::REDIRECT;
+  }
+  1;
+
+
+=head1 Sending Cookies in REDIRECT Response (handlers)
+
+  use CGI::Cookie ();
+  use Apache2::RequestRec ();
+  use APR::Table ();
+  
+  use Apache2::Const -compile => qw(REDIRECT);
+  
+  my $location = "http://example.com/final_destination/";
+  
+  sub handler {
+      my $r = shift;
+  
+      my $cookie = CGI::Cookie->new(-name  => 'mod_perl',
+                                    -value => 'awesome');
+  
+      $r->err_headers_out->add('Set-Cookie' => $cookie);
+      $r->headers_out->set(Location => $location);
+  
+      return Apache2::Const::REDIRECT;
+  }
+  1;
+
+note that this example differs from the Registry example
+only in that it does not attempt to fiddle with 
+C<$r-E<gt>status()> - C<ModPerl::Registry> uses C<$r-E<gt>status()>
+as a hack, but handlers should never manipulate the
+status field in the request record.
+
+=head1 Sending Cookies Using libapreq2
+
+  use Apache2::Request ();
+  use Apache2::RequestRec ();
+  use Apache2::Const -compile => qw(OK);
+  
+  use APR::Table ();
+  use APR::Request::Cookie ();
+  
+  sub handler {
+      my $r = shift;
+      my $req = $r->pool();
+      
+      my $cookie = APR::Request::Cookie->new($req, name => "foo", value => time(), path => '/cookie');
+      
+      $r->err_headers_out->add('Set-Cookie' => $cookie->as_string);
+      
+      $r->content_type("text/plain");
+      $r->print("Testing....");
+      
+      return Apache2::Const::OK;
+  }
+
+=head1 Maintainers
+
+Maintainer is the person(s) you should contact with updates,
+corrections and patches.
+
+=over
+
+=item *
+
+Stas Bekman [http://stason.org/]
+
+=back
+
+=head1 Authors
+
+=over
+
+=item *
+
+Stas Bekman [http://stason.org/]
+
+=back
+
+Only the major authors are listed above. For contributors see the
+Changes file.
+
+
+=cut
+
+
+

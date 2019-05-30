@@ -1,0 +1,183 @@
+##########  mod_perl specific functions  ##########
+
+# for mapping see %ModPerl::MapUtil::disabled_map in
+# lib/ModPerl/MapUtil.pm
+
+MODULE=ModPerl::Util
+ mpxs_ModPerl__Util_untaint | | ...
+ SV *:DEFINE_current_perl_id
+ char *:DEFINE_current_callback 
+ DEFINE_unload_package_xs | | const char *:package
+
+MODULE=ModPerl::Global
+ mpxs_ModPerl__Global_special_list_call
+ mpxs_ModPerl__Global_special_list_clear
+ mpxs_ModPerl__Global_special_list_register
+
+MODULE=Apache2::RequestRec   PACKAGE=Apache2::RequestRec
+ mpxs_Apache2__RequestRec_content_type   | | r, type=(SV *)NULL
+ mpxs_Apache2__RequestRec_proxyreq       | | r, val=(SV *)NULL
+ mpxs_Apache2__RequestRec_subprocess_env | | r, key=NULL, val=(SV *)NULL
+ mpxs_Apache2__RequestRec_finfo | | r, finfo=NULL
+ mpxs_Apache2__RequestRec_handler | | ...
+ mpxs_Apache2__RequestRec_content_languages | | r, languages=(SV *)NULL
+
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } > 2003000
+MODULE=Apache2::ServerRec   PACKAGE=Apache2::ServerRec
+ mpxs_Apache2__ServerRec_is_virtual       | | server_rec *:s, val=(SV *)NULL
+#_end_
+
+MODULE=Apache2::RequestUtil   PACKAGE=guess
+ mpxs_Apache2__RequestRec_push_handlers
+ mpxs_Apache2__RequestRec_set_handlers
+ mpxs_Apache2__RequestRec_get_handlers
+ mpxs_Apache2__RequestRec_is_perl_option_enabled
+ mpxs_Apache2__RequestRec_location
+ mpxs_Apache2__RequestRec_as_string
+ mpxs_Apache2__RequestRec_pnotes | | r, key=(SV *)NULL, val=(SV *)NULL
+ mpxs_Apache2__RequestRec_pnotes_kill | | r
+ mpxs_Apache2__RequestRec_add_config | | r, lines, override=MP_HTTPD_OVERRIDE_HTACCESS, path=NULL, override_options=MP_HTTPD_OVERRIDE_OPTS_UNSET
+ mpxs_Apache2__RequestRec_document_root | | r, new_root=(SV *)NULL
+ mpxs_Apache2__RequestRec_child_terminate
+
+ #protocol module helpers
+ mpxs_Apache2__RequestRec_location_merge
+ mpxs_Apache2__RequestRec_set_basic_credentials
+ mpxs_Apache2__RequestRec_no_cache | | r, flag=(SV *)NULL
+
+PACKAGE=Apache2::RequestRec
+ mpxs_Apache2__RequestRec_new | | classname, c, base_pool_sv=(SV *)NULL
+ SV *:DEFINE_dir_config | | request_rec *:r, char *:key=NULL, SV *:sv_val=(SV *)NULL
+ SV *:DEFINE_slurp_filename | | request_rec *:r, int:tainted=1
+
+MODULE=Apache2::RequestUtil   PACKAGE=Apache2::RequestUtil
+ mpxs_Apache2__RequestUtil_request | | classname, svr=(SV *)NULL
+
+MODULE=Apache2::RequestIO   PACKAGE=Apache2::RequestRec
+ SV *:DEFINE_TIEHANDLE    | | SV *:stashsv, SV *:sv=(SV *)NULL
+ SV *:DEFINE_PRINT  | | ...
+ apr_size_t:DEFINE_PRINTF | | ...
+ SV *:DEFINE_BINMODE  | | request_rec *:r
+ SV *:DEFINE_CLOSE    | | request_rec *:r
+ SV *:DEFINE_UNTIE    | | request_rec *:r, int:refcnt
+ mpxs_Apache2__RequestRec_sendfile | | r, filename=r->filename, offset=0, len=0
+ mpxs_Apache2__RequestRec_read | | r, buffer, len, offset=0
+ SV *:DEFINE_READ | | request_rec *:r, SV *:buffer, apr_size_t:len, apr_off_t:offset=0
+ mpxs_Apache2__RequestRec_write | | r, buffer, len=-1, offset=0
+ mpxs_Apache2__RequestRec_print | | ...
+ apr_size_t:DEFINE_WRITE | | \
+             request_rec *:r, SV *:buffer, apr_size_t:len=-1, apr_off_t:offset=0
+ mpxs_Apache2__RequestRec_rflush | | ...
+ mpxs_Apache2__RequestRec_GETC
+ mpxs_Apache2__RequestRec_OPEN | | SV *:self, SV *:arg1, SV *:arg2=(SV *)NULL
+ mpxs_Apache2__RequestRec_FILENO
+
+MODULE=Apache2::Response   PACKAGE=Apache2::RequestRec
+DEFINE_send_cgi_header | | request_rec *:r, SV *:buffer
+ mpxs_Apache2__RequestRec_set_last_modified | | r, mtime=0
+
+
+MODULE=Apache2::ServerUtil   PACKAGE=guess
+ mpxs_Apache2__ServerRec_push_handlers
+ mpxs_Apache2__ServerRec_set_handlers
+ mpxs_Apache2__ServerRec_get_handlers
+ mpxs_Apache2__ServerRec_is_perl_option_enabled
+ mpxs_Apache2__ServerRec_add_config
+
+MODULE=Apache2::ServerUtil  PACKAGE=Apache2::ServerRec
+ SV *:DEFINE_dir_config | | server_rec *:s, char *:key=NULL, SV *:sv_val=(SV *)NULL
+
+MODULE=Apache2::ServerUtil PACKAGE=Apache2::ServerUtil
+ mpxs_Apache2__ServerUtil_server_shutdown_cleanup_register | | cv, arg=(SV *)NULL
+ int:DEFINE_restart_count
+
+MODULE=Apache2::ServerUtil   PACKAGE=Apache2::ServerUtil
+ server_rec *:DEFINE_server | | SV *:classname=(SV *)NULL
+ uid_t:DEFINE_user_id       | | SV *:classname=(SV *)NULL
+ gid_t:DEFINE_group_id      | | SV *:classname=(SV *)NULL
+
+MODULE=Apache2::Connection
+ mpxs_Apache2__Connection_client_socket | | c, s=NULL
+
+MODULE=Apache2::ConnectionUtil   PACKAGE=guess
+ mpxs_Apache2__Connection_pnotes | | c, key=(SV *)NULL, val=(SV *)NULL
+ mpxs_Apache2__Connection_pnotes_kill | | c
+
+MODULE=Apache2::Filter
+ modperl_filter_attributes | MPXS_ | ... | MODIFY_CODE_ATTRIBUTES
+
+ mpxs_Apache2__Filter_print    | | ...
+ mpxs_Apache2__Filter_read     | | ...
+ mpxs_Apache2__Filter_seen_eos | | ...
+ mpxs_Apache2__Filter_ctx      | | filter, data=(SV *)NULL
+ mpxs_Apache2__Filter_remove   | | ...
+
+ SV *:DEFINE_TIEHANDLE | | SV *:stashsv, SV *:sv=(SV *)NULL
+ apr_size_t:DEFINE_PRINT      | | ...
+
+MODULE=Apache2::Filter PACKAGE=Apache2::RequestRec
+ mpxs_Apache2__RequestRec_add_input_filter
+ mpxs_Apache2__RequestRec_add_output_filter
+
+MODULE=Apache2::Filter PACKAGE=Apache2::Connection
+ mpxs_Apache2__Connection_add_input_filter
+ mpxs_Apache2__Connection_add_output_filter
+
+MODULE=Apache2::Log   PACKAGE=Apache2::Log   BOOT=1
+
+DEFINE_error  | MPXS_Apache2__Log_dispatch | ...
+DEFINE_emerg  | MPXS_Apache2__Log_dispatch | ...
+DEFINE_alert  | MPXS_Apache2__Log_dispatch | ...
+DEFINE_warn   | MPXS_Apache2__Log_dispatch | ...
+DEFINE_notice | MPXS_Apache2__Log_dispatch | ...
+DEFINE_info   | MPXS_Apache2__Log_dispatch | ...
+DEFINE_debug  | MPXS_Apache2__Log_dispatch | ...
+DEFINE_crit   | MPXS_Apache2__Log_dispatch | ...
+DEFINE_LOG_MARK   | MPXS_Apache2__Log_LOG_MARK  | ...
+
+PACKAGE=Apache2::RequestRec
+SV *:DEFINE_log   | | SV *:obj
+DEFINE_log_rerror | MPXS_Apache2__Log_log_xerror | ...
+DEFINE_log_error  | MPXS_Apache2__Log_log_error  | ...
+DEFINE_warn       | MPXS_Apache2__Log_log_error  | ...
+DEFINE_log_reason | modperl_log_reason | request_rec *:r, char *:msg, char *:file=r->uri
+
+PACKAGE=Apache2::ServerRec
+SV *:DEFINE_log   | | SV *:obj
+DEFINE_log_serror | MPXS_Apache2__Log_log_xerror | ...
+DEFINE_log_error  | MPXS_Apache2__Log_log_error  | ...
+DEFINE_warn       | MPXS_Apache2__Log_log_error  | ...
+
+MODULE=Apache2::SubProcess   PACKAGE=Apache2::RequestRec
+ # ap_subprocess_ won't work
+ modperl_spawn_proc_prog | MPXS_ | ... | spawn_proc_prog
+
+MODULE=Apache2::Directive
+ mpxs_Apache2__Directive_as_string
+ mpxs_Apache2__Directive_as_hash
+ DEFINE_lookup | MPXS_Apache2__Directive_lookup | ...
+
+MODULE=Apache2::CmdParms
+ ap_check_cmd_context
+ ap_method_is_limited
+ mpxs_Apache2__CmdParms_info
+ mpxs_Apache2__CmdParms_add_config
+ mpxs_Apache2__CmdParms_override_opts
+
+MODULE=Apache2::MPM    PACKAGE=Apache2::MPM   BOOT=1
+ mpxs_Apache2__MPM_query
+
+MODULE=Apache2::Access   PACKAGE=guess
+ mpxs_Apache2__RequestRec_allow_override_opts
+
+#_if_ do {use Apache2::Build; Apache2::Build::PERL_HAS_ITHREADS}
+
+MODULE=ModPerl::Interpreter
+ mpxs_ModPerl__Interpreter_current | | class=Nullsv
+
+#_end_

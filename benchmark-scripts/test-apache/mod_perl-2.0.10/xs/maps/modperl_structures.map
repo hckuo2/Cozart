@@ -1,0 +1,44 @@
+##########  ModPerl structures  ##########
+
+# for mapping see %ModPerl::MapUtil::disabled_map in
+# lib/ModPerl/MapUtil.pm
+
+#_if_ do {use Apache2::Build; Apache2::Build::PERL_HAS_ITHREADS}
+
+<modperl_interp_t>
+<  mip
+<  perl
+<  num_requests
+<  flags
+-  ccfg
+<  refcnt
+-  tid
+</modperl_interp_t>
+
+<modperl_interp_pool_t>
+<  server
+<  tipool
+<  parent
+</modperl_interp_pool_t>
+
+<modperl_tipool_t>
+-  tiplock
+-  available
+-  idle
+-  busy
+<  in_use
+<  size
+-  data
+<  cfg
+-  func
+</modperl_tipool_t>
+
+<modperl_tipool_config_t>
+<  start
+<  min_spare
+<  max_spare
+<  max
+<  max_requests
+</modperl_tipool_config_t>
+
+#_end_

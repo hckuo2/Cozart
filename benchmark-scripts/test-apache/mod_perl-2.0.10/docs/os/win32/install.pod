@@ -1,0 +1,323 @@
+=head1 NAME
+
+mod_perl 2.0 Win32 Installation Instructions
+
+=head1 Description
+
+This document deals with installation specifics on Win32 platforms.
+
+=head1 Synopsis
+
+As described in the discussion of issues in L<multithreaded
+win32|docs::1.0::os::win32::multithread>, a mod_perl 1.0 enabled server
+based on Apache 1.3 on Win32 is limited to a single thread serving a
+request at a time. This effectively prevents concurrent processing,
+which can have serious implications for busy sites. This problem is
+addressed in the multi-thread/multi-process approach of mod_perl
+2.0/Apache 2.x, which consequently requires a Perl built with ithreads
+enabled.
+
+There are some threading issues in perl-5.6
+(upon which ActivePerl builds 6xx are based) which cause
+problems with mod_perl 2.0 on Win32. Consequently, the minimum
+required perl version is 5.8 (upon which ActivePerl builds 8xx are based)
+for use with mod_perl 2.0 on Win32.
+
+=head1 Installing
+
+Unless you are using an all-in-one package, you should
+first install Perl and Apache, either from the sources or as binaries.
+The Perl sources are available from L<http://www.cpan.org/src/>,
+with directions for building contained in F<README.win32>.
+ActiveState also makes the sources available for their binary
+builds at L<ftp://ftp.activestate.com/ActivePerl/src/>,
+which may contain, in particular, Win32-specific fixes not in the
+CPAN Perl sources. If you are building Perl from source then you must
+enable both USE_MULTI and USE_ITHREADS in the Makefile to enable
+ithreads, as required for mod_perl 2.0 on Win32. ActivePerl builds also
+enable USE_IMP_SYS, providing the implicit "host" layer which gives a
+C<fork()> emulation, but this is at the cost of disabling PERL_MALLOC
+which may have significant performance implications since Win32's system
+C<malloc()> is notably slower than Perl's in some situations. Thus, unless
+you require the C<fork()> emulation or specifically want an ActivePerl-
+compatible build then you may want to disable USE_IMP_SYS and enable
+PERL_MALLOC. (Note that you cannot currently enable PERL_MALLOC with
+USE_IMP_SYS enabled as well.) As a binary, at present, an ActivePerl-
+compatible Perl, compiled with Visual C++, is the most common one used in
+the Win32 mod_perl/Apache environment; you can obtain such a prebuilt Perl
+binary from L<http://www.activestate.com/>.
+
+The Apache sources and binaries are available at
+L<http://httpd.apache.org/>.
+
+As of this writing, mod_perl 2.0 is known to compile and work
+with both an ActivePerl-compatible perl-5.8 (ActivePerl build 8xx) and
+with an otherwise similar Perl having USE_IMP_SYS disabled and
+PERL_MALLOC enabled. See the section on Apache/mod_perl binaries 
+below for details on a suitable repository containing mod_perl
+ppm packages, and also how to obtain other Win32 binary packages.
+
+When installing Perl or other related binaries, subtleties may arise
+in using path names that have spaces in them - you may, for example, 
+have to specify F<C:\Program Files\> by the DOS 8.3 path name 
+F<C:\Progra~1\> in certain Apache directives. If you want to avoid
+this, install, if possible, these packages to locations without spaces
+in their names (eg, F<C:\Perl> for Perl and F<C:\Apache2> for Apache 2.0).
+
+In the following, it may be necessary to invoke certain commands 
+through a DOS prompt. A DOS window may be opened either through
+a I<Command Prompt> option of the I<Start> menu, or by choosing
+to run, from the Start menu, C<command> or C<cmd>, as appropriate. 
+
+=head2 Building from sources
+
+If you are building mod_perl 2.0 from sources, it is probably also
+best to do the same for Apache 2.0. The Apache 2.0 sources can be
+obtained from L<http://httpd.apache.org/>, which when unpacked will
+contain at the top-level a Visual Studio project file
+(make sure to obtain the I<win32-src.zip> archive). Choose the
+C<InstallBin - Win32 Release> target to build and install Apache 2.0,
+which by default will be placed in F</Apache2>. At the present
+time you must have version 2.0.47 or greater of Apache2 in
+order to build mod_perl.
+
+Having built and installed Apache 2.0, next obtain the mod_perl 2.0
+sources. First obtain the L<mod_perl 2.0
+sources|download::source/Development_mod_perl_2_0_Source_Distribution>
+as a C<tar.gz> file - when unpacked, using Winzip or similar tools, a
+subdirectory F<mod_perl-x.xx> will be created. Next, run the command
+
+    C:\modperl_src> perl Makefile.PL MP_AP_PREFIX=\Path\to\Apache2
+
+Then
+
+    C:\modperl_src> nmake
+    C:\modperl_src> nmake test
+
+will build and test mod_perl 2.0. mod_perl 2.0 on Win32 is considered
+at an alpha stage of development, so not all the tests may pass.
+
+The final command,
+
+    C:\modperl_src> nmake install
+
+will install the necessary mod_perl 2.0 files into your Perl directory
+tree, and also copy F<src/modules/perl/mod_perl.so> into
+your F</Path/to/Apache2/modules/> directory.
+
+If this build fails, or you want features not present in the official
+releases, you may want to try the sources obtained from svn - see the
+discussion on the L<2.0 Development Source
+Distribution|download::source/Development_mod_perl_2_0_Source_Distribution>
+for details. Be aware, though, that as well as providing bug fixes,
+there may be new features being added and tested in the svn versions,
+so at any given time there are no guarantees that these packages will
+build and test successfully.
+
+=head2 PPM Packages
+
+The following assumes you already have ActivePerl 8xx (I<not> 6xx)
+from L<http://www.activestate.com/> and a Win32 Apache 2.x binary from 
+L<http://httpd.apache.org/>. In installing this, you might avoid
+some future problems by choosing installation directories that do
+not have spaces in their names (eg, F<C:/Apache2>). At this time
+you must have version 2.0.47 or greater of Apache2 in order to
+install the mod_perl 2 ppm package.
+
+After installing Perl and Apache 2.x, you can then install mod_perl
+via the C<PPM> utility. ActiveState does not maintain mod_perl in
+their ppm repository, so you must get it from a different location
+other than ActiveState's site. A quick way to do this is to download
+the script F<mpinstall> and save it as, for example, I<mpinstall>.
+Invoking this as C<perl mpinstall> on a command line
+will take you through a dialogue, based on your configuration, 
+which will determine and install, via C<ppm>, the desired 
+mod_perl ppm package.
+
+The direct way to install mod_perl via ppm is simply as (broken over two
+lines for readability)
+
+  C:\> ppm install
+       http://theoryx5.uwinnipeg.ca/ppms/mod_perl.ppd
+
+for Apache/2.2, and
+
+  C:\> ppm install
+       http://theoryx5.uwinnipeg.ca/ppms/mod_perl-2.0.ppd
+
+for Apache/2.0. Another way, which will be useful if you plan on 
+installing additional Apache modules, is to add the following
+repository within C<ppm>:
+
+   http://theoryx5.uwinnipeg.ca/ppms/
+
+for ActivePerl 819 or higher, or
+
+   http://theoryx5.uwinnipeg.ca/cgi-bin/ppmserver?urn:/PPMServer58
+
+for ActivePerl 818 or lower;
+see the help utility within C<ppm> for
+details on how to do this. 
+mod_perl 2.0 can then be installed, within the ppm shell, as 
+
+  ppm> install mod_perl
+
+for Apache/2.2, and as
+
+  ppm> install mod_perl-2.0
+
+for Apache/2.0. This will install the necessary modules under an F<Apache2>
+subdirectory in your Perl tree, so as not to disturb a possible existing
+F<Apache> directory from mod_perl 1.0. See the section below on
+configuring mod_perl to add this directory to the C<@INC> path for
+searching for modules.
+
+The preceding L<http://theoryx5.uwinnipeg.ca/ppms/> repository
+is appropriate for ActivePerl 8xx builds, based on perl-5.8.
+If you're using an ActivePerl 10xx build, based on perl-5.10,
+you can install mod_perl via
+
+ C:\> ppm install
+       http://cpan.uwinnipeg.ca/PPMPackages/10xx/mod_perl.ppd
+
+for Apache/2.2. The corresponding repository that can be
+added to ppm is
+
+   http://cpan.uwinnipeg.ca/PPMPackages/10xx/
+
+after which mod_perl can be installed as
+
+  ppm> install mod_perl
+
+Note that ActivePerl 8xx and ActivePerl 10xx are not binary
+compatible, which means ppm packages compiled, for example,
+for an 8xx build are not compatible with ActivePerl 10xx.
+
+The mod_perl PPM package also includes the necessary Apache DLL
+F<mod_perl.so>; a post-installation script should be run which will
+offer to copy this file to your Apache2 modules directory (eg,
+F<C:/Apache2/modules/>). If this fails, you can get
+F<mod_perl.so> from L<http://theoryx5.uwinnipeg.ca/ppms/x86/>
+and install it to your Apache2 modules directory by hand. 
+
+Note that, because of binary incompatibilities, one should
+I<not> install packages for ActivePerl 8xx from a repository
+containing packages for ActivePerl 6xx, and vice-versa, particularly
+if these packages contain XS-based modules. Also note that
+modules compiled under Apache/2.0 are not compatible with
+modules compiled under Apache/2.2, so be sure to install the
+mod_perl ppm package appropriate for your version of Apache/2.x.
+
+The mod_perl package available from this site will always
+use the latest mod_perl sources available from CPAN
+compiled against the latest official
+Apache release; depending on changes made in Apache, you may or may
+not be able to use an earlier Apache binary. However, in the Apache
+Win32 world it is particularly a good idea to use the latest version,
+for bug and security fixes. If you want to try a later development
+version of mod_perl 2, get the F<mod_perl-dev.ppd> ppm package
+instead; the development version may contain bug fixes that were
+found since the last CPAN release, but it may also contain
+experimental features that have not been fully tested.
+
+If you encounter problems loading
+F<mod_perl.so>, ensure that the mod_perl version you are using matches
+that of Apache, make sure you are using at least Apache/2.0.47,
+and also make certain C<Perl> is in your C<PATH> environment
+variable or try adding the Apache directive
+
+  LoadFile "C:/Path/to/your/Perl/bin/perlxx.dll"
+
+before loading F<mod_perl.so>. If all else fails, a reboot may help.
+
+If the I<theoryx5.uwinnipeg.ca> repository is down, you can
+access these packages at 
+L<http://www.apache.org/dyn/closer.cgi/perl/win32-bin/ppms/>,
+for builds 8xx, and
+L<http://www.apache.org/dyn/closer.cgi/perl/win32-bin/ppmpackages/>,
+for builds 6xx.
+
+=head2 All in one packages
+
+There are a number of binary packages for Win32 that contain the
+necessary Perl and Apache binaries:
+
+=over
+
+=item *
+
+IndigoPerl from
+L<http://www.indigostar.com/>, 
+
+=item *
+
+XAMPP for Windows from
+L<http://www.apachefriends.org/en/xampp-windows.html>
+
+=item *
+
+DeveloperSide.NET for Windows at
+L<http://www.devside.net/web/server/free/software>
+
+=item *
+
+zangweb from
+L<http://www.arbingersys.com/hostsites/zangweb/>
+
+=back
+
+As well, at L<http://www.apache.org/dyn/closer.cgi/perl/win32-bin/> 
+there is a package
+F<Perl-5.8-win32-bin.exe> containing a binary version
+of perl-5.8 (compatible with ActivePerl 8xx), together with Apache 2.0
+and mod_perl 2.0. See the file F<Perl-5.8-win32-bin.readme> for
+a description. If you have trouble
+fetching the whole file at once, the directory
+L<http://www.apache.org/dyn/closer.cgi/perl/win32-bin/Perl-5.8-win32-bin/>
+contains this distribution split across multiple files -
+see F<README.join> for instructions on how to join them. Alternatively,
+if you have Perl already, you can get the script
+F<distinstall> which, when invoked as
+C<perl distinstall>, will fetch and join
+the files for you.
+
+=head1 See Also
+
+The directions for L<configuring mod_perl 2.0 on
+Win32|docs::2.0::os::win32::config>, the L<mod_perl
+documentation|docs::index>, L<http://httpd.apache.org/>,
+L<http://www.activestate.com/>, and the
+L<FAQs for mod_perl on Win32|docs::general::os::win32::faq>.  
+Help is also available through the archives of and subscribing to
+the L<mod_perl mailing list|maillist::modperl>.
+
+=head1 Maintainers
+
+Maintainer is the person(s) you should contact with updates,
+corrections and patches.
+
+=over
+
+=item * 
+
+Randy Kobes E<lt>randy@theoryx5.uwinnipeg.caE<gt>
+
+=back
+
+
+=head1 Authors
+
+=over
+
+=item *
+
+Randy Kobes E<lt>randy@theoryx5.uwinnipeg.caE<gt>
+
+=back
+
+Only the major authors are listed above. For contributors see the
+Changes file.
+
+
+=cut
+

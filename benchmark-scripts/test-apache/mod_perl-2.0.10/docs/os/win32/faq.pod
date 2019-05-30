@@ -1,0 +1,54 @@
+=head1 NAME
+
+Frequently asked questions for mod_perl on Win32
+
+=head1 Description
+
+This document discusses some questions that arise often
+with mod_perl 2.0 on Win32.
+
+
+=head1 See Also
+
+The L<FAQs for mod_perl on Win32|docs::general::os::win32::faq>,
+the discussion of 
+L<frequent mod_perl problems|docs::1.0::guide::frequent>,
+the L<troubleshooting index|docs::1.0::guide::troubleshooting>,
+L<debugging mod_perl|docs::1.0::guide::debug>, and
+a L<troubleshooting guide for mod_perl 
+2.0|docs::2.0::user::troubleshooting::troubleshooting>.
+Help is also available through the archives of and subscribing to
+the L<mod_perl mailing list|maillist::modperl>; you will
+probably find the
+L<guide to getting help|docs::1.0::guide::help>
+useful reading beforehand.
+
+=head1 Maintainers
+
+Maintainer is the person(s) you should contact with updates,
+corrections and patches.
+
+=over
+
+=item * 
+
+Randy Kobes E<lt>randy@theoryx5.uwinnipeg.caE<gt>
+
+=back
+
+
+=head1 Authors
+
+=over
+
+=item *
+
+Randy Kobes E<lt>randy@theoryx5.uwinnipeg.caE<gt>
+
+=back
+
+Only the major authors are listed above. For contributors see the
+Changes file.
+
+=cut
+

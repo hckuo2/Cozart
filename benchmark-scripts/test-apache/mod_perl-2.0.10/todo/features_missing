@@ -1,0 +1,118 @@
+########################
+# mp1 missing features #
+########################
+
+### try to get this first post 2.0 release ###
+
+* mp2 test suite opens many files - quite a few failure reports were
+  due to the low shell file limit. But at the moment we can't tell
+  users why this have the problem. Gisle Aas has suggested that we
+  check whether the shell has a big enough setting for this limit and
+  either die explaining the situation or try to manually raise the
+  limit.
+
+    http://thread.gmane.org/gmane.comp.apache.mod-perl/16154
+
+  once implemented this should be ideally abstracted to be usable by
+  Apache-Test, and have a hook so each project can specify its own
+  min files limit, so other projects can benefit too.
+
+* directive handlers are supported but need some work for 1.x compat
+  - Apache::CmdParms::{GETC,getline} needs compat mapping, similar to
+    what Apache::Directive->as_string does, but one char or line at a time
+
+  - Automatic setting of cmd_args in @APACHE_MODULE_DIRECTIVE based on
+    function prototype
+
+* $r->child_terminate:
+  - Apache has no API for this (used to be ap_child_terminate). The
+    current solution is not ideal. Better trying to get ap_child_terminate
+    back in the httpd API.
+  - future ideas for threaded mpms: might consider knocking
+    off the current PerlInterpreter instead.
+
+* tied filehandle interface:
+ -EOF, TELL, SEEK
+ -READLINE - proper implementation (see comment in Apache::compat)
+ need to attempt to fix that interface so it'll work with IPC::Open* family  
+
+* It'd be nice to have PAUSE and the clients support packages with
+  several versions, like mod_perl 1.0 and mod_perl 2.0, since once we
+  release it any dependency on mod_perl will be resolved as mod_perl
+  2.0, when mod_perl 1.0 may be required instead.
+  owner: stas: talked to autrijus, he will start working on it, but
+               not sure when. we need to ping him every so often. but
+               it'll probably won't happen by the time we release 2.0.
+
+### other, less important things ###
+
+* Integrate the new perl feature: PL_use_safe_putenv (starting from
+  perl 5.8.6)
+  http://public.activestate.com/cgi-bin/perlbrowse?patch=23529 this is
+  needed to make it possible mod_php and mod_perl run at the same
+  time. Relevant threads:
+  http://www.gossamer-threads.com/lists/perl/porters/187753
+  http://www.phpbuilder.com/lists/php-install/2003092/0018.php
+
+  at the moment recompiling perl with -DPERL_USE_SAFE_PUTENV may or
+  may not work
+
+* $r->last is missing (it was provided explicitly by modperl, it's not
+  an apache thing) see modperl/src/modules/perl/Apache.xs
+
+* automate generation of xs/tables/current/apr/FunctionTable.pm
+  via Apache::ParseSource. This file contains a subset of
+  functions appearing in ModPerl::FunctionTable that are
+  needed when building APR.so, and is used when generating
+  the def/exp files on Win32/AIX.
+
+* Apache::PerlSections missing features for backwards compatibility:
+ - $Apache::ReadConfig::DocumentRoot
+ - Apache::PerlSections->store(filename)
+
+  Report: Philippe M. Chiasson <gozer@cpan.org>
+  Status: Philippe M. Chiasson <gozer@cpan.org> is working on it
+
+* PerlOpCodeMask (experimental in 1.xx)
+
+* die 404 (consider deprecating it)
+
+* mod_perl::import
+  - Apache->import:
+   required for exit/warn overridding
+  - use mod_perl2 qw(2.0 MethodHandlers Authen Authz [...]);
+   used to be able to specify what optionnal feature were required
+
+* Apache::test: tobe a compat stub around new test framework
+
+* Apache::src: tobe a compat stub around new build framework
+
+* hooks ordering is not implemented yet
+  Owner: geoff
+
+* $r->finfo:
+  need apr_finfo_t <-> struct stat conversion (might already be there,
+  haven't looked close enough yet)
+
+* $r->chdir_file:
+  not safe for threaded environments.  should at least unshift @INC
+  with dirname $r->filename.  consider overriding open() to resolve
+  relative filenames.
+
+* size_string() - can we use apr_strfsize ?
+
+* $r->send_fd:
+  need to figure out howto map PerlIO <-> apr_file_t
+  at the moment $r->send_fd is implement in Apache::compat, functions,
+  but does not have the performance benefits of ap_send_fd()
+  however, $r->sendfile is a new function that opens the file for you
+  and calls ap_send_fd() underneath. ap_send_fd() in APR doesn't work 
+  with fd's which aren't files and of unknown length, therefore it cannot 
+  be used for implementing 1.x compatible send_fd.
+  Solution: send_fd will require the length argument and there will be
+  no send_fd without the length argument as in mp1
+  Owner: stas
+
+* Apache::Debug:
+  Possibly work it differently, but certainly add support for dealing with $^M
+  Report: http://gossamer-threads.com/lists/modperl/modperl/77853

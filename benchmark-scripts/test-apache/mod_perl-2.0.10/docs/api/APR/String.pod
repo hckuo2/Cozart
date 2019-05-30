@@ -1,0 +1,92 @@
+=head1 NAME
+
+APR::String - Perl API for manipulating APR UUIDs
+
+
+
+
+=head1 Synopsis
+
+  use APR::String ();
+  
+  # 42_000 => " 41K",
+  my $size_str = APR::String::format_size($size);
+
+
+
+
+=head1 Description
+
+C<APR::String> provides strings manipulation API.
+
+
+
+
+
+
+
+
+
+
+=head1 API
+
+C<APR::String> provides the following functions and/or methods:
+
+
+
+
+
+
+=head2 C<format_size>
+
+  my $size_str = APR::String::format_size($size);
+
+=over 4
+
+=item arg1: C<$size> ( integer )
+
+=item ret: C<$size_str>
+
+returns a formatted size string representation of a number.  The size
+given in the string will be in units of bytes, kilobytes, or
+megabytes, depending on the size. The length of that string is always
+4 chars long. For example:
+
+    0               => "  0 ",
+    42              => " 42 ",
+    42_000          => " 41K",
+    42_000_000      => " 40M",
+
+=item since: 2.0.00
+
+=back
+
+
+
+
+
+
+
+
+=head1 See Also
+
+L<mod_perl 2.0 documentation|docs::2.0::index>.
+
+
+
+
+=head1 Copyright
+
+mod_perl 2.0 and its core modules are copyrighted under
+The Apache Software License, Version 2.0.
+
+
+
+
+=head1 Authors
+
+L<The mod_perl development team and numerous
+contributors|about::contributors::people>.
+
+=cut
+

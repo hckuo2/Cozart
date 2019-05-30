@@ -1,0 +1,41 @@
+=head1 NAME
+
+ModPerl::PerlRunPrefork - Run unaltered CGI scripts under mod_perl
+
+=head1 Synopsis
+
+  # httpd.conf
+  PerlModule ModPerl::PerlRunPrefork
+  Alias /perl-run/ /home/httpd/perl/
+  <Location /perl-run>
+      SetHandler perl-script
+      PerlResponseHandler ModPerl::PerlRunPrefork
+      PerlOptions +ParseHeaders
+      Options +ExecCGI
+  </Location>
+
+
+=head1 Description
+
+
+
+=head1 Copyright
+
+mod_perl 2.0 and its core modules are copyrighted under
+The Apache Software License, Version 2.0.
+
+
+
+
+=head1 Authors
+
+L<The mod_perl development team and numerous
+contributors|about::contributors::people>.
+
+
+=head1 See Also
+
+C<L<ModPerl::RegistryCooker|docs::2.0::api::ModPerl::RegistryCooker>>
+and C<L<ModPerl::Registry|docs::2.0::api::ModPerl::Registry>>.
+
+=cut

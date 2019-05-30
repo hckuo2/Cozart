@@ -1,0 +1,345 @@
+=head1 NAME
+
+mod_perl Coding Style Guide
+
+=head1 Description
+
+This document explains the coding style used in the core mod_perl
+development and which should be followed by all core developers.
+
+=head1 Coding Style Guide
+
+We try hard to code mod_perl using an identical style. Because
+everyone in the team should be able to read and understand the code as
+quickly and easily as possible. Some will have to adjust their habits
+for the benefit of all.
+
+=over 4
+
+=item * C code
+
+mod_perl's C code follows the Apache style guide:
+http://dev.apache.org/styleguide.html
+
+=item * XS code
+
+C code inside XS modules also follows the Apache style guide.
+
+=item * Perl code
+
+mod_perl's Perl code also follows the Apache style guide, in terms of
+indentation, braces, etc. Style issues not covered by Apache style of
+guide should be looked up in the I<perlstyle> manpage.
+
+=back
+
+Here are the rough guidelines with more stress on the Perl coding
+style.
+
+=over 4
+
+=item Indentation and Tabs
+
+Do use 4 characters indentation.
+
+Do NOT use tabs.
+
+Here is how to setup your editor to do the right thing:
+
+=over
+
+=item * x?emacs: cperl-mode
+
+  .xemacs/custom.el:
+  ------------------
+  (custom-set-variables
+     '(cperl-indent-level 4)
+     '(cperl-continued-statement-offset 4)
+     '(cperl-tab-always-indent t)
+     '(indent-tabs-mode nil)
+  )
+
+=item * vim
+
+  .vimrc:
+  -------
+  set expandtab " replaces any tab keypress with the appropriate number of spaces
+  set tabstop=4 " sets tabs to 4 spaces
+
+=back
+
+
+=item Block Braces
+
+Do use a style similar to K&R style, not the same. The following
+example is the best guide:
+
+Do:
+
+   sub foo {
+       my ($self, $cond, $baz, $taz) = @_;
+  
+       if ($cond) {
+           bar();
+       }
+       else {
+           $self->foo("one", 2, "...");
+       }
+  
+       return $self;
+   }
+
+Don't:
+
+   sub foo
+   {
+       my ($self,$bar,$baz,$taz)=@_;
+       if( $cond )
+       {
+           &bar();
+       } else { $self->foo ("one",2,"..."); }
+       return $self;
+   }
+
+=item Lists and Arrays
+
+Whenever you create a list or an array, always add a comma after the
+last item. The reason for doing this is that it's highly probable that
+new items will be appended to the end of the list in the future. If
+the comma is missing and this isn't noticed, there will be an error.
+
+Do:
+
+  my @list = (
+      "item1",
+      "item2",
+      "item3",
+  );
+
+
+Don't:
+
+  my @list = (
+      "item1",
+      "item2",
+      "item3"
+  );
+
+=item Last Statement in the Block
+
+The same goes for C<;> in the last statement of the block. Almost
+always add it even if it's not required, so when you add a new
+statement you don't have to remember to add C<;> on a previous line.
+
+Do:
+
+  sub foo {
+      statement1;
+      statement2;
+      statement3;
+  }
+
+Don't:
+
+  sub foo {
+      statement1;
+      statement2;
+      statement3
+  }
+
+=back
+
+
+
+=head1 Function and Variable Prefixes Convention
+
+=over 4
+
+=item modperl_
+
+The prefix for mod_perl C API functions.
+
+=item MP_
+
+The prefix for mod_perl C macros.
+
+=item mpxs_
+
+The prefix for mod_perl XS utility functions.
+
+=item mp_xs_
+
+The prefix for mod_perl I<generated> XS utility functions.
+
+=item MPXS_
+
+The prefix for mod_perl XSUBs with an XS() prototype.
+
+=back
+
+
+
+
+
+
+
+=head1 Coding Guidelines
+
+The following are the Perl coding guidelines:
+
+
+=head2 Global Variables
+
+=over 4
+
+=item avoid globals in general
+
+=item avoid $&, $', $`
+
+See C<Devel::SawAmpersand>'s I<README> that explains the evilness.
+Under mod_perl everybody suffers when one is seen anywhere since the
+interpreter is never shutdown.
+
+=back
+
+
+=head2 Modules
+
+=over 4
+
+=item Exporting/Importing
+
+Avoid too much exporting/importing (glob aliases eat up memory)
+
+When you do wish to import from a module try to use an explicit list or
+tag whenever possible, e.g.:
+
+  use POSIX qw(strftime);
+
+When you do not wish to import from a module, always use an empty list
+to avoid any import, e.g.:
+
+  use IO::File ();
+
+(explain how to use Apache2::Status to find imported/exported
+functions)
+
+=back
+
+
+=head2 Methods
+
+=over 4
+
+=item indirect vs direct method calls
+
+Avoid indirect method calls, e.g.
+
+Do:
+
+  CGI::Cookie->new
+
+Don't:
+
+  new CGI::Cookie
+
+=back
+
+
+
+
+=head2 Inheritance
+
+=over 4
+
+=item Avoid inheriting from certain modules
+
+Exporter.
+To avoid inheriting B<AutoLoader::AUTOLOAD>
+
+Do:
+
+  *import = \&Exporter::import;
+
+Don't:
+
+  @MyClass::ISA = qw(Exporter);
+
+=back
+
+
+
+
+
+=head2 Symbol tables
+
+=over 4
+
+=item %main::
+
+stay away from C<main::> to avoid namespace clashes
+
+=back
+
+=head2 Use of $_ in loops
+
+Avoid using C<$_> in loops unless it's a short loop and you don't call
+any subs from within the loop. If the loop started as short and then
+started to grow make sure to remove the use of C<$_>:
+
+Do:
+
+  for my $idx (1..100) {
+      ....more than few lines...
+      foo($idx);
+      ....
+  }
+
+Don't:
+
+   for (1..100) {
+       ....more than a few statements...
+       foo();
+       ....
+   }
+
+Because foo() might change C<$_> if foo()'s author didn't localize C<$_>.
+
+This is OK:
+
+   for (1..100) {
+       .... a few statements with no subs called
+       # do something with $_
+       ....
+   }
+
+
+
+
+
+=head1 Maintainers
+
+Maintainer is the person(s) you should contact with updates,
+corrections and patches.
+
+Stas Bekman [http://stason.org/]
+
+=head1 Authors
+
+=over
+
+=item * 
+
+Doug MacEachernE<lt>dougm (at) covalent.netE<gt>
+
+=item *
+
+Stas Bekman [http://stason.org/]
+
+=back
+
+Only the major authors are listed above. For contributors see the
+Changes file.
+
+=cut
+

@@ -1,0 +1,49 @@
+=head1 NAME
+
+ModPerl::BuildMM -- A "subclass" of ModPerl::MM used for building mod_perl 2.0
+
+=head1 SYNOPSIS
+
+  use ModPerl::BuildMM;
+  
+  # ModPerl::BuildMM takes care of doing all the dirty job of overriding 
+  ModPerl::BuildMM::WriteMakefile(...);
+
+  # if there is a need to extend the methods 
+  sub MY::postamble {
+      my $self = shift;
+  
+      my $string = $self->ModPerl::BuildMM::MY::postamble;
+  
+      $string .= "\nmydist : manifest tardist\n";
+  
+      return $string;
+  }
+
+
+=head1 DESCRIPTION
+
+C<ModPerl::BuildMM> is a "subclass" of C<ModPerl::MM> used for
+building mod_perl 2.0. Refer to
+C<L<ModPerl::MM|docs::2.0::api::ModPerl::MM>> manpage.
+
+=head1 OVERRIDEN METHODS
+
+C<ModPerl::BuildMM> overrides the following methods:
+
+=head2 C<ModPerl::BuildMM::MY::constants>
+
+
+=head2 C<ModPerl::BuildMM::MY::top_targets>
+
+
+=head2 C<ModPerl::BuildMM::MY::postamble>
+
+
+=head2 C<ModPerl::BuildMM::MY::post_initialize>
+
+
+=head2 C<ModPerl::BuildMM::MY::libscan>
+
+
+=cut

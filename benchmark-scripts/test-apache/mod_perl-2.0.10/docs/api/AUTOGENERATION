@@ -1,0 +1,113 @@
+This document explains how the semi-autogeneration of the mod_perl 2.0
+API docs will work and includes the templates that we are going to
+use. There are three stages all residing in four dirs:
+
+  raw_src/
+  raw_src_last/
+  rich_pod/
+  pod/
+
+1) Stage1: The autogenerator generates chunks of API docs conforming
+to the rich_template.pod format under:
+
+  raw_src/
+
+2) Stage2:
+
+- first time the raw_src/ doc is copied over to pod_src and manually
+edited.
+
+- afterwards the stage2 doc is synced with stage1 doc, (currently
+using the diffing approach with the older version of the stage1 doc).
+
+This is the only doc that is ever touched manually. This doc includes
+rich information that makes it easy to parse for datastructures.
+
+At this stage we use use stage2 template.
+
+3) Stage3: The autoconvert converts stage2 doc into the final
+representation POD for user consumption. The stage3 template is used
+here. This stage's doc isn't edited manually.
+
+This is the doc that will be distributed to user
+
+4) Stage2 or Stage3 can be used for converting into other formats
+(xml, html, pdf, etc.).
+
+Stage3 actually falls into the Stage4 category but it's special,
+because the rendered results are required to be distributed with the
+mod_perl source distribution.
+
+
+And the templates are:
+
+*** rich_template.pod ***
+-------------------------
+
+=head2 @func: function()
+
+   ($foo, $bar) = function($a, \@b);
+
+=over
+
+=item @param: $a
+
+is ...
+
+=item @param: @b
+
+is ...
+
+=item @return: $foo
+
+is ...
+
+=item @since: 2.0.1
+
+=back
+
+Description notes
+
+--------------------------
+
+*** pod_template.pod ***
+------------------------
+
+=head2 function()
+
+ ($foo, $bar) = function($a, \@b);
+
+Arguments:
+
+=over
+
+=item $a
+
+is ...
+
+=item @b
+
+is ...
+
+=back
+
+Return values:
+
+=over
+
+=item $foo
+
+is ...
+
+=item $bar
+
+is ...
+
+=back
+
+Since: 2.0.1
+
+Description notes
+
+--------------------------------
+

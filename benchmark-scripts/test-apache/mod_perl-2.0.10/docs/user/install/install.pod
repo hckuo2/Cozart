@@ -1,0 +1,741 @@
+=head1 NAME
+
+Installing mod_perl 2.0
+
+=head1 Description
+
+This chapter provides an in-depth mod_perl 2.0 installation coverage.
+
+
+
+
+
+
+=head1 Prerequisites
+
+Before building mod_perl 2.0 you need to have its prerequisites
+installed. If you don't have them, download and install them first,
+using the information in the following sections. Otherwise proceed
+directly to the mod_perl building instructions.
+
+The mod_perl 2.0 prerequisites are:
+
+=over
+
+=item * Apache
+
+Apache 2.0 is required. mod_perl 2.0 B<does not> work with Apache 1.3.
+
+L<Dynamic|/MP_USE_DSO> (DSO) mod_perl build requires Apache 2.0.47 or
+higher. L<Static|/MP_USE_STATIC> build requires Apache 2.0.51 or
+higher.
+
+=item * Perl
+
+=over
+
+=item Prefork MPM
+
+Requires at least Perl version 5.6.1.
+
+You don't need to have threads-support enabled in Perl. If you do have
+it, it B<must> be I<ithreads> and not I<5005threads>! If you have:
+
+  % perl5.8.0 -V:use5005threads
+  use5005threads='define';
+
+you must rebuild Perl without threads enabled or with
+C<-Dusethreads>. Remember that threads-support slows things down and
+on some platforms it's unstable (e.g., FreeBSD), so don't enable it
+unless you really need it.
+
+=item 64 bit Linux
+
+If while running C<make test> while building mod_perl 2 you get an error like
+this:
+
+  /usr/bin/ld: /usr/local/lib/perl5/5.10.1/x86_64-linux/CORE/libperl.a(op.o): \
+  relocation R_X86_64_32S against `PL_sv_yes' can not be used when making a shared \
+                  object; recompile with -fPIC
+  /usr/local/lib/perl5/5.10.1/x86_64-linux/CORE/libperl.a: could not read symbols: Bad \
+                  value
+
+You're likely on 64 bit Linux and will need to build Perl for that platform.
+You can do so by running Perl's C<Configure> with the C<$CFLAGS> environment
+variable and the C<-A> and C<ccflags> options. So if you normally build Perl
+with:
+
+  % ./Configure -des
+
+You would instead configure with:
+
+  % CFLAGS='-m64 -mtune=nocona' ./Configure -des -A ccflags=-fPIC
+
+=item Threaded MPMs
+
+Require at least Perl version 5.8.0 with ithreads support
+built-in. That means that it should report:
+
+  % perl5.8.0 -V:useithreads -V:usemultiplicity
+  useithreads='define';
+  usemultiplicity='define';
+
+If that's not what you see rebuild Perl with C<-Dusethreads>.
+
+=item Static prefork build
+
+Perl with ithreads support version 5.6.1 or higher
+
+Perl without ithreads support version 5.8.2 or higher
+
+=item Static non-prefork build
+
+Perl with ithreads support version 5.8.0 or higher
+
+=item threads.pm
+
+If you want to run applications that take benefit of Perl's
+I<threads.pm> Perl version 5.8.1 or higher w/ithreads enabled is
+required. Perl 5.8.0's I<threads.pm> doesn't work with mod_perl 2.0.
+
+=back
+
+=item * CPAN Perl Modules
+
+The mod_perl 2.0 test suite has several requirements on its own. If
+you don't satisfy them, the tests depending on these requirements will
+be skipped, which is OK, but you won't get to run these tests and
+potential problems, which may exhibit themselves in your own code,
+could be missed. We don't require them from C<Makefile.PL>, which
+could have been automated the requirements installation, in order to
+have less dependencies to get mod_perl 2.0 installed.
+
+Also if your code uses any of these modules, chances are that you will
+need to use at least the version numbers listed here.
+
+=over
+
+=item CGI.pm 3.11
+
+=item Compress::Zlib 1.09
+
+=back
+
+Though the easiest way to satisfy all the dependencies is to install
+C<Bundle::Apache2> available from CPAN.
+
+=back
+
+
+
+
+
+
+
+=head2 Downloading Stable Release Sources
+
+If you are going to install mod_perl on a production site, you want to
+use the officially released stable components. Since the latest stable
+versions change all the time you should check for the latest stable
+version at the listed below URLs:
+
+=over
+
+=item Perl
+
+Download from: I<http://cpan.org/src/README.html>
+
+This direct link which symlinks to the latest release should work too:
+I<http://cpan.org/src/stable.tar.gz>.
+
+For the purpose of examples in this chapter we will use the package
+named I<perl-5.8.x.tar.gz>, where I<x> should be replaced with the
+real version number.
+
+=item Apache
+
+Download from: I<http://www.apache.org/dist/httpd/>
+
+For the purpose of examples in this chapter we will use the package
+named I<httpd-2.x.xx.tar.gz>, where I<x.xx> should be replaced with
+the real version number.
+
+
+=back
+
+
+
+=head2 Getting Bleeding Edge Sources
+
+If you really know what you are doing you can use the cvs/svn versions
+of the components. Chances are that you don't want to them on a
+production site. You have been warned!
+
+=over
+
+=item Perl
+
+The cutting edge version of Perl (aka bleadperl or bleedperl) is only
+generally available through an rsync repository maintained by
+ActiveState:
+
+  # (--delete to ensure a clean state)
+  % rsync -acvz --delete --force \
+    rsync://public.activestate.com/perl-current/ perl-current
+
+If you are re-building Perl after rsync-ing, make sure to cleanup first:
+
+  % make distclean
+
+before running C<./Configure>.
+
+You'll also want to install (at least) LWP if you want to fully test
+mod_perl. You can install LWP with C<CPAN.pm> shell:
+
+  % perl -MCPAN -e 'install("LWP")'
+
+For more details on bleadperl, see I<http://dev.perl.org/perl5/source.html>.
+
+=item Apache
+
+See L<Development mod_perl 2.0 Source
+Distribution|download::source/Development_mod_perl_2_0_Source_Distribution>.
+
+=back
+
+
+
+=head2 Configuring and Installing Prerequisites
+
+If you don't have the prerequisites installed yet, install them now.
+
+
+
+=head3 Perl
+
+  % cd perl-5.8.x
+  % ./Configure -des
+
+If you L<need the threads
+support|docs::2.0::user::install::install/Prerequisites>, run:
+
+  % ./Configure -des -Dusethreads
+
+Most likely you don't want perl-support for threads enabled, in which
+case pass: C<-Uusethreads> instead of C<-Dusethreads>.
+
+If you want to debug mod_perl segmentation faults, add the
+following I<./Configure> options:
+
+  -Doptimize='-g' -Dusedevel
+
+Now build it:
+
+  % make && make test && make install
+
+
+
+
+=head3 Apache
+
+You need to have Apache built and installed prior to building
+mod_perl, only if you intend build a DSO mod_perl. If you intend to
+build a statically linked Apache+mod_perl, you only need to have the
+Apache source available (mod_perl will build and install Apache for
+you), you should skip this step.
+
+  % cd httpd-2.x.xx
+  % ./configure --prefix=$HOME/httpd/prefork --with-mpm=prefork
+  % make && make install
+
+Starting from 2.0.49, the Apache logging API escapes everything that
+goes to F<error_log>, therefore if you're annoyed by this feature
+during the development phase (as your error messages will be all
+messed up) you can disable the escaping during the Apache build time:
+
+  % CFLAGS="-DAP_UNSAFE_ERROR_LOG_UNESCAPED" ./configure ...
+
+Do B<not> use that CFLAGS in production unless you know what you are
+doing.
+
+
+
+
+=head1 Installing mod_perl from Binary Packages
+
+As of this writing only the binaries for the Win32 platform are
+available, kindly prepared and maintained by Randy Kobes.
+See the documentation on L<Win32 binaries|docs::2.0::os::win32::install>
+for details.
+
+Some RPM packages can be found using rpmfind services, e.g.:
+
+http://www.rpmfind.net/linux/rpm2html/search.php?query=mod_perl&submit=Search+...
+However if you have problems using them, you have to contact those who
+have created them.
+
+
+=head1 Installing mod_perl from Source
+
+Building from source is the best option, because it ensures a binary
+compatibility with Apache and Perl. However it's possible that your
+distribution provides a solid binary mod_perl 2.0 package.
+
+For Win32 specific details, see the documentation on
+L<Win32 installation|docs::2.0::os::win32::install>.
+
+=head2 Downloading the mod_perl Source
+
+First download the mod_perl source.
+
+=over
+
+=item Stable Release
+
+Download from I<http://perl.apache.org/download/> or your favorite
+CPAN mirror.
+
+This direct link which symlinks to the latest release should work too:
+I<http://apache.org/dist/perl/mod_perl-2.0-current.tar.gz>.
+
+For the purpose of examples in this chapter we will use the package
+named I<mod_perl-2.x.x.tar.gz>, where I<x.x> should be replaced with
+the real version number.
+
+Open the package with:
+
+  % tar -xvzf mod_perl-2.x.x.tar.gz
+
+or an equivalent command.
+
+=item Development Version
+
+See L<Development mod_perl 2.0 Source
+Distribution|download::source/Development_mod_perl_2_0_Source_Distribution>.
+
+=back
+
+
+
+=head2 Configuring mod_perl
+
+To build mod_perl, you B<must> also use the same compiler that Perl
+was built with. You can find that out by running C<perl -V> and
+looking at the C<Compiler:> section.
+
+Like any other Perl module, mod_perl is configured via the
+I<Makefile.PL> file, but requires one or more configuration options:
+
+  % cd modperl-2.x.x
+  % perl Makefile.PL <options>
+
+where I<options> is an optional list of key/value pairs.  These
+options can include all the usual options supported by
+C<ExtUtils::MakeMaker> (e.g., C<PREFIX>, C<LIB>, etc.).
+
+The following sections give the details about all the available
+options, but let's mention first an important one.
+
+Configuration options are discussed in L<Build
+Options|/mod_perl_Build_Options>.
+
+
+
+=head3 Dynamic mod_perl
+
+Before you proceed, make sure that Apache 2.0 has been built and
+installed. mod_perl B<cannot> be built before that.
+
+It seems that most users use pre-packaged Apache installation, most of
+which tend to spread the Apache files across many directories
+(i.e. not using --enable-layout=Apache, which puts all the files under
+the same directory). If Apache 2.0 files are spread under different
+directories, you need to use at least the C<L<MP_APXS|/MP_APXS>>
+option, which should be set to a full path to the C<apxs>
+executable. For example:
+
+  % perl Makefile.PL MP_APXS=/path/to/apxs
+
+For example RedHat Linux system installs the C<httpd> binary, the
+C<apxs> and C<apr-config> scripts (the latter two are needed to build
+mod_perl) all in different locations, therefore they configure
+mod_perl 2.0 as:
+
+  % perl Makefile.PL MP_APXS=/path/to/apxs \
+    MP_APR_CONFIG=/another/path/to/apr-config <other options>
+
+However a correctly built Apache shouldn't require the
+C<L<MP_APR_CONFIG|/MP_APR_CONFIG>> option, since
+C<L<MP_APXS|/MP_APXS>> should provide the location of this script.
+
+If however all Apache 2.0 files were installed under the same
+directory, mod_perl 2.0's build only needs to know the path to that
+directory, passed via the C<L<MP_AP_PREFIX|/MP_AP_PREFIX>> option:
+
+  % perl Makefile.PL MP_AP_PREFIX=$HOME/httpd/prefork
+
+=head3 Static mod_perl
+
+Before you proceed make sure that Apache 2.0 has been downloaded and
+extracted. mod_perl B<cannot> be built before that.
+
+If this is an svn checkout and not an official distribution tarball,
+you need to first run:
+
+  % cd httpd-2.0
+  % ./buildconf
+
+To enable statically linking mod_perl into Apache, use the
+C<L<MP_USE_STATIC|/MP_USE_STATIC>> flag like this:
+
+  % perl Makefile.PL MP_USE_STATIC=1 \
+    MP_AP_PREFIX=$HOME/src/httpd-2.x \
+    MP_AP_CONFIGURE="--with-mpm=prefork"
+
+C<L<MP_AP_PREFIX|/MP_AP_PREFIX>> B<must> point to an extracted Apache
+2.0 source tree.
+
+This will configure Apache by passing C<L<MP_AP_CONFIGURE|/MP_AP_CONFIGURE>>
+to Apache's F<./configure> script.
+
+Here is an example:
+
+  % cd ~/src
+  % tar -xvzf perl-5.8.x.tar.gz
+  % cd perl-5.8.x
+  % ./Configure -des
+  % make install
+  % cd ..
+  % tar -xvzf httpd-2.0.xx.tar.gz
+  % tar -xvzf mod_perl-2.x.x.tar.gz 
+  % perl5.8.x Makefile.PL \
+    MP_USE_STATIC=1 \
+    MP_AP_PREFIX="$HOME/src/httpd-2.0.xx" \
+    MP_AP_CONFIGURE="--with-mpm=prefork"
+  % make
+  % make test
+  % make install
+  % ./httpd -l | grep perl
+     mod_perl.c
+
+=head2 mod_perl Build Options
+
+=head3 Boolean Build Options
+
+The following options are boolean and can be set with C<MP_XXX=1> or
+unset with C<MP_XXX=0>, where XXX is the name of the option.
+
+=head4 MP_PROMPT_DEFAULT
+
+Accept default values for all would-be prompts.
+
+=head4 MP_GENERATE_XS
+
+Generate XS code from parsed source headers in I<xs/tables/$httpd_version>.
+Default is 1, set to 0 to disable.
+
+=head4 MP_USE_DSO
+
+Build mod_perl as a DSO (I<mod_perl.so>). This is the default.
+
+=head4 MP_USE_STATIC
+
+Build static mod_perl (I<mod_perl.a>).
+
+=head4 MP_STATIC_EXTS
+
+Build C<Apache2::*.xs> as static extensions.
+
+=head4 MP_USE_GTOP
+
+Link with I<libgtop> and enable I<libgtop> reporting.
+
+=head4 MP_COMPAT_1X
+
+C<MP_COMPAT_1X=1> or a lack of it enables several mod_perl 1.0
+back-compatibility features, which are deprecated in mod_perl
+2.0. It's enabled by default, but can be disabled with
+C<MP_COMPAT_1X=0> during the build process.
+
+When this option is disabled, the following things will happen:
+
+=over
+
+=item *
+
+Deprecated special variable, C<$Apache2::__T> won't be available. Use
+C<${^TAINT}> instead.
+
+=item *
+
+I<$ServerRoot> and I<$ServerRoot/lib/perl> won't be appended to
+C<@INC>. Instead use:
+
+  PerlSwitches -I/path/to/server -I/path/to/server/lib/perl
+
+in I<httpd.conf> or:
+
+  use Apache2::ServerUtil ();
+  use File::Spec::Functions qw(catfile);
+  push @INC, catfile Apache2::ServerUtil::server_root, "";
+  push @INC, catfile Apache2::ServerUtil::server_root, "lib/perl";
+
+in I<startup.pl>.
+
+=item *
+
+The following deprecated configuration directives won't be recognized
+by Apache:
+
+  PerlSendHeader
+  PerlSetupEnv
+  PerlHandler
+  PerlTaintCheck
+  PerlWarn
+
+Use L<their 2.0
+equivalents|docs::2.0::user::porting::compat/Configuration_Files_Porting>
+instead.
+
+=back
+
+
+
+=head4 MP_DEBUG
+
+Turn on debugging (C<-g -lperld>) and tracing.
+
+=head4 MP_MAINTAINER
+
+Enable maintainer compile mode, which sets C<MP_DEBUG=1> and adds the
+following C<gcc> flags:
+
+  -DAP_DEBUG -Wall -Wmissing-prototypes -Wstrict-prototypes \
+  -Wmissing-declarations \
+
+If gcc version 3.3.2+ is found, not compiling on OpenBSD,
+and C<-Wdeclaration-after-statement> is
+not already part of the C<gcc> flags add it.
+
+To use this mode Apache must be build with
+C<--enable-maintainer-mode>.
+
+=head4 MP_TRACE
+
+Enable tracing
+
+
+=head3 Non-Boolean Build Options
+
+set the non-boolean options with MP_XXX=value.
+
+=head4 MP_APXS
+
+Path to C<apxs>. For example if you've installed Apache 2.0 under
+I</home/httpd/httpd-2.0> as DSO, the default location would be
+I</home/httpd/httpd-2.0/bin/apxs>.
+
+=head4 MP_AP_CONFIGURE
+
+The command-line arguments to pass to httpd's configure script.
+
+=head4 MP_AP_PREFIX
+
+Apache installation prefix, under which the I<include/> directory with
+Apache C header files can be found. For example if you've installed
+Apache 2.0 in directory I<\Apache2> on Win32, you should use:
+
+  MP_AP_PREFIX=\Apache2
+
+If Apache is not installed yet, you can point to the Apache 2.0 source
+directory, but only after you've built or configured Apache in it. For
+example:
+
+  MP_AP_PREFIX=/home/stas/apache.org/httpd-2.0
+
+Though in this case C<make test> won't automatically find C<httpd>,
+therefore you should run C<t/TEST> instead and pass the location of
+C<apxs> or C<httpd>, e.g.:
+
+  % t/TEST -apxs /home/stas/httpd/prefork/bin/apxs
+
+or
+
+  % t/TEST -httpd /home/stas/httpd/prefork/bin/httpd
+
+
+
+
+=head4 MP_AP_DESTDIR
+
+This option exists to make the lives of package maintainers easier. If
+you aren't a package manager you should not need to use this option.
+
+Apache installation destination directory.  This path will be prefixed
+to the installation paths for all Apache-specific files during C<make
+install>.  For instance, if Apache modules are normally installed into
+I</path/to/httpd-2.0/modules/> and C<MP_AP_DESTDIR> is set to
+I</tmp/foo>, the I<mod_perl.so> will be installed in:
+
+  /tmp/foo/path/to/httpd-2.0/modules/mod_perl.so
+
+
+
+=head4 MP_APR_CONFIG
+
+If APR wasn't installed under the same file tree as httpd, you may
+need to tell the build process where it can find the executable
+C<apr-config>, which can then be used to figure out where the apr and
+aprutil I<include/> and I<lib/> directories can be found.
+
+=head4 MP_CCOPTS
+
+Add to compiler flags, e.g.:
+
+  MP_CCOPTS=-Werror
+
+(Notice that C<-Werror> will work only with the Perl version 5.7 and
+higher.)
+
+=head4 MP_OPTIONS_FILE
+
+Read build options from given file. e.g.:
+
+  MP_OPTIONS_FILE=~/.my_mod_perl2_opts
+
+=head4 MP_APR_LIB
+
+On Win32, in order to build the APR and APR::* modules so as to
+be independent of mod_perl.so, a static library is first built
+containing the needed functions these modules link into. The option
+
+  MP_APR_LIB=aprext
+
+specifies the name that this library has. The default used
+is C<aprext>. This option has no effect on platforms other than
+Win32, as they use a different mechanism to accomplish the
+decoupling of APR and APR::* from mod_perl.so.
+
+=head3 mod_perl-specific Compiler Options
+
+=head4 -DMP_IOBUFSIZE
+
+Change the default mod_perl's 8K IO buffer size, e.g. to 16K:
+
+  MP_CCOPTS=-DMP_IOBUFSIZE=16384
+
+=head3 mod_perl Options File
+
+Options can also be specified in the file I<makepl_args.mod_perl2> or
+I<.makepl_args.mod_perl2>. The file can be placed under C<$ENV{HOME}>,
+the root of the source package or its parent directory. So if you
+unpack the mod_perl source into I</tmp/mod_perl-2.x/> and your home is
+I</home/foo/>, the file will be searched in:
+
+  /tmp/mod_perl-2.x/makepl_args.mod_perl2
+  /tmp/makepl_args.mod_perl2
+  /home/foo/makepl_args.mod_perl2
+  /tmp/mod_perl-2.x/.makepl_args.mod_perl2
+  /tmp/.makepl_args.mod_perl2
+  /home/foo/.makepl_args.mod_perl2
+
+If the file specified in C<MP_OPTIONS_FILE> is found the
+I<makepl_args.mod_perl2> will be ignored.
+
+Options specified on the command line override those from
+I<makepl_args.mod_perl2> and those from C<MP_OPTIONS_FILE>.
+
+If your terminal supports colored text you may want to set the
+environment variable C<APACHE_TEST_COLOR> to 1 to enable the colored
+tracing which makes it easier to tell the reported errors and
+warnings, from the rest of the notifications.
+
+=head2 Re-using Configure Options
+
+Since mod_perl remembers what build options were used to build it if
+first place, you can use this knowledge to rebuild itself using the
+same options. Simply C<chdir(1)> to the mod_perl source directory and
+run:
+
+  % cd modperl-2.x.
+  % perl -MApache2::Build -e rebuild
+
+
+
+=head2 Compiling mod_perl
+
+Next stage is to build mod_perl:
+
+  % make
+
+
+
+=head2 Testing mod_perl
+
+When mod_perl has been built, it's very important to test that
+everything works on your machine:
+
+  % make test
+
+If something goes wrong with the test phase and want to figure out how
+to run individual tests and pass various options to the test suite,
+see the corresponding sections of L<the bug reporting
+guidelines|docs::2.0::user::help::help/_C_make_test___Failures> or
+the L<Apache::Test
+Framework|docs::general::testing::testing/Running_Tests> tutorial.
+
+=head2 Installing mod_perl
+
+Once the test suite has passed, it's a time to install mod_perl.
+
+  % make install
+
+If you install mod_perl system wide, you probably need to become
+I<root> prior to doing the installation:
+
+  % su
+  # make install
+
+
+
+=head1 If Something Goes Wrong
+
+If something goes wrong during the installation, try to repeat the
+installation process from scratch, while verifying all the steps with
+this document.
+
+If the problem persists L<report the
+problem|docs::2.0::user::help::help/Reporting_Problems>.
+
+=head1 Maintainers
+
+Maintainer is the person(s) you should contact with updates,
+corrections and patches.
+
+=over
+
+=item *
+
+Stas Bekman [http://stason.org/]
+
+=back
+
+=head1 Authors
+
+=over
+
+=item *
+
+Stas Bekman [http://stason.org/]
+
+=item *
+
+Doug MacEachern E<lt>dougm (at) covalent.netE<gt>
+
+=back
+
+Only the major authors are listed above. For contributors see the
+Changes file.
+
+
+=cut

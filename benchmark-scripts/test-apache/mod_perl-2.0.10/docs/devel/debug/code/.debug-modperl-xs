@@ -1,0 +1,65 @@
+# This gdb startup script breaks at the mpxs_Apache__Filter_print()
+# function from the XS code, as an example how you can debug the code
+# in XS extensions.
+#
+# Invoke as:
+# gdb -command=.debug-modperl-xs
+# and then run: 
+# t/TEST -v -run -ping=block filter/api
+#
+# see ADJUST notes for things that may need to be adjusted
+
+# ADJUST: the path to the httpd executable if needed
+file /home/stas/httpd/worker/bin/httpd
+handle SIGPIPE nostop
+handle SIGPIPE pass
+set auto-solib-add 0
+
+define myrun
+    tbreak main
+    break ap_run_pre_config
+    # ADJUST: the httpd.conf file's path if needed
+    # ADJUST: add -DPERL_USEITHREADS to debug threaded mpms
+    run -d `pwd`/t -f `pwd`/t/conf/httpd.conf \
+    -DONE_PROCESS -DNO_DETACH -DAPACHE2
+    continue
+end
+
+define sharedap
+    # ADJUST: uncomment next line to debug threaded mpms
+    #sharedlibrary libpthread
+    sharedlibrary apr
+    sharedlibrary aprutil
+    #sharedlibrary mod_ssl.so
+    continue
+end
+
+define sharedperl
+    sharedlibrary libperl
+end
+
+define gopoll
+    b apr_poll
+    continue
+    continue
+end
+
+define mybp
+    # load Apache/Filter.so
+    sharedlibrary Filter
+    b mpxs_Apache__Filter_print
+    # no longer needed and they just make debugging harder under threads
+    disable 2
+    disable 3
+    continue
+end
+
+myrun
+gopoll
+mybp
+
+# ADJUST: uncomment if you need to step through the code in apr libs
+#sharedap
+
+# ADJUST: uncomment if you need to step through the code in perlib
+#sharedperl

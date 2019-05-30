@@ -1,0 +1,27 @@
+search=".. ../.."
+for dir in $search; do
+    if test -d "`pwd`/$dir/modperl-2.0"; then
+	root="`pwd`/$dir"
+	echo "root=$root"
+    fi
+done
+
+#e.g. symlink to $HOME/perl/perl-current
+#XXX: perl has its own (more robust) TAGS generator: emacs/ptags
+perl_src=$root/perl/
+#XXX: apache has its own: build/MakeEtags
+apache_src=$root/httpd-2.0/
+modperl_src=$root/modperl-2.0/src/
+xs_src=$root/modperl-2.0/xs
+
+cd $root/modperl-2.0
+rm -f src/modules/perl/etag_files
+
+for dir in $apache_src $modperl_src $perl_src $xs_src; do
+    echo $dir
+    find $dir -follow -name '*.[ch]' >> src/modules/perl/etag_files
+done
+
+(cd src/modules/perl && etags `cat etag_files`)
+
+rm -f src/modules/perl/etag_files

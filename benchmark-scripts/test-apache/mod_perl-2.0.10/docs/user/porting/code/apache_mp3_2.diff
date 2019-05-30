@@ -1,0 +1,193 @@
+--- Apache/MP3.pm.2	2003-06-06 15:17:22.000000000 +1000
++++ Apache/MP3.pm	2003-06-06 15:16:21.000000000 +1000
+@@ -55,6 +55,14 @@
+ my $NO  = '^(no|false)$';  # regular expression
+ my $YES = '^(yes|true)$';  # regular expression
+ 
++sub get_config {
++    my $val = shift->r->dir_config(shift);
++    return defined $val ? $val : '';
++}
++
++sub config_yes { shift->get_config(shift) !~ /$YES/oi; }
++sub config_no  { shift->get_config(shift) !~ /$NO/oi; }
++
+ sub handler : method {
+   my $class = shift;
+   my $obj = $class->new(@_) or die "Can't create object: $!";
+@@ -70,7 +78,7 @@
+   my @lang_tags;
+   push @lang_tags,split /,\s+/,$r->header_in('Accept-language') 
+     if $r->header_in('Accept-language');
+-  push @lang_tags,$r->dir_config('DefaultLanguage') || 'en-US';
++  push @lang_tags,$new->get_config('DefaultLanguage') || 'en-US';
+ 
+   $new->{'lh'} ||=
+     Apache::MP3::L10N->get_handle(@lang_tags)
+@@ -343,7 +351,7 @@
+     my $file = $subr->filename;
+     my $type = $subr->content_type;
+     my $data = $self->fetch_info($file,$type);
+-    my $format = $self->r->dir_config('DescriptionFormat');
++    my $format = $self->get_config('DescriptionFormat');
+     if ($format) {
+       $r->print('#EXTINF:' , $data->{seconds} , ',');
+       (my $description = $format) =~ s{%([atfglncrdmsqS%])}
+@@ -1204,7 +1212,7 @@
+ # get fields to display in list of MP3 files
+ sub fields {
+   my $self = shift;
+-  my @f = split /\W+/,$self->r->dir_config('Fields');
++  my @f = split /\W+/,$self->get_config('Fields');
+   return map { lc $_  } @f if @f;          # lower case
+   return qw(title artist duration bitrate); # default
+ }
+@@ -1340,7 +1348,7 @@
+ sub get_dir {
+   my $self = shift;
+   my ($config,$default) = @_;
+-  my $dir = $self->r->dir_config($config) || $default;
++  my $dir = $self->get_config($config) || $default;
+   return $dir if $dir =~ m!^/!;       # looks like a path
+   return $dir if $dir =~ m!^\w+://!;  # looks like a URL
+   return $self->default_dir . '/' . $dir;
+@@ -1348,22 +1356,22 @@
+ 
+ # return true if downloads are allowed from this directory
+ sub download_ok {
+-  shift->r->dir_config('AllowDownload') !~ /$NO/oi;
++  shift->config_no('AllowDownload');
+ }
+ 
+ # return true if streaming is allowed from this directory
+ sub stream_ok {
+-  shift->r->dir_config('AllowStream') !~ /$NO/oi;
++  shift->config_no('AllowStream');
+ }
+ 
+ # return true if playing locally is allowed
+ sub playlocal_ok {
+-  shift->r->dir_config('AllowPlayLocally') =~ /$YES/oi;
++  shift->config_yes('AllowPlayLocally');
+ }
+ 
+ # return true if we should check that the client can accomodate streaming
+ sub check_stream_client {
+-  shift->r->dir_config('CheckStreamClient') =~ /$YES/oi;
++  shift->config_yes('CheckStreamClient');
+ }
+ 
+ # return true if client can stream
+@@ -1378,48 +1386,48 @@
+ 
+ # whether to read info for each MP3 file (might take a long time)
+ sub read_mp3_info {
+-  shift->r->dir_config('ReadMP3Info') !~ /$NO/oi;
++  shift->config_no('ReadMP3Info');
+ }
+ 
+ # whether to time out streams
+ sub stream_timeout {
+-  shift->r->dir_config('StreamTimeout') || 0;
++  shift->get_config('StreamTimeout') || 0;
+ }
+ 
+ # how long an album list is considered so long we should put buttons
+ # at the top as well as the bottom
+-sub file_list_is_long { shift->r->dir_config('LongList') || 10 }
++sub file_list_is_long { shift->get_config('LongList') || 10 }
+ 
+ sub home_label {
+   my $self = shift;
+-  my $home = $self->r->dir_config('HomeLabel') ||
++  my $home = $self->get_config('HomeLabel') ||
+     $self->x('Home');
+   return lc($home) eq 'hostname' ? $self->r->hostname : $home;
+ }
+ 
+ sub path_style {  # style for the path to parent directories
+-  lc(shift->r->dir_config('PathStyle')) || 'staircase';
++  lc(shift->get_config('PathStyle')) || 'staircase';
+ }
+ 
+ # where is our cache directory (if any)
+ sub cache_dir    {
+   my $self = shift;
+-  return unless my $dir  = $self->r->dir_config('CacheDir');
++  return unless my $dir  = $self->get_config('CacheDir');
+   return $self->r->server_root_relative($dir);
+ }
+ 
+ # columns to display
+-sub subdir_columns {shift->r->dir_config('SubdirColumns') || SUBDIRCOLUMNS  }
+-sub playlist_columns {shift->r->dir_config('PlaylistColumns') || PLAYLISTCOLUMNS }
++sub subdir_columns {shift->get_config('SubdirColumns') || SUBDIRCOLUMNS  }
++sub playlist_columns {shift->get_config('PlaylistColumns') || PLAYLISTCOLUMNS }
+ 
+ # various configuration variables
+-sub default_dir   { shift->r->dir_config('BaseDir') || BASE_DIR  }
++sub default_dir   { shift->get_config('BaseDir') || BASE_DIR  }
+ sub stylesheet    { shift->get_dir('Stylesheet', STYLESHEET)     }
+ sub parent_icon   { shift->get_dir('ParentIcon',PARENTICON)      }
+ sub cd_list_icon  {
+   my $self   = shift;
+   my $subdir = shift;
+-  my $image = $self->r->dir_config('CoverImageSmall') || COVERIMAGESMALL;
++  my $image = $self->get_config('CoverImageSmall') || COVERIMAGESMALL;
+   my $directory_specific_icon = $self->r->filename."/$subdir/$image";
+   return -e $directory_specific_icon 
+     ? join ("/",$self->r->uri,escape($subdir),$image)
+@@ -1427,7 +1435,7 @@
+ }
+ sub playlist_icon {
+   my $self = shift; 
+-  my $image = $self->r->dir_config('PlaylistImage') || PLAYLISTIMAGE;
++  my $image = $self->get_config('PlaylistImage') || PLAYLISTIMAGE;
+   my $directory_specific_icon = $self->r->filename."/$image";
+ warn $directory_specific_icon;
+   return -e $directory_specific_icon
+@@ -1444,7 +1452,7 @@
+ sub cd_icon {
+   my $self = shift;
+   my $dir = shift;
+-  my $coverimg = $self->r->dir_config('CoverImage') || COVERIMAGE;
++  my $coverimg = $self->get_config('CoverImage') || COVERIMAGE;
+   if (-e "$dir/$coverimg") {
+     $coverimg;
+   } else {
+@@ -1453,7 +1461,7 @@
+ }
+ sub missing_comment {
+   my $self = shift;
+-  my $missing = $self->r->dir_config('MissingComment');
++  my $missing = $self->get_config('MissingComment');
+   return if $missing eq 'off';
+   $missing = $self->lh->maketext('unknown') unless $missing;
+   $missing;
+@@ -1464,7 +1472,7 @@
+   my $self = shift;
+   my $data = shift;
+   my $description;
+-  my $format = $self->r->dir_config('DescriptionFormat');
++  my $format = $self->get_config('DescriptionFormat');
+   if ($format) {
+     ($description = $format) =~ s{%([atfglncrdmsqS%])}
+       {$1 eq '%' ? '%'
+@@ -1495,7 +1503,7 @@
+     }
+   }
+ 
+-  if ((my $basename = $r->dir_config('StreamBase')) && !$self->is_localnet()) {
++  if ((my $basename = $self->get_config('StreamBase')) && !$self->is_localnet()) {
+     $basename =~ s!http://!http://$auth_info! if $auth_info;
+     return $basename;
+   }
+@@ -1536,7 +1544,7 @@
+ sub is_localnet {
+   my $self = shift;
+   return 1 if $self->is_local;  # d'uh
+-  my @local = split /\s+/,$self->r->dir_config('LocalNet') or return;
++  my @local = split /\s+/,$self->get_config('LocalNet') or return;
+ 
+   my $remote_ip = $self->r->connection->remote_ip . '.';
+   foreach (@local) {

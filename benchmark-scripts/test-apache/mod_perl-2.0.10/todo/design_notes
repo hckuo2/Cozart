@@ -1,0 +1,105 @@
+(dunno where to put it but don't want to lose these design notes, so
+just land them here for now)
+
+
+Filters: direct C api mapping
+--------------------
+
+Apache::register_output_filter($filtername, $callback, $filter_type)
+
+Apache::register_input_filter($filtername, $callback, $filter_type)
+
+    filter_type can be one of:
+      Apache::FTYPE_CONTENT
+      Apache::FTYPE_HTTP_HEADER
+      Apache::FTYPE_TRANSCODE
+      Apache::FTYPE_CONNECTION
+      Apache::FTYPE_NETWORK
+
+$r->add_output_filter($name, $ctx)
+$c->add_output_filter($name, $ctx)
+
+$r->add_input_filter($name, $ctx)
+$c->add_input_filter($name, $ctx)
+
+note: $ctx will default to NULL
+
+Filters: directives
+----------
+
+PerlInputFilterHandler
+
+PerlOutputFilterHandler
+
+each will be the equivalent of:
+
+ap_register_{input,output}_filter($handler_name, $handler, $filter_type)
+
+where:
+ $handler_name is the Perl name, at the moment is "MODPERL_OUTPUT" and
+ "MODPERL_INPUT", would be easy to switch that to the handler name
+
+ $handler is the modperl C callback
+
+ $filter_type defaults to AP_FTYPE_CONTENT, subroutine attributes can
+ be used to specify the filter_types list above
+
+ based on attributes, add_{input,output}_filter may need to happen at
+ different times, e.g. input filters who want to filter headers +
+ content vs. input filters who want to filter only content
+
+alternative to those directives would be:
+
+PerlInputFilter
+
+PerlOutputFilter
+
+combined with:
+
+SetInputFilter
+
+SetOutputFilter
+
+pros: can use Perl{Input,Output}Filter to register the filter in
+      httpd.conf, rather than using the API.  can then call
+      $r->add_{input,output}_filter($filter_name) at request time
+
+cons: in the common case, requires two directives that use the same
+      values (the $handler_name)
+
+ - and/or -
+
+PerlSetInputFilter
+
+PerlSetOutputFilter
+
+as aliases for SetInputFilter, SetOutputFilter which also take care of
+filter registration (which PerlInputFilter, PerlOutputFilter would
+have done)
+
+pros: similar to Set{Input,Output}Filter
+      only need to use one directive
+
+cons: the filter module needs to register the filter in order to add
+      the filter at request time without using a directive
+      however: PerlModule Apache::FooFilter
+      where Apache::FooFilter registers the filter, can provide this
+      functionality without requiring new Perl{Input,Output}Filter
+      directives
+
+ - in any case -
+
+with the C api mapping it should be possible for a PerlModule to
+register the filter(s), then use the standard Set{Input,Output}Filter
+directives and the add_{input,output}_filter api at request time.
+
+note: no need to maintain a list of PerlFilters (like PerlModule,
+PerlRequire) since the directives trigger modperl_handler_new(), just
+like all other Perl*Handlers
+
+Filters: {get,set,push}_handlers
+-----------------------
+would be nice for Perl{Input,Output}FilterHandler to work with the
+modperl {get,set,push}_handlers api just like other Perl*Handlers
+
+

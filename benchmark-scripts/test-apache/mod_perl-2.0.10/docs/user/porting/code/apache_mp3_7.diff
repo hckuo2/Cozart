@@ -1,0 +1,174 @@
+--- Apache/MP3.pm.7	2003-06-06 17:04:27.000000000 +1000
++++ Apache/MP3.pm	2003-06-06 17:13:26.000000000 +1000
+@@ -129,7 +129,7 @@
+   my $self = shift;
+ 
+   $self->r->send_http_header( $self->html_content_type );
+-  return OK if $self->r->header_only;
++  return Apache::OK if $self->r->header_only;
+ 
+   print start_html(
+ 		   -lang => $self->lh->language_tag,
+@@ -246,20 +246,20 @@
+       $self->send_playlist(\@matches);
+     }
+ 
+-    return OK;
++    return Apache::OK;
+   }
+ 
+   # this is called to generate a playlist for selected files
+   if (param('Play Selected')) {
+-    return HTTP_NO_CONTENT unless my @files = param('file');
++    return Apache::HTTP_NO_CONTENT unless my @files = param('file');
+     my $uri = dirname($r->uri);
+     $self->send_playlist([map { "$uri/$_" } @files]);
+-    return OK;
++    return Apache::OK;
+   }
+ 
+   # otherwise don't know how to deal with this
+   $self->r->log_reason('Invalid parameters -- possible attempt to circumvent checks.');
+-  return FORBIDDEN;
++  return Apache::FORBIDDEN;
+ }
+ 
+ # this generates the top-level directory listing
+@@ -273,7 +273,7 @@
+     my $query = $self->r->args;
+     $query = "?" . $query if defined $query;
+     $self->r->header_out(Location => "$uri/$query");
+-    return REDIRECT;
++    return Apache::REDIRECT;
+   }
+ 
+   return $self->list_directory($dir);
+@@ -289,9 +289,9 @@
+ 
+   if ($is_audio && !$self->download_ok) {
+     $self->r->log_reason('File downloading is forbidden');
+-    return FORBIDDEN;
++    return Apache::FORBIDDEN;
+   } else {
+-    return DECLINED;  # allow Apache to do its standard thing
++    return Apache::DECLINED;  # allow Apache to do its standard thing
+   }
+ 
+ }
+@@ -302,17 +302,17 @@
+   my $self = shift;
+   my $r = $self->r;
+ 
+-  return DECLINED unless -e $r->filename;  # should be $r->finfo
++  return Apache::DECLINED unless -e $r->filename;  # should be $r->finfo
+ 
+   unless ($self->stream_ok) {
+     $r->log_reason('AllowStream forbidden');
+-    return FORBIDDEN;
++    return Apache::FORBIDDEN;
+   }
+ 
+   if ($self->check_stream_client and !$self->is_stream_client) {
+     my $useragent = $r->header_in('User-Agent');
+     $r->log_reason("CheckStreamClient is true and $useragent is not a streaming client");
+-    return FORBIDDEN;
++    return Apache::FORBIDDEN;
+   }
+ 
+   return $self->send_stream($r->filename,$r->uri);
+@@ -322,12 +322,12 @@
+ sub send_playlist {
+   my $self = shift;
+   my ($urls,$shuffle) = @_;
+-  return HTTP_NO_CONTENT unless @$urls;
++  return Apache::HTTP_NO_CONTENT unless @$urls;
+   my $r = $self->r;
+   my $base = $self->stream_base;
+ 
+   $r->send_http_header('audio/mpegurl');
+-  return OK if $r->header_only;
++  return Apache::OK if $r->header_only;
+ 
+   # local user
+   my $local = $self->playlocal_ok && $self->is_local;
+@@ -377,7 +377,7 @@
+       $r->print ("$base$_?$stream_parms$CRLF");
+     }
+   }
+-  return OK;
++  return Apache::OK;
+ }
+ 
+ sub stream_parms {
+@@ -468,7 +468,7 @@
+   my $self = shift;
+   my $dir  = shift;
+ 
+-  return DECLINED unless -d $dir;
++  return Apache::DECLINED unless -d $dir;
+ 
+   my $last_modified = (stat(_))[9];
+ 
+@@ -478,15 +478,15 @@
+     my ($time, $ver) = $check =~ /^([a-f0-9]+)-([0-9.]+)$/;
+ 
+     if ($check eq '*' or (hex($time) == $last_modified and $ver == $VERSION)) {
+-      return HTTP_NOT_MODIFIED;
++      return Apache::HTTP_NOT_MODIFIED;
+     }
+   }
+ 
+-  return DECLINED unless my ($directories,$mp3s,$playlists,$txtfiles)
++  return Apache::DECLINED unless my ($directories,$mp3s,$playlists,$txtfiles)
+     = $self->read_directory($dir);
+ 
+   $self->r->send_http_header( $self->html_content_type );
+-  return OK if $self->r->header_only;
++  return Apache::OK if $self->r->header_only;
+ 
+   $self->page_top($dir);
+   $self->directory_top($dir);
+@@ -514,7 +514,7 @@
+   print hr                         unless %$mp3s;
+   print "\n<!-- end main -->\n";
+   $self->directory_bottom($dir);
+-  return OK;
++  return Apache::OK;
+ }
+ 
+ # print the HTML at the top of the page
+@@ -1268,8 +1268,8 @@
+ 
+   my $mime = $r->content_type;
+   my $info = $self->fetch_info($file,$mime);
+-  return DECLINED unless $info;  # not a legit mp3 file?
+-  my $fh = $self->open_file($file) || return DECLINED;
++  return Apache::DECLINED unless $info;  # not a legit mp3 file?
++  my $fh = $self->open_file($file) || return Apache::DECLINED;
+   binmode($fh);  # to prevent DOS text-mode foolishness
+ 
+   my $size = -s $file;
+@@ -1317,7 +1317,7 @@
+   $r->print("Content-Length: $size$CRLF");
+   $r->print("Content-Type: $mime$CRLF");
+   $r->print("$CRLF");
+-  return OK if $r->header_only;
++  return Apache::OK if $r->header_only;
+ 
+   if (my $timeout = $self->stream_timeout) {
+     my $seconds  = $info->{seconds};
+@@ -1330,12 +1330,12 @@
+       $bytes -= $b;
+       $r->print($data);
+     }
+-    return OK;
++    return Apache::OK;
+   }
+ 
+   # we get here for untimed transmits
+   $r->send_fd($fh);
+-  return OK;
++  return Apache::OK;
+ }
+ 
+ # called to open the MP3 file
