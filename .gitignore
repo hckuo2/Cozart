@@ -4,12 +4,12 @@ qemu/
 bin/
 *.tmp
 mnt/
-linux-*
-linux_*
 *.bzImage
 *.vmlinux
 vmlinux
 *.old
 modules
 compiled-kernels/
+kernelbuild
 *.benchresult
+/linux-*
