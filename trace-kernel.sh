@@ -24,6 +24,11 @@ trace-kernel() {
     fi
     rm $rawtrace;
 
+    if [ $(wc -l trace.tmp) -eq 0 ]; then
+        echo "[Error] Trace contains 0 line."
+        exit 1
+    fi
+
     make get-modules
 	echo "Getting module config information..."
     cat modules.tmp | ./module2config.sh >module.config.tmp &
