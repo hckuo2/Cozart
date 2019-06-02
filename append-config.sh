@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-source lib.sh
+source constant.sh
 
 help() {
 	echo "append-config.sh app [apps ...]"
@@ -11,14 +11,14 @@ main() {
 		exit 1
 	fi
     for app in $@; do
-        candidates=$(python3 assign-config-value.py config-db/$distro/vanilla.config \
-            config-db/$distro/$app.config | grep --invert-match '#')
+        candidates=$(python3 assign-config-value.py config-db/$linux/$base/base.config \
+            config-db/$linux/$base/$app.config | grep --invert-match '#')
 
         cnt=0
         while read -r line; do
-            if ! grep --silent "$line" $linuxdir/.config.old; then
+            if ! grep --silent "$line" $linux/.config.old; then
                 (( cnt += 1 ))
-                echo $line | tee --append $linuxdir/.config.old
+                echo $line | tee --append $linux/.config.old
             fi
         done <<< "$candidates"
         printf "New config for %s %d\n" $app $cnt

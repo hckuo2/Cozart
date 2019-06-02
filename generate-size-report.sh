@@ -1,10 +1,10 @@
 #!/bin/bash
-source lib.sh
+source constant.sh
 tmp=$(mktemp)
 printf "%s %s %s %s %s %s %s %s %s %s\n" "type" vmlinux_text vmlinux_data vmlinux_bss vmlinux_dec \
     image_size yes_configs mod_configs total-mod-size loaded-mod-size
 for app in $@; do
-    dir=$workdir/compiled-kernels/$distro/$app/
+    dir=$(kernelbuild)/$linux/$base
     vmlinuz=$dir/vmlinuz*
     config=$dir/config*
     extract-vmlinux $vmlinuz > $tmp

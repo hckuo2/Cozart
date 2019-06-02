@@ -1,5 +1,5 @@
 #!/bin/bash
-source lib.sh
+source constant.sh
 
-addr2line -e ./$1.vmlinux | awk '{print $1}' |
+addr2line -e $kernelbuild/$linux/$base/base/vmlinux | awk '{print $1}' |
     remove-dot-dir | rebase-linuxdir | sort --version-sort | uniq

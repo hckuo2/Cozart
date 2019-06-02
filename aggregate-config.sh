@@ -1,9 +1,9 @@
 #!/bin/bash
 set -e
-source lib.sh
+source constant.sh
 
 help() {
-	echo "aggregate-config.sh distro app [apps ...]"
+	echo "aggregate-config.sh base config [configs ...]"
 }
 main() {
 	if [ "$#" -lt 2 ]; then
@@ -11,22 +11,21 @@ main() {
 		exit 1
 	fi
     tmp=$(mktemp)
-	distro=$1
 	shift
     echo "Tmp config file: $tmp"
-	apps=$@
-	for app in $apps; do
-        echo "Collect config for $app"
-		cat config-db/$distro/$app.config >>$tmp
+	configs=$@
+	for config in $configs; do
+        echo "Collect config for $config"
+		cat $config >>$tmp
 	done
 
     tmp2=$(mktemp)
-    echo "Filter with the $distro vanilla"
+    echo "Filter with the $1"
 	# use the original config to determine the value
-	python3 assign-config-value.py config-db/$distro/vanilla.config $tmp >$tmp2
+	python3 assign-config-value.py $1 $tmp >$tmp2
 
     echo "Merge with allnoconfig"
-    cd $linuxdir
+    cd $linux
     ./scripts/kconfig/merge_config.sh -n $tmp2 &>merge.log
 }
 

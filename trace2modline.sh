@@ -1,14 +1,13 @@
 #!/bin/bash
 
-source lib.sh
-distro=$1
+source constant.sh
 tmp=$(mktemp)
 
 get_module_file() {
-    if ! find $vanillamoddir -type f | grep "/$1.ko" ;
+    if ! find $kernelbuild/$linux/$base/base -type f | grep "/$1.ko" ;
     then
         mod=$(echo $1 | tr "_" "-")
-        find $vanillamoddir -type f | grep "/$mod.ko"
+        find $kernelbuild/$linux/$base/base -type f | grep "/$mod.ko"
     fi
 }
 

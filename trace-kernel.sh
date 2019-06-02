@@ -1,10 +1,8 @@
 #!/bin/bash
-source lib.sh
-
-vanillaconfig="config-db/$distro/vanilla.config"
+source constant.sh
 
 help() {
-    echo "./trace-kernel.sh distro initProgram [local=true]"
+    echo "./trace-kernel.sh linux initProgram [local=true]"
     echo "The third argument is for observe a local view."
 }
 
@@ -13,8 +11,8 @@ trace-kernel() {
     rawtrace=$(mktemp --tmpdir=/tmp cozart-XXXXX)
 	$qemubin -trace exec_tb_block -smp $cores -m $mem -cpu $cpu \
 		-drive file="$workdir/qemu-disk.ext4,if=ide,format=raw" \
-		-kernel $distro.bzImage -nographic -no-reboot \
-		-append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=$2" \
+		-kernel $kernelbuild/$linux/$base/base/vmlinuz* -nographic -no-reboot \
+		-append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=$1" \
         2>$rawtrace
 
     if [ $# -eq 3 ]; then
@@ -28,10 +26,10 @@ trace-kernel() {
 
     make get-modules
 	echo "Getting module config information..."
-    cat modules.tmp | ./module2config.sh $distro >module.config.tmp &
+    cat modules.tmp | ./module2config.sh >module.config.tmp &
 
 	echo "Getting line information..."
-    cat trace.tmp | ./trace2line.sh $distro >lines.tmp &
+    cat trace.tmp | ./trace2line.sh >lines.tmp &
     cat trace.tmp | awk /ffffffffc0/'{print $0}' | sort | ./trace2modline.sh \
         >lines.mod.tmp &
 
@@ -57,7 +55,7 @@ trace-kernel() {
 
 }
 
-if (test $# -ne 2) && (test $# -ne 3); then
+if (test $# -ne 1) && (test $# -ne 2); then
     help
     exit 1
 fi

@@ -1,5 +1,5 @@
 #!/bin/bash
-source lib.sh
+source constant.sh
 
 decompose_app() {
     # this function is a helper for application stacks and has no effect for

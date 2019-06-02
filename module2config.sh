@@ -1,6 +1,5 @@
 #!/bin/bash
-source lib.sh
-distro=$1
+source constant.sh
 tmp=$(mktemp)
 
 get_module_name() {
@@ -8,7 +7,7 @@ get_module_name() {
 }
 
 name2config() {
-    find $linuxdir -type f -name Makefile | xargs grep " $1\.o" \
+    find $linux -type f -name Makefile | xargs grep " $1\.o" \
         | grep --only-matching 'CONFIG_\([A-Z0-9_]\+\)'
 }
 

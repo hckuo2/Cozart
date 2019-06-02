@@ -1,27 +1,22 @@
-mnt=mnt/
-disk=qemu-disk.ext4
-setupfile=bench/native/setup_custom.sh
-kernelversion=cosmic
-distro=ubuntu-cosmic
-linuxdir=linux-$(kernelversion)
-whoami=hckuo2
 .PHONY: rm-disk clean build-db
-nothing:
+echo-env:
+	@echo "linux=$(linux)"
+	@echo "base=$(base)"
 
 remove-makefile-escaped-newlines:
-	find $(linuxdir) -name Makefile | \
+	find $(linux) -name Makefile | \
 		xargs sed -i ':a;N;$!ba;s/\\\n/ /g'
 
 build-db:
-	./directive-extracter.sh $(linuxdir) >directives.db
-	find $(linuxdir) -name Makefile \
+	./directive-extracter.sh $(linux) >directives.db
+	find $(linux) -name Makefile \
 		| xargs awk -f extract-makefile.awk | sort -u -t' ' -k2,2 -k1,1 -r | \
 		awk -f postproc-fndb.awk >filename.db
 
 setup-linux:
-	git clone --depth=1 git://kernel.ubuntu.com/ubuntu/$(distro).git $(linuxdir)
+	git clone --depth=1 git://kernel.ubuntu.com/ubuntu/linux-.git $(linux)
 	make remove-makefile-escaped-newlines
-	cp $(linuxdir)/debian/scripts/retpoline-extract-one $(linuxdir)/scripts/ubuntu-retpoline-extract-one
+	cp $(linux)/debian/scripts/retpoline-extract-one $(linux)/scripts/ubuntu-retpoline-extract-one
 
 setup-qemu:
 	-git clone --depth 1 -b stable-2.12 https://github.com/qemu/qemu.git
@@ -32,17 +27,15 @@ setup-qemu:
 		./configure --enable-trace-backend=log --target-list=x86_64-softmmu && \
 		make -j`nproc`
 
-build-ubuntu-vanilla:
-	mkdir -p vanilla-modules
-	mkdir -p compiled-kernels/$(distro)/vanilla
-	cd $(linuxdir) && \
-		cp ../config-db/$(distro)/vanilla.config .config && \
+build-base:
+	mkdir -p $(kernelbuild)/$(linux)/$(base)/base
+	cd $(linux) && \
+		cp ../config-db/$(linux)/$(base)/base.config .config && \
 		make olddefconfig && \
-		make -j`nproc` LOCALVERSION=-$(distro)-vanilla && \
-		cp vmlinux ../$(distro).vmlinux && \
-		cp arch/x86/boot/bzImage ../$(distro).bzImage && \
-		INSTALL_PATH=../compiled-kernels/$(distro)/vanilla make install && \
-		INSTALL_MOD_PATH=../compiled-kernels/$(distro)/vanilla make modules_install
+		make -j`nproc` LOCALVERSION=-$(linux)-$(base)-base && \
+		cp vmlinux $(kernelbuild)/$(linux)/$(base)/base/vmlinux && \
+		INSTALL_PATH=$(kernelbuild)/$(linux)/$(base)/base make install && \
+		INSTALL_MOD_PATH=$(kernelbuild)/$(linux)/$(base)/base make modules_install
 	make install-kernel-modules
 
 $(mnt):
@@ -60,7 +53,7 @@ rm-disk:
 install-kernel-modules:
 	-sudo umount --recursive $(mnt)
 	sudo mount -o loop $(disk) $(mnt)
-	cd $(linuxdir) && \
+	cd $(linux) && \
 	sudo INSTALL_MOD_PATH=../$(mnt) make modules_install
 	-sudo umount --recursive ./$(mnt)
 
