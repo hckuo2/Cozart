@@ -11,6 +11,7 @@ main() {
 		exit 1
 	fi
     tmp=$(mktemp)
+    baseconfig=$1
 	shift
     echo "Tmp config file: $tmp"
 	configs=$@
@@ -20,9 +21,9 @@ main() {
 	done
 
     tmp2=$(mktemp)
-    echo "Filter with the $1"
+    echo "Filter with the $baseconfig"
 	# use the original config to determine the value
-	python3 assign-config-value.py $1 $tmp >$tmp2
+	python3 assign-config-value.py $baseconfig $tmp >$tmp2
 
     echo "Merge with allnoconfig"
     cd $linux
