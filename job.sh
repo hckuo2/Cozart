@@ -23,17 +23,17 @@ decompose_app() {
 }
 
 locate_config_file() {
-    for $arg in $@; do
+    for arg in $@; do
         printf "config-db/$linux/$base/$arg.config "
     done
 }
 
 aggregate() {
     for app in $@; do
-        echo "Aggregate $linux $base $app"
+        echo "Aggregate $app"
         ./aggregate-config.sh config-db/$linux/$base/base.config \
             $(locate_config_file $(decompose_app $app))
-        cd $linuxdir
+        cd $linux
         make clean
         make -j`nproc` LOCALVERSION=-$linux-$base-$app
         mkdir -p $kernelbuild/$linux/$base/$app
