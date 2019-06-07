@@ -7,22 +7,22 @@ help() {
 }
 
 trace-kernel() {
+    if [ $# -eq 3 ]; then
+        echo "Parsing LOCAL raw trace ..."
+        awkoption="--assign local=true"
+    else
+        echo "Parsing GLOBAL raw trace ..."
+        awkoption=""
+    fi
     make clean
-    rawtrace=$(mktemp --tmpdir=/tmp cozart-XXXXX)
+    # rawtrace=$(mktemp --tmpdir=/tmp cozart-XXXXX)
 	$qemubin -trace exec_tb_block -smp $cores -m $mem -cpu $cpu \
 		-drive file="$workdir/qemu-disk.ext4,if=ide,format=raw" \
 		-kernel $kernelbuild/$linux/$base/base/vmlinuz* -nographic -no-reboot \
 		-append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=$1" \
-        2>$rawtrace
+        3>&1 1>trace-stdout.tmp 2>&3 | awk $awkoption --file extract-trace.awk > unsorted-trace.tmp
 
-    if [ $# -eq 3 ]; then
-        echo "Parsing LOCAL raw trace ..."
-        awk --assign local=true --file extract-trace.awk $rawtrace | sort | uniq >trace.tmp
-    else
-        echo "Parsing GLOBAL raw trace ..."
-        awk --file extract-trace.awk $rawtrace | sort | uniq >trace.tmp
-    fi
-    rm $rawtrace;
+    cat unsorted-trace.tmp | sort >trace.tmp
 
     if [ $(wc -l trace.tmp) -eq 0 ]; then
         echo "[Error] Trace contains 0 line."

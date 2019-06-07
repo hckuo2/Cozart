@@ -18,7 +18,7 @@ export kernelbuild="$workdir/kernelbuild"
 export linux="linux-cosmic"
 # default is the kernel defconfig
 
-export base="default"
+export base="cosmic"
 
 rebase-linuxdir() {
     sed -r "s/.+$linux/$linux/"

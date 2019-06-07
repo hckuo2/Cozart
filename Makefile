@@ -117,4 +117,7 @@ install-unixbench:
 	./copy2disks.sh byte-unixbench
 	rm -rf byte-unixbench
 
+repair-disk:
+	sudo fsck.ext4 -y $(disk)
+
 

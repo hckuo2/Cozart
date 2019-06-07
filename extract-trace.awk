@@ -18,7 +18,7 @@ BEGIN{
         }
 
         # print if it's a kernel address
-        if (pc ~ /ffff/) {
+        if (pc ~ /ffff/ && !a[pc]++) {
             printf("0x%s\n", pc)
         }
     }
