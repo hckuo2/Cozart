@@ -13,6 +13,4 @@ compiled-kernels/
 kernelbuild
 *.benchresult
 /linux-*
-/benchmark-scripts
-!/benchmark-scripts/*.sh
 
