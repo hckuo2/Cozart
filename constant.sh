@@ -15,7 +15,7 @@ export kernelbuild="$workdir/kernelbuild"
 # A base configuration has multiple applications.
 #
 
-export linux="linux-cosmic"
+export linux="linux-4.14"
 # default is the kernel defconfig
 
 export base="cosmic"
