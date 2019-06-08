@@ -18,7 +18,7 @@ export kernelbuild="$workdir/kernelbuild"
 export linux="linux-4.14"
 # default is the kernel defconfig
 
-export base="cosmic"
+export base="firecracker"
 
 rebase-linuxdir() {
     sed -r "s/.+$linux/$linux/"
