@@ -42,7 +42,7 @@ aggregate() {
         cd $workdir
         make install-kernel-modules
     done
-    find $workdir/compiled-kernels -iname "*.old" | xargs rm -f
+    find $kernelbuild -iname "*.old" | xargs rm -f
 }
 
 benchmark() {

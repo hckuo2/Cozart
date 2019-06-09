@@ -31,7 +31,7 @@ build-base:
 	mkdir -p $(kernelbuild)/$(linux)/$(base)/base
 	cd $(linux) && \
 		cp ../config-db/$(linux)/$(base)/base.config .config && \
-		make olddefconfig && \
+		./scripts/kconfig/merge_config.sh -n .config && \
 		make -j`nproc` LOCALVERSION=-$(linux)-$(base)-base && \
 		cp vmlinux $(kernelbuild)/$(linux)/$(base)/base/vmlinux && \
 		INSTALL_PATH=$(kernelbuild)/$(linux)/$(base)/base make install && \

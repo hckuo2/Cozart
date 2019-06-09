@@ -18,7 +18,10 @@ if __name__ == '__main__':
                     print(line)
             else:
                 cols = line.split("=")
-                vanilla[cols[0]] = cols[1]
+                if is_constant(cols[1]):
+                    print(line)
+                else:
+                    vanilla[cols[0]] = cols[1]
 
     with open(sys.argv[2]) as f:
         for line in f:
