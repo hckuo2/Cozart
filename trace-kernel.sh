@@ -16,15 +16,16 @@ trace-kernel() {
     fi
     make clean
     # rawtrace=$(mktemp --tmpdir=/tmp cozart-XXXXX)
-	$qemubin -trace exec_tb_block -smp $cores -m $mem -cpu $cpu \
-		-drive file="$workdir/qemu-disk.ext4,if=ide,format=raw" \
-		-kernel $kernelbuild/$linux/$base/base/vmlinuz* -nographic -no-reboot \
-		-append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=$1" \
+    $qemubin -trace exec_tb_block -smp $cores -m $mem -cpu $cpu \
+        -drive file="$workdir/qemu-disk.ext4,if=ide,format=raw" \
+        -kernel $kernelbuild/$linux/$base/base/vmlinuz* -nographic -no-reboot \
+        -append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=$1" \
         3>&1 1>trace-stdout.tmp 2>&3 | awk $awkoption --file extract-trace.awk > unsorted-trace.tmp
 
     cat unsorted-trace.tmp | sort >trace.tmp
 
-    if [ $(wc -l trace.tmp) -eq 0 ]; then
+    tracecnt=$(wc -l trace.tmp | cut -d' ' -f1)
+    if [ $tracecnt -eq 0 ]; then
         echo "[Error] Trace contains 0 line."
         exit 1
     fi
