@@ -3,11 +3,11 @@ source constant.sh
 tmp=$(mktemp)
 printf "%s %s %s %s %s %s %s %s %s %s\n" "type" vmlinux_text vmlinux_data vmlinux_bss vmlinux_dec \
     image_size yes_configs mod_configs total-mod-size loaded-mod-size
-for app in $@; do
-    dir=$(kernelbuild)/$linux/$base
+for app in "$@"; do
+    dir=$kernelbuild/$linux/$base/$app
     vmlinuz=$dir/vmlinuz*
     config=$dir/config*
-    extract-vmlinux $vmlinuz > $tmp
+    $linux/scripts/extract-vmlinux $vmlinuz > $tmp
     name=$(basename "$(dirname "$dir")")/$(basename "$dir")
     image_size=$(stat -c %s $vmlinuz)
     binary_info=$(size $tmp | sed '1d' | cut -f1,2,3,4 --output-delimiter=" ")
