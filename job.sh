@@ -31,7 +31,11 @@ locate_config_file() {
 aggregate() {
     for app in $@; do
         echo "Aggregate $app"
-        ./aggregate-config.sh config-db/$linux/$base/base.config \
+        ./aggregate-config.sh \
+            config-db/$linux/$base/base.config \
+            config-db/$linux/$base/base-choice.config \
+            config-db/$linux/$base/disable.config \
+            config-db/$linux/$base/boot.config \
             $(locate_config_file $(decompose_app $app))
         cd $linux
         make clean
@@ -42,7 +46,7 @@ aggregate() {
         cd $workdir
         make install-kernel-modules
     done
-    find $workdir/compiled-kernels -iname "*.old" | xargs rm -f
+    find $kernelbuild -iname "*.old" | xargs rm -f
 }
 
 benchmark() {
@@ -50,7 +54,7 @@ benchmark() {
     for app in $@; do
         echo "Benchmark $app on cozarted kernel"
         qemu-system-x86_64 -cpu $cpu -enable-kvm -smp $cores -m $mem \
-            -kernel $kernelbuild/$linux/$base/$app/vmlinuz* \
+            -kernel $kernelbuild/$linux/$base/$app-test/vmlinuz* \
             -drive file="$(pwd)/qemu-disk.ext4",if=ide,format=raw \
             -nographic -no-reboot \
             -append "panic=-1 console=ttyS0 root=/dev/sda rw init=/benchmark-scripts/$app.sh" \
