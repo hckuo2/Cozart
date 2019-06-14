@@ -42,7 +42,7 @@ $(mnt):
 	mkdir -p $(mnt)
 
 $(disk):
-	qemu-img create -f raw $(disk) 60G
+	qemu-img create -f raw $(disk) 20G
 
 clean:
 	rm -rf *.tmp

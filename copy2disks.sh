@@ -1,5 +1,6 @@
-disks=./qemu-disk.ext4
-mnt=./mnt
+#!/bin/bash
+
+source constant.sh
 for disk in $disks; do
 	sudo umount --recursive $mnt
 	sudo mount -o loop $disk $mnt

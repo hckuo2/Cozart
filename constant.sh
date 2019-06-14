@@ -15,10 +15,10 @@ export kernelbuild="$workdir/kernelbuild"
 # A base configuration has multiple applications.
 #
 
-export linux="linux-cosmic"
+export linux="linux-5.1.9"
 # default is the kernel defconfig
 
-export base="cosmic"
+export base="fedora30"
 
 rebase-linuxdir() {
     sed -r "s/.+$linux/$linux/"
