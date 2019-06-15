@@ -42,7 +42,7 @@ $(mnt):
 	mkdir -p $(mnt)
 
 $(disk):
-	qemu-img create -f raw $(disk) 20G
+	dd if=/dev/zero of=$(disk) bs=1 count=0 seek=20G 
 
 clean:
 	rm -rf *.tmp
@@ -62,7 +62,7 @@ debootstrap: $(disk) $(mnt)
 	sudo mkfs.ext4 $(disk)
 	sudo mount -o loop $(disk) $(mnt)
 	sudo debootstrap --components=main,universe \
-		--include="build-essential vim kmod net-tools apache2 apache2-utils haveged cgroupfs-mount linux-tools-generic iptables libltdl7 redis-server redis-tools nginx mysql-server sysbench php memcached" \
+		--include="build-essential vim kmod net-tools apache2 apache2-utils haveged cgroupfs-mount iptables libltdl7 redis-server redis-tools nginx sysbench php memcached" \
 		--arch=amd64 cosmic $(mnt) http://archive.ubuntu.com/ubuntu
 	sudo umount --recursive $(mnt)
 	make install-docker install-mark sync-scripts
