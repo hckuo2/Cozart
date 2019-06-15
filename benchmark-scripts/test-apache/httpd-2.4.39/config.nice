@@ -1,8 +1,0 @@
-#! /bin/sh
-#
-# Created by configure
-
-"./configure" \
-"--prefix=/home/hckuo2/test-apache/httpd-2.4.39/httpd-build" \
-"--with-mpm=prefork" \
-"$@"
