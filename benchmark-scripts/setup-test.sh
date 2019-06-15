@@ -39,7 +39,7 @@ php() {
 
 memcached() {
     cd $DIR
-    apt install -y wget unzip autotools
+    apt install -y wget unzip autotools-dev automake libevent-dev
     rm -rf $DIR/memcached-src
     wget --no-clobber https://github.com/memcached/memcached/archive/1.5.16.zip
     unzip 1.5.16.zip
