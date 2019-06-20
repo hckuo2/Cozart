@@ -22,12 +22,6 @@ decompose_app() {
     echo $1 | tr '+' ' '
 }
 
-locate_config_file() {
-    for arg in $@; do
-        printf "config-db/$linux/$base/$arg.config "
-    done
-}
-
 aggregate() {
     for app in $@; do
         echo "Aggregate $app"

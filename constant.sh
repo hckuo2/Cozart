@@ -15,10 +15,10 @@ export kernelbuild="$workdir/kernelbuild"
 # A base configuration has multiple applications.
 #
 
-export linux="linux-5.1.9"
+export linux="linux-cosmic"
 # default is the kernel defconfig
 
-export base="fedora30"
+export base="cosmic"
 
 rebase-linuxdir() {
     sed -r "s/.+$linux/$linux/"
@@ -26,5 +26,11 @@ rebase-linuxdir() {
 
 remove-dot-dir() {
     sed 's/\/\.\//\//'
+}
+
+locate_config_file() {
+    for arg in $@; do
+        printf "config-db/$linux/$base/$arg.config "
+    done
 }
 
