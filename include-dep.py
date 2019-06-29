@@ -2,9 +2,6 @@
 import kconfiglib
 import os
 import sys
-os.environ['srctree'] = "linux-cosmic"
-os.environ['SRCARCH'] = "x86"
-os.environ['ARCH'] = "x86"
 kconf = kconfiglib.Kconfig()
 
 

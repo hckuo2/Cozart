@@ -10,6 +10,11 @@ export mem="8G"
 export whoami=$(whoami)
 export kernelbuild="$workdir/kernelbuild"
 
+# for python pkg kconfiglib
+export srctree="linux-cosmic"
+export SRCARCH="x86"
+export ARCH="x86"
+
 # Cozart constants
 # A Linux version has multiple base configurations.
 # A base configuration has multiple applications.
