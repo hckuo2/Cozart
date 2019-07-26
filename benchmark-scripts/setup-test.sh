@@ -50,3 +50,12 @@ memcached() {
     make -j`nproc`
     cd $DIR
 }
+
+redis() {
+    cd $DIR
+    wget --no-clobber https://github.com/antirez/redis/archive/4.0.zip
+    unzip 4.0.zip
+    mv redis-4.0 redis-src
+    cd $DIR/redis-src
+    make -j8
+}
