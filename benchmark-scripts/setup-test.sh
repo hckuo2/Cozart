@@ -59,3 +59,12 @@ redis() {
     cd $DIR/redis-src
     make -j8
 }
+
+setup_nginx() {
+    cd $DIR
+    wget --no-clobber https://github.com/nginx/nginx-tests/archive/master.zip
+    unzip master.zip
+    mv nginx-tests-master nginx-tests
+    cd $DIR/nginx-tests
+    make -j8
+}
