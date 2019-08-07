@@ -22,7 +22,7 @@ decompose_app() {
     echo $1 | tr '+' ' '
 }
 
-aggregate() {
+compose() {
     for app in $@; do
         echo "Aggregate $app"
         ./aggregate-config.sh \
@@ -39,6 +39,22 @@ aggregate() {
         INSTALL_MOD_PATH=$kernelbuild/$linux/$base/$app make modules_install
         cd $workdir
         make install-kernel-modules
+    done
+    find $kernelbuild -iname "*.old" | xargs rm -f
+}
+
+compose-fc() {
+    for app in $@; do
+        echo "Aggregate $app"
+        ./aggregate-config.sh \
+            config-db/hypervisors/fc.config \
+            $(locate_config_file $(decompose_app $app))
+        cd $linux
+        make clean
+        make -j`nproc` LOCALVERSION=-fc-$app
+        mkdir -p $kernelbuild/fc/$app
+        INSTALL_PATH=$kernelbuild/fc/$app make install
+        cd $workdir
     done
     find $kernelbuild -iname "*.old" | xargs rm -f
 }
