@@ -7,7 +7,7 @@ help() {
 }
 
 trace-kernel() {
-    if [ $# -eq 3 ]; then
+    if [ $# -eq 2 ]; then
         echo "Parsing LOCAL raw trace ..."
         awkoption="--assign local=true"
     else

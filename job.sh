@@ -4,12 +4,13 @@ source constant.sh
 
 trace() {
     make toggle-trace-mode
-    for app in $@; do echo "Tracing $app"
+    for app in $@; do
+        echo "Tracing $app"
         make clean
         if [[ $app == "boot" ]]; then
             ./trace-kernel.sh /benchmark-scripts/$app.sh;
         else
-            ./trace-kernel.sh /benchmark-scripts/$app.sh true;
+            ./trace-kernel.sh /benchmark-scripts/$app.sh local;
         fi
         mkdir -p config-db/$linux/$base
         cp final.config.tmp config-db/$linux/$base/$app.config
