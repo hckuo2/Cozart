@@ -20,10 +20,13 @@ if __name__ == '__main__':
                 cols = line.split("=")
                 vanilla[cols[0]] = cols[1]
 
-    with open(sys.argv[2]) as f:
-        for line in f:
-            conf = line.strip()
-            if line[0] == "#":
-                continue
-            if conf in vanilla:
-                print(conf + "=" + vanilla[conf])
+    if len(sys.argv) == 3:
+        f = open(sys.argv[2])
+    else:
+        f = sys.stdin
+    for line in f:
+        conf = line.strip()
+        if line[0] == "#":
+            continue
+        if conf in vanilla:
+            print(conf + "=" + vanilla[conf])
