@@ -48,17 +48,16 @@ compose-fc() {
         appconfig=$(mktemp)
         trap "rm $appconfig" EXIT
         cat $workdir/config-db/$linux/$base/$app.config \
-            | ./classify_config.py | grep sw | cut -d' ' -f1 \
-            | awk '{print $0"=y"}' > $appconfig
+            | ./appconfiglet_filter.sh > $appconfig
         cd $linux
-        rm .config
-        ./scripts/kconfig/merge_config.sh \
+        make -j`nproc` mrproper
+        ./scripts/kconfig/merge_config.sh -n \
             $workdir/config-db/hypervisors/fc.config $appconfig
-        make -j`nproc` clean
         make -j`nproc` LOCALVERSION=-fc-$app
         mkdir -p $kernelbuild/fc/$app
         cp vmlinux $kernelbuild/fc/$app
         INSTALL_PATH=$kernelbuild/fc/$app make install
+        INSTALL_MOD_PATH=$kernelbuild/fc/$app make modules_install
         cd $workdir
     done
     find $kernelbuild -iname "*.old" | xargs rm -f
