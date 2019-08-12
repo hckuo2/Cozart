@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 source constant.sh
 
 trace() {
@@ -46,14 +45,19 @@ compose() {
 
 compose-fc() {
     for app in $@; do
-        echo "Aggregate $app"
-        ./aggregate-config.sh \
-            config-db/hypervisors/fc.config \
-            $(locate_config_file $(decompose_app $app))
+        appconfig=$(mktemp)
+        trap "rm $appconfig" EXIT
+        cat $workdir/config-db/$linux/$base/$app.config \
+            | ./classify_config.py | grep sw | cut -d' ' -f1 \
+            | awk '{print $0"=y"}' > $appconfig
         cd $linux
-        make clean
+        rm .config
+        ./scripts/kconfig/merge_config.sh \
+            $workdir/config-db/hypervisors/fc.config $appconfig
+        make -j`nproc` clean
         make -j`nproc` LOCALVERSION=-fc-$app
         mkdir -p $kernelbuild/fc/$app
+        cp vmlinux $kernelbuild/fc/$app
         INSTALL_PATH=$kernelbuild/fc/$app make install
         cd $workdir
     done
