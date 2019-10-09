@@ -1,4 +1,6 @@
-source constants.sh
+#!/bin/bash
+source constant.sh
+
 KERNEL=$1
 $qemubin -smp $cores -m $mem -cpu $cpu -enable-kvm \
 	-drive file="$workdir/qemu-disk.ext4,if=ide,format=raw" \
