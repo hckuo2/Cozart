@@ -1,6 +1,6 @@
 #!/bin/bash
-itr=20
-reqcnt=10000
+itr=1
+reqcnt=500
 
 source benchmark-scripts/general-helper.sh
 bootstrap;

@@ -1,7 +1,6 @@
 #!/bin/bash
 source benchmark-scripts/general-helper.sh
 bootstrap;
-enable_swap
 mark_start;
 mkdir -p /home/hckuo2/mysqltest
 chmod 777 -R /home/hckuo2/mysqltest
