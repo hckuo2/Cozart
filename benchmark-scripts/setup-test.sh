@@ -3,7 +3,7 @@ source /benchmark-scripts/general-helper.sh
 bootstrap
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-apache() {
+setuptest_apache() {
     apt install -y wget libapr1-dev libaprutil1-dev libpcre3-dev libperl-dev bison libtool libwww-perl
     rm -rf $DIR/test-apache
     mkdir -p $DIR/test-apache
@@ -23,7 +23,7 @@ apache() {
     cd $DIR
 }
 
-php() {
+setuptest_php() {
     cd $DIR
     apt install -y wget pkg-config libxml2-dev unzip libsqlite3-dev
     rm -rf $DIR/php-src
@@ -37,7 +37,7 @@ php() {
     cd $DIR
 }
 
-memcached() {
+setuptest_memcached() {
     cd $DIR
     apt install -y wget unzip autotools-dev automake libevent-dev
     rm -rf $DIR/memcached-src
@@ -51,7 +51,7 @@ memcached() {
     cd $DIR
 }
 
-redis() {
+setuptest_redis() {
     cd $DIR
     wget --no-clobber https://github.com/antirez/redis/archive/4.0.zip
     unzip 4.0.zip
@@ -60,7 +60,7 @@ redis() {
     make -j8
 }
 
-setup_nginx() {
+setuptest_nginx() {
     cd $DIR
     wget --no-clobber https://github.com/nginx/nginx-tests/archive/master.zip
     unzip master.zip
