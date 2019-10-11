@@ -1,0 +1,726 @@
+        -:    0:Source:stats.c
+        -:    0:Programs:54
+        -:    0:Source is newer than graph
+        -:    1:/* -*- Mode: C; tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*- */
+        -:    2:/*
+        -:    3: * Detailed statistics management. For simple stats like total number of
+        -:    4: * "get" requests, we use inline code in memcached.c and friends, but when
+        -:    5: * stats detail mode is activated, the code here records more information.
+        -:    6: *
+        -:    7: * Author:
+        -:    8: *   Steven Grimm <sgrimm@facebook.com>
+        -:    9: */
+        -:   10:#include "memcached.h"
+        -:   11:#include <stdio.h>
+        -:   12:#include <stdlib.h>
+        -:   13:#include <string.h>
+        -:   14:#include <assert.h>
+        -:   15:
+        -:   16:/*
+        -:   17: * Stats are tracked on the basis of key prefixes. This is a simple
+        -:   18: * fixed-size hash of prefixes; we run the prefixes through the same
+        -:   19: * CRC function used by the cache hashtable.
+        -:   20: */
+        -:   21:typedef struct _prefix_stats PREFIX_STATS;
+        -:   22:struct _prefix_stats {
+        -:   23:    char         *prefix;
+        -:   24:    size_t        prefix_len;
+        -:   25:    uint64_t      num_gets;
+        -:   26:    uint64_t      num_sets;
+        -:   27:    uint64_t      num_deletes;
+        -:   28:    uint64_t      num_hits;
+        -:   29:    PREFIX_STATS *next;
+        -:   30:};
+        -:   31:
+        -:   32:#define PREFIX_HASH_SIZE 256
+        -:   33:
+        -:   34:static PREFIX_STATS *prefix_stats[PREFIX_HASH_SIZE];
+        -:   35:static int num_prefixes = 0;
+        -:   36:static int total_prefix_size = 0;
+        -:   37:
+      285:   38:void stats_prefix_init() {
+      570:   39:    memset(prefix_stats, 0, sizeof(prefix_stats));
+      285:   40:}
+------------------
+stats_prefix_init:
+       95:   38:void stats_prefix_init() {
+      190:   39:    memset(prefix_stats, 0, sizeof(prefix_stats));
+       95:   40:}
+------------------
+stats_prefix_init:
+       95:   38:void stats_prefix_init() {
+      190:   39:    memset(prefix_stats, 0, sizeof(prefix_stats));
+       95:   40:}
+------------------
+stats_prefix_init:
+       95:   38:void stats_prefix_init() {
+      190:   39:    memset(prefix_stats, 0, sizeof(prefix_stats));
+       95:   40:}
+------------------
+        -:   41:
+        -:   42:/*
+        -:   43: * Cleans up all our previously collected stats. NOTE: the stats lock is
+        -:   44: * assumed to be held when this is called.
+        -:   45: */
+        9:   46:void stats_prefix_clear() {
+        9:   47:    int i;
+        -:   48:
+     2313:   49:    for (i = 0; i < PREFIX_HASH_SIZE; i++) {
+     2304:   50:        PREFIX_STATS *cur, *next;
+     2307:   51:        for (cur = prefix_stats[i]; cur != NULL; cur = next) {
+        3:   52:            next = cur->next;
+        3:   53:            free(cur->prefix);
+        3:   54:            free(cur);
+        -:   55:        }
+     2304:   56:        prefix_stats[i] = NULL;
+        -:   57:    }
+        9:   58:    num_prefixes = 0;
+        9:   59:    total_prefix_size = 0;
+        9:   60:}
+------------------
+stats_prefix_clear:
+        3:   46:void stats_prefix_clear() {
+        3:   47:    int i;
+        -:   48:
+      771:   49:    for (i = 0; i < PREFIX_HASH_SIZE; i++) {
+      768:   50:        PREFIX_STATS *cur, *next;
+      769:   51:        for (cur = prefix_stats[i]; cur != NULL; cur = next) {
+        1:   52:            next = cur->next;
+        1:   53:            free(cur->prefix);
+        1:   54:            free(cur);
+        -:   55:        }
+      768:   56:        prefix_stats[i] = NULL;
+        -:   57:    }
+        3:   58:    num_prefixes = 0;
+        3:   59:    total_prefix_size = 0;
+        3:   60:}
+------------------
+stats_prefix_clear:
+        3:   46:void stats_prefix_clear() {
+        3:   47:    int i;
+        -:   48:
+      771:   49:    for (i = 0; i < PREFIX_HASH_SIZE; i++) {
+      768:   50:        PREFIX_STATS *cur, *next;
+      769:   51:        for (cur = prefix_stats[i]; cur != NULL; cur = next) {
+        1:   52:            next = cur->next;
+        1:   53:            free(cur->prefix);
+        1:   54:            free(cur);
+        -:   55:        }
+      768:   56:        prefix_stats[i] = NULL;
+        -:   57:    }
+        3:   58:    num_prefixes = 0;
+        3:   59:    total_prefix_size = 0;
+        3:   60:}
+------------------
+stats_prefix_clear:
+        3:   46:void stats_prefix_clear() {
+        3:   47:    int i;
+        -:   48:
+      771:   49:    for (i = 0; i < PREFIX_HASH_SIZE; i++) {
+      768:   50:        PREFIX_STATS *cur, *next;
+      769:   51:        for (cur = prefix_stats[i]; cur != NULL; cur = next) {
+        1:   52:            next = cur->next;
+        1:   53:            free(cur->prefix);
+        1:   54:            free(cur);
+        -:   55:        }
+      768:   56:        prefix_stats[i] = NULL;
+        -:   57:    }
+        3:   58:    num_prefixes = 0;
+        3:   59:    total_prefix_size = 0;
+        3:   60:}
+------------------
+        -:   61:
+        -:   62:/*
+        -:   63: * Returns the stats structure for a prefix, creating it if it's not already
+        -:   64: * in the list.
+        -:   65: */
+        -:   66:/*@null@*/
+    61659:   67:static PREFIX_STATS *stats_prefix_find(const char *key, const size_t nkey) {
+    61659:   68:    PREFIX_STATS *pfs;
+    61659:   69:    uint32_t hashval;
+    61659:   70:    size_t length;
+    61659:   71:    bool bailout = true;
+        -:   72:
+   61659*:   73:    assert(key != NULL);
+        -:   74:
+   981288:   75:    for (length = 0; length < nkey && key[length] != '\0'; length++) {
+   919644:   76:        if (key[length] == settings.prefix_delimiter) {
+        -:   77:            bailout = false;
+        -:   78:            break;
+        -:   79:        }
+        -:   80:    }
+        -:   81:
+    61659:   82:    if (bailout) {
+        -:   83:        return NULL;
+        -:   84:    }
+        -:   85:
+       15:   86:    hashval = hash(key, length) % PREFIX_HASH_SIZE;
+        -:   87:
+      15*:   88:    for (pfs = prefix_stats[hashval]; NULL != pfs; pfs = pfs->next) {
+        9:   89:        if (strncmp(pfs->prefix, key, length) == 0)
+        9:   90:            return pfs;
+        -:   91:    }
+        -:   92:
+        6:   93:    pfs = calloc(sizeof(PREFIX_STATS), 1);
+        6:   94:    if (NULL == pfs) {
+    #####:   95:        perror("Can't allocate space for stats structure: calloc");
+    #####:   96:        return NULL;
+        -:   97:    }
+        -:   98:
+        6:   99:    pfs->prefix = malloc(length + 1);
+        6:  100:    if (NULL == pfs->prefix) {
+    #####:  101:        perror("Can't allocate space for copy of prefix: malloc");
+    #####:  102:        free(pfs);
+    #####:  103:        return NULL;
+        -:  104:    }
+        -:  105:
+       12:  106:    strncpy(pfs->prefix, key, length);
+        6:  107:    pfs->prefix[length] = '\0';      /* because strncpy() sucks */
+        6:  108:    pfs->prefix_len = length;
+        -:  109:
+        6:  110:    pfs->next = prefix_stats[hashval];
+        6:  111:    prefix_stats[hashval] = pfs;
+        -:  112:
+        6:  113:    num_prefixes++;
+        6:  114:    total_prefix_size += length;
+        -:  115:
+        6:  116:    return pfs;
+        -:  117:}
+------------------
+stats_prefix_find:
+    20553:   67:static PREFIX_STATS *stats_prefix_find(const char *key, const size_t nkey) {
+    20553:   68:    PREFIX_STATS *pfs;
+    20553:   69:    uint32_t hashval;
+    20553:   70:    size_t length;
+    20553:   71:    bool bailout = true;
+        -:   72:
+   20553*:   73:    assert(key != NULL);
+        -:   74:
+   327096:   75:    for (length = 0; length < nkey && key[length] != '\0'; length++) {
+   306548:   76:        if (key[length] == settings.prefix_delimiter) {
+        -:   77:            bailout = false;
+        -:   78:            break;
+        -:   79:        }
+        -:   80:    }
+        -:   81:
+    20553:   82:    if (bailout) {
+        -:   83:        return NULL;
+        -:   84:    }
+        -:   85:
+        5:   86:    hashval = hash(key, length) % PREFIX_HASH_SIZE;
+        -:   87:
+       5*:   88:    for (pfs = prefix_stats[hashval]; NULL != pfs; pfs = pfs->next) {
+        3:   89:        if (strncmp(pfs->prefix, key, length) == 0)
+        3:   90:            return pfs;
+        -:   91:    }
+        -:   92:
+        2:   93:    pfs = calloc(sizeof(PREFIX_STATS), 1);
+        2:   94:    if (NULL == pfs) {
+    #####:   95:        perror("Can't allocate space for stats structure: calloc");
+    #####:   96:        return NULL;
+        -:   97:    }
+        -:   98:
+        2:   99:    pfs->prefix = malloc(length + 1);
+        2:  100:    if (NULL == pfs->prefix) {
+    #####:  101:        perror("Can't allocate space for copy of prefix: malloc");
+    #####:  102:        free(pfs);
+    #####:  103:        return NULL;
+        -:  104:    }
+        -:  105:
+        4:  106:    strncpy(pfs->prefix, key, length);
+        2:  107:    pfs->prefix[length] = '\0';      /* because strncpy() sucks */
+        2:  108:    pfs->prefix_len = length;
+        -:  109:
+        2:  110:    pfs->next = prefix_stats[hashval];
+        2:  111:    prefix_stats[hashval] = pfs;
+        -:  112:
+        2:  113:    num_prefixes++;
+        2:  114:    total_prefix_size += length;
+        -:  115:
+        2:  116:    return pfs;
+        -:  117:}
+------------------
+stats_prefix_find:
+    20553:   67:static PREFIX_STATS *stats_prefix_find(const char *key, const size_t nkey) {
+    20553:   68:    PREFIX_STATS *pfs;
+    20553:   69:    uint32_t hashval;
+    20553:   70:    size_t length;
+    20553:   71:    bool bailout = true;
+        -:   72:
+   20553*:   73:    assert(key != NULL);
+        -:   74:
+   327096:   75:    for (length = 0; length < nkey && key[length] != '\0'; length++) {
+   306548:   76:        if (key[length] == settings.prefix_delimiter) {
+        -:   77:            bailout = false;
+        -:   78:            break;
+        -:   79:        }
+        -:   80:    }
+        -:   81:
+    20553:   82:    if (bailout) {
+        -:   83:        return NULL;
+        -:   84:    }
+        -:   85:
+        5:   86:    hashval = hash(key, length) % PREFIX_HASH_SIZE;
+        -:   87:
+       5*:   88:    for (pfs = prefix_stats[hashval]; NULL != pfs; pfs = pfs->next) {
+        3:   89:        if (strncmp(pfs->prefix, key, length) == 0)
+        3:   90:            return pfs;
+        -:   91:    }
+        -:   92:
+        2:   93:    pfs = calloc(sizeof(PREFIX_STATS), 1);
+        2:   94:    if (NULL == pfs) {
+    #####:   95:        perror("Can't allocate space for stats structure: calloc");
+    #####:   96:        return NULL;
+        -:   97:    }
+        -:   98:
+        2:   99:    pfs->prefix = malloc(length + 1);
+        2:  100:    if (NULL == pfs->prefix) {
+    #####:  101:        perror("Can't allocate space for copy of prefix: malloc");
+    #####:  102:        free(pfs);
+    #####:  103:        return NULL;
+        -:  104:    }
+        -:  105:
+        4:  106:    strncpy(pfs->prefix, key, length);
+        2:  107:    pfs->prefix[length] = '\0';      /* because strncpy() sucks */
+        2:  108:    pfs->prefix_len = length;
+        -:  109:
+        2:  110:    pfs->next = prefix_stats[hashval];
+        2:  111:    prefix_stats[hashval] = pfs;
+        -:  112:
+        2:  113:    num_prefixes++;
+        2:  114:    total_prefix_size += length;
+        -:  115:
+        2:  116:    return pfs;
+        -:  117:}
+------------------
+stats_prefix_find:
+    20553:   67:static PREFIX_STATS *stats_prefix_find(const char *key, const size_t nkey) {
+    20553:   68:    PREFIX_STATS *pfs;
+    20553:   69:    uint32_t hashval;
+    20553:   70:    size_t length;
+    20553:   71:    bool bailout = true;
+        -:   72:
+   20553*:   73:    assert(key != NULL);
+        -:   74:
+   327096:   75:    for (length = 0; length < nkey && key[length] != '\0'; length++) {
+   306548:   76:        if (key[length] == settings.prefix_delimiter) {
+        -:   77:            bailout = false;
+        -:   78:            break;
+        -:   79:        }
+        -:   80:    }
+        -:   81:
+    20553:   82:    if (bailout) {
+        -:   83:        return NULL;
+        -:   84:    }
+        -:   85:
+        5:   86:    hashval = hash(key, length) % PREFIX_HASH_SIZE;
+        -:   87:
+       5*:   88:    for (pfs = prefix_stats[hashval]; NULL != pfs; pfs = pfs->next) {
+        3:   89:        if (strncmp(pfs->prefix, key, length) == 0)
+        3:   90:            return pfs;
+        -:   91:    }
+        -:   92:
+        2:   93:    pfs = calloc(sizeof(PREFIX_STATS), 1);
+        2:   94:    if (NULL == pfs) {
+    #####:   95:        perror("Can't allocate space for stats structure: calloc");
+    #####:   96:        return NULL;
+        -:   97:    }
+        -:   98:
+        2:   99:    pfs->prefix = malloc(length + 1);
+        2:  100:    if (NULL == pfs->prefix) {
+    #####:  101:        perror("Can't allocate space for copy of prefix: malloc");
+    #####:  102:        free(pfs);
+    #####:  103:        return NULL;
+        -:  104:    }
+        -:  105:
+        4:  106:    strncpy(pfs->prefix, key, length);
+        2:  107:    pfs->prefix[length] = '\0';      /* because strncpy() sucks */
+        2:  108:    pfs->prefix_len = length;
+        -:  109:
+        2:  110:    pfs->next = prefix_stats[hashval];
+        2:  111:    prefix_stats[hashval] = pfs;
+        -:  112:
+        2:  113:    num_prefixes++;
+        2:  114:    total_prefix_size += length;
+        -:  115:
+        2:  116:    return pfs;
+        -:  117:}
+------------------
+        -:  118:
+        -:  119:/*
+        -:  120: * Records a "get" of a key.
+        -:  121: */
+     1671:  122:void stats_prefix_record_get(const char *key, const size_t nkey, const bool is_hit) {
+     1671:  123:    PREFIX_STATS *pfs;
+        -:  124:
+     1671:  125:    STATS_LOCK();
+     1671:  126:    pfs = stats_prefix_find(key, nkey);
+     1671:  127:    if (NULL != pfs) {
+        9:  128:        pfs->num_gets++;
+        9:  129:        if (is_hit) {
+        6:  130:            pfs->num_hits++;
+        -:  131:        }
+        -:  132:    }
+     1671:  133:    STATS_UNLOCK();
+     1671:  134:}
+------------------
+stats_prefix_record_get:
+      557:  122:void stats_prefix_record_get(const char *key, const size_t nkey, const bool is_hit) {
+      557:  123:    PREFIX_STATS *pfs;
+        -:  124:
+      557:  125:    STATS_LOCK();
+      557:  126:    pfs = stats_prefix_find(key, nkey);
+      557:  127:    if (NULL != pfs) {
+        3:  128:        pfs->num_gets++;
+        3:  129:        if (is_hit) {
+        2:  130:            pfs->num_hits++;
+        -:  131:        }
+        -:  132:    }
+      557:  133:    STATS_UNLOCK();
+      557:  134:}
+------------------
+stats_prefix_record_get:
+      557:  122:void stats_prefix_record_get(const char *key, const size_t nkey, const bool is_hit) {
+      557:  123:    PREFIX_STATS *pfs;
+        -:  124:
+      557:  125:    STATS_LOCK();
+      557:  126:    pfs = stats_prefix_find(key, nkey);
+      557:  127:    if (NULL != pfs) {
+        3:  128:        pfs->num_gets++;
+        3:  129:        if (is_hit) {
+        2:  130:            pfs->num_hits++;
+        -:  131:        }
+        -:  132:    }
+      557:  133:    STATS_UNLOCK();
+      557:  134:}
+------------------
+stats_prefix_record_get:
+      557:  122:void stats_prefix_record_get(const char *key, const size_t nkey, const bool is_hit) {
+      557:  123:    PREFIX_STATS *pfs;
+        -:  124:
+      557:  125:    STATS_LOCK();
+      557:  126:    pfs = stats_prefix_find(key, nkey);
+      557:  127:    if (NULL != pfs) {
+        3:  128:        pfs->num_gets++;
+        3:  129:        if (is_hit) {
+        2:  130:            pfs->num_hits++;
+        -:  131:        }
+        -:  132:    }
+      557:  133:    STATS_UNLOCK();
+      557:  134:}
+------------------
+        -:  135:
+        -:  136:/*
+        -:  137: * Records a "delete" of a key.
+        -:  138: */
+        9:  139:void stats_prefix_record_delete(const char *key, const size_t nkey) {
+        9:  140:    PREFIX_STATS *pfs;
+        -:  141:
+        9:  142:    STATS_LOCK();
+        9:  143:    pfs = stats_prefix_find(key, nkey);
+        9:  144:    if (NULL != pfs) {
+        3:  145:        pfs->num_deletes++;
+        -:  146:    }
+        9:  147:    STATS_UNLOCK();
+        9:  148:}
+------------------
+stats_prefix_record_delete:
+        3:  139:void stats_prefix_record_delete(const char *key, const size_t nkey) {
+        3:  140:    PREFIX_STATS *pfs;
+        -:  141:
+        3:  142:    STATS_LOCK();
+        3:  143:    pfs = stats_prefix_find(key, nkey);
+        3:  144:    if (NULL != pfs) {
+        1:  145:        pfs->num_deletes++;
+        -:  146:    }
+        3:  147:    STATS_UNLOCK();
+        3:  148:}
+------------------
+stats_prefix_record_delete:
+        3:  139:void stats_prefix_record_delete(const char *key, const size_t nkey) {
+        3:  140:    PREFIX_STATS *pfs;
+        -:  141:
+        3:  142:    STATS_LOCK();
+        3:  143:    pfs = stats_prefix_find(key, nkey);
+        3:  144:    if (NULL != pfs) {
+        1:  145:        pfs->num_deletes++;
+        -:  146:    }
+        3:  147:    STATS_UNLOCK();
+        3:  148:}
+------------------
+stats_prefix_record_delete:
+        3:  139:void stats_prefix_record_delete(const char *key, const size_t nkey) {
+        3:  140:    PREFIX_STATS *pfs;
+        -:  141:
+        3:  142:    STATS_LOCK();
+        3:  143:    pfs = stats_prefix_find(key, nkey);
+        3:  144:    if (NULL != pfs) {
+        1:  145:        pfs->num_deletes++;
+        -:  146:    }
+        3:  147:    STATS_UNLOCK();
+        3:  148:}
+------------------
+        -:  149:
+        -:  150:/*
+        -:  151: * Records a "set" of a key.
+        -:  152: */
+    59979:  153:void stats_prefix_record_set(const char *key, const size_t nkey) {
+    59979:  154:    PREFIX_STATS *pfs;
+        -:  155:
+    59979:  156:    STATS_LOCK();
+    59979:  157:    pfs = stats_prefix_find(key, nkey);
+    59979:  158:    if (NULL != pfs) {
+        3:  159:        pfs->num_sets++;
+        -:  160:    }
+    59979:  161:    STATS_UNLOCK();
+    59979:  162:}
+------------------
+stats_prefix_record_set:
+    19993:  153:void stats_prefix_record_set(const char *key, const size_t nkey) {
+    19993:  154:    PREFIX_STATS *pfs;
+        -:  155:
+    19993:  156:    STATS_LOCK();
+    19993:  157:    pfs = stats_prefix_find(key, nkey);
+    19993:  158:    if (NULL != pfs) {
+        1:  159:        pfs->num_sets++;
+        -:  160:    }
+    19993:  161:    STATS_UNLOCK();
+    19993:  162:}
+------------------
+stats_prefix_record_set:
+    19993:  153:void stats_prefix_record_set(const char *key, const size_t nkey) {
+    19993:  154:    PREFIX_STATS *pfs;
+        -:  155:
+    19993:  156:    STATS_LOCK();
+    19993:  157:    pfs = stats_prefix_find(key, nkey);
+    19993:  158:    if (NULL != pfs) {
+        1:  159:        pfs->num_sets++;
+        -:  160:    }
+    19993:  161:    STATS_UNLOCK();
+    19993:  162:}
+------------------
+stats_prefix_record_set:
+    19993:  153:void stats_prefix_record_set(const char *key, const size_t nkey) {
+    19993:  154:    PREFIX_STATS *pfs;
+        -:  155:
+    19993:  156:    STATS_LOCK();
+    19993:  157:    pfs = stats_prefix_find(key, nkey);
+    19993:  158:    if (NULL != pfs) {
+        1:  159:        pfs->num_sets++;
+        -:  160:    }
+    19993:  161:    STATS_UNLOCK();
+    19993:  162:}
+------------------
+        -:  163:
+        -:  164:/*
+        -:  165: * Returns stats in textual form suitable for writing to a client.
+        -:  166: */
+        -:  167:/*@null@*/
+       27:  168:char *stats_prefix_dump(int *length) {
+       27:  169:    const char *format = "PREFIX %s get %llu hit %llu set %llu del %llu\r\n";
+       27:  170:    PREFIX_STATS *pfs;
+       27:  171:    char *buf;
+       27:  172:    int i, pos;
+       27:  173:    size_t size = 0, written = 0, total_written = 0;
+        -:  174:
+        -:  175:    /*
+        -:  176:     * Figure out how big the buffer needs to be. This is the sum of the
+        -:  177:     * lengths of the prefixes themselves, plus the size of one copy of
+        -:  178:     * the per-prefix output with 20-digit values for all the counts,
+        -:  179:     * plus space for the "END" at the end.
+        -:  180:     */
+       27:  181:    STATS_LOCK();
+       54:  182:    size = strlen(format) + total_prefix_size +
+       27:  183:           num_prefixes * (strlen(format) - 2 /* %s */
+        -:  184:                           + 4 * (20 - 4)) /* %llu replaced by 20-digit num */
+        -:  185:                           + sizeof("END\r\n");
+       27:  186:    buf = malloc(size);
+       27:  187:    if (NULL == buf) {
+    #####:  188:        perror("Can't allocate stats response: malloc");
+    #####:  189:        STATS_UNLOCK();
+    #####:  190:        return NULL;
+        -:  191:    }
+        -:  192:
+        -:  193:    pos = 0;
+     6939:  194:    for (i = 0; i < PREFIX_HASH_SIZE; i++) {
+     6930:  195:        for (pfs = prefix_stats[i]; NULL != pfs; pfs = pfs->next) {
+       18:  196:            written = snprintf(buf + pos, size-pos, format,
+        -:  197:                           pfs->prefix, pfs->num_gets, pfs->num_hits,
+        -:  198:                           pfs->num_sets, pfs->num_deletes);
+       18:  199:            pos += written;
+       18:  200:            total_written += written;
+      18*:  201:            assert(total_written < size);
+        -:  202:        }
+        -:  203:    }
+        -:  204:
+       27:  205:    STATS_UNLOCK();
+       27:  206:    memcpy(buf + pos, "END\r\n", 6);
+        -:  207:
+       27:  208:    *length = pos + 5;
+       27:  209:    return buf;
+        -:  210:}
+        -:  211:
+        -:  212:
+        -:  213:#ifdef UNIT_TEST
+        -:  214:
+        -:  215:/****************************************************************************
+        -:  216:      To run unit tests, compile with $(CC) -DUNIT_TEST stats.c assoc.o
+        -:  217:      (need assoc.o to get the hash() function).
+        -:  218:****************************************************************************/
+        -:  219:
+        -:  220:struct settings settings;
+        -:  221:
+        -:  222:static char *current_test = "";
+        -:  223:static int test_count = 0;
+        -:  224:static int fail_count = 0;
+        -:  225:
+        -:  226:static void fail(char *what) { printf("\tFAIL: %s\n", what); fflush(stdout); fail_count++; }
+        -:  227:static void test_equals_int(char *what, int a, int b) { test_count++; if (a != b) fail(what); }
+        -:  228:static void test_equals_ptr(char *what, void *a, void *b) { test_count++; if (a != b) fail(what); }
+        -:  229:static void test_equals_str(char *what, const char *a, const char *b) { test_count++; if (strcmp(a, b)) fail(what); }
+        -:  230:static void test_equals_ull(char *what, uint64_t a, uint64_t b) { test_count++; if (a != b) fail(what); }
+        -:  231:static void test_notequals_ptr(char *what, void *a, void *b) { test_count++; if (a == b) fail(what); }
+        -:  232:static void test_notnull_ptr(char *what, void *a) { test_count++; if (NULL == a) fail(what); }
+        -:  233:
+        -:  234:static void test_prefix_find() {
+        -:  235:    PREFIX_STATS *pfs1, *pfs2;
+        -:  236:
+        -:  237:    pfs1 = stats_prefix_find("abc");
+        -:  238:    test_notnull_ptr("initial prefix find", pfs1);
+        -:  239:    test_equals_ull("request counts", 0ULL,
+        -:  240:        pfs1->num_gets + pfs1->num_sets + pfs1->num_deletes + pfs1->num_hits);
+        -:  241:    pfs2 = stats_prefix_find("abc");
+        -:  242:    test_equals_ptr("find of same prefix", pfs1, pfs2);
+        -:  243:    pfs2 = stats_prefix_find("abc:");
+        -:  244:    test_equals_ptr("find of same prefix, ignoring delimiter", pfs1, pfs2);
+        -:  245:    pfs2 = stats_prefix_find("abc:d");
+        -:  246:    test_equals_ptr("find of same prefix, ignoring extra chars", pfs1, pfs2);
+        -:  247:    pfs2 = stats_prefix_find("xyz123");
+        -:  248:    test_notequals_ptr("find of different prefix", pfs1, pfs2);
+        -:  249:    pfs2 = stats_prefix_find("ab:");
+        -:  250:    test_notequals_ptr("find of shorter prefix", pfs1, pfs2);
+        -:  251:}
+        -:  252:
+        -:  253:static void test_prefix_record_get() {
+        -:  254:    PREFIX_STATS *pfs;
+        -:  255:
+        -:  256:    stats_prefix_record_get("abc:123", 0);
+        -:  257:    pfs = stats_prefix_find("abc:123");
+        -:  258:    test_equals_ull("get count after get #1", 1, pfs->num_gets);
+        -:  259:    test_equals_ull("hit count after get #1", 0, pfs->num_hits);
+        -:  260:    stats_prefix_record_get("abc:456", 0);
+        -:  261:    test_equals_ull("get count after get #2", 2, pfs->num_gets);
+        -:  262:    test_equals_ull("hit count after get #2", 0, pfs->num_hits);
+        -:  263:    stats_prefix_record_get("abc:456", 1);
+        -:  264:    test_equals_ull("get count after get #3", 3, pfs->num_gets);
+        -:  265:    test_equals_ull("hit count after get #3", 1, pfs->num_hits);
+        -:  266:    stats_prefix_record_get("def:", 1);
+        -:  267:    test_equals_ull("get count after get #4", 3, pfs->num_gets);
+        -:  268:    test_equals_ull("hit count after get #4", 1, pfs->num_hits);
+        -:  269:}
+        -:  270:
+        -:  271:static void test_prefix_record_delete() {
+        -:  272:    PREFIX_STATS *pfs;
+        -:  273:
+        -:  274:    stats_prefix_record_delete("abc:123");
+        -:  275:    pfs = stats_prefix_find("abc:123");
+        -:  276:    test_equals_ull("get count after delete #1", 0, pfs->num_gets);
+        -:  277:    test_equals_ull("hit count after delete #1", 0, pfs->num_hits);
+        -:  278:    test_equals_ull("delete count after delete #1", 1, pfs->num_deletes);
+        -:  279:    test_equals_ull("set count after delete #1", 0, pfs->num_sets);
+        -:  280:    stats_prefix_record_delete("def:");
+        -:  281:    test_equals_ull("delete count after delete #2", 1, pfs->num_deletes);
+        -:  282:}
+        -:  283:
+        -:  284:static void test_prefix_record_set() {
+        -:  285:    PREFIX_STATS *pfs;
+        -:  286:
+        -:  287:    stats_prefix_record_set("abc:123");
+        -:  288:    pfs = stats_prefix_find("abc:123");
+        -:  289:    test_equals_ull("get count after set #1", 0, pfs->num_gets);
+        -:  290:    test_equals_ull("hit count after set #1", 0, pfs->num_hits);
+        -:  291:    test_equals_ull("delete count after set #1", 0, pfs->num_deletes);
+        -:  292:    test_equals_ull("set count after set #1", 1, pfs->num_sets);
+        -:  293:    stats_prefix_record_delete("def:");
+        -:  294:    test_equals_ull("set count after set #2", 1, pfs->num_sets);
+        -:  295:}
+        -:  296:
+        -:  297:static void test_prefix_dump() {
+        -:  298:    int hashval = hash("abc", 3) % PREFIX_HASH_SIZE;
+        -:  299:    char tmp[500];
+        -:  300:    char *expected;
+        -:  301:    int keynum;
+        -:  302:    int length;
+        -:  303:
+        -:  304:    test_equals_str("empty stats", "END\r\n", stats_prefix_dump(&length));
+        -:  305:    test_equals_int("empty stats length", 5, length);
+        -:  306:    stats_prefix_record_set("abc:123");
+        -:  307:    expected = "PREFIX abc get 0 hit 0 set 1 del 0\r\nEND\r\n";
+        -:  308:    test_equals_str("stats after set", expected, stats_prefix_dump(&length));
+        -:  309:    test_equals_int("stats length after set", strlen(expected), length);
+        -:  310:    stats_prefix_record_get("abc:123", 0);
+        -:  311:    expected = "PREFIX abc get 1 hit 0 set 1 del 0\r\nEND\r\n";
+        -:  312:    test_equals_str("stats after get #1", expected, stats_prefix_dump(&length));
+        -:  313:    test_equals_int("stats length after get #1", strlen(expected), length);
+        -:  314:    stats_prefix_record_get("abc:123", 1);
+        -:  315:    expected = "PREFIX abc get 2 hit 1 set 1 del 0\r\nEND\r\n";
+        -:  316:    test_equals_str("stats after get #2", expected, stats_prefix_dump(&length));
+        -:  317:    test_equals_int("stats length after get #2", strlen(expected), length);
+        -:  318:    stats_prefix_record_delete("abc:123");
+        -:  319:    expected = "PREFIX abc get 2 hit 1 set 1 del 1\r\nEND\r\n";
+        -:  320:    test_equals_str("stats after del #1", expected, stats_prefix_dump(&length));
+        -:  321:    test_equals_int("stats length after del #1", strlen(expected), length);
+        -:  322:
+        -:  323:    /* The order of results might change if we switch hash functions. */
+        -:  324:    stats_prefix_record_delete("def:123");
+        -:  325:    expected = "PREFIX abc get 2 hit 1 set 1 del 1\r\n"
+        -:  326:               "PREFIX def get 0 hit 0 set 0 del 1\r\n"
+        -:  327:               "END\r\n";
+        -:  328:    test_equals_str("stats after del #2", expected, stats_prefix_dump(&length));
+        -:  329:    test_equals_int("stats length after del #2", strlen(expected), length);
+        -:  330:
+        -:  331:    /* Find a key that hashes to the same bucket as "abc" */
+        -:  332:    for (keynum = 0; keynum < PREFIX_HASH_SIZE * 100; keynum++) {
+        -:  333:        snprintf(tmp, sizeof(tmp), "%d", keynum);
+        -:  334:        if (hashval == hash(tmp, strlen(tmp)) % PREFIX_HASH_SIZE) {
+        -:  335:            break;
+        -:  336:        }
+        -:  337:    }
+        -:  338:    stats_prefix_record_set(tmp);
+        -:  339:    snprintf(tmp, sizeof(tmp),
+        -:  340:             "PREFIX %d get 0 hit 0 set 1 del 0\r\n"
+        -:  341:             "PREFIX abc get 2 hit 1 set 1 del 1\r\n"
+        -:  342:             "PREFIX def get 0 hit 0 set 0 del 1\r\n"
+        -:  343:             "END\r\n", keynum);
+        -:  344:    test_equals_str("stats with two stats in one bucket",
+        -:  345:                    tmp, stats_prefix_dump(&length));
+        -:  346:    test_equals_int("stats length with two stats in one bucket",
+        -:  347:                    strlen(tmp), length);
+        -:  348:}
+        -:  349:
+        -:  350:static void run_test(char *what, void (*func)(void)) {
+        -:  351:    current_test = what;
+        -:  352:    test_count = fail_count = 0;
+        -:  353:    puts(what);
+        -:  354:    fflush(stdout);
+        -:  355:
+        -:  356:    stats_prefix_clear();
+        -:  357:    (func)();
+        -:  358:    printf("\t%d / %d pass\n", (test_count - fail_count), test_count);
+        -:  359:}
+        -:  360:
+        -:  361:/* In case we're compiled in thread mode */
+        -:  362:void mt_stats_lock() { }
+        -:  363:void mt_stats_unlock() { }
+        -:  364:
+        -:  365:main(int argc, char **argv) {
+        -:  366:    stats_prefix_init();
+        -:  367:    settings.prefix_delimiter = ':';
+        -:  368:    run_test("stats_prefix_find", test_prefix_find);
+        -:  369:    run_test("stats_prefix_record_get", test_prefix_record_get);
+        -:  370:    run_test("stats_prefix_record_delete", test_prefix_record_delete);
+        -:  371:    run_test("stats_prefix_record_set", test_prefix_record_set);
+        -:  372:    run_test("stats_prefix_dump", test_prefix_dump);
+        -:  373:}
+        -:  374:
+        -:  375:#endif

@@ -1,0 +1,706 @@
+        -:    0:Source:util.c
+        -:    0:Programs:54
+        -:    0:Source is newer than graph
+        -:    1:#include <stdio.h>
+        -:    2:#include <assert.h>
+        -:    3:#include <ctype.h>
+        -:    4:#include <errno.h>
+        -:    5:#include <string.h>
+        -:    6:#include <stdlib.h>
+        -:    7:#include <stdarg.h>
+        -:    8:
+        -:    9:#include "memcached.h"
+        -:   10:
+        -:   11:static char *uriencode_map[256];
+        -:   12:static char uriencode_str[768];
+        -:   13:
+      282:   14:void uriencode_init(void) {
+      282:   15:    int x;
+      282:   16:    char *str = uriencode_str;
+    72474:   17:    for (x = 0; x < 256; x++) {
+    72192:   18:        if (isalnum(x) || x == '-' || x == '.' || x == '_' || x == '~') {
+    18612:   19:            uriencode_map[x] = NULL;
+        -:   20:        } else {
+    53580:   21:            snprintf(str, 4, "%%%02hhX", (unsigned char)x);
+    53580:   22:            uriencode_map[x] = str;
+    53580:   23:            str += 3; /* lobbing off the \0 is fine */
+        -:   24:        }
+        -:   25:    }
+      282:   26:}
+------------------
+uriencode_init:
+       94:   14:void uriencode_init(void) {
+       94:   15:    int x;
+       94:   16:    char *str = uriencode_str;
+    24158:   17:    for (x = 0; x < 256; x++) {
+    24064:   18:        if (isalnum(x) || x == '-' || x == '.' || x == '_' || x == '~') {
+     6204:   19:            uriencode_map[x] = NULL;
+        -:   20:        } else {
+    17860:   21:            snprintf(str, 4, "%%%02hhX", (unsigned char)x);
+    17860:   22:            uriencode_map[x] = str;
+    17860:   23:            str += 3; /* lobbing off the \0 is fine */
+        -:   24:        }
+        -:   25:    }
+       94:   26:}
+------------------
+uriencode_init:
+       94:   14:void uriencode_init(void) {
+       94:   15:    int x;
+       94:   16:    char *str = uriencode_str;
+    24158:   17:    for (x = 0; x < 256; x++) {
+    24064:   18:        if (isalnum(x) || x == '-' || x == '.' || x == '_' || x == '~') {
+     6204:   19:            uriencode_map[x] = NULL;
+        -:   20:        } else {
+    17860:   21:            snprintf(str, 4, "%%%02hhX", (unsigned char)x);
+    17860:   22:            uriencode_map[x] = str;
+    17860:   23:            str += 3; /* lobbing off the \0 is fine */
+        -:   24:        }
+        -:   25:    }
+       94:   26:}
+------------------
+uriencode_init:
+       94:   14:void uriencode_init(void) {
+       94:   15:    int x;
+       94:   16:    char *str = uriencode_str;
+    24158:   17:    for (x = 0; x < 256; x++) {
+    24064:   18:        if (isalnum(x) || x == '-' || x == '.' || x == '_' || x == '~') {
+     6204:   19:            uriencode_map[x] = NULL;
+        -:   20:        } else {
+    17860:   21:            snprintf(str, 4, "%%%02hhX", (unsigned char)x);
+    17860:   22:            uriencode_map[x] = str;
+    17860:   23:            str += 3; /* lobbing off the \0 is fine */
+        -:   24:        }
+        -:   25:    }
+       94:   26:}
+------------------
+        -:   27:
+   217689:   28:bool uriencode(const char *src, char *dst, const size_t srclen, const size_t dstlen) {
+   217689:   29:    int x;
+   217689:   30:    size_t d = 0;
+ 41008566:   31:    for (x = 0; x < srclen; x++) {
+ 40790877:   32:        if (d + 4 > dstlen)
+        -:   33:            return false;
+ 40790877:   34:        if (uriencode_map[(unsigned char) src[x]] != NULL) {
+     2001:   35:            memcpy(&dst[d], uriencode_map[(unsigned char) src[x]], 3);
+     2001:   36:            d += 3;
+        -:   37:        } else {
+ 40788876:   38:            dst[d] = src[x];
+ 40788876:   39:            d++;
+        -:   40:        }
+        -:   41:    }
+   217689:   42:    dst[d] = '\0';
+   217689:   43:    return true;
+        -:   44:}
+------------------
+uriencode:
+    72563:   28:bool uriencode(const char *src, char *dst, const size_t srclen, const size_t dstlen) {
+    72563:   29:    int x;
+    72563:   30:    size_t d = 0;
+ 13669522:   31:    for (x = 0; x < srclen; x++) {
+ 13596959:   32:        if (d + 4 > dstlen)
+        -:   33:            return false;
+ 13596959:   34:        if (uriencode_map[(unsigned char) src[x]] != NULL) {
+      667:   35:            memcpy(&dst[d], uriencode_map[(unsigned char) src[x]], 3);
+      667:   36:            d += 3;
+        -:   37:        } else {
+ 13596292:   38:            dst[d] = src[x];
+ 13596292:   39:            d++;
+        -:   40:        }
+        -:   41:    }
+    72563:   42:    dst[d] = '\0';
+    72563:   43:    return true;
+        -:   44:}
+------------------
+uriencode:
+    72563:   28:bool uriencode(const char *src, char *dst, const size_t srclen, const size_t dstlen) {
+    72563:   29:    int x;
+    72563:   30:    size_t d = 0;
+ 13669522:   31:    for (x = 0; x < srclen; x++) {
+ 13596959:   32:        if (d + 4 > dstlen)
+        -:   33:            return false;
+ 13596959:   34:        if (uriencode_map[(unsigned char) src[x]] != NULL) {
+      667:   35:            memcpy(&dst[d], uriencode_map[(unsigned char) src[x]], 3);
+      667:   36:            d += 3;
+        -:   37:        } else {
+ 13596292:   38:            dst[d] = src[x];
+ 13596292:   39:            d++;
+        -:   40:        }
+        -:   41:    }
+    72563:   42:    dst[d] = '\0';
+    72563:   43:    return true;
+        -:   44:}
+------------------
+uriencode:
+    72563:   28:bool uriencode(const char *src, char *dst, const size_t srclen, const size_t dstlen) {
+    72563:   29:    int x;
+    72563:   30:    size_t d = 0;
+ 13669522:   31:    for (x = 0; x < srclen; x++) {
+ 13596959:   32:        if (d + 4 > dstlen)
+        -:   33:            return false;
+ 13596959:   34:        if (uriencode_map[(unsigned char) src[x]] != NULL) {
+      667:   35:            memcpy(&dst[d], uriencode_map[(unsigned char) src[x]], 3);
+      667:   36:            d += 3;
+        -:   37:        } else {
+ 13596292:   38:            dst[d] = src[x];
+ 13596292:   39:            d++;
+        -:   40:        }
+        -:   41:    }
+    72563:   42:    dst[d] = '\0';
+    72563:   43:    return true;
+        -:   44:}
+------------------
+        -:   45:
+        -:   46:/* Avoid warnings on solaris, where isspace() is an index into an array, and gcc uses signed chars */
+        -:   47:#define xisspace(c) isspace((unsigned char)c)
+        -:   48:
+     1833:   49:bool safe_strtoull(const char *str, uint64_t *out) {
+    1833*:   50:    assert(out != NULL);
+     1833:   51:    errno = 0;
+     1833:   52:    *out = 0;
+     1833:   53:    char *endptr;
+     1833:   54:    unsigned long long ull = strtoull(str, &endptr, 10);
+     1833:   55:    if ((errno == ERANGE) || (str == endptr)) {
+        -:   56:        return false;
+        -:   57:    }
+        -:   58:
+     1821:   59:    if (xisspace(*endptr) || (*endptr == '\0' && endptr != str)) {
+     1821:   60:        if ((long long) ull < 0) {
+        -:   61:            /* only check for negative signs in the uncommon case when
+        -:   62:             * the unsigned number is so big that it's negative as a
+        -:   63:             * signed number. */
+       18:   64:            if (strchr(str, '-') != NULL) {
+        -:   65:                return false;
+        -:   66:            }
+        -:   67:        }
+     1821:   68:        *out = ull;
+     1821:   69:        return true;
+        -:   70:    }
+        -:   71:    return false;
+        -:   72:}
+------------------
+safe_strtoull:
+      611:   49:bool safe_strtoull(const char *str, uint64_t *out) {
+     611*:   50:    assert(out != NULL);
+      611:   51:    errno = 0;
+      611:   52:    *out = 0;
+      611:   53:    char *endptr;
+      611:   54:    unsigned long long ull = strtoull(str, &endptr, 10);
+      611:   55:    if ((errno == ERANGE) || (str == endptr)) {
+        -:   56:        return false;
+        -:   57:    }
+        -:   58:
+      607:   59:    if (xisspace(*endptr) || (*endptr == '\0' && endptr != str)) {
+      607:   60:        if ((long long) ull < 0) {
+        -:   61:            /* only check for negative signs in the uncommon case when
+        -:   62:             * the unsigned number is so big that it's negative as a
+        -:   63:             * signed number. */
+        6:   64:            if (strchr(str, '-') != NULL) {
+        -:   65:                return false;
+        -:   66:            }
+        -:   67:        }
+      607:   68:        *out = ull;
+      607:   69:        return true;
+        -:   70:    }
+        -:   71:    return false;
+        -:   72:}
+------------------
+safe_strtoull:
+      611:   49:bool safe_strtoull(const char *str, uint64_t *out) {
+     611*:   50:    assert(out != NULL);
+      611:   51:    errno = 0;
+      611:   52:    *out = 0;
+      611:   53:    char *endptr;
+      611:   54:    unsigned long long ull = strtoull(str, &endptr, 10);
+      611:   55:    if ((errno == ERANGE) || (str == endptr)) {
+        -:   56:        return false;
+        -:   57:    }
+        -:   58:
+      607:   59:    if (xisspace(*endptr) || (*endptr == '\0' && endptr != str)) {
+      607:   60:        if ((long long) ull < 0) {
+        -:   61:            /* only check for negative signs in the uncommon case when
+        -:   62:             * the unsigned number is so big that it's negative as a
+        -:   63:             * signed number. */
+        6:   64:            if (strchr(str, '-') != NULL) {
+        -:   65:                return false;
+        -:   66:            }
+        -:   67:        }
+      607:   68:        *out = ull;
+      607:   69:        return true;
+        -:   70:    }
+        -:   71:    return false;
+        -:   72:}
+------------------
+safe_strtoull:
+      611:   49:bool safe_strtoull(const char *str, uint64_t *out) {
+     611*:   50:    assert(out != NULL);
+      611:   51:    errno = 0;
+      611:   52:    *out = 0;
+      611:   53:    char *endptr;
+      611:   54:    unsigned long long ull = strtoull(str, &endptr, 10);
+      611:   55:    if ((errno == ERANGE) || (str == endptr)) {
+        -:   56:        return false;
+        -:   57:    }
+        -:   58:
+      607:   59:    if (xisspace(*endptr) || (*endptr == '\0' && endptr != str)) {
+      607:   60:        if ((long long) ull < 0) {
+        -:   61:            /* only check for negative signs in the uncommon case when
+        -:   62:             * the unsigned number is so big that it's negative as a
+        -:   63:             * signed number. */
+        6:   64:            if (strchr(str, '-') != NULL) {
+        -:   65:                return false;
+        -:   66:            }
+        -:   67:        }
+      607:   68:        *out = ull;
+      607:   69:        return true;
+        -:   70:    }
+        -:   71:    return false;
+        -:   72:}
+------------------
+        -:   73:
+    #####:   74:bool safe_strtoll(const char *str, int64_t *out) {
+    #####:   75:    assert(out != NULL);
+    #####:   76:    errno = 0;
+    #####:   77:    *out = 0;
+    #####:   78:    char *endptr;
+    #####:   79:    long long ll = strtoll(str, &endptr, 10);
+    #####:   80:    if ((errno == ERANGE) || (str == endptr)) {
+        -:   81:        return false;
+        -:   82:    }
+        -:   83:
+    #####:   84:    if (xisspace(*endptr) || (*endptr == '\0' && endptr != str)) {
+    #####:   85:        *out = ll;
+    #####:   86:        return true;
+        -:   87:    }
+        -:   88:    return false;
+        -:   89:}
+------------------
+safe_strtoll:
+    #####:   74:bool safe_strtoll(const char *str, int64_t *out) {
+    #####:   75:    assert(out != NULL);
+    #####:   76:    errno = 0;
+    #####:   77:    *out = 0;
+    #####:   78:    char *endptr;
+    #####:   79:    long long ll = strtoll(str, &endptr, 10);
+    #####:   80:    if ((errno == ERANGE) || (str == endptr)) {
+        -:   81:        return false;
+        -:   82:    }
+        -:   83:
+    #####:   84:    if (xisspace(*endptr) || (*endptr == '\0' && endptr != str)) {
+    #####:   85:        *out = ll;
+    #####:   86:        return true;
+        -:   87:    }
+        -:   88:    return false;
+        -:   89:}
+------------------
+safe_strtoll:
+    #####:   74:bool safe_strtoll(const char *str, int64_t *out) {
+    #####:   75:    assert(out != NULL);
+    #####:   76:    errno = 0;
+    #####:   77:    *out = 0;
+    #####:   78:    char *endptr;
+    #####:   79:    long long ll = strtoll(str, &endptr, 10);
+    #####:   80:    if ((errno == ERANGE) || (str == endptr)) {
+        -:   81:        return false;
+        -:   82:    }
+        -:   83:
+    #####:   84:    if (xisspace(*endptr) || (*endptr == '\0' && endptr != str)) {
+    #####:   85:        *out = ll;
+    #####:   86:        return true;
+        -:   87:    }
+        -:   88:    return false;
+        -:   89:}
+------------------
+safe_strtoll:
+    #####:   74:bool safe_strtoll(const char *str, int64_t *out) {
+    #####:   75:    assert(out != NULL);
+    #####:   76:    errno = 0;
+    #####:   77:    *out = 0;
+    #####:   78:    char *endptr;
+    #####:   79:    long long ll = strtoll(str, &endptr, 10);
+    #####:   80:    if ((errno == ERANGE) || (str == endptr)) {
+        -:   81:        return false;
+        -:   82:    }
+        -:   83:
+    #####:   84:    if (xisspace(*endptr) || (*endptr == '\0' && endptr != str)) {
+    #####:   85:        *out = ll;
+    #####:   86:        return true;
+        -:   87:    }
+        -:   88:    return false;
+        -:   89:}
+------------------
+        -:   90:
+   247662:   91:bool safe_strtoul(const char *str, uint32_t *out) {
+   247662:   92:    char *endptr = NULL;
+   247662:   93:    unsigned long l = 0;
+  247662*:   94:    assert(out);
+  247662*:   95:    assert(str);
+   247662:   96:    *out = 0;
+   247662:   97:    errno = 0;
+        -:   98:
+   247662:   99:    l = strtoul(str, &endptr, 10);
+   247662:  100:    if ((errno == ERANGE) || (str == endptr)) {
+        -:  101:        return false;
+        -:  102:    }
+        -:  103:
+   247659:  104:    if (xisspace(*endptr) || (*endptr == '\0' && endptr != str)) {
+   247659:  105:        if ((long) l < 0) {
+        -:  106:            /* only check for negative signs in the uncommon case when
+        -:  107:             * the unsigned number is so big that it's negative as a
+        -:  108:             * signed number. */
+    #####:  109:            if (strchr(str, '-') != NULL) {
+        -:  110:                return false;
+        -:  111:            }
+        -:  112:        }
+   247659:  113:        *out = l;
+   247659:  114:        return true;
+        -:  115:    }
+        -:  116:
+        -:  117:    return false;
+        -:  118:}
+------------------
+safe_strtoul:
+    82554:   91:bool safe_strtoul(const char *str, uint32_t *out) {
+    82554:   92:    char *endptr = NULL;
+    82554:   93:    unsigned long l = 0;
+   82554*:   94:    assert(out);
+   82554*:   95:    assert(str);
+    82554:   96:    *out = 0;
+    82554:   97:    errno = 0;
+        -:   98:
+    82554:   99:    l = strtoul(str, &endptr, 10);
+    82554:  100:    if ((errno == ERANGE) || (str == endptr)) {
+        -:  101:        return false;
+        -:  102:    }
+        -:  103:
+    82553:  104:    if (xisspace(*endptr) || (*endptr == '\0' && endptr != str)) {
+    82553:  105:        if ((long) l < 0) {
+        -:  106:            /* only check for negative signs in the uncommon case when
+        -:  107:             * the unsigned number is so big that it's negative as a
+        -:  108:             * signed number. */
+    #####:  109:            if (strchr(str, '-') != NULL) {
+        -:  110:                return false;
+        -:  111:            }
+        -:  112:        }
+    82553:  113:        *out = l;
+    82553:  114:        return true;
+        -:  115:    }
+        -:  116:
+        -:  117:    return false;
+        -:  118:}
+------------------
+safe_strtoul:
+    82554:   91:bool safe_strtoul(const char *str, uint32_t *out) {
+    82554:   92:    char *endptr = NULL;
+    82554:   93:    unsigned long l = 0;
+   82554*:   94:    assert(out);
+   82554*:   95:    assert(str);
+    82554:   96:    *out = 0;
+    82554:   97:    errno = 0;
+        -:   98:
+    82554:   99:    l = strtoul(str, &endptr, 10);
+    82554:  100:    if ((errno == ERANGE) || (str == endptr)) {
+        -:  101:        return false;
+        -:  102:    }
+        -:  103:
+    82553:  104:    if (xisspace(*endptr) || (*endptr == '\0' && endptr != str)) {
+    82553:  105:        if ((long) l < 0) {
+        -:  106:            /* only check for negative signs in the uncommon case when
+        -:  107:             * the unsigned number is so big that it's negative as a
+        -:  108:             * signed number. */
+    #####:  109:            if (strchr(str, '-') != NULL) {
+        -:  110:                return false;
+        -:  111:            }
+        -:  112:        }
+    82553:  113:        *out = l;
+    82553:  114:        return true;
+        -:  115:    }
+        -:  116:
+        -:  117:    return false;
+        -:  118:}
+------------------
+safe_strtoul:
+    82554:   91:bool safe_strtoul(const char *str, uint32_t *out) {
+    82554:   92:    char *endptr = NULL;
+    82554:   93:    unsigned long l = 0;
+   82554*:   94:    assert(out);
+   82554*:   95:    assert(str);
+    82554:   96:    *out = 0;
+    82554:   97:    errno = 0;
+        -:   98:
+    82554:   99:    l = strtoul(str, &endptr, 10);
+    82554:  100:    if ((errno == ERANGE) || (str == endptr)) {
+        -:  101:        return false;
+        -:  102:    }
+        -:  103:
+    82553:  104:    if (xisspace(*endptr) || (*endptr == '\0' && endptr != str)) {
+    82553:  105:        if ((long) l < 0) {
+        -:  106:            /* only check for negative signs in the uncommon case when
+        -:  107:             * the unsigned number is so big that it's negative as a
+        -:  108:             * signed number. */
+    #####:  109:            if (strchr(str, '-') != NULL) {
+        -:  110:                return false;
+        -:  111:            }
+        -:  112:        }
+    82553:  113:        *out = l;
+    82553:  114:        return true;
+        -:  115:    }
+        -:  116:
+        -:  117:    return false;
+        -:  118:}
+------------------
+        -:  119:
+   495246:  120:bool safe_strtol(const char *str, int32_t *out) {
+  495246*:  121:    assert(out != NULL);
+   495246:  122:    errno = 0;
+   495246:  123:    *out = 0;
+   495246:  124:    char *endptr;
+   495246:  125:    long l = strtol(str, &endptr, 10);
+   495246:  126:    if ((errno == ERANGE) || (str == endptr)) {
+        -:  127:        return false;
+        -:  128:    }
+        -:  129:
+   495240:  130:    if (xisspace(*endptr) || (*endptr == '\0' && endptr != str)) {
+   495240:  131:        *out = l;
+   495240:  132:        return true;
+        -:  133:    }
+        -:  134:    return false;
+        -:  135:}
+------------------
+safe_strtol:
+   165082:  120:bool safe_strtol(const char *str, int32_t *out) {
+  165082*:  121:    assert(out != NULL);
+   165082:  122:    errno = 0;
+   165082:  123:    *out = 0;
+   165082:  124:    char *endptr;
+   165082:  125:    long l = strtol(str, &endptr, 10);
+   165082:  126:    if ((errno == ERANGE) || (str == endptr)) {
+        -:  127:        return false;
+        -:  128:    }
+        -:  129:
+   165080:  130:    if (xisspace(*endptr) || (*endptr == '\0' && endptr != str)) {
+   165080:  131:        *out = l;
+   165080:  132:        return true;
+        -:  133:    }
+        -:  134:    return false;
+        -:  135:}
+------------------
+safe_strtol:
+   165082:  120:bool safe_strtol(const char *str, int32_t *out) {
+  165082*:  121:    assert(out != NULL);
+   165082:  122:    errno = 0;
+   165082:  123:    *out = 0;
+   165082:  124:    char *endptr;
+   165082:  125:    long l = strtol(str, &endptr, 10);
+   165082:  126:    if ((errno == ERANGE) || (str == endptr)) {
+        -:  127:        return false;
+        -:  128:    }
+        -:  129:
+   165080:  130:    if (xisspace(*endptr) || (*endptr == '\0' && endptr != str)) {
+   165080:  131:        *out = l;
+   165080:  132:        return true;
+        -:  133:    }
+        -:  134:    return false;
+        -:  135:}
+------------------
+safe_strtol:
+   165082:  120:bool safe_strtol(const char *str, int32_t *out) {
+  165082*:  121:    assert(out != NULL);
+   165082:  122:    errno = 0;
+   165082:  123:    *out = 0;
+   165082:  124:    char *endptr;
+   165082:  125:    long l = strtol(str, &endptr, 10);
+   165082:  126:    if ((errno == ERANGE) || (str == endptr)) {
+        -:  127:        return false;
+        -:  128:    }
+        -:  129:
+   165080:  130:    if (xisspace(*endptr) || (*endptr == '\0' && endptr != str)) {
+   165080:  131:        *out = l;
+   165080:  132:        return true;
+        -:  133:    }
+        -:  134:    return false;
+        -:  135:}
+------------------
+        -:  136:
+    #####:  137:bool safe_strtod(const char *str, double *out) {
+    #####:  138:    assert(out != NULL);
+    #####:  139:    errno = 0;
+    #####:  140:    *out = 0;
+    #####:  141:    char *endptr;
+    #####:  142:    double d = strtod(str, &endptr);
+    #####:  143:    if ((errno == ERANGE) || (str == endptr)) {
+        -:  144:        return false;
+        -:  145:    }
+        -:  146:
+    #####:  147:    if (xisspace(*endptr) || (*endptr == '\0' && endptr != str)) {
+    #####:  148:        *out = d;
+    #####:  149:        return true;
+        -:  150:    }
+        -:  151:    return false;
+        -:  152:}
+------------------
+safe_strtod:
+    #####:  137:bool safe_strtod(const char *str, double *out) {
+    #####:  138:    assert(out != NULL);
+    #####:  139:    errno = 0;
+    #####:  140:    *out = 0;
+    #####:  141:    char *endptr;
+    #####:  142:    double d = strtod(str, &endptr);
+    #####:  143:    if ((errno == ERANGE) || (str == endptr)) {
+        -:  144:        return false;
+        -:  145:    }
+        -:  146:
+    #####:  147:    if (xisspace(*endptr) || (*endptr == '\0' && endptr != str)) {
+    #####:  148:        *out = d;
+    #####:  149:        return true;
+        -:  150:    }
+        -:  151:    return false;
+        -:  152:}
+------------------
+safe_strtod:
+    #####:  137:bool safe_strtod(const char *str, double *out) {
+    #####:  138:    assert(out != NULL);
+    #####:  139:    errno = 0;
+    #####:  140:    *out = 0;
+    #####:  141:    char *endptr;
+    #####:  142:    double d = strtod(str, &endptr);
+    #####:  143:    if ((errno == ERANGE) || (str == endptr)) {
+        -:  144:        return false;
+        -:  145:    }
+        -:  146:
+    #####:  147:    if (xisspace(*endptr) || (*endptr == '\0' && endptr != str)) {
+    #####:  148:        *out = d;
+    #####:  149:        return true;
+        -:  150:    }
+        -:  151:    return false;
+        -:  152:}
+------------------
+safe_strtod:
+    #####:  137:bool safe_strtod(const char *str, double *out) {
+    #####:  138:    assert(out != NULL);
+    #####:  139:    errno = 0;
+    #####:  140:    *out = 0;
+    #####:  141:    char *endptr;
+    #####:  142:    double d = strtod(str, &endptr);
+    #####:  143:    if ((errno == ERANGE) || (str == endptr)) {
+        -:  144:        return false;
+        -:  145:    }
+        -:  146:
+    #####:  147:    if (xisspace(*endptr) || (*endptr == '\0' && endptr != str)) {
+    #####:  148:        *out = d;
+    #####:  149:        return true;
+        -:  150:    }
+        -:  151:    return false;
+        -:  152:}
+------------------
+        -:  153:
+        3:  154:void vperror(const char *fmt, ...) {
+        3:  155:    int old_errno = errno;
+        3:  156:    char buf[1024];
+        3:  157:    va_list ap;
+        -:  158:
+        3:  159:    va_start(ap, fmt);
+        6:  160:    if (vsnprintf(buf, sizeof(buf), fmt, ap) == -1) {
+    #####:  161:        buf[sizeof(buf) - 1] = '\0';
+        -:  162:    }
+        3:  163:    va_end(ap);
+        -:  164:
+        3:  165:    errno = old_errno;
+        -:  166:
+        3:  167:    perror(buf);
+        3:  168:}
+------------------
+vperror:
+        1:  154:void vperror(const char *fmt, ...) {
+        1:  155:    int old_errno = errno;
+        1:  156:    char buf[1024];
+        1:  157:    va_list ap;
+        -:  158:
+        1:  159:    va_start(ap, fmt);
+        2:  160:    if (vsnprintf(buf, sizeof(buf), fmt, ap) == -1) {
+    #####:  161:        buf[sizeof(buf) - 1] = '\0';
+        -:  162:    }
+        1:  163:    va_end(ap);
+        -:  164:
+        1:  165:    errno = old_errno;
+        -:  166:
+        1:  167:    perror(buf);
+        1:  168:}
+------------------
+vperror:
+        1:  154:void vperror(const char *fmt, ...) {
+        1:  155:    int old_errno = errno;
+        1:  156:    char buf[1024];
+        1:  157:    va_list ap;
+        -:  158:
+        1:  159:    va_start(ap, fmt);
+        2:  160:    if (vsnprintf(buf, sizeof(buf), fmt, ap) == -1) {
+    #####:  161:        buf[sizeof(buf) - 1] = '\0';
+        -:  162:    }
+        1:  163:    va_end(ap);
+        -:  164:
+        1:  165:    errno = old_errno;
+        -:  166:
+        1:  167:    perror(buf);
+        1:  168:}
+------------------
+vperror:
+        1:  154:void vperror(const char *fmt, ...) {
+        1:  155:    int old_errno = errno;
+        1:  156:    char buf[1024];
+        1:  157:    va_list ap;
+        -:  158:
+        1:  159:    va_start(ap, fmt);
+        2:  160:    if (vsnprintf(buf, sizeof(buf), fmt, ap) == -1) {
+    #####:  161:        buf[sizeof(buf) - 1] = '\0';
+        -:  162:    }
+        1:  163:    va_end(ap);
+        -:  164:
+        1:  165:    errno = old_errno;
+        -:  166:
+        1:  167:    perror(buf);
+        1:  168:}
+------------------
+        -:  169:
+        -:  170:#ifndef HAVE_HTONLL
+        -:  171:static uint64_t mc_swap64(uint64_t in) {
+        -:  172:#ifdef ENDIAN_LITTLE
+        -:  173:    /* Little endian, flip the bytes around until someone makes a faster/better
+        -:  174:    * way to do this. */
+    93081:  175:    int64_t rv = 0;
+    93081:  176:    int i = 0;
+   837729:  177:     for(i = 0; i<8; i++) {
+   744648:  178:        rv = (rv << 8) | (in & 0xff);
+   744648:  179:        in >>= 8;
+        -:  180:     }
+    93081:  181:    return rv;
+        -:  182:#else
+        -:  183:    /* big-endian machines don't need byte swapping */
+        -:  184:    return in;
+        -:  185:#endif
+        -:  186:}
+        -:  187:
+    75612:  188:uint64_t ntohll(uint64_t val) {
+    75612:  189:   return mc_swap64(val);
+        -:  190:}
+------------------
+ntohll:
+    25204:  188:uint64_t ntohll(uint64_t val) {
+    25204:  189:   return mc_swap64(val);
+        -:  190:}
+------------------
+ntohll:
+    25204:  188:uint64_t ntohll(uint64_t val) {
+    25204:  189:   return mc_swap64(val);
+        -:  190:}
+------------------
+ntohll:
+    25204:  188:uint64_t ntohll(uint64_t val) {
+    25204:  189:   return mc_swap64(val);
+        -:  190:}
+------------------
+        -:  191:
+    17469:  192:uint64_t htonll(uint64_t val) {
+    17469:  193:   return mc_swap64(val);
+        -:  194:}
+        -:  195:#endif
+        -:  196:

@@ -1,0 +1,588 @@
+        -:    0:Source:bipbuffer.c
+        -:    0:Programs:54
+        -:    0:Source is newer than graph
+        -:    1:/**
+        -:    2: * Copyright (c) 2011, Willem-Hendrik Thiart
+        -:    3: * Use of this source code is governed by a BSD-style license that can be
+        -:    4: * found in the LICENSE.bipbuffer file.
+        -:    5: *
+        -:    6: * @file
+        -:    7: * @author  Willem Thiart himself@willemthiart.com
+        -:    8: */
+        -:    9:
+        -:   10:#include "stdio.h"
+        -:   11:#include <stdlib.h>
+        -:   12:
+        -:   13:/* for memcpy */
+        -:   14:#include <string.h>
+        -:   15:
+        -:   16:#include "bipbuffer.h"
+        -:   17:
+        -:   18:static size_t bipbuf_sizeof(const unsigned int size)
+        -:   19:{
+     2556:   20:    return sizeof(bipbuf_t) + size;
+        -:   21:}
+        -:   22:
+    #####:   23:int bipbuf_unused(const bipbuf_t* me)
+        -:   24:{
+  479319*:   25:    if (1 == me->b_inuse)
+        -:   26:        /* distance between region B and region A */
+     594*:   27:        return me->a_start - me->b_end;
+        -:   28:    else
+  478725*:   29:        return me->size - me->a_end;
+        -:   30:}
+------------------
+bipbuf_unused:
+    #####:   23:int bipbuf_unused(const bipbuf_t* me)
+        -:   24:{
+    #####:   25:    if (1 == me->b_inuse)
+        -:   26:        /* distance between region B and region A */
+    #####:   27:        return me->a_start - me->b_end;
+        -:   28:    else
+    #####:   29:        return me->size - me->a_end;
+        -:   30:}
+------------------
+bipbuf_unused:
+    #####:   23:int bipbuf_unused(const bipbuf_t* me)
+        -:   24:{
+    #####:   25:    if (1 == me->b_inuse)
+        -:   26:        /* distance between region B and region A */
+    #####:   27:        return me->a_start - me->b_end;
+        -:   28:    else
+    #####:   29:        return me->size - me->a_end;
+        -:   30:}
+------------------
+bipbuf_unused:
+    #####:   23:int bipbuf_unused(const bipbuf_t* me)
+        -:   24:{
+    #####:   25:    if (1 == me->b_inuse)
+        -:   26:        /* distance between region B and region A */
+    #####:   27:        return me->a_start - me->b_end;
+        -:   28:    else
+    #####:   29:        return me->size - me->a_end;
+        -:   30:}
+------------------
+        -:   31:
+    #####:   32:int bipbuf_size(const bipbuf_t* me)
+        -:   33:{
+    #####:   34:    return me->size;
+        -:   35:}
+------------------
+bipbuf_size:
+    #####:   32:int bipbuf_size(const bipbuf_t* me)
+        -:   33:{
+    #####:   34:    return me->size;
+        -:   35:}
+------------------
+bipbuf_size:
+    #####:   32:int bipbuf_size(const bipbuf_t* me)
+        -:   33:{
+    #####:   34:    return me->size;
+        -:   35:}
+------------------
+bipbuf_size:
+    #####:   32:int bipbuf_size(const bipbuf_t* me)
+        -:   33:{
+    #####:   34:    return me->size;
+        -:   35:}
+------------------
+        -:   36:
+        6:   37:int bipbuf_used(const bipbuf_t* me)
+        -:   38:{
+        6:   39:    return (me->a_end - me->a_start) + me->b_end;
+        -:   40:}
+------------------
+bipbuf_used:
+        2:   37:int bipbuf_used(const bipbuf_t* me)
+        -:   38:{
+        2:   39:    return (me->a_end - me->a_start) + me->b_end;
+        -:   40:}
+------------------
+bipbuf_used:
+        2:   37:int bipbuf_used(const bipbuf_t* me)
+        -:   38:{
+        2:   39:    return (me->a_end - me->a_start) + me->b_end;
+        -:   40:}
+------------------
+bipbuf_used:
+        2:   37:int bipbuf_used(const bipbuf_t* me)
+        -:   38:{
+        2:   39:    return (me->a_end - me->a_start) + me->b_end;
+        -:   40:}
+------------------
+        -:   41:
+    #####:   42:void bipbuf_init(bipbuf_t* me, const unsigned int size)
+        -:   43:{
+    2556*:   44:    me->a_start = me->a_end = me->b_end = 0;
+    2556*:   45:    me->size = size;
+    2556*:   46:    me->b_inuse = 0;
+    #####:   47:}
+------------------
+bipbuf_init:
+    #####:   42:void bipbuf_init(bipbuf_t* me, const unsigned int size)
+        -:   43:{
+    #####:   44:    me->a_start = me->a_end = me->b_end = 0;
+    #####:   45:    me->size = size;
+    #####:   46:    me->b_inuse = 0;
+    #####:   47:}
+------------------
+bipbuf_init:
+    #####:   42:void bipbuf_init(bipbuf_t* me, const unsigned int size)
+        -:   43:{
+    #####:   44:    me->a_start = me->a_end = me->b_end = 0;
+    #####:   45:    me->size = size;
+    #####:   46:    me->b_inuse = 0;
+    #####:   47:}
+------------------
+bipbuf_init:
+    #####:   42:void bipbuf_init(bipbuf_t* me, const unsigned int size)
+        -:   43:{
+    #####:   44:    me->a_start = me->a_end = me->b_end = 0;
+    #####:   45:    me->size = size;
+    #####:   46:    me->b_inuse = 0;
+    #####:   47:}
+------------------
+        -:   48:
+     2556:   49:bipbuf_t *bipbuf_new(const unsigned int size)
+        -:   50:{
+     5112:   51:    bipbuf_t *me = malloc(bipbuf_sizeof(size));
+     2556:   52:    if (!me)
+        -:   53:        return NULL;
+     5112:   54:    bipbuf_init(me, size);
+     2556:   55:    return me;
+        -:   56:}
+------------------
+bipbuf_new:
+      852:   49:bipbuf_t *bipbuf_new(const unsigned int size)
+        -:   50:{
+     1704:   51:    bipbuf_t *me = malloc(bipbuf_sizeof(size));
+      852:   52:    if (!me)
+        -:   53:        return NULL;
+     1704:   54:    bipbuf_init(me, size);
+      852:   55:    return me;
+        -:   56:}
+------------------
+bipbuf_new:
+      852:   49:bipbuf_t *bipbuf_new(const unsigned int size)
+        -:   50:{
+     1704:   51:    bipbuf_t *me = malloc(bipbuf_sizeof(size));
+      852:   52:    if (!me)
+        -:   53:        return NULL;
+     1704:   54:    bipbuf_init(me, size);
+      852:   55:    return me;
+        -:   56:}
+------------------
+bipbuf_new:
+      852:   49:bipbuf_t *bipbuf_new(const unsigned int size)
+        -:   50:{
+     1704:   51:    bipbuf_t *me = malloc(bipbuf_sizeof(size));
+      852:   52:    if (!me)
+        -:   53:        return NULL;
+     1704:   54:    bipbuf_init(me, size);
+      852:   55:    return me;
+        -:   56:}
+------------------
+        -:   57:
+        9:   58:void bipbuf_free(bipbuf_t* me)
+        -:   59:{
+        9:   60:    free(me);
+        9:   61:}
+------------------
+bipbuf_free:
+        3:   58:void bipbuf_free(bipbuf_t* me)
+        -:   59:{
+        3:   60:    free(me);
+        3:   61:}
+------------------
+bipbuf_free:
+        3:   58:void bipbuf_free(bipbuf_t* me)
+        -:   59:{
+        3:   60:    free(me);
+        3:   61:}
+------------------
+bipbuf_free:
+        3:   58:void bipbuf_free(bipbuf_t* me)
+        -:   59:{
+        3:   60:    free(me);
+        3:   61:}
+------------------
+        -:   62:
+    #####:   63:int bipbuf_is_empty(const bipbuf_t* me)
+        -:   64:{
+  302328*:   65:    return me->a_start == me->a_end;
+        -:   66:}
+------------------
+bipbuf_is_empty:
+    #####:   63:int bipbuf_is_empty(const bipbuf_t* me)
+        -:   64:{
+    #####:   65:    return me->a_start == me->a_end;
+        -:   66:}
+------------------
+bipbuf_is_empty:
+    #####:   63:int bipbuf_is_empty(const bipbuf_t* me)
+        -:   64:{
+    #####:   65:    return me->a_start == me->a_end;
+        -:   66:}
+------------------
+bipbuf_is_empty:
+    #####:   63:int bipbuf_is_empty(const bipbuf_t* me)
+        -:   64:{
+    #####:   65:    return me->a_start == me->a_end;
+        -:   66:}
+------------------
+        -:   67:
+        -:   68:/* find out if we should turn on region B
+        -:   69: * ie. is the distance from A to buffer's end less than B to A? */
+        -:   70:static void __check_for_switch_to_b(bipbuf_t* me)
+        -:   71:{
+   235110:   72:    if (me->size - me->a_end < me->a_start - me->b_end)
+     207*:   73:        me->b_inuse = 1;
+        -:   74:}
+        -:   75:
+        -:   76:/* TODO: DOCUMENT THESE TWO FUNCTIONS */
+   258819:   77:unsigned char *bipbuf_request(bipbuf_t* me, const int size)
+        -:   78:{
+   517638:   79:    if (bipbuf_unused(me) < size)
+        -:   80:        return 0;
+   221250:   81:    if (1 == me->b_inuse)
+        -:   82:    {
+      297:   83:        return (unsigned char *)me->data + me->b_end;
+        -:   84:    }
+        -:   85:    else
+        -:   86:    {
+   220953:   87:        return (unsigned char *)me->data + me->a_end;
+        -:   88:    }
+        -:   89:}
+------------------
+bipbuf_request:
+    86273:   77:unsigned char *bipbuf_request(bipbuf_t* me, const int size)
+        -:   78:{
+   172546:   79:    if (bipbuf_unused(me) < size)
+        -:   80:        return 0;
+    73750:   81:    if (1 == me->b_inuse)
+        -:   82:    {
+       99:   83:        return (unsigned char *)me->data + me->b_end;
+        -:   84:    }
+        -:   85:    else
+        -:   86:    {
+    73651:   87:        return (unsigned char *)me->data + me->a_end;
+        -:   88:    }
+        -:   89:}
+------------------
+bipbuf_request:
+    86273:   77:unsigned char *bipbuf_request(bipbuf_t* me, const int size)
+        -:   78:{
+   172546:   79:    if (bipbuf_unused(me) < size)
+        -:   80:        return 0;
+    73750:   81:    if (1 == me->b_inuse)
+        -:   82:    {
+       99:   83:        return (unsigned char *)me->data + me->b_end;
+        -:   84:    }
+        -:   85:    else
+        -:   86:    {
+    73651:   87:        return (unsigned char *)me->data + me->a_end;
+        -:   88:    }
+        -:   89:}
+------------------
+bipbuf_request:
+    86273:   77:unsigned char *bipbuf_request(bipbuf_t* me, const int size)
+        -:   78:{
+   172546:   79:    if (bipbuf_unused(me) < size)
+        -:   80:        return 0;
+    73750:   81:    if (1 == me->b_inuse)
+        -:   82:    {
+       99:   83:        return (unsigned char *)me->data + me->b_end;
+        -:   84:    }
+        -:   85:    else
+        -:   86:    {
+    73651:   87:        return (unsigned char *)me->data + me->a_end;
+        -:   88:    }
+        -:   89:}
+------------------
+        -:   90:
+   219312:   91:int bipbuf_push(bipbuf_t* me, const int size)
+        -:   92:{
+   438624:   93:    if (bipbuf_unused(me) < size)
+        -:   94:        return 0;
+        -:   95:
+   219312:   96:    if (1 == me->b_inuse)
+        -:   97:    {
+      297:   98:        me->b_end += size;
+        -:   99:    }
+        -:  100:    else
+        -:  101:    {
+   219015:  102:        me->a_end += size;
+        -:  103:    }
+        -:  104:
+   219312:  105:    __check_for_switch_to_b(me);
+        -:  106:    return size;
+        -:  107:}
+------------------
+bipbuf_push:
+    73104:   91:int bipbuf_push(bipbuf_t* me, const int size)
+        -:   92:{
+   146208:   93:    if (bipbuf_unused(me) < size)
+        -:   94:        return 0;
+        -:   95:
+    73104:   96:    if (1 == me->b_inuse)
+        -:   97:    {
+       99:   98:        me->b_end += size;
+        -:   99:    }
+        -:  100:    else
+        -:  101:    {
+    73005:  102:        me->a_end += size;
+        -:  103:    }
+        -:  104:
+    73104:  105:    __check_for_switch_to_b(me);
+        -:  106:    return size;
+        -:  107:}
+------------------
+bipbuf_push:
+    73104:   91:int bipbuf_push(bipbuf_t* me, const int size)
+        -:   92:{
+   146208:   93:    if (bipbuf_unused(me) < size)
+        -:   94:        return 0;
+        -:   95:
+    73104:   96:    if (1 == me->b_inuse)
+        -:   97:    {
+       99:   98:        me->b_end += size;
+        -:   99:    }
+        -:  100:    else
+        -:  101:    {
+    73005:  102:        me->a_end += size;
+        -:  103:    }
+        -:  104:
+    73104:  105:    __check_for_switch_to_b(me);
+        -:  106:    return size;
+        -:  107:}
+------------------
+bipbuf_push:
+    73104:   91:int bipbuf_push(bipbuf_t* me, const int size)
+        -:   92:{
+   146208:   93:    if (bipbuf_unused(me) < size)
+        -:   94:        return 0;
+        -:   95:
+    73104:   96:    if (1 == me->b_inuse)
+        -:   97:    {
+       99:   98:        me->b_end += size;
+        -:   99:    }
+        -:  100:    else
+        -:  101:    {
+    73005:  102:        me->a_end += size;
+        -:  103:    }
+        -:  104:
+    73104:  105:    __check_for_switch_to_b(me);
+        -:  106:    return size;
+        -:  107:}
+------------------
+        -:  108:
+     1188:  109:int bipbuf_offer(bipbuf_t* me, const unsigned char *data, const int size)
+        -:  110:{
+        -:  111:    /* not enough space */
+     2376:  112:    if (bipbuf_unused(me) < size)
+        -:  113:        return 0;
+        -:  114:
+     1188:  115:    if (1 == me->b_inuse)
+        -:  116:    {
+    #####:  117:        memcpy(me->data + me->b_end, data, size);
+    #####:  118:        me->b_end += size;
+        -:  119:    }
+        -:  120:    else
+        -:  121:    {
+     1188:  122:        memcpy(me->data + me->a_end, data, size);
+     1188:  123:        me->a_end += size;
+        -:  124:    }
+        -:  125:
+     1188:  126:    __check_for_switch_to_b(me);
+        -:  127:    return size;
+        -:  128:}
+------------------
+bipbuf_offer:
+      396:  109:int bipbuf_offer(bipbuf_t* me, const unsigned char *data, const int size)
+        -:  110:{
+        -:  111:    /* not enough space */
+      792:  112:    if (bipbuf_unused(me) < size)
+        -:  113:        return 0;
+        -:  114:
+      396:  115:    if (1 == me->b_inuse)
+        -:  116:    {
+    #####:  117:        memcpy(me->data + me->b_end, data, size);
+    #####:  118:        me->b_end += size;
+        -:  119:    }
+        -:  120:    else
+        -:  121:    {
+      396:  122:        memcpy(me->data + me->a_end, data, size);
+      396:  123:        me->a_end += size;
+        -:  124:    }
+        -:  125:
+      396:  126:    __check_for_switch_to_b(me);
+        -:  127:    return size;
+        -:  128:}
+------------------
+bipbuf_offer:
+      396:  109:int bipbuf_offer(bipbuf_t* me, const unsigned char *data, const int size)
+        -:  110:{
+        -:  111:    /* not enough space */
+      792:  112:    if (bipbuf_unused(me) < size)
+        -:  113:        return 0;
+        -:  114:
+      396:  115:    if (1 == me->b_inuse)
+        -:  116:    {
+    #####:  117:        memcpy(me->data + me->b_end, data, size);
+    #####:  118:        me->b_end += size;
+        -:  119:    }
+        -:  120:    else
+        -:  121:    {
+      396:  122:        memcpy(me->data + me->a_end, data, size);
+      396:  123:        me->a_end += size;
+        -:  124:    }
+        -:  125:
+      396:  126:    __check_for_switch_to_b(me);
+        -:  127:    return size;
+        -:  128:}
+------------------
+bipbuf_offer:
+      396:  109:int bipbuf_offer(bipbuf_t* me, const unsigned char *data, const int size)
+        -:  110:{
+        -:  111:    /* not enough space */
+      792:  112:    if (bipbuf_unused(me) < size)
+        -:  113:        return 0;
+        -:  114:
+      396:  115:    if (1 == me->b_inuse)
+        -:  116:    {
+    #####:  117:        memcpy(me->data + me->b_end, data, size);
+    #####:  118:        me->b_end += size;
+        -:  119:    }
+        -:  120:    else
+        -:  121:    {
+      396:  122:        memcpy(me->data + me->a_end, data, size);
+      396:  123:        me->a_end += size;
+        -:  124:    }
+        -:  125:
+      396:  126:    __check_for_switch_to_b(me);
+        -:  127:    return size;
+        -:  128:}
+------------------
+        -:  129:
+    #####:  130:unsigned char *bipbuf_peek(const bipbuf_t* me, const unsigned int size)
+        -:  131:{
+        -:  132:    /* make sure we can actually peek at this data */
+    #####:  133:    if (me->size < me->a_start + size)
+        -:  134:        return NULL;
+        -:  135:
+    #####:  136:    if (bipbuf_is_empty(me))
+        -:  137:        return NULL;
+        -:  138:
+    #####:  139:    return (unsigned char *)me->data + me->a_start;
+        -:  140:}
+------------------
+bipbuf_peek:
+    #####:  130:unsigned char *bipbuf_peek(const bipbuf_t* me, const unsigned int size)
+        -:  131:{
+        -:  132:    /* make sure we can actually peek at this data */
+    #####:  133:    if (me->size < me->a_start + size)
+        -:  134:        return NULL;
+        -:  135:
+    #####:  136:    if (bipbuf_is_empty(me))
+        -:  137:        return NULL;
+        -:  138:
+    #####:  139:    return (unsigned char *)me->data + me->a_start;
+        -:  140:}
+------------------
+bipbuf_peek:
+    #####:  130:unsigned char *bipbuf_peek(const bipbuf_t* me, const unsigned int size)
+        -:  131:{
+        -:  132:    /* make sure we can actually peek at this data */
+    #####:  133:    if (me->size < me->a_start + size)
+        -:  134:        return NULL;
+        -:  135:
+    #####:  136:    if (bipbuf_is_empty(me))
+        -:  137:        return NULL;
+        -:  138:
+    #####:  139:    return (unsigned char *)me->data + me->a_start;
+        -:  140:}
+------------------
+bipbuf_peek:
+    #####:  130:unsigned char *bipbuf_peek(const bipbuf_t* me, const unsigned int size)
+        -:  131:{
+        -:  132:    /* make sure we can actually peek at this data */
+    #####:  133:    if (me->size < me->a_start + size)
+        -:  134:        return NULL;
+        -:  135:
+    #####:  136:    if (bipbuf_is_empty(me))
+        -:  137:        return NULL;
+        -:  138:
+    #####:  139:    return (unsigned char *)me->data + me->a_start;
+        -:  140:}
+------------------
+        -:  141:
+   287718:  142:unsigned char *bipbuf_peek_all(const bipbuf_t* me, unsigned int *size)
+        -:  143:{
+   287718:  144:    if (bipbuf_is_empty(me))
+        -:  145:        return NULL;
+        -:  146:
+    80496:  147:    *size = me->a_end - me->a_start;
+    80496:  148:    return (unsigned char*)me->data + me->a_start;
+        -:  149:}
+------------------
+bipbuf_peek_all:
+    95906:  142:unsigned char *bipbuf_peek_all(const bipbuf_t* me, unsigned int *size)
+        -:  143:{
+    95906:  144:    if (bipbuf_is_empty(me))
+        -:  145:        return NULL;
+        -:  146:
+    26832:  147:    *size = me->a_end - me->a_start;
+    26832:  148:    return (unsigned char*)me->data + me->a_start;
+        -:  149:}
+------------------
+bipbuf_peek_all:
+    95906:  142:unsigned char *bipbuf_peek_all(const bipbuf_t* me, unsigned int *size)
+        -:  143:{
+    95906:  144:    if (bipbuf_is_empty(me))
+        -:  145:        return NULL;
+        -:  146:
+    26832:  147:    *size = me->a_end - me->a_start;
+    26832:  148:    return (unsigned char*)me->data + me->a_start;
+        -:  149:}
+------------------
+bipbuf_peek_all:
+    95906:  142:unsigned char *bipbuf_peek_all(const bipbuf_t* me, unsigned int *size)
+        -:  143:{
+    95906:  144:    if (bipbuf_is_empty(me))
+        -:  145:        return NULL;
+        -:  146:
+    26832:  147:    *size = me->a_end - me->a_start;
+    26832:  148:    return (unsigned char*)me->data + me->a_start;
+        -:  149:}
+------------------
+        -:  150:
+    14610:  151:unsigned char *bipbuf_poll(bipbuf_t* me, const unsigned int size)
+        -:  152:{
+    14610:  153:    if (bipbuf_is_empty(me))
+        -:  154:        return NULL;
+        -:  155:
+        -:  156:    /* make sure we can actually poll this data */
+    14610:  157:    if (me->size < me->a_start + size)
+        -:  158:        return NULL;
+        -:  159:
+    14610:  160:    void *end = me->data + me->a_start;
+    14610:  161:    me->a_start += size;
+        -:  162:
+        -:  163:    /* we seem to be empty.. */
+    14610:  164:    if (me->a_start == me->a_end)
+        -:  165:    {
+        -:  166:        /* replace a with region b */
+     4704:  167:        if (1 == me->b_inuse)
+        -:  168:        {
+        6:  169:            me->a_start = 0;
+        6:  170:            me->a_end = me->b_end;
+        6:  171:            me->b_end = me->b_inuse = 0;
+        -:  172:        }
+        -:  173:        else
+        -:  174:            /* safely move cursor back to the start because we are empty */
+     4698:  175:            me->a_start = me->a_end = 0;
+        -:  176:    }
+        -:  177:
+    14610:  178:    __check_for_switch_to_b(me);
+        -:  179:    return end;
+        -:  180:}

@@ -1,0 +1,24 @@
+        -:    0:Source:hash.c
+        -:    0:Programs:54
+        -:    0:Source is newer than graph
+        -:    1:/* -*- Mode: C; tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*- */
+        -:    2:
+        -:    3:#include "memcached.h"
+        -:    4:#include "jenkins_hash.h"
+        -:    5:#include "murmur3_hash.h"
+        -:    6:
+      288:    7:int hash_init(enum hashfunc_type type) {
+      288:    8:    switch(type) {
+       21:    9:        case JENKINS_HASH:
+       21:   10:            hash = jenkins_hash;
+       21:   11:            settings.hash_algorithm = "jenkins";
+       21:   12:            break;
+      267:   13:        case MURMUR3_HASH:
+      267:   14:            hash = MurmurHash3_x86_32;
+      267:   15:            settings.hash_algorithm = "murmur3";
+      267:   16:            break;
+        -:   17:        default:
+        -:   18:            return -1;
+        -:   19:    }
+        -:   20:    return 0;
+        -:   21:}
