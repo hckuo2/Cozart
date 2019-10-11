@@ -1,5 +1,5 @@
         -:    0:Source:itoa_ljust.c
-        -:    0:Programs:36
+        -:    0:Programs:54
         -:    1://=== itoa_ljust.cpp - Fast integer to ascii conversion           --*- C++ -*-//
         -:    2://
         -:    3:// Substantially simplified (and slightly faster) version
@@ -144,7 +144,36 @@ itoa:
     #####:  106:    return p;
         -:  107:}
 ------------------
+itoa:
+    #####:   92:static inline char* itoa(uint32_t u, char* p, int d, int n) {
+    #####:   93:    switch(n) {
+    #####:   94:    case 10: d  = u / 100000000; p = out2( d, p );
+    #####:   95:    case  9: u -= d * 100000000;
+    #####:   96:    case  8: d  = u /   1000000; p = out2( d, p );
+    #####:   97:    case  7: u -= d *   1000000;
+    #####:   98:    case  6: d  = u /     10000; p = out2( d, p );
+    #####:   99:    case  5: u -= d *     10000;
+    #####:  100:    case  4: d  = u /       100; p = out2( d, p );
+    #####:  101:    case  3: u -= d *       100;
+    #####:  102:    case  2: d  = u /         1; p = out2( d, p );
+    #####:  103:    case  1: ;
+        -:  104:    }
+    #####:  105:    *p = '\0';
+    #####:  106:    return p;
+        -:  107:}
+------------------
         -:  108:
+    #####:  109:char* itoa_u32(uint32_t u, char* p) {
+    #####:  110:    int d = 0,n;
+    #####:  111:         if (u >=100000000) n = digits(u, 100000000, &d, &p, 10);
+    #####:  112:    else if (u <       100) n = digits(u,         1, &d, &p,  2);
+    #####:  113:    else if (u <     10000) n = digits(u,       100, &d, &p,  4);
+    #####:  114:    else if (u <   1000000) n = digits(u,     10000, &d, &p,  6);
+    #####:  115:    else                    n = digits(u,   1000000, &d, &p,  8);
+    #####:  116:    return itoa( u, p, d, n );
+        -:  117:}
+------------------
+itoa_u32:
     #####:  109:char* itoa_u32(uint32_t u, char* p) {
     #####:  110:    int d = 0,n;
     #####:  111:         if (u >=100000000) n = digits(u, 100000000, &d, &p, 10);
@@ -207,7 +236,32 @@ itoa_32:
     #####:  125:    return itoa_u32(u, p);
         -:  126:}
 ------------------
+itoa_32:
+    #####:  119:char* itoa_32(int32_t i, char* p) {
+    #####:  120:    uint32_t u = i;
+    #####:  121:    if (i < 0) {
+    #####:  122:        *p++ = '-';
+    #####:  123:        u = -u;
+        -:  124:    }
+    #####:  125:    return itoa_u32(u, p);
+        -:  126:}
+------------------
         -:  127:
+    #####:  128:char* itoa_u64(uint64_t u, char* p) {
+    #####:  129:    int d;
+        -:  130:
+    #####:  131:    uint32_t lower = (uint32_t)u;
+    #####:  132:    if (lower == u) return itoa_u32(lower, p);
+        -:  133:
+    #####:  134:    uint64_t upper = u / 1000000000;
+    #####:  135:    p = itoa_u64(upper, p);
+    #####:  136:    lower = u - (upper * 1000000000);
+    #####:  137:    d = lower / 100000000;
+    #####:  138:    p = out1('0'+d,p);
+    #####:  139:    return itoa( lower, p, d, 9 );
+        -:  140:}
+------------------
+itoa_u64:
     #####:  128:char* itoa_u64(uint64_t u, char* p) {
     #####:  129:    int d;
         -:  130:

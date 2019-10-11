@@ -1,5 +1,5 @@
         -:    0:Source:/usr/include/x86_64-linux-gnu/bits/stdio2.h
-        -:    0:Programs:36
+        -:    0:Programs:54
         -:    1:/* Checking macros for stdio functions.
         -:    2:   Copyright (C) 2004-2019 Free Software Foundation, Inc.
         -:    3:   This file is part of the GNU C Library.
@@ -66,7 +66,7 @@
         -:   64:__NTH (snprintf (char *__restrict __s, size_t __n,
         -:   65:		 const char *__restrict __fmt, ...))
         -:   66:{
-     382*:   67:  return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+     573*:   67:  return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
         -:   68:				   __bos (__s), __fmt, __va_arg_pack ());
         -:   69:}
         -:   70:# elif !defined __cplusplus
@@ -106,7 +106,7 @@
         -:  104:__fortify_function int
         -:  105:printf (const char *__restrict __fmt, ...)
         -:  106:{
-       2*:  107:  return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
+       3*:  107:  return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
         -:  108:}
         -:  109:# elif !defined __cplusplus
         -:  110:#  define printf(...) \

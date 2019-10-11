@@ -1,5 +1,5 @@
         -:    0:Source:/usr/include/x86_64-linux-gnu/bits/byteswap.h
-        -:    0:Programs:36
+        -:    0:Programs:54
         -:    1:/* Macros and inline functions to swap the order of bytes in integer values.
         -:    2:   Copyright (C) 1997-2019 Free Software Foundation, Inc.
         -:    3:   This file is part of the GNU C Library.
@@ -36,7 +36,7 @@
         -:   34:__bswap_16 (__uint16_t __bsx)
         -:   35:{
         -:   36:#if __GNUC_PREREQ (4, 8)
-  600000*:   37:  return __builtin_bswap16 (__bsx);
+  900000*:   37:  return __builtin_bswap16 (__bsx);
         -:   38:#else
         -:   39:  return __bswap_constant_16 (__bsx);
         -:   40:#endif
@@ -51,7 +51,7 @@
         -:   49:__bswap_32 (__uint32_t __bsx)
         -:   50:{
         -:   51:#if __GNUC_PREREQ (4, 3)
-  436800*:   52:  return __builtin_bswap32 (__bsx);
+  655200*:   52:  return __builtin_bswap32 (__bsx);
         -:   53:#else
         -:   54:  return __bswap_constant_32 (__bsx);
         -:   55:#endif

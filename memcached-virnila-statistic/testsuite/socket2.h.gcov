@@ -1,5 +1,5 @@
         -:    0:Source:/usr/include/x86_64-linux-gnu/bits/socket2.h
-        -:    0:Programs:54
+        -:    0:Programs:72
         -:    1:/* Checking macros for socket functions.
         -:    2:   Copyright (C) 2005-2019 Free Software Foundation, Inc.
         -:    3:   This file is part of the GNU C Library.
@@ -66,7 +66,7 @@
         -:   64:recvfrom (int __fd, void *__restrict __buf, size_t __n, int __flags,
         -:   65:	  __SOCKADDR_ARG __addr, socklen_t *__restrict __addr_len)
         -:   66:{
-       60:   67:  if (__bos0 (__buf) != (size_t) -1)
+      124:   67:  if (__bos0 (__buf) != (size_t) -1)
         -:   68:    {
     #####:   69:      if (!__builtin_constant_p (__n))
     #####:   70:	return __recvfrom_chk (__fd, __buf, __n, __bos0 (__buf), __flags,
@@ -75,5 +75,5 @@
     #####:   73:	return __recvfrom_chk_warn (__fd, __buf, __n, __bos0 (__buf), __flags,
         -:   74:				    __addr, __addr_len);
         -:   75:    }
-       60:   76:  return __recvfrom_alias (__fd, __buf, __n, __flags, __addr, __addr_len);
+      124:   76:  return __recvfrom_alias (__fd, __buf, __n, __flags, __addr, __addr_len);
         -:   77:}

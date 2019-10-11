@@ -1,5 +1,5 @@
         -:    0:Source:/usr/include/stdlib.h
-        -:    0:Programs:54
+        -:    0:Programs:72
         -:    1:/* Copyright (C) 1991-2019 Free Software Foundation, Inc.
         -:    2:   This file is part of the GNU C Library.
         -:    3:
@@ -362,12 +362,12 @@
         -:  360:__extern_inline int
         -:  361:__NTH (atoi (const char *__nptr))
         -:  362:{
-     201*:  363:  return (int) strtol (__nptr, (char **) NULL, 10);
+     276*:  363:  return (int) strtol (__nptr, (char **) NULL, 10);
         -:  364:}
         -:  365:__extern_inline long int
         -:  366:__NTH (atol (const char *__nptr))
         -:  367:{
-        3:  368:  return strtol (__nptr, (char **) NULL, 10);
+        4:  368:  return strtol (__nptr, (char **) NULL, 10);
         -:  369:}
         -:  370:
         -:  371:# ifdef __USE_ISOC99

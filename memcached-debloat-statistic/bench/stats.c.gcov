@@ -1,5 +1,5 @@
         -:    0:Source:stats.c
-        -:    0:Programs:36
+        -:    0:Programs:54
         -:    1:/* -*- Mode: C; tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*- */
         -:    2:/*
         -:    3: * Detailed statistics management. For simple stats like total number of
@@ -37,9 +37,14 @@
         -:   35:static int num_prefixes = 0;
         -:   36:static int total_prefix_size = 0;
         -:   37:
-        2:   38:void stats_prefix_init() {
-        4:   39:    memset(prefix_stats, 0, sizeof(prefix_stats));
-        2:   40:}
+        3:   38:void stats_prefix_init() {
+        6:   39:    memset(prefix_stats, 0, sizeof(prefix_stats));
+        3:   40:}
+------------------
+stats_prefix_init:
+        1:   38:void stats_prefix_init() {
+        2:   39:    memset(prefix_stats, 0, sizeof(prefix_stats));
+        1:   40:}
 ------------------
 stats_prefix_init:
         1:   38:void stats_prefix_init() {
@@ -56,6 +61,23 @@ stats_prefix_init:
         -:   43: * Cleans up all our previously collected stats. NOTE: the stats lock is
         -:   44: * assumed to be held when this is called.
         -:   45: */
+    #####:   46:void stats_prefix_clear() {
+    #####:   47:    int i;
+        -:   48:
+    #####:   49:    for (i = 0; i < PREFIX_HASH_SIZE; i++) {
+    #####:   50:        PREFIX_STATS *cur, *next;
+    #####:   51:        for (cur = prefix_stats[i]; cur != NULL; cur = next) {
+    #####:   52:            next = cur->next;
+    #####:   53:            free(cur->prefix);
+    #####:   54:            free(cur);
+        -:   55:        }
+    #####:   56:        prefix_stats[i] = NULL;
+        -:   57:    }
+    #####:   58:    num_prefixes = 0;
+    #####:   59:    total_prefix_size = 0;
+    #####:   60:}
+------------------
+stats_prefix_clear:
     #####:   46:void stats_prefix_clear() {
     #####:   47:    int i;
         -:   48:
@@ -270,10 +292,78 @@ stats_prefix_find:
     #####:  116:    return pfs;
         -:  117:}
 ------------------
+stats_prefix_find:
+    #####:   67:static PREFIX_STATS *stats_prefix_find(const char *key, const size_t nkey) {
+    #####:   68:    PREFIX_STATS *pfs;
+    #####:   69:    uint32_t hashval;
+    #####:   70:    size_t length;
+    #####:   71:    bool bailout = true;
+        -:   72:
+    #####:   73:    assert(key != NULL);
+        -:   74:
+    #####:   75:    for (length = 0; length < nkey && key[length] != '\0'; length++) {
+    #####:   76:        if (key[length] == settings.prefix_delimiter) {
+        -:   77:            bailout = false;
+        -:   78:            break;
+        -:   79:        }
+        -:   80:    }
+        -:   81:
+    #####:   82:    if (bailout) {
+        -:   83:        return NULL;
+        -:   84:    }
+        -:   85:
+    #####:   86:    hashval = hash(key, length) % PREFIX_HASH_SIZE;
+        -:   87:
+    #####:   88:    for (pfs = prefix_stats[hashval]; NULL != pfs; pfs = pfs->next) {
+    #####:   89:        if (strncmp(pfs->prefix, key, length) == 0)
+    #####:   90:            return pfs;
+        -:   91:    }
+        -:   92:
+    #####:   93:    pfs = calloc(sizeof(PREFIX_STATS), 1);
+    #####:   94:    if (NULL == pfs) {
+    #####:   95:        perror("Can't allocate space for stats structure: calloc");
+    #####:   96:        return NULL;
+        -:   97:    }
+        -:   98:
+    #####:   99:    pfs->prefix = malloc(length + 1);
+    #####:  100:    if (NULL == pfs->prefix) {
+    #####:  101:        perror("Can't allocate space for copy of prefix: malloc");
+    #####:  102:        free(pfs);
+    #####:  103:        return NULL;
+        -:  104:    }
+        -:  105:
+    #####:  106:    strncpy(pfs->prefix, key, length);
+    #####:  107:    pfs->prefix[length] = '\0';      /* because strncpy() sucks */
+    #####:  108:    pfs->prefix_len = length;
+        -:  109:
+    #####:  110:    pfs->next = prefix_stats[hashval];
+    #####:  111:    prefix_stats[hashval] = pfs;
+        -:  112:
+    #####:  113:    num_prefixes++;
+    #####:  114:    total_prefix_size += length;
+        -:  115:
+    #####:  116:    return pfs;
+        -:  117:}
+------------------
         -:  118:
         -:  119:/*
         -:  120: * Records a "get" of a key.
         -:  121: */
+    #####:  122:void stats_prefix_record_get(const char *key, const size_t nkey, const bool is_hit) {
+    #####:  123:    PREFIX_STATS *pfs;
+        -:  124:
+    #####:  125:    STATS_LOCK();
+    #####:  126:    pfs = stats_prefix_find(key, nkey);
+    #####:  127:    if (NULL != pfs) {
+    #####:  128:        pfs->num_gets++;
+    #####:  129:        if (is_hit) {
+    #####:  130:            pfs->num_hits++;
+        -:  131:        }
+        -:  132:    }
+    #####:  133:    STATS_UNLOCK();
+    #####:  134:}
+------------------
+stats_prefix_record_get:
     #####:  122:void stats_prefix_record_get(const char *key, const size_t nkey, const bool is_hit) {
     #####:  123:    PREFIX_STATS *pfs;
         -:  124:
@@ -357,10 +447,34 @@ stats_prefix_record_delete:
     #####:  147:    STATS_UNLOCK();
     #####:  148:}
 ------------------
+stats_prefix_record_delete:
+    #####:  139:void stats_prefix_record_delete(const char *key, const size_t nkey) {
+    #####:  140:    PREFIX_STATS *pfs;
+        -:  141:
+    #####:  142:    STATS_LOCK();
+    #####:  143:    pfs = stats_prefix_find(key, nkey);
+    #####:  144:    if (NULL != pfs) {
+    #####:  145:        pfs->num_deletes++;
+        -:  146:    }
+    #####:  147:    STATS_UNLOCK();
+    #####:  148:}
+------------------
         -:  149:
         -:  150:/*
         -:  151: * Records a "set" of a key.
         -:  152: */
+    #####:  153:void stats_prefix_record_set(const char *key, const size_t nkey) {
+    #####:  154:    PREFIX_STATS *pfs;
+        -:  155:
+    #####:  156:    STATS_LOCK();
+    #####:  157:    pfs = stats_prefix_find(key, nkey);
+    #####:  158:    if (NULL != pfs) {
+    #####:  159:        pfs->num_sets++;
+        -:  160:    }
+    #####:  161:    STATS_UNLOCK();
+    #####:  162:}
+------------------
+stats_prefix_record_set:
     #####:  153:void stats_prefix_record_set(const char *key, const size_t nkey) {
     #####:  154:    PREFIX_STATS *pfs;
         -:  155:

@@ -1,5 +1,5 @@
         -:    0:Source:/usr/include/x86_64-linux-gnu/bits/poll2.h
-        -:    0:Programs:54
+        -:    0:Programs:72
         -:    1:/* Checking macros for poll functions.
         -:    2:   Copyright (C) 2012-2019 Free Software Foundation, Inc.
         -:    3:   This file is part of the GNU C Library.
@@ -37,15 +37,15 @@
         -:   35:__fortify_function int
         -:   36:poll (struct pollfd *__fds, nfds_t __nfds, int __timeout)
         -:   37:{
-    15537:   38:  if (__bos (__fds) != (__SIZE_TYPE__) -1)
+    42040:   38:  if (__bos (__fds) != (__SIZE_TYPE__) -1)
         -:   39:    {
-    15534:   40:      if (! __builtin_constant_p (__nfds))
-    15534:   41:	return __poll_chk (__fds, __nfds, __timeout, __bos (__fds));
+    42036:   40:      if (! __builtin_constant_p (__nfds))
+    42036:   41:	return __poll_chk (__fds, __nfds, __timeout, __bos (__fds));
     #####:   42:      else if (__bos (__fds) / sizeof (*__fds) < __nfds)
     #####:   43:	return __poll_chk_warn (__fds, __nfds, __timeout, __bos (__fds));
         -:   44:    }
         -:   45:
-       3*:   46:  return __poll_alias (__fds, __nfds, __timeout);
+       4*:   46:  return __poll_alias (__fds, __nfds, __timeout);
         -:   47:}
         -:   48:
         -:   49:

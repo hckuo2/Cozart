@@ -1,5 +1,5 @@
         -:    0:Source:/usr/include/x86_64-linux-gnu/bits/string_fortified.h
-        -:    0:Programs:36
+        -:    0:Programs:54
         -:    1:/* Copyright (C) 2004-2019 Free Software Foundation, Inc.
         -:    2:   This file is part of the GNU C Library.
         -:    3:
@@ -33,13 +33,13 @@
         -:   31:__NTH (memcpy (void *__restrict __dest, const void *__restrict __src,
         -:   32:	       size_t __len))
         -:   33:{
-   18416*:   34:  return __builtin___memcpy_chk (__dest, __src, __len, __bos0 (__dest));
+   27624*:   34:  return __builtin___memcpy_chk (__dest, __src, __len, __bos0 (__dest));
         -:   35:}
         -:   36:
         -:   37:__fortify_function void *
         -:   38:__NTH (memmove (void *__dest, const void *__src, size_t __len))
         -:   39:{
-   18400*:   40:  return __builtin___memmove_chk (__dest, __src, __len, __bos0 (__dest));
+   27600*:   40:  return __builtin___memmove_chk (__dest, __src, __len, __bos0 (__dest));
         -:   41:}
         -:   42:
         -:   43:#ifdef __USE_GNU
@@ -70,7 +70,7 @@
         -:   68:      return __dest;
         -:   69:    }
         -:   70:#endif
-  401128*:   71:  return __builtin___memset_chk (__dest, __ch, __len, __bos0 (__dest));
+  601692*:   71:  return __builtin___memset_chk (__dest, __ch, __len, __bos0 (__dest));
         -:   72:}
         -:   73:
         -:   74:#ifdef __USE_MISC

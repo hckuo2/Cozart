@@ -1,5 +1,5 @@
         -:    0:Source:murmur3_hash.c
-        -:    0:Programs:36
+        -:    0:Programs:54
         -:    1://-----------------------------------------------------------------------------
         -:    2:// MurmurHash3 was written by Austin Appleby, and is placed in the public
         -:    3:// domain. The author hereby disclaims copyright to this source code.
@@ -34,7 +34,7 @@
         -:   32:
         -:   33:static inline uint32_t rotl32 ( uint32_t x, int8_t r )
         -:   34:{
-  1551836:   35:  return (x << r) | (x >> (32 - r));
+  2327754:   35:  return (x << r) | (x >> (32 - r));
         -:   36:}
         -:   37:
         -:   38:#define    ROTL32(x,y)    rotl32(x,y)
@@ -49,7 +49,7 @@
         -:   47:
         -:   48:static FORCE_INLINE uint32_t getblock32 ( const uint32_t * p, int i )
         -:   49:{
-   665244:   50:  return p[i];
+   997866:   50:  return p[i];
         -:   51:}
         -:   52:
         -:   53://-----------------------------------------------------------------------------
@@ -57,70 +57,70 @@
         -:   55:
         -:   56:static FORCE_INLINE uint32_t fmix32 ( uint32_t h )
         -:   57:{
-   221748:   58:  h ^= h >> 16;
-   221748:   59:  h *= 0x85ebca6b;
-   221748:   60:  h ^= h >> 13;
-   221748:   61:  h *= 0xc2b2ae35;
-   221748:   62:  h ^= h >> 16;
+   332622:   58:  h ^= h >> 16;
+   332622:   59:  h *= 0x85ebca6b;
+   332622:   60:  h ^= h >> 13;
+   332622:   61:  h *= 0xc2b2ae35;
+   332622:   62:  h ^= h >> 16;
         -:   63:
-   221748:   64:  return h;
+   332622:   64:  return h;
         -:   65:}
         -:   66:
         -:   67://-----------------------------------------------------------------------------
         -:   68:
         -:   69:/* Definition modified slightly from the public domain interface (no seed +
         -:   70: * return value */
-   221748:   71:uint32_t MurmurHash3_x86_32 ( const void * key, size_t length)
+   332622:   71:uint32_t MurmurHash3_x86_32 ( const void * key, size_t length)
         -:   72:{
-   221748:   73:  const uint8_t * data = (const uint8_t*)key;
-   221748:   74:  const int nblocks = length / 4;
+   332622:   73:  const uint8_t * data = (const uint8_t*)key;
+   332622:   74:  const int nblocks = length / 4;
         -:   75:
-   221748:   76:  uint32_t h1 = 0;
+   332622:   76:  uint32_t h1 = 0;
         -:   77:
-   221748:   78:  uint32_t c1 = 0xcc9e2d51;
-   221748:   79:  uint32_t c2 = 0x1b873593;
+   332622:   78:  uint32_t c1 = 0xcc9e2d51;
+   332622:   79:  uint32_t c2 = 0x1b873593;
         -:   80:
         -:   81:  //----------
         -:   82:  // body
         -:   83:
-   221748:   84:  const uint32_t * blocks = (const uint32_t *)(data + nblocks*4);
+   332622:   84:  const uint32_t * blocks = (const uint32_t *)(data + nblocks*4);
         -:   85:
-   886992:   86:  for(int i = -nblocks; i; i++)
+  1330488:   86:  for(int i = -nblocks; i; i++)
         -:   87:  {
-  1330488:   88:    uint32_t k1 = getblock32(blocks,i);
+  1995732:   88:    uint32_t k1 = getblock32(blocks,i);
         -:   89:
-   665244:   90:    k1 *= c1;
-  1330488:   91:    k1 = ROTL32(k1,15);
-   665244:   92:    k1 *= c2;
+   997866:   90:    k1 *= c1;
+  1995732:   91:    k1 = ROTL32(k1,15);
+   997866:   92:    k1 *= c2;
         -:   93:
-   665244:   94:    h1 ^= k1;
-  1330488:   95:    h1 = ROTL32(h1,13);
-   665244:   96:    h1 = h1*5+0xe6546b64;
+   997866:   94:    h1 ^= k1;
+  1995732:   95:    h1 = ROTL32(h1,13);
+   997866:   96:    h1 = h1*5+0xe6546b64;
         -:   97:  }
         -:   98:
         -:   99:  //----------
         -:  100:  // tail
         -:  101:
-   221748:  102:  const uint8_t * tail = (const uint8_t*)(data + nblocks*4);
+   332622:  102:  const uint8_t * tail = (const uint8_t*)(data + nblocks*4);
         -:  103:
-   221748:  104:  uint32_t k1 = 0;
+   332622:  104:  uint32_t k1 = 0;
         -:  105:
-   221748:  106:  switch(length & 3)
+   332622:  106:  switch(length & 3)
         -:  107:  {
-   198214:  108:  case 3: k1 ^= tail[2] << 16;
-   219734:  109:  case 2: k1 ^= tail[1] << 8;
-   221348:  110:  case 1: k1 ^= tail[0];
-   221348:  111:          k1 *= c1; k1 = ROTL32(k1,15); k1 *= c2; h1 ^= k1;
-   221748:  112:  };
+   297321:  108:  case 3: k1 ^= tail[2] << 16;
+   329601:  109:  case 2: k1 ^= tail[1] << 8;
+   332022:  110:  case 1: k1 ^= tail[0];
+   332022:  111:          k1 *= c1; k1 = ROTL32(k1,15); k1 *= c2; h1 ^= k1;
+   332622:  112:  };
         -:  113:
         -:  114:  //----------
         -:  115:  // finalization
         -:  116:
-   221748:  117:  h1 ^= length;
+   332622:  117:  h1 ^= length;
         -:  118:
-   443496:  119:  h1 = fmix32(h1);
+   665244:  119:  h1 = fmix32(h1);
         -:  120:
         -:  121:  //*(uint32_t*)out = h1;
-   221748:  122:  return h1;
+   332622:  122:  return h1;
         -:  123:}
         -:  124:

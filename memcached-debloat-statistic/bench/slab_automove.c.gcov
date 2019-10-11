@@ -1,5 +1,5 @@
         -:    0:Source:slab_automove.c
-        -:    0:Programs:36
+        -:    0:Programs:54
         -:    1:/*  Copyright 2017 Facebook.
         -:    2: *
         -:    3: *  Use and distribution licensed under the BSD license.  See
@@ -32,25 +32,47 @@
         -:   30:    slab_stats_automove sam_after[MAX_NUMBER_OF_SLAB_CLASSES];
         -:   31:} slab_automove;
         -:   32:
-        2:   33:void *slab_automove_init(struct settings *settings) {
-        2:   34:    uint32_t window_size = settings->slab_automove_window;
-        2:   35:    double max_age_ratio = settings->slab_automove_ratio;
-        2:   36:    slab_automove *a = calloc(1, sizeof(slab_automove));
-        2:   37:    if (a == NULL)
+        3:   33:void *slab_automove_init(struct settings *settings) {
+        3:   34:    uint32_t window_size = settings->slab_automove_window;
+        3:   35:    double max_age_ratio = settings->slab_automove_ratio;
+        3:   36:    slab_automove *a = calloc(1, sizeof(slab_automove));
+        3:   37:    if (a == NULL)
         -:   38:        return NULL;
-        2:   39:    a->window_data = calloc(window_size * MAX_NUMBER_OF_SLAB_CLASSES, sizeof(struct window_data));
-        2:   40:    a->window_size = window_size;
-        2:   41:    a->max_age_ratio = max_age_ratio;
-        2:   42:    if (a->window_data == NULL) {
+        3:   39:    a->window_data = calloc(window_size * MAX_NUMBER_OF_SLAB_CLASSES, sizeof(struct window_data));
+        3:   40:    a->window_size = window_size;
+        3:   41:    a->max_age_ratio = max_age_ratio;
+        3:   42:    if (a->window_data == NULL) {
     #####:   43:        free(a);
     #####:   44:        return NULL;
         -:   45:    }
         -:   46:
         -:   47:    // do a dry run to fill the before structs
-        2:   48:    fill_item_stats_automove(a->iam_before);
-        2:   49:    fill_slab_stats_automove(a->sam_before);
+        3:   48:    fill_item_stats_automove(a->iam_before);
+        3:   49:    fill_slab_stats_automove(a->sam_before);
         -:   50:
-        2:   51:    return (void *)a;
+        3:   51:    return (void *)a;
+        -:   52:}
+------------------
+slab_automove_init:
+        1:   33:void *slab_automove_init(struct settings *settings) {
+        1:   34:    uint32_t window_size = settings->slab_automove_window;
+        1:   35:    double max_age_ratio = settings->slab_automove_ratio;
+        1:   36:    slab_automove *a = calloc(1, sizeof(slab_automove));
+        1:   37:    if (a == NULL)
+        -:   38:        return NULL;
+        1:   39:    a->window_data = calloc(window_size * MAX_NUMBER_OF_SLAB_CLASSES, sizeof(struct window_data));
+        1:   40:    a->window_size = window_size;
+        1:   41:    a->max_age_ratio = max_age_ratio;
+        1:   42:    if (a->window_data == NULL) {
+    #####:   43:        free(a);
+    #####:   44:        return NULL;
+        -:   45:    }
+        -:   46:
+        -:   47:    // do a dry run to fill the before structs
+        1:   48:    fill_item_stats_automove(a->iam_before);
+        1:   49:    fill_slab_stats_automove(a->sam_before);
+        -:   50:
+        1:   51:    return (void *)a;
         -:   52:}
 ------------------
 slab_automove_init:
@@ -118,64 +140,71 @@ slab_automove_free:
     #####:   57:    free(a);
     #####:   58:}
 ------------------
+slab_automove_free:
+    #####:   54:void slab_automove_free(void *arg) {
+    #####:   55:    slab_automove *a = (slab_automove *)arg;
+    #####:   56:    free(a->window_data);
+    #####:   57:    free(a);
+    #####:   58:}
+------------------
         -:   59:
         -:   60:static void window_sum(struct window_data *wd, struct window_data *w, uint32_t size) {
         -:   61:    int x;
-    15624:   62:    for (x = 0; x < size; x++) {
-    15120:   63:        struct window_data *d = &wd[x];
-    15120:   64:        w->age += d->age;
-    15120:   65:        w->dirty += d->dirty;
-    15120:   66:        w->evicted += d->evicted;
+    23436:   62:    for (x = 0; x < size; x++) {
+    22680:   63:        struct window_data *d = &wd[x];
+    22680:   64:        w->age += d->age;
+    22680:   65:        w->dirty += d->dirty;
+    22680:   66:        w->evicted += d->evicted;
         -:   67:    }
         -:   68:}
         -:   69:
         -:   70:// TODO: if oldest is dirty, find next oldest.
         -:   71:// still need to base ratio off of absolute age
-        8:   72:void slab_automove_run(void *arg, int *src, int *dst) {
-        8:   73:    slab_automove *a = (slab_automove *)arg;
-        8:   74:    int n;
-        8:   75:    struct window_data w_sum;
-        8:   76:    int oldest = -1;
-        8:   77:    uint64_t oldest_age = 0;
-        8:   78:    int youngest = -1;
-        8:   79:    uint64_t youngest_age = ~0;
-        8:   80:    bool youngest_evicting = false;
-        8:   81:    *src = -1;
-        8:   82:    *dst = -1;
+       12:   72:void slab_automove_run(void *arg, int *src, int *dst) {
+       12:   73:    slab_automove *a = (slab_automove *)arg;
+       12:   74:    int n;
+       12:   75:    struct window_data w_sum;
+       12:   76:    int oldest = -1;
+       12:   77:    uint64_t oldest_age = 0;
+       12:   78:    int youngest = -1;
+       12:   79:    uint64_t youngest_age = ~0;
+       12:   80:    bool youngest_evicting = false;
+       12:   81:    *src = -1;
+       12:   82:    *dst = -1;
         -:   83:
         -:   84:    // fill after structs
-        8:   85:    fill_item_stats_automove(a->iam_after);
-        8:   86:    fill_slab_stats_automove(a->sam_after);
-        8:   87:    a->window_cur++;
+       12:   85:    fill_item_stats_automove(a->iam_after);
+       12:   86:    fill_slab_stats_automove(a->sam_after);
+       12:   87:    a->window_cur++;
         -:   88:
         -:   89:    // iterate slabs
-      512:   90:    for (n = POWER_SMALLEST; n < MAX_NUMBER_OF_SLAB_CLASSES; n++) {
-      504:   91:        int w_offset = n * a->window_size;
-      504:   92:        struct window_data *wd = &a->window_data[w_offset + (a->window_cur % a->window_size)];
-      504:   93:        memset(wd, 0, sizeof(struct window_data));
+      768:   90:    for (n = POWER_SMALLEST; n < MAX_NUMBER_OF_SLAB_CLASSES; n++) {
+      756:   91:        int w_offset = n * a->window_size;
+      756:   92:        struct window_data *wd = &a->window_data[w_offset + (a->window_cur % a->window_size)];
+      756:   93:        memset(wd, 0, sizeof(struct window_data));
         -:   94:        // summarize the window-up-to-now.
-      504:   95:        memset(&w_sum, 0, sizeof(struct window_data));
-      504:   96:        window_sum(&a->window_data[w_offset], &w_sum, a->window_size);
+      756:   95:        memset(&w_sum, 0, sizeof(struct window_data));
+      756:   96:        window_sum(&a->window_data[w_offset], &w_sum, a->window_size);
         -:   97:
         -:   98:        // if page delta, or evicted delta, mark window dirty
         -:   99:        // (or outofmemory)
-      504:  100:        if (a->iam_after[n].evicted - a->iam_before[n].evicted > 0 ||
-      504:  101:            a->iam_after[n].outofmemory - a->iam_before[n].outofmemory > 0) {
+      756:  100:        if (a->iam_after[n].evicted - a->iam_before[n].evicted > 0 ||
+      756:  101:            a->iam_after[n].outofmemory - a->iam_before[n].outofmemory > 0) {
     #####:  102:            wd->evicted = 1;
     #####:  103:            wd->dirty = 1;
         -:  104:        }
-      504:  105:        if (a->sam_after[n].total_pages - a->sam_before[n].total_pages > 0) {
-        2:  106:            wd->dirty = 1;
+      756:  105:        if (a->sam_after[n].total_pages - a->sam_before[n].total_pages > 0) {
+        3:  106:            wd->dirty = 1;
         -:  107:        }
         -:  108:
         -:  109:        // set age into window
-      504:  110:        wd->age = a->iam_after[n].age;
+      756:  110:        wd->age = a->iam_after[n].age;
         -:  111:
         -:  112:        // grab age as average of window total
-      504:  113:        uint64_t age = w_sum.age / a->window_size;
+      756:  113:        uint64_t age = w_sum.age / a->window_size;
         -:  114:
         -:  115:        // if > N free chunks and not dirty, make decision.
-      504:  116:        if (a->sam_after[n].free_chunks > a->sam_after[n].chunks_per_page * MIN_PAGES_FOR_RECLAIM) {
+      756:  116:        if (a->sam_after[n].free_chunks > a->sam_after[n].chunks_per_page * MIN_PAGES_FOR_RECLAIM) {
     #####:  117:            if (w_sum.dirty == 0) {
     #####:  118:                *src = n;
     #####:  119:                *dst = 0;
@@ -184,31 +213,31 @@ slab_automove_free:
         -:  122:        }
         -:  123:
         -:  124:        // if oldest and have enough pages, is oldest
-      504:  125:        if (age > oldest_age && a->sam_after[n].total_pages > MIN_PAGES_FOR_SOURCE) {
+      756:  125:        if (age > oldest_age && a->sam_after[n].total_pages > MIN_PAGES_FOR_SOURCE) {
     #####:  126:            oldest = n;
     #####:  127:            oldest_age = age;
         -:  128:        }
         -:  129:
         -:  130:        // grab evicted count from window
         -:  131:        // if > half the window and youngest, mark as youngest
-      504:  132:        if (age < youngest_age && w_sum.evicted > a->window_size / 2) {
+      756:  132:        if (age < youngest_age && w_sum.evicted > a->window_size / 2) {
     #####:  133:            youngest = n;
     #####:  134:            youngest_age = age;
     #####:  135:            youngest_evicting = wd->evicted ? true : false;
         -:  136:        }
         -:  137:    }
         -:  138:
-        8:  139:    memcpy(a->iam_before, a->iam_after,
+       12:  139:    memcpy(a->iam_before, a->iam_after,
         -:  140:            sizeof(item_stats_automove) * MAX_NUMBER_OF_SLAB_CLASSES);
-        8:  141:    memcpy(a->sam_before, a->sam_after,
+       12:  141:    memcpy(a->sam_before, a->sam_after,
         -:  142:            sizeof(slab_stats_automove) * MAX_NUMBER_OF_SLAB_CLASSES);
         -:  143:    // if we have a youngest and oldest, and oldest is outside the ratio,
         -:  144:    // also, only make decisions if window has filled once.
-       8*:  145:    if (youngest != -1 && oldest != -1 && a->window_cur > a->window_size) {
+      12*:  145:    if (youngest != -1 && oldest != -1 && a->window_cur > a->window_size) {
     #####:  146:        if (youngest_age < ((double)oldest_age * a->max_age_ratio) && youngest_evicting) {
     #####:  147:            *src = oldest;
     #####:  148:            *dst = youngest;
         -:  149:        }
         -:  150:    }
-        8:  151:    return;
+       12:  151:    return;
         -:  152:}

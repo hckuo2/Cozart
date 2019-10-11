@@ -1,5 +1,5 @@
         -:    0:Source:thread.c
-        -:    0:Programs:36
+        -:    0:Programs:54
         -:    1:/* -*- Mode: C; tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*- */
         -:    2:/*
         -:    3: * Thread management for memcached.
@@ -103,7 +103,12 @@
         -:  101: */
         -:  102:
     #####:  103:void item_lock(uint32_t hv) {
-  218400*:  104:    mutex_lock(&item_locks[hv & hashmask(item_lock_hashpower)]);
+  327600*:  104:    mutex_lock(&item_locks[hv & hashmask(item_lock_hashpower)]);
+    #####:  105:}
+------------------
+item_lock:
+    #####:  103:void item_lock(uint32_t hv) {
+    #####:  104:    mutex_lock(&item_locks[hv & hashmask(item_lock_hashpower)]);
     #####:  105:}
 ------------------
 item_lock:
@@ -117,50 +122,69 @@ item_lock:
     #####:  105:}
 ------------------
         -:  106:
-     2992:  107:void *item_trylock(uint32_t hv) {
-     2992:  108:    pthread_mutex_t *lock = &item_locks[hv & hashmask(item_lock_hashpower)];
-     2992:  109:    if (pthread_mutex_trylock(lock) == 0) {
-     2992:  110:        return lock;
+     4989:  107:void *item_trylock(uint32_t hv) {
+     4989:  108:    pthread_mutex_t *lock = &item_locks[hv & hashmask(item_lock_hashpower)];
+     4989:  109:    if (pthread_mutex_trylock(lock) == 0) {
+     4989:  110:        return lock;
         -:  111:    }
         -:  112:    return NULL;
         -:  113:}
 ------------------
 item_trylock:
-     1496:  107:void *item_trylock(uint32_t hv) {
-     1496:  108:    pthread_mutex_t *lock = &item_locks[hv & hashmask(item_lock_hashpower)];
-     1496:  109:    if (pthread_mutex_trylock(lock) == 0) {
-     1496:  110:        return lock;
+     1663:  107:void *item_trylock(uint32_t hv) {
+     1663:  108:    pthread_mutex_t *lock = &item_locks[hv & hashmask(item_lock_hashpower)];
+     1663:  109:    if (pthread_mutex_trylock(lock) == 0) {
+     1663:  110:        return lock;
         -:  111:    }
         -:  112:    return NULL;
         -:  113:}
 ------------------
 item_trylock:
-     1496:  107:void *item_trylock(uint32_t hv) {
-     1496:  108:    pthread_mutex_t *lock = &item_locks[hv & hashmask(item_lock_hashpower)];
-     1496:  109:    if (pthread_mutex_trylock(lock) == 0) {
-     1496:  110:        return lock;
+     1663:  107:void *item_trylock(uint32_t hv) {
+     1663:  108:    pthread_mutex_t *lock = &item_locks[hv & hashmask(item_lock_hashpower)];
+     1663:  109:    if (pthread_mutex_trylock(lock) == 0) {
+     1663:  110:        return lock;
+        -:  111:    }
+        -:  112:    return NULL;
+        -:  113:}
+------------------
+item_trylock:
+     1663:  107:void *item_trylock(uint32_t hv) {
+     1663:  108:    pthread_mutex_t *lock = &item_locks[hv & hashmask(item_lock_hashpower)];
+     1663:  109:    if (pthread_mutex_trylock(lock) == 0) {
+     1663:  110:        return lock;
         -:  111:    }
         -:  112:    return NULL;
         -:  113:}
 ------------------
         -:  114:
-     2992:  115:void item_trylock_unlock(void *lock) {
-     2992:  116:    mutex_unlock((pthread_mutex_t *) lock);
-     2992:  117:}
+     4989:  115:void item_trylock_unlock(void *lock) {
+     4989:  116:    mutex_unlock((pthread_mutex_t *) lock);
+     4989:  117:}
 ------------------
 item_trylock_unlock:
-     1496:  115:void item_trylock_unlock(void *lock) {
-     1496:  116:    mutex_unlock((pthread_mutex_t *) lock);
-     1496:  117:}
+     1663:  115:void item_trylock_unlock(void *lock) {
+     1663:  116:    mutex_unlock((pthread_mutex_t *) lock);
+     1663:  117:}
 ------------------
 item_trylock_unlock:
-     1496:  115:void item_trylock_unlock(void *lock) {
-     1496:  116:    mutex_unlock((pthread_mutex_t *) lock);
-     1496:  117:}
+     1663:  115:void item_trylock_unlock(void *lock) {
+     1663:  116:    mutex_unlock((pthread_mutex_t *) lock);
+     1663:  117:}
+------------------
+item_trylock_unlock:
+     1663:  115:void item_trylock_unlock(void *lock) {
+     1663:  116:    mutex_unlock((pthread_mutex_t *) lock);
+     1663:  117:}
 ------------------
         -:  118:
     #####:  119:void item_unlock(uint32_t hv) {
-  218400*:  120:    mutex_unlock(&item_locks[hv & hashmask(item_lock_hashpower)]);
+  327600*:  120:    mutex_unlock(&item_locks[hv & hashmask(item_lock_hashpower)]);
+    #####:  121:}
+------------------
+item_unlock:
+    #####:  119:void item_unlock(uint32_t hv) {
+    #####:  120:    mutex_unlock(&item_locks[hv & hashmask(item_lock_hashpower)]);
     #####:  121:}
 ------------------
 item_unlock:
@@ -175,20 +199,31 @@ item_unlock:
 ------------------
         -:  122:
         -:  123:static void wait_for_thread_registration(int nthreads) {
-       8*:  124:    while (init_count < nthreads) {
-       6*:  125:        pthread_cond_wait(&init_cond, &init_lock);
+      12*:  124:    while (init_count < nthreads) {
+       9*:  125:        pthread_cond_wait(&init_cond, &init_lock);
         -:  126:    }
         -:  127:}
         -:  128:
-        8:  129:static void register_thread_initialized(void) {
-        8:  130:    pthread_mutex_lock(&init_lock);
-        8:  131:    init_count++;
-        8:  132:    pthread_cond_signal(&init_cond);
-        8:  133:    pthread_mutex_unlock(&init_lock);
+       12:  129:static void register_thread_initialized(void) {
+       12:  130:    pthread_mutex_lock(&init_lock);
+       12:  131:    init_count++;
+       12:  132:    pthread_cond_signal(&init_cond);
+       12:  133:    pthread_mutex_unlock(&init_lock);
         -:  134:    /* Force worker threads to pile up if someone wants us to */
-        8:  135:    pthread_mutex_lock(&worker_hang_lock);
-        8:  136:    pthread_mutex_unlock(&worker_hang_lock);
-        8:  137:}
+       12:  135:    pthread_mutex_lock(&worker_hang_lock);
+       12:  136:    pthread_mutex_unlock(&worker_hang_lock);
+       12:  137:}
+------------------
+register_thread_initialized:
+        4:  129:static void register_thread_initialized(void) {
+        4:  130:    pthread_mutex_lock(&init_lock);
+        4:  131:    init_count++;
+        4:  132:    pthread_cond_signal(&init_cond);
+        4:  133:    pthread_mutex_unlock(&init_lock);
+        -:  134:    /* Force worker threads to pile up if someone wants us to */
+        4:  135:    pthread_mutex_lock(&worker_hang_lock);
+        4:  136:    pthread_mutex_unlock(&worker_hang_lock);
+        4:  137:}
 ------------------
 register_thread_initialized:
         4:  129:static void register_thread_initialized(void) {
@@ -372,14 +407,67 @@ pause_threads:
     #####:  189:    pthread_mutex_unlock(&init_lock);
         -:  190:}
 ------------------
+pause_threads:
+    #####:  140:void pause_threads(enum pause_thread_types type) {
+    #####:  141:    char buf[1];
+    #####:  142:    int i;
+        -:  143:
+    #####:  144:    buf[0] = 0;
+    #####:  145:    switch (type) {
+    #####:  146:        case PAUSE_ALL_THREADS:
+    #####:  147:            slabs_rebalancer_pause();
+    #####:  148:            lru_maintainer_pause();
+    #####:  149:            lru_crawler_pause();
+        -:  150:#ifdef EXTSTORE
+        -:  151:            storage_compact_pause();
+        -:  152:            storage_write_pause();
+        -:  153:#endif
+    #####:  154:        case PAUSE_WORKER_THREADS:
+    #####:  155:            buf[0] = 'p';
+    #####:  156:            pthread_mutex_lock(&worker_hang_lock);
+    #####:  157:            break;
+    #####:  158:        case RESUME_ALL_THREADS:
+    #####:  159:            slabs_rebalancer_resume();
+    #####:  160:            lru_maintainer_resume();
+    #####:  161:            lru_crawler_resume();
+        -:  162:#ifdef EXTSTORE
+        -:  163:            storage_compact_resume();
+        -:  164:            storage_write_resume();
+        -:  165:#endif
+    #####:  166:        case RESUME_WORKER_THREADS:
+    #####:  167:            pthread_mutex_unlock(&worker_hang_lock);
+    #####:  168:            break;
+    #####:  169:        default:
+    #####:  170:            fprintf(stderr, "Unknown lock type: %d\n", type);
+    #####:  171:            assert(1 == 0);
+        -:  172:            break;
+        -:  173:    }
+        -:  174:
+        -:  175:    /* Only send a message if we have one. */
+    #####:  176:    if (buf[0] == 0) {
+    #####:  177:        return;
+        -:  178:    }
+        -:  179:
+    #####:  180:    pthread_mutex_lock(&init_lock);
+    #####:  181:    init_count = 0;
+    #####:  182:    for (i = 0; i < settings.num_threads; i++) {
+    #####:  183:        if (write(threads[i].notify_send_fd, buf, 1) != 1) {
+    #####:  184:            perror("Failed writing to notify pipe");
+        -:  185:            /* TODO: This is a fatal problem. Can it ever happen temporarily? */
+        -:  186:        }
+        -:  187:    }
+    #####:  188:    wait_for_thread_registration(settings.num_threads);
+    #####:  189:    pthread_mutex_unlock(&init_lock);
+        -:  190:}
+------------------
         -:  191:
         -:  192:/*
         -:  193: * Initializes a connection queue.
         -:  194: */
         -:  195:static void cq_init(CQ *cq) {
-        8:  196:    pthread_mutex_init(&cq->lock, NULL);
-        8:  197:    cq->head = NULL;
-        8:  198:    cq->tail = NULL;
+       12:  196:    pthread_mutex_init(&cq->lock, NULL);
+       12:  197:    cq->head = NULL;
+       12:  198:    cq->tail = NULL;
         -:  199:}
         -:  200:
         -:  201:/*
@@ -387,19 +475,19 @@ pause_threads:
         -:  203: * one.
         -:  204: * Returns the item, or NULL if no item is available
         -:  205: */
-      400:  206:static CQ_ITEM *cq_pop(CQ *cq) {
-      400:  207:    CQ_ITEM *item;
+      600:  206:static CQ_ITEM *cq_pop(CQ *cq) {
+      600:  207:    CQ_ITEM *item;
         -:  208:
-      400:  209:    pthread_mutex_lock(&cq->lock);
-      400:  210:    item = cq->head;
-      400:  211:    if (NULL != item) {
-      400:  212:        cq->head = item->next;
-      400:  213:        if (NULL == cq->head)
-      398:  214:            cq->tail = NULL;
+      600:  209:    pthread_mutex_lock(&cq->lock);
+      600:  210:    item = cq->head;
+      600:  211:    if (NULL != item) {
+      600:  212:        cq->head = item->next;
+      600:  213:        if (NULL == cq->head)
+      600:  214:            cq->tail = NULL;
         -:  215:    }
-      400:  216:    pthread_mutex_unlock(&cq->lock);
+      600:  216:    pthread_mutex_unlock(&cq->lock);
         -:  217:
-      400:  218:    return item;
+      600:  218:    return item;
         -:  219:}
 ------------------
 cq_pop:
@@ -411,7 +499,7 @@ cq_pop:
       200:  211:    if (NULL != item) {
       200:  212:        cq->head = item->next;
       200:  213:        if (NULL == cq->head)
-      199:  214:            cq->tail = NULL;
+      200:  214:            cq->tail = NULL;
         -:  215:    }
       200:  216:    pthread_mutex_unlock(&cq->lock);
         -:  217:
@@ -427,7 +515,23 @@ cq_pop:
       200:  211:    if (NULL != item) {
       200:  212:        cq->head = item->next;
       200:  213:        if (NULL == cq->head)
-      199:  214:            cq->tail = NULL;
+      200:  214:            cq->tail = NULL;
+        -:  215:    }
+      200:  216:    pthread_mutex_unlock(&cq->lock);
+        -:  217:
+      200:  218:    return item;
+        -:  219:}
+------------------
+cq_pop:
+      200:  206:static CQ_ITEM *cq_pop(CQ *cq) {
+      200:  207:    CQ_ITEM *item;
+        -:  208:
+      200:  209:    pthread_mutex_lock(&cq->lock);
+      200:  210:    item = cq->head;
+      200:  211:    if (NULL != item) {
+      200:  212:        cq->head = item->next;
+      200:  213:        if (NULL == cq->head)
+      200:  214:            cq->tail = NULL;
         -:  215:    }
       200:  216:    pthread_mutex_unlock(&cq->lock);
         -:  217:
@@ -438,17 +542,17 @@ cq_pop:
         -:  221:/*
         -:  222: * Adds an item to a connection queue.
         -:  223: */
-      400:  224:static void cq_push(CQ *cq, CQ_ITEM *item) {
-      400:  225:    item->next = NULL;
+      600:  224:static void cq_push(CQ *cq, CQ_ITEM *item) {
+      600:  225:    item->next = NULL;
         -:  226:
-      400:  227:    pthread_mutex_lock(&cq->lock);
-      400:  228:    if (NULL == cq->tail)
-      398:  229:        cq->head = item;
+      600:  227:    pthread_mutex_lock(&cq->lock);
+      600:  228:    if (NULL == cq->tail)
+      600:  229:        cq->head = item;
         -:  230:    else
-        2:  231:        cq->tail->next = item;
-      400:  232:    cq->tail = item;
-      400:  233:    pthread_mutex_unlock(&cq->lock);
-      400:  234:}
+    #####:  231:        cq->tail->next = item;
+      600:  232:    cq->tail = item;
+      600:  233:    pthread_mutex_unlock(&cq->lock);
+      600:  234:}
 ------------------
 cq_push:
       200:  224:static void cq_push(CQ *cq, CQ_ITEM *item) {
@@ -456,9 +560,9 @@ cq_push:
         -:  226:
       200:  227:    pthread_mutex_lock(&cq->lock);
       200:  228:    if (NULL == cq->tail)
-      199:  229:        cq->head = item;
+      200:  229:        cq->head = item;
         -:  230:    else
-        1:  231:        cq->tail->next = item;
+    #####:  231:        cq->tail->next = item;
       200:  232:    cq->tail = item;
       200:  233:    pthread_mutex_unlock(&cq->lock);
       200:  234:}
@@ -469,9 +573,22 @@ cq_push:
         -:  226:
       200:  227:    pthread_mutex_lock(&cq->lock);
       200:  228:    if (NULL == cq->tail)
-      199:  229:        cq->head = item;
+      200:  229:        cq->head = item;
         -:  230:    else
-        1:  231:        cq->tail->next = item;
+    #####:  231:        cq->tail->next = item;
+      200:  232:    cq->tail = item;
+      200:  233:    pthread_mutex_unlock(&cq->lock);
+      200:  234:}
+------------------
+cq_push:
+      200:  224:static void cq_push(CQ *cq, CQ_ITEM *item) {
+      200:  225:    item->next = NULL;
+        -:  226:
+      200:  227:    pthread_mutex_lock(&cq->lock);
+      200:  228:    if (NULL == cq->tail)
+      200:  229:        cq->head = item;
+        -:  230:    else
+    #####:  231:        cq->tail->next = item;
       200:  232:    cq->tail = item;
       200:  233:    pthread_mutex_unlock(&cq->lock);
       200:  234:}
@@ -480,21 +597,21 @@ cq_push:
         -:  236:/*
         -:  237: * Returns a fresh connection queue item.
         -:  238: */
-      400:  239:static CQ_ITEM *cqi_new(void) {
-      400:  240:    CQ_ITEM *item = NULL;
-      400:  241:    pthread_mutex_lock(&cqi_freelist_lock);
-      400:  242:    if (cqi_freelist) {
-      398:  243:        item = cqi_freelist;
-      398:  244:        cqi_freelist = item->next;
+      600:  239:static CQ_ITEM *cqi_new(void) {
+      600:  240:    CQ_ITEM *item = NULL;
+      600:  241:    pthread_mutex_lock(&cqi_freelist_lock);
+      600:  242:    if (cqi_freelist) {
+      597:  243:        item = cqi_freelist;
+      597:  244:        cqi_freelist = item->next;
         -:  245:    }
-      400:  246:    pthread_mutex_unlock(&cqi_freelist_lock);
+      600:  246:    pthread_mutex_unlock(&cqi_freelist_lock);
         -:  247:
-      400:  248:    if (NULL == item) {
-        2:  249:        int i;
+      600:  248:    if (NULL == item) {
+        3:  249:        int i;
         -:  250:
         -:  251:        /* Allocate a bunch of items at once to reduce fragmentation */
-        2:  252:        item = malloc(sizeof(CQ_ITEM) * ITEMS_PER_ALLOC);
-        2:  253:        if (NULL == item) {
+        3:  252:        item = malloc(sizeof(CQ_ITEM) * ITEMS_PER_ALLOC);
+        3:  253:        if (NULL == item) {
     #####:  254:            STATS_LOCK();
     #####:  255:            stats.malloc_fails++;
     #####:  256:            STATS_UNLOCK();
@@ -506,13 +623,52 @@ cq_push:
         -:  262:         * (which we'll return to the caller) for placement on
         -:  263:         * the freelist.
         -:  264:         */
-      126:  265:        for (i = 2; i < ITEMS_PER_ALLOC; i++)
-      124:  266:            item[i - 1].next = &item[i];
+      189:  265:        for (i = 2; i < ITEMS_PER_ALLOC; i++)
+      186:  266:            item[i - 1].next = &item[i];
         -:  267:
-        2:  268:        pthread_mutex_lock(&cqi_freelist_lock);
-        2:  269:        item[ITEMS_PER_ALLOC - 1].next = cqi_freelist;
-        2:  270:        cqi_freelist = &item[1];
-        2:  271:        pthread_mutex_unlock(&cqi_freelist_lock);
+        3:  268:        pthread_mutex_lock(&cqi_freelist_lock);
+        3:  269:        item[ITEMS_PER_ALLOC - 1].next = cqi_freelist;
+        3:  270:        cqi_freelist = &item[1];
+        3:  271:        pthread_mutex_unlock(&cqi_freelist_lock);
+        -:  272:    }
+        -:  273:
+        -:  274:    return item;
+        -:  275:}
+------------------
+cqi_new:
+      200:  239:static CQ_ITEM *cqi_new(void) {
+      200:  240:    CQ_ITEM *item = NULL;
+      200:  241:    pthread_mutex_lock(&cqi_freelist_lock);
+      200:  242:    if (cqi_freelist) {
+      199:  243:        item = cqi_freelist;
+      199:  244:        cqi_freelist = item->next;
+        -:  245:    }
+      200:  246:    pthread_mutex_unlock(&cqi_freelist_lock);
+        -:  247:
+      200:  248:    if (NULL == item) {
+        1:  249:        int i;
+        -:  250:
+        -:  251:        /* Allocate a bunch of items at once to reduce fragmentation */
+        1:  252:        item = malloc(sizeof(CQ_ITEM) * ITEMS_PER_ALLOC);
+        1:  253:        if (NULL == item) {
+    #####:  254:            STATS_LOCK();
+    #####:  255:            stats.malloc_fails++;
+    #####:  256:            STATS_UNLOCK();
+    #####:  257:            return NULL;
+        -:  258:        }
+        -:  259:
+        -:  260:        /*
+        -:  261:         * Link together all the new items except the first one
+        -:  262:         * (which we'll return to the caller) for placement on
+        -:  263:         * the freelist.
+        -:  264:         */
+       63:  265:        for (i = 2; i < ITEMS_PER_ALLOC; i++)
+       62:  266:            item[i - 1].next = &item[i];
+        -:  267:
+        1:  268:        pthread_mutex_lock(&cqi_freelist_lock);
+        1:  269:        item[ITEMS_PER_ALLOC - 1].next = cqi_freelist;
+        1:  270:        cqi_freelist = &item[1];
+        1:  271:        pthread_mutex_unlock(&cqi_freelist_lock);
         -:  272:    }
         -:  273:
         -:  274:    return item;
@@ -601,12 +757,20 @@ cqi_new:
         -:  278:/*
         -:  279: * Frees a connection queue item (adds it to the freelist.)
         -:  280: */
-      400:  281:static void cqi_free(CQ_ITEM *item) {
-      400:  282:    pthread_mutex_lock(&cqi_freelist_lock);
-      400:  283:    item->next = cqi_freelist;
-      400:  284:    cqi_freelist = item;
-      400:  285:    pthread_mutex_unlock(&cqi_freelist_lock);
-      400:  286:}
+      600:  281:static void cqi_free(CQ_ITEM *item) {
+      600:  282:    pthread_mutex_lock(&cqi_freelist_lock);
+      600:  283:    item->next = cqi_freelist;
+      600:  284:    cqi_freelist = item;
+      600:  285:    pthread_mutex_unlock(&cqi_freelist_lock);
+      600:  286:}
+------------------
+cqi_free:
+      200:  281:static void cqi_free(CQ_ITEM *item) {
+      200:  282:    pthread_mutex_lock(&cqi_freelist_lock);
+      200:  283:    item->next = cqi_freelist;
+      200:  284:    cqi_freelist = item;
+      200:  285:    pthread_mutex_unlock(&cqi_freelist_lock);
+      200:  286:}
 ------------------
 cqi_free:
       200:  281:static void cqi_free(CQ_ITEM *item) {
@@ -629,18 +793,32 @@ cqi_free:
         -:  289:/*
         -:  290: * Creates a worker thread.
         -:  291: */
-        8:  292:static void create_worker(void *(*func)(void *), void *arg) {
-        8:  293:    pthread_attr_t  attr;
-        8:  294:    int             ret;
+       12:  292:static void create_worker(void *(*func)(void *), void *arg) {
+       12:  293:    pthread_attr_t  attr;
+       12:  294:    int             ret;
         -:  295:
-        8:  296:    pthread_attr_init(&attr);
+       12:  296:    pthread_attr_init(&attr);
         -:  297:
-        8:  298:    if ((ret = pthread_create(&((LIBEVENT_THREAD*)arg)->thread_id, &attr, func, arg)) != 0) {
+       12:  298:    if ((ret = pthread_create(&((LIBEVENT_THREAD*)arg)->thread_id, &attr, func, arg)) != 0) {
     #####:  299:        fprintf(stderr, "Can't create thread: %s\n",
         -:  300:                strerror(ret));
     #####:  301:        exit(1);
         -:  302:    }
-        8:  303:}
+       12:  303:}
+------------------
+create_worker:
+        4:  292:static void create_worker(void *(*func)(void *), void *arg) {
+        4:  293:    pthread_attr_t  attr;
+        4:  294:    int             ret;
+        -:  295:
+        4:  296:    pthread_attr_init(&attr);
+        -:  297:
+        4:  298:    if ((ret = pthread_create(&((LIBEVENT_THREAD*)arg)->thread_id, &attr, func, arg)) != 0) {
+    #####:  299:        fprintf(stderr, "Can't create thread: %s\n",
+        -:  300:                strerror(ret));
+    #####:  301:        exit(1);
+        -:  302:    }
+        4:  303:}
 ------------------
 create_worker:
         4:  292:static void create_worker(void *(*func)(void *), void *arg) {
@@ -694,52 +872,59 @@ accept_new_conns:
     #####:  311:    pthread_mutex_unlock(&conn_lock);
     #####:  312:}
 ------------------
+accept_new_conns:
+    #####:  308:void accept_new_conns(const bool do_accept) {
+    #####:  309:    pthread_mutex_lock(&conn_lock);
+    #####:  310:    do_accept_new_conns(do_accept);
+    #####:  311:    pthread_mutex_unlock(&conn_lock);
+    #####:  312:}
+------------------
         -:  313:/****************************** LIBEVENT THREADS *****************************/
         -:  314:
         -:  315:/*
         -:  316: * Set up a thread's information.
         -:  317: */
-        8:  318:static void setup_thread(LIBEVENT_THREAD *me) {
+       12:  318:static void setup_thread(LIBEVENT_THREAD *me) {
         -:  319:#if defined(LIBEVENT_VERSION_NUMBER) && LIBEVENT_VERSION_NUMBER >= 0x02000101
-        8:  320:    struct event_config *ev_config;
-        8:  321:    ev_config = event_config_new();
-        8:  322:    event_config_set_flag(ev_config, EVENT_BASE_FLAG_NOLOCK);
-        8:  323:    me->base = event_base_new_with_config(ev_config);
-        8:  324:    event_config_free(ev_config);
+       12:  320:    struct event_config *ev_config;
+       12:  321:    ev_config = event_config_new();
+       12:  322:    event_config_set_flag(ev_config, EVENT_BASE_FLAG_NOLOCK);
+       12:  323:    me->base = event_base_new_with_config(ev_config);
+       12:  324:    event_config_free(ev_config);
         -:  325:#else
         -:  326:    me->base = event_init();
         -:  327:#endif
         -:  328:
-        8:  329:    if (! me->base) {
+       12:  329:    if (! me->base) {
     #####:  330:        fprintf(stderr, "Can't allocate event base\n");
     #####:  331:        exit(1);
         -:  332:    }
         -:  333:
         -:  334:    /* Listen for notifications from other threads */
-        8:  335:    event_set(&me->notify_event, me->notify_receive_fd,
+       12:  335:    event_set(&me->notify_event, me->notify_receive_fd,
         -:  336:              EV_READ | EV_PERSIST, thread_libevent_process, me);
-        8:  337:    event_base_set(me->base, &me->notify_event);
+       12:  337:    event_base_set(me->base, &me->notify_event);
         -:  338:
-        8:  339:    if (event_add(&me->notify_event, 0) == -1) {
+       12:  339:    if (event_add(&me->notify_event, 0) == -1) {
     #####:  340:        fprintf(stderr, "Can't monitor libevent notify pipe\n");
     #####:  341:        exit(1);
         -:  342:    }
         -:  343:
-        8:  344:    me->new_conn_queue = malloc(sizeof(struct conn_queue));
-        8:  345:    if (me->new_conn_queue == NULL) {
+       12:  344:    me->new_conn_queue = malloc(sizeof(struct conn_queue));
+       12:  345:    if (me->new_conn_queue == NULL) {
     #####:  346:        perror("Failed to allocate memory for connection queue");
     #####:  347:        exit(EXIT_FAILURE);
         -:  348:    }
-        8:  349:    cq_init(me->new_conn_queue);
+       12:  349:    cq_init(me->new_conn_queue);
         -:  350:
-        8:  351:    if (pthread_mutex_init(&me->stats.mutex, NULL) != 0) {
+       12:  351:    if (pthread_mutex_init(&me->stats.mutex, NULL) != 0) {
     #####:  352:        perror("Failed to initialize mutex");
     #####:  353:        exit(EXIT_FAILURE);
         -:  354:    }
         -:  355:
-        8:  356:    me->suffix_cache = cache_create("suffix", SUFFIX_SIZE, sizeof(char*),
+       12:  356:    me->suffix_cache = cache_create("suffix", SUFFIX_SIZE, sizeof(char*),
         -:  357:                                    NULL, NULL);
-        8:  358:    if (me->suffix_cache == NULL) {
+       12:  358:    if (me->suffix_cache == NULL) {
     #####:  359:        fprintf(stderr, "Failed to create suffix cache\n");
     #####:  360:        exit(EXIT_FAILURE);
         -:  361:    }
@@ -759,7 +944,70 @@ accept_new_conns:
         -:  375:        }
         -:  376:    }
         -:  377:#endif
-        8:  378:}
+       12:  378:}
+------------------
+setup_thread:
+        4:  318:static void setup_thread(LIBEVENT_THREAD *me) {
+        -:  319:#if defined(LIBEVENT_VERSION_NUMBER) && LIBEVENT_VERSION_NUMBER >= 0x02000101
+        4:  320:    struct event_config *ev_config;
+        4:  321:    ev_config = event_config_new();
+        4:  322:    event_config_set_flag(ev_config, EVENT_BASE_FLAG_NOLOCK);
+        4:  323:    me->base = event_base_new_with_config(ev_config);
+        4:  324:    event_config_free(ev_config);
+        -:  325:#else
+        -:  326:    me->base = event_init();
+        -:  327:#endif
+        -:  328:
+        4:  329:    if (! me->base) {
+    #####:  330:        fprintf(stderr, "Can't allocate event base\n");
+    #####:  331:        exit(1);
+        -:  332:    }
+        -:  333:
+        -:  334:    /* Listen for notifications from other threads */
+        4:  335:    event_set(&me->notify_event, me->notify_receive_fd,
+        -:  336:              EV_READ | EV_PERSIST, thread_libevent_process, me);
+        4:  337:    event_base_set(me->base, &me->notify_event);
+        -:  338:
+        4:  339:    if (event_add(&me->notify_event, 0) == -1) {
+    #####:  340:        fprintf(stderr, "Can't monitor libevent notify pipe\n");
+    #####:  341:        exit(1);
+        -:  342:    }
+        -:  343:
+        4:  344:    me->new_conn_queue = malloc(sizeof(struct conn_queue));
+        4:  345:    if (me->new_conn_queue == NULL) {
+    #####:  346:        perror("Failed to allocate memory for connection queue");
+    #####:  347:        exit(EXIT_FAILURE);
+        -:  348:    }
+        4:  349:    cq_init(me->new_conn_queue);
+        -:  350:
+        4:  351:    if (pthread_mutex_init(&me->stats.mutex, NULL) != 0) {
+    #####:  352:        perror("Failed to initialize mutex");
+    #####:  353:        exit(EXIT_FAILURE);
+        -:  354:    }
+        -:  355:
+        4:  356:    me->suffix_cache = cache_create("suffix", SUFFIX_SIZE, sizeof(char*),
+        -:  357:                                    NULL, NULL);
+        4:  358:    if (me->suffix_cache == NULL) {
+    #####:  359:        fprintf(stderr, "Failed to create suffix cache\n");
+    #####:  360:        exit(EXIT_FAILURE);
+        -:  361:    }
+        -:  362:#ifdef EXTSTORE
+        -:  363:    me->io_cache = cache_create("io", sizeof(io_wrap), sizeof(char*), NULL, NULL);
+        -:  364:    if (me->io_cache == NULL) {
+        -:  365:        fprintf(stderr, "Failed to create IO object cache\n");
+        -:  366:        exit(EXIT_FAILURE);
+        -:  367:    }
+        -:  368:#endif
+        -:  369:#ifdef TLS
+        -:  370:    if (settings.ssl_enabled) {
+        -:  371:        me->ssl_wbuf = (char *)malloc((size_t)settings.ssl_wbuf_size);
+        -:  372:        if (me->ssl_wbuf == NULL) {
+        -:  373:            fprintf(stderr, "Failed to allocate the SSL write buffer\n");
+        -:  374:            exit(EXIT_FAILURE);
+        -:  375:        }
+        -:  376:    }
+        -:  377:#endif
+        4:  378:}
 ------------------
 setup_thread:
         4:  318:static void setup_thread(LIBEVENT_THREAD *me) {
@@ -891,25 +1139,50 @@ setup_thread:
         -:  380:/*
         -:  381: * Worker thread: main event loop
         -:  382: */
-        8:  383:static void *worker_libevent(void *arg) {
-        8:  384:    LIBEVENT_THREAD *me = arg;
+       12:  383:static void *worker_libevent(void *arg) {
+       12:  384:    LIBEVENT_THREAD *me = arg;
         -:  385:
         -:  386:    /* Any per-thread setup can happen here; memcached_thread_init() will block until
         -:  387:     * all threads have finished initializing.
         -:  388:     */
-        8:  389:    me->l = logger_create();
-        8:  390:    me->lru_bump_buf = item_lru_bump_buf_create();
-        8:  391:    if (me->l == NULL || me->lru_bump_buf == NULL) {
+       12:  389:    me->l = logger_create();
+       12:  390:    me->lru_bump_buf = item_lru_bump_buf_create();
+       12:  391:    if (me->l == NULL || me->lru_bump_buf == NULL) {
     #####:  392:        abort();
         -:  393:    }
         -:  394:
-        8:  395:    if (settings.drop_privileges) {
-        8:  396:        drop_worker_privileges();
+       12:  395:    if (settings.drop_privileges) {
+       12:  396:        drop_worker_privileges();
         -:  397:    }
         -:  398:
-        8:  399:    register_thread_initialized();
+       12:  399:    register_thread_initialized();
         -:  400:
-        8:  401:    event_base_loop(me->base, 0);
+       12:  401:    event_base_loop(me->base, 0);
+        -:  402:
+    #####:  403:    event_base_free(me->base);
+    #####:  404:    return NULL;
+        -:  405:}
+------------------
+worker_libevent:
+        4:  383:static void *worker_libevent(void *arg) {
+        4:  384:    LIBEVENT_THREAD *me = arg;
+        -:  385:
+        -:  386:    /* Any per-thread setup can happen here; memcached_thread_init() will block until
+        -:  387:     * all threads have finished initializing.
+        -:  388:     */
+        4:  389:    me->l = logger_create();
+        4:  390:    me->lru_bump_buf = item_lru_bump_buf_create();
+        4:  391:    if (me->l == NULL || me->lru_bump_buf == NULL) {
+    #####:  392:        abort();
+        -:  393:    }
+        -:  394:
+        4:  395:    if (settings.drop_privileges) {
+        4:  396:        drop_worker_privileges();
+        -:  397:    }
+        -:  398:
+        4:  399:    register_thread_initialized();
+        -:  400:
+        4:  401:    event_base_loop(me->base, 0);
         -:  402:
     #####:  403:    event_base_free(me->base);
     #####:  404:    return NULL;
@@ -971,32 +1244,32 @@ worker_libevent:
         -:  409: * Processes an incoming "handle a new connection" item. This is called when
         -:  410: * input arrives on the libevent wakeup pipe.
         -:  411: */
-      400:  412:static void thread_libevent_process(int fd, short which, void *arg) {
-      400:  413:    LIBEVENT_THREAD *me = arg;
-      400:  414:    CQ_ITEM *item;
-      400:  415:    char buf[1];
-      400:  416:    conn *c;
-      400:  417:    unsigned int timeout_fd;
+      600:  412:static void thread_libevent_process(int fd, short which, void *arg) {
+      600:  413:    LIBEVENT_THREAD *me = arg;
+      600:  414:    CQ_ITEM *item;
+      600:  415:    char buf[1];
+      600:  416:    conn *c;
+      600:  417:    unsigned int timeout_fd;
         -:  418:
-      400:  419:    if (read(fd, buf, 1) != 1) {
+      600:  419:    if (read(fd, buf, 1) != 1) {
     #####:  420:        if (settings.verbose > 0)
     #####:  421:            fprintf(stderr, "Can't read from libevent pipe\n");
     #####:  422:        return;
         -:  423:    }
         -:  424:
-      400:  425:    switch (buf[0]) {
-      400:  426:    case 'c':
-      400:  427:        item = cq_pop(me->new_conn_queue);
+      600:  425:    switch (buf[0]) {
+      600:  426:    case 'c':
+      600:  427:        item = cq_pop(me->new_conn_queue);
         -:  428:
-      400:  429:        if (NULL == item) {
+      600:  429:        if (NULL == item) {
         -:  430:            break;
         -:  431:        }
-      400:  432:        switch (item->mode) {
-      400:  433:            case queue_new_conn:
-      400:  434:                c = conn_new(item->sfd, item->init_state, item->event_flags,
+      600:  432:        switch (item->mode) {
+      600:  433:            case queue_new_conn:
+      600:  434:                c = conn_new(item->sfd, item->init_state, item->event_flags,
         -:  435:                                   item->read_buffer_size, item->transport,
         -:  436:                                   me->base, item->ssl);
-      400:  437:                if (c == NULL) {
+      600:  437:                if (c == NULL) {
     #####:  438:                    if (IS_UDP(item->transport)) {
     #####:  439:                        fprintf(stderr, "Can't listen for events on UDP socket\n");
     #####:  440:                        exit(1);
@@ -1008,7 +1281,7 @@ worker_libevent:
     #####:  446:                        close(item->sfd);
         -:  447:                    }
         -:  448:                } else {
-      400:  449:                    c->thread = me;
+      600:  449:                    c->thread = me;
         -:  450:#ifdef TLS
         -:  451:                    if (settings.ssl_enabled && c->ssl != NULL) {
         -:  452:                        assert(c->thread && c->thread->ssl_wbuf);
@@ -1022,8 +1295,8 @@ worker_libevent:
     #####:  460:                conn_worker_readd(item->c);
     #####:  461:                break;
         -:  462:        }
-      400:  463:        cqi_free(item);
-      400:  464:        break;
+      600:  463:        cqi_free(item);
+      600:  464:        break;
         -:  465:    /* we were told to pause and report in */
     #####:  466:    case 'p':
     #####:  467:        register_thread_initialized();
@@ -1038,7 +1311,77 @@ worker_libevent:
     #####:  476:        conn_close_idle(conns[timeout_fd]);
     #####:  477:        break;
         -:  478:    }
-     400*:  479:}
+     600*:  479:}
+------------------
+thread_libevent_process:
+      200:  412:static void thread_libevent_process(int fd, short which, void *arg) {
+      200:  413:    LIBEVENT_THREAD *me = arg;
+      200:  414:    CQ_ITEM *item;
+      200:  415:    char buf[1];
+      200:  416:    conn *c;
+      200:  417:    unsigned int timeout_fd;
+        -:  418:
+      200:  419:    if (read(fd, buf, 1) != 1) {
+    #####:  420:        if (settings.verbose > 0)
+    #####:  421:            fprintf(stderr, "Can't read from libevent pipe\n");
+    #####:  422:        return;
+        -:  423:    }
+        -:  424:
+      200:  425:    switch (buf[0]) {
+      200:  426:    case 'c':
+      200:  427:        item = cq_pop(me->new_conn_queue);
+        -:  428:
+      200:  429:        if (NULL == item) {
+        -:  430:            break;
+        -:  431:        }
+      200:  432:        switch (item->mode) {
+      200:  433:            case queue_new_conn:
+      200:  434:                c = conn_new(item->sfd, item->init_state, item->event_flags,
+        -:  435:                                   item->read_buffer_size, item->transport,
+        -:  436:                                   me->base, item->ssl);
+      200:  437:                if (c == NULL) {
+    #####:  438:                    if (IS_UDP(item->transport)) {
+    #####:  439:                        fprintf(stderr, "Can't listen for events on UDP socket\n");
+    #####:  440:                        exit(1);
+        -:  441:                    } else {
+    #####:  442:                        if (settings.verbose > 0) {
+    #####:  443:                            fprintf(stderr, "Can't listen for events on fd %d\n",
+        -:  444:                                item->sfd);
+        -:  445:                        }
+    #####:  446:                        close(item->sfd);
+        -:  447:                    }
+        -:  448:                } else {
+      200:  449:                    c->thread = me;
+        -:  450:#ifdef TLS
+        -:  451:                    if (settings.ssl_enabled && c->ssl != NULL) {
+        -:  452:                        assert(c->thread && c->thread->ssl_wbuf);
+        -:  453:                        c->ssl_wbuf = c->thread->ssl_wbuf;
+        -:  454:                    }
+        -:  455:#endif
+        -:  456:                }
+        -:  457:                break;
+        -:  458:
+    #####:  459:            case queue_redispatch:
+    #####:  460:                conn_worker_readd(item->c);
+    #####:  461:                break;
+        -:  462:        }
+      200:  463:        cqi_free(item);
+      200:  464:        break;
+        -:  465:    /* we were told to pause and report in */
+    #####:  466:    case 'p':
+    #####:  467:        register_thread_initialized();
+    #####:  468:        break;
+        -:  469:    /* a client socket timed out */
+        -:  470:    case 't':
+    #####:  471:        if (read(fd, &timeout_fd, sizeof(timeout_fd)) != sizeof(timeout_fd)) {
+    #####:  472:            if (settings.verbose > 0)
+    #####:  473:                fprintf(stderr, "Can't read timeout fd from libevent pipe\n");
+    #####:  474:            return;
+        -:  475:        }
+    #####:  476:        conn_close_idle(conns[timeout_fd]);
+    #####:  477:        break;
+        -:  478:    }
+     200*:  479:}
 ------------------
 thread_libevent_process:
       200:  412:static void thread_libevent_process(int fd, short which, void *arg) {
@@ -1189,36 +1532,71 @@ thread_libevent_process:
         -:  486: * from the main thread, either during initialization (for UDP) or because
         -:  487: * of an incoming connection.
         -:  488: */
-      400:  489:void dispatch_conn_new(int sfd, enum conn_states init_state, int event_flags,
+      600:  489:void dispatch_conn_new(int sfd, enum conn_states init_state, int event_flags,
         -:  490:                       int read_buffer_size, enum network_transport transport, void *ssl) {
-      400:  491:    CQ_ITEM *item = cqi_new();
-      400:  492:    char buf[1];
-      400:  493:    if (item == NULL) {
+      600:  491:    CQ_ITEM *item = cqi_new();
+      600:  492:    char buf[1];
+      600:  493:    if (item == NULL) {
     #####:  494:        close(sfd);
         -:  495:        /* given that malloc failed this may also fail, but let's try */
     #####:  496:        fprintf(stderr, "Failed to allocate memory for connection object\n");
     #####:  497:        return ;
         -:  498:    }
         -:  499:
-      400:  500:    int tid = (last_thread + 1) % settings.num_threads;
+      600:  500:    int tid = (last_thread + 1) % settings.num_threads;
         -:  501:
-      400:  502:    LIBEVENT_THREAD *thread = threads + tid;
+      600:  502:    LIBEVENT_THREAD *thread = threads + tid;
         -:  503:
-      400:  504:    last_thread = tid;
+      600:  504:    last_thread = tid;
         -:  505:
-      400:  506:    item->sfd = sfd;
-      400:  507:    item->init_state = init_state;
-      400:  508:    item->event_flags = event_flags;
-      400:  509:    item->read_buffer_size = read_buffer_size;
-      400:  510:    item->transport = transport;
-      400:  511:    item->mode = queue_new_conn;
-      400:  512:    item->ssl = ssl;
+      600:  506:    item->sfd = sfd;
+      600:  507:    item->init_state = init_state;
+      600:  508:    item->event_flags = event_flags;
+      600:  509:    item->read_buffer_size = read_buffer_size;
+      600:  510:    item->transport = transport;
+      600:  511:    item->mode = queue_new_conn;
+      600:  512:    item->ssl = ssl;
         -:  513:
-      400:  514:    cq_push(thread->new_conn_queue, item);
+      600:  514:    cq_push(thread->new_conn_queue, item);
         -:  515:
-      400:  516:    MEMCACHED_CONN_DISPATCH(sfd, thread->thread_id);
-      400:  517:    buf[0] = 'c';
-      400:  518:    if (write(thread->notify_send_fd, buf, 1) != 1) {
+      600:  516:    MEMCACHED_CONN_DISPATCH(sfd, thread->thread_id);
+      600:  517:    buf[0] = 'c';
+      600:  518:    if (write(thread->notify_send_fd, buf, 1) != 1) {
+    #####:  519:        perror("Writing to thread notify pipe");
+        -:  520:    }
+        -:  521:}
+------------------
+dispatch_conn_new:
+      200:  489:void dispatch_conn_new(int sfd, enum conn_states init_state, int event_flags,
+        -:  490:                       int read_buffer_size, enum network_transport transport, void *ssl) {
+      200:  491:    CQ_ITEM *item = cqi_new();
+      200:  492:    char buf[1];
+      200:  493:    if (item == NULL) {
+    #####:  494:        close(sfd);
+        -:  495:        /* given that malloc failed this may also fail, but let's try */
+    #####:  496:        fprintf(stderr, "Failed to allocate memory for connection object\n");
+    #####:  497:        return ;
+        -:  498:    }
+        -:  499:
+      200:  500:    int tid = (last_thread + 1) % settings.num_threads;
+        -:  501:
+      200:  502:    LIBEVENT_THREAD *thread = threads + tid;
+        -:  503:
+      200:  504:    last_thread = tid;
+        -:  505:
+      200:  506:    item->sfd = sfd;
+      200:  507:    item->init_state = init_state;
+      200:  508:    item->event_flags = event_flags;
+      200:  509:    item->read_buffer_size = read_buffer_size;
+      200:  510:    item->transport = transport;
+      200:  511:    item->mode = queue_new_conn;
+      200:  512:    item->ssl = ssl;
+        -:  513:
+      200:  514:    cq_push(thread->new_conn_queue, item);
+        -:  515:
+      200:  516:    MEMCACHED_CONN_DISPATCH(sfd, thread->thread_id);
+      200:  517:    buf[0] = 'c';
+      200:  518:    if (write(thread->notify_send_fd, buf, 1) != 1) {
     #####:  519:        perror("Writing to thread notify pipe");
         -:  520:    }
         -:  521:}
@@ -1369,8 +1747,53 @@ redispatch_conn:
         -:  547:    }
         -:  548:}
 ------------------
+redispatch_conn:
+    #####:  527:void redispatch_conn(conn *c) {
+    #####:  528:    CQ_ITEM *item = cqi_new();
+    #####:  529:    char buf[1];
+    #####:  530:    if (item == NULL) {
+        -:  531:        /* Can't cleanly redispatch connection. close it forcefully. */
+    #####:  532:        c->state = conn_closed;
+    #####:  533:        close(c->sfd);
+    #####:  534:        return;
+        -:  535:    }
+    #####:  536:    LIBEVENT_THREAD *thread = c->thread;
+    #####:  537:    item->sfd = c->sfd;
+    #####:  538:    item->init_state = conn_new_cmd;
+    #####:  539:    item->c = c;
+    #####:  540:    item->mode = queue_redispatch;
+        -:  541:
+    #####:  542:    cq_push(thread->new_conn_queue, item);
+        -:  543:
+    #####:  544:    buf[0] = 'c';
+    #####:  545:    if (write(thread->notify_send_fd, buf, 1) != 1) {
+    #####:  546:        perror("Writing to thread notify pipe");
+        -:  547:    }
+        -:  548:}
+------------------
         -:  549:
         -:  550:/* This misses the allow_new_conns flag :( */
+    #####:  551:void sidethread_conn_close(conn *c) {
+    #####:  552:    c->state = conn_closed;
+    #####:  553:    if (settings.verbose > 1)
+    #####:  554:        fprintf(stderr, "<%d connection closed from side thread.\n", c->sfd);
+        -:  555:#ifdef TLS
+        -:  556:    if (c->ssl) {
+        -:  557:        c->ssl_wbuf = NULL;
+        -:  558:        SSL_shutdown(c->ssl);
+        -:  559:        SSL_free(c->ssl);
+        -:  560:    }
+        -:  561:#endif
+    #####:  562:    close(c->sfd);
+        -:  563:
+    #####:  564:    STATS_LOCK();
+    #####:  565:    stats_state.curr_conns--;
+    #####:  566:    STATS_UNLOCK();
+        -:  567:
+    #####:  568:    return;
+        -:  569:}
+------------------
+sidethread_conn_close:
     #####:  551:void sidethread_conn_close(conn *c) {
     #####:  552:    c->state = conn_closed;
     #####:  553:    if (settings.verbose > 1)
@@ -1439,11 +1862,19 @@ sidethread_conn_close:
         -:  573:/*
         -:  574: * Allocates a new item.
         -:  575: */
-    18400:  576:item *item_alloc(char *key, size_t nkey, int flags, rel_time_t exptime, int nbytes) {
-    18400:  577:    item *it;
+    27600:  576:item *item_alloc(char *key, size_t nkey, int flags, rel_time_t exptime, int nbytes) {
+    27600:  577:    item *it;
         -:  578:    /* do_item_alloc handles its own locks */
-    18400:  579:    it = do_item_alloc(key, nkey, flags, exptime, nbytes);
-    18400:  580:    return it;
+    27600:  579:    it = do_item_alloc(key, nkey, flags, exptime, nbytes);
+    27600:  580:    return it;
+        -:  581:}
+------------------
+item_alloc:
+     9200:  576:item *item_alloc(char *key, size_t nkey, int flags, rel_time_t exptime, int nbytes) {
+     9200:  577:    item *it;
+        -:  578:    /* do_item_alloc handles its own locks */
+     9200:  579:    it = do_item_alloc(key, nkey, flags, exptime, nbytes);
+     9200:  580:    return it;
         -:  581:}
 ------------------
 item_alloc:
@@ -1467,14 +1898,25 @@ item_alloc:
         -:  584: * Returns an item if it hasn't been marked as expired,
         -:  585: * lazy-expiring as needed.
         -:  586: */
-   181600:  587:item *item_get(const char *key, const size_t nkey, conn *c, const bool do_update) {
-   181600:  588:    item *it;
-   181600:  589:    uint32_t hv;
-   181600:  590:    hv = hash(key, nkey);
-   181600:  591:    item_lock(hv);
-   181600:  592:    it = do_item_get(key, nkey, hv, c, do_update);
-   181600:  593:    item_unlock(hv);
-   181600:  594:    return it;
+   272400:  587:item *item_get(const char *key, const size_t nkey, conn *c, const bool do_update) {
+   272400:  588:    item *it;
+   272400:  589:    uint32_t hv;
+   272400:  590:    hv = hash(key, nkey);
+   272400:  591:    item_lock(hv);
+   272400:  592:    it = do_item_get(key, nkey, hv, c, do_update);
+   272400:  593:    item_unlock(hv);
+   272400:  594:    return it;
+        -:  595:}
+------------------
+item_get:
+    90800:  587:item *item_get(const char *key, const size_t nkey, conn *c, const bool do_update) {
+    90800:  588:    item *it;
+    90800:  589:    uint32_t hv;
+    90800:  590:    hv = hash(key, nkey);
+    90800:  591:    item_lock(hv);
+    90800:  592:    it = do_item_get(key, nkey, hv, c, do_update);
+    90800:  593:    item_unlock(hv);
+    90800:  594:    return it;
         -:  595:}
 ------------------
 item_get:
@@ -1529,7 +1971,27 @@ item_get_locked:
     #####:  605:    return it;
         -:  606:}
 ------------------
+item_get_locked:
+    #####:  600:item *item_get_locked(const char *key, const size_t nkey, conn *c, const bool do_update, uint32_t *hv) {
+    #####:  601:    item *it;
+    #####:  602:    *hv = hash(key, nkey);
+    #####:  603:    item_lock(*hv);
+    #####:  604:    it = do_item_get(key, nkey, *hv, c, do_update);
+    #####:  605:    return it;
+        -:  606:}
+------------------
         -:  607:
+    #####:  608:item *item_touch(const char *key, size_t nkey, uint32_t exptime, conn *c) {
+    #####:  609:    item *it;
+    #####:  610:    uint32_t hv;
+    #####:  611:    hv = hash(key, nkey);
+    #####:  612:    item_lock(hv);
+    #####:  613:    it = do_item_touch(key, nkey, exptime, hv, c);
+    #####:  614:    item_unlock(hv);
+    #####:  615:    return it;
+        -:  616:}
+------------------
+item_touch:
     #####:  608:item *item_touch(const char *key, size_t nkey, uint32_t exptime, conn *c) {
     #####:  609:    item *it;
     #####:  610:    uint32_t hv;
@@ -1601,19 +2063,41 @@ item_link:
     #####:  629:    return ret;
         -:  630:}
 ------------------
+item_link:
+    #####:  621:int item_link(item *item) {
+    #####:  622:    int ret;
+    #####:  623:    uint32_t hv;
+        -:  624:
+    #####:  625:    hv = hash(ITEM_key(item), item->nkey);
+    #####:  626:    item_lock(hv);
+    #####:  627:    ret = do_item_link(item, hv);
+    #####:  628:    item_unlock(hv);
+    #####:  629:    return ret;
+        -:  630:}
+------------------
         -:  631:
         -:  632:/*
         -:  633: * Decrements the reference count on an item and adds it to the freelist if
         -:  634: * needed.
         -:  635: */
-    18400:  636:void item_remove(item *item) {
-    18400:  637:    uint32_t hv;
-    18400:  638:    hv = hash(ITEM_key(item), item->nkey);
+    27600:  636:void item_remove(item *item) {
+    27600:  637:    uint32_t hv;
+    27600:  638:    hv = hash(ITEM_key(item), item->nkey);
         -:  639:
-    18400:  640:    item_lock(hv);
-    18400:  641:    do_item_remove(item);
-    18400:  642:    item_unlock(hv);
-    18400:  643:}
+    27600:  640:    item_lock(hv);
+    27600:  641:    do_item_remove(item);
+    27600:  642:    item_unlock(hv);
+    27600:  643:}
+------------------
+item_remove:
+     9200:  636:void item_remove(item *item) {
+     9200:  637:    uint32_t hv;
+     9200:  638:    hv = hash(ITEM_key(item), item->nkey);
+        -:  639:
+     9200:  640:    item_lock(hv);
+     9200:  641:    do_item_remove(item);
+     9200:  642:    item_unlock(hv);
+     9200:  643:}
 ------------------
 item_remove:
      9200:  636:void item_remove(item *item) {
@@ -1641,8 +2125,13 @@ item_remove:
         -:  647: * Unprotected by a mutex lock since the core server does not require
         -:  648: * it to be thread-safe.
         -:  649: */
-    18308:  650:int item_replace(item *old_it, item *new_it, const uint32_t hv) {
-    18308:  651:    return do_item_replace(old_it, new_it, hv);
+    27462:  650:int item_replace(item *old_it, item *new_it, const uint32_t hv) {
+    27462:  651:    return do_item_replace(old_it, new_it, hv);
+        -:  652:}
+------------------
+item_replace:
+     9154:  650:int item_replace(item *old_it, item *new_it, const uint32_t hv) {
+     9154:  651:    return do_item_replace(old_it, new_it, hv);
         -:  652:}
 ------------------
 item_replace:
@@ -1659,6 +2148,15 @@ item_replace:
         -:  654:/*
         -:  655: * Unlinks an item from the LRU and hashtable.
         -:  656: */
+    #####:  657:void item_unlink(item *item) {
+    #####:  658:    uint32_t hv;
+    #####:  659:    hv = hash(ITEM_key(item), item->nkey);
+    #####:  660:    item_lock(hv);
+    #####:  661:    do_item_unlink(item, hv);
+    #####:  662:    item_unlock(hv);
+    #####:  663:}
+------------------
+item_unlink:
     #####:  657:void item_unlink(item *item) {
     #####:  658:    uint32_t hv;
     #####:  659:    hv = hash(ITEM_key(item), item->nkey);
@@ -1733,19 +2231,46 @@ add_delta:
     #####:  679:    return ret;
         -:  680:}
 ------------------
+add_delta:
+    #####:  668:enum delta_result_type add_delta(conn *c, const char *key,
+        -:  669:                                 const size_t nkey, bool incr,
+        -:  670:                                 const int64_t delta, char *buf,
+        -:  671:                                 uint64_t *cas) {
+    #####:  672:    enum delta_result_type ret;
+    #####:  673:    uint32_t hv;
+        -:  674:
+    #####:  675:    hv = hash(key, nkey);
+    #####:  676:    item_lock(hv);
+    #####:  677:    ret = do_add_delta(c, key, nkey, incr, delta, buf, cas, hv);
+    #####:  678:    item_unlock(hv);
+    #####:  679:    return ret;
+        -:  680:}
+------------------
         -:  681:
         -:  682:/*
         -:  683: * Stores an item in the cache (high level, obeys set/add/replace semantics)
         -:  684: */
-    18400:  685:enum store_item_type store_item(item *item, int comm, conn* c) {
-    18400:  686:    enum store_item_type ret;
-    18400:  687:    uint32_t hv;
+    27600:  685:enum store_item_type store_item(item *item, int comm, conn* c) {
+    27600:  686:    enum store_item_type ret;
+    27600:  687:    uint32_t hv;
         -:  688:
-    18400:  689:    hv = hash(ITEM_key(item), item->nkey);
-    18400:  690:    item_lock(hv);
-    18400:  691:    ret = do_store_item(item, comm, c, hv);
-    18400:  692:    item_unlock(hv);
-    18400:  693:    return ret;
+    27600:  689:    hv = hash(ITEM_key(item), item->nkey);
+    27600:  690:    item_lock(hv);
+    27600:  691:    ret = do_store_item(item, comm, c, hv);
+    27600:  692:    item_unlock(hv);
+    27600:  693:    return ret;
+        -:  694:}
+------------------
+store_item:
+     9200:  685:enum store_item_type store_item(item *item, int comm, conn* c) {
+     9200:  686:    enum store_item_type ret;
+     9200:  687:    uint32_t hv;
+        -:  688:
+     9200:  689:    hv = hash(ITEM_key(item), item->nkey);
+     9200:  690:    item_lock(hv);
+     9200:  691:    ret = do_store_item(item, comm, c, hv);
+     9200:  692:    item_unlock(hv);
+     9200:  693:    return ret;
         -:  694:}
 ------------------
 store_item:
@@ -1775,36 +2300,67 @@ store_item:
         -:  695:
         -:  696:/******************************* GLOBAL STATS ******************************/
         -:  697:
-    39798:  698:void STATS_LOCK() {
-   39798*:  699:    pthread_mutex_lock(&stats_lock);
-    39798:  700:}
+    59814:  698:void STATS_LOCK() {
+   59814*:  699:    pthread_mutex_lock(&stats_lock);
+    59814:  700:}
 ------------------
 STATS_LOCK:
-    19899:  698:void STATS_LOCK() {
-    19899:  699:    pthread_mutex_lock(&stats_lock);
-    19899:  700:}
+    19938:  698:void STATS_LOCK() {
+    19938:  699:    pthread_mutex_lock(&stats_lock);
+    19938:  700:}
 ------------------
 STATS_LOCK:
-    19899:  698:void STATS_LOCK() {
-    19899:  699:    pthread_mutex_lock(&stats_lock);
-    19899:  700:}
+    19938:  698:void STATS_LOCK() {
+    19938:  699:    pthread_mutex_lock(&stats_lock);
+    19938:  700:}
+------------------
+STATS_LOCK:
+    19938:  698:void STATS_LOCK() {
+    19938:  699:    pthread_mutex_lock(&stats_lock);
+    19938:  700:}
 ------------------
         -:  701:
-    39798:  702:void STATS_UNLOCK() {
-   39798*:  703:    pthread_mutex_unlock(&stats_lock);
-    39798:  704:}
+    59814:  702:void STATS_UNLOCK() {
+   59814*:  703:    pthread_mutex_unlock(&stats_lock);
+    59814:  704:}
 ------------------
 STATS_UNLOCK:
-    19899:  702:void STATS_UNLOCK() {
-    19899:  703:    pthread_mutex_unlock(&stats_lock);
-    19899:  704:}
+    19938:  702:void STATS_UNLOCK() {
+    19938:  703:    pthread_mutex_unlock(&stats_lock);
+    19938:  704:}
 ------------------
 STATS_UNLOCK:
-    19899:  702:void STATS_UNLOCK() {
-    19899:  703:    pthread_mutex_unlock(&stats_lock);
-    19899:  704:}
+    19938:  702:void STATS_UNLOCK() {
+    19938:  703:    pthread_mutex_unlock(&stats_lock);
+    19938:  704:}
+------------------
+STATS_UNLOCK:
+    19938:  702:void STATS_UNLOCK() {
+    19938:  703:    pthread_mutex_unlock(&stats_lock);
+    19938:  704:}
 ------------------
         -:  705:
+    #####:  706:void threadlocal_stats_reset(void) {
+    #####:  707:    int ii;
+    #####:  708:    for (ii = 0; ii < settings.num_threads; ++ii) {
+    #####:  709:        pthread_mutex_lock(&threads[ii].stats.mutex);
+        -:  710:#define X(name) threads[ii].stats.name = 0;
+    #####:  711:        THREAD_STATS_FIELDS
+        -:  712:#ifdef EXTSTORE
+        -:  713:        EXTSTORE_THREAD_STATS_FIELDS
+        -:  714:#endif
+        -:  715:#undef X
+        -:  716:
+    #####:  717:        memset(&threads[ii].stats.slab_stats, 0,
+        -:  718:                sizeof(threads[ii].stats.slab_stats));
+    #####:  719:        memset(&threads[ii].stats.lru_hits, 0,
+        -:  720:                sizeof(uint64_t) * POWER_LARGEST);
+        -:  721:
+    #####:  722:        pthread_mutex_unlock(&threads[ii].stats.mutex);
+        -:  723:    }
+    #####:  724:}
+------------------
+threadlocal_stats_reset:
     #####:  706:void threadlocal_stats_reset(void) {
     #####:  707:    int ii;
     #####:  708:    for (ii = 0; ii < settings.num_threads; ++ii) {
@@ -1972,7 +2528,55 @@ threadlocal_stats_aggregate:
         -:  757:    }
     #####:  758:}
 ------------------
+threadlocal_stats_aggregate:
+    #####:  726:void threadlocal_stats_aggregate(struct thread_stats *stats) {
+    #####:  727:    int ii, sid;
+        -:  728:
+        -:  729:    /* The struct has a mutex, but we can safely set the whole thing
+        -:  730:     * to zero since it is unused when aggregating. */
+    #####:  731:    memset(stats, 0, sizeof(*stats));
+        -:  732:
+    #####:  733:    for (ii = 0; ii < settings.num_threads; ++ii) {
+    #####:  734:        pthread_mutex_lock(&threads[ii].stats.mutex);
+        -:  735:#define X(name) stats->name += threads[ii].stats.name;
+    #####:  736:        THREAD_STATS_FIELDS
+        -:  737:#ifdef EXTSTORE
+        -:  738:        EXTSTORE_THREAD_STATS_FIELDS
+        -:  739:#endif
+        -:  740:#undef X
+        -:  741:
+    #####:  742:        for (sid = 0; sid < MAX_NUMBER_OF_SLAB_CLASSES; sid++) {
+        -:  743:#define X(name) stats->slab_stats[sid].name += \
+        -:  744:            threads[ii].stats.slab_stats[sid].name;
+    #####:  745:            SLAB_STATS_FIELDS
+        -:  746:#undef X
+        -:  747:        }
+        -:  748:
+    #####:  749:        for (sid = 0; sid < POWER_LARGEST; sid++) {
+    #####:  750:            stats->lru_hits[sid] +=
+    #####:  751:                threads[ii].stats.lru_hits[sid];
+    #####:  752:            stats->slab_stats[CLEAR_LRU(sid)].get_hits +=
+    #####:  753:                threads[ii].stats.lru_hits[sid];
+        -:  754:        }
+        -:  755:
+    #####:  756:        pthread_mutex_unlock(&threads[ii].stats.mutex);
+        -:  757:    }
+    #####:  758:}
+------------------
         -:  759:
+    #####:  760:void slab_stats_aggregate(struct thread_stats *stats, struct slab_stats *out) {
+    #####:  761:    int sid;
+        -:  762:
+    #####:  763:    memset(out, 0, sizeof(*out));
+        -:  764:
+    #####:  765:    for (sid = 0; sid < MAX_NUMBER_OF_SLAB_CLASSES; sid++) {
+        -:  766:#define X(name) out->name += stats->slab_stats[sid].name;
+    #####:  767:        SLAB_STATS_FIELDS
+        -:  768:#undef X
+        -:  769:    }
+    #####:  770:}
+------------------
+slab_stats_aggregate:
     #####:  760:void slab_stats_aggregate(struct thread_stats *stats, struct slab_stats *out) {
     #####:  761:    int sid;
         -:  762:
@@ -2017,27 +2621,27 @@ slab_stats_aggregate:
         -:  774: *
         -:  775: * nthreads  Number of worker event handler threads to spawn
         -:  776: */
-        2:  777:void memcached_thread_init(int nthreads, void *arg) {
-        2:  778:    int         i;
-        2:  779:    int         power;
+        3:  777:void memcached_thread_init(int nthreads, void *arg) {
+        3:  778:    int         i;
+        3:  779:    int         power;
         -:  780:
-      514:  781:    for (i = 0; i < POWER_LARGEST; i++) {
-      512:  782:        pthread_mutex_init(&lru_locks[i], NULL);
+      771:  781:    for (i = 0; i < POWER_LARGEST; i++) {
+      768:  782:        pthread_mutex_init(&lru_locks[i], NULL);
         -:  783:    }
-        2:  784:    pthread_mutex_init(&worker_hang_lock, NULL);
+        3:  784:    pthread_mutex_init(&worker_hang_lock, NULL);
         -:  785:
-        2:  786:    pthread_mutex_init(&init_lock, NULL);
-        2:  787:    pthread_cond_init(&init_cond, NULL);
+        3:  786:    pthread_mutex_init(&init_lock, NULL);
+        3:  787:    pthread_cond_init(&init_cond, NULL);
         -:  788:
-        2:  789:    pthread_mutex_init(&cqi_freelist_lock, NULL);
-        2:  790:    cqi_freelist = NULL;
+        3:  789:    pthread_mutex_init(&cqi_freelist_lock, NULL);
+        3:  790:    cqi_freelist = NULL;
         -:  791:
         -:  792:    /* Want a wide lock table, but don't waste memory */
-        2:  793:    if (nthreads < 3) {
+        3:  793:    if (nthreads < 3) {
         -:  794:        power = 10;
-        2:  795:    } else if (nthreads < 4) {
+        3:  795:    } else if (nthreads < 4) {
         -:  796:        power = 11;
-        2:  797:    } else if (nthreads < 5) {
+        3:  797:    } else if (nthreads < 5) {
         -:  798:        power = 12;
     #####:  799:    } else if (nthreads <= 10) {
         -:  800:        power = 13;
@@ -2048,58 +2652,143 @@ slab_stats_aggregate:
     #####:  805:        power = 15;
         -:  806:    }
         -:  807:
-        2:  808:    if (power >= hashpower) {
+        3:  808:    if (power >= hashpower) {
     #####:  809:        fprintf(stderr, "Hash table power size (%d) cannot be equal to or less than item lock table (%d)\n", hashpower, power);
     #####:  810:        fprintf(stderr, "Item lock table grows with `-t N` (worker threadcount)\n");
     #####:  811:        fprintf(stderr, "Hash table grows with `-o hashpower=N` \n");
     #####:  812:        exit(1);
         -:  813:    }
         -:  814:
-        2:  815:    item_lock_count = hashsize(power);
-        2:  816:    item_lock_hashpower = power;
+        3:  815:    item_lock_count = hashsize(power);
+        3:  816:    item_lock_hashpower = power;
         -:  817:
-        2:  818:    item_locks = calloc(item_lock_count, sizeof(pthread_mutex_t));
-        2:  819:    if (! item_locks) {
+        3:  818:    item_locks = calloc(item_lock_count, sizeof(pthread_mutex_t));
+        3:  819:    if (! item_locks) {
     #####:  820:        perror("Can't allocate item locks");
     #####:  821:        exit(1);
         -:  822:    }
-     8194:  823:    for (i = 0; i < item_lock_count; i++) {
-     8192:  824:        pthread_mutex_init(&item_locks[i], NULL);
+    12291:  823:    for (i = 0; i < item_lock_count; i++) {
+    12288:  824:        pthread_mutex_init(&item_locks[i], NULL);
         -:  825:    }
         -:  826:
-        2:  827:    threads = calloc(nthreads, sizeof(LIBEVENT_THREAD));
-        2:  828:    if (! threads) {
+        3:  827:    threads = calloc(nthreads, sizeof(LIBEVENT_THREAD));
+        3:  828:    if (! threads) {
     #####:  829:        perror("Can't allocate thread descriptors");
     #####:  830:        exit(1);
         -:  831:    }
         -:  832:
-       10:  833:    for (i = 0; i < nthreads; i++) {
-        8:  834:        int fds[2];
-        8:  835:        if (pipe(fds)) {
+       15:  833:    for (i = 0; i < nthreads; i++) {
+       12:  834:        int fds[2];
+       12:  835:        if (pipe(fds)) {
     #####:  836:            perror("Can't create notify pipe");
     #####:  837:            exit(1);
         -:  838:        }
         -:  839:
-        8:  840:        threads[i].notify_receive_fd = fds[0];
-        8:  841:        threads[i].notify_send_fd = fds[1];
+       12:  840:        threads[i].notify_receive_fd = fds[0];
+       12:  841:        threads[i].notify_send_fd = fds[1];
         -:  842:#ifdef EXTSTORE
         -:  843:        threads[i].storage = arg;
         -:  844:#endif
-        8:  845:        setup_thread(&threads[i]);
+       12:  845:        setup_thread(&threads[i]);
         -:  846:        /* Reserve three fds for the libevent base, and two for the pipe */
-        8:  847:        stats_state.reserved_fds += 5;
+       12:  847:        stats_state.reserved_fds += 5;
         -:  848:    }
         -:  849:
         -:  850:    /* Create threads after we've done all the libevent setup. */
-       10:  851:    for (i = 0; i < nthreads; i++) {
-        8:  852:        create_worker(worker_libevent, &threads[i]);
+       15:  851:    for (i = 0; i < nthreads; i++) {
+       12:  852:        create_worker(worker_libevent, &threads[i]);
         -:  853:    }
         -:  854:
         -:  855:    /* Wait for all the threads to set themselves up before returning. */
-        2:  856:    pthread_mutex_lock(&init_lock);
-        2:  857:    wait_for_thread_registration(nthreads);
-        2:  858:    pthread_mutex_unlock(&init_lock);
-        2:  859:}
+        3:  856:    pthread_mutex_lock(&init_lock);
+        3:  857:    wait_for_thread_registration(nthreads);
+        3:  858:    pthread_mutex_unlock(&init_lock);
+        3:  859:}
+------------------
+memcached_thread_init:
+        1:  777:void memcached_thread_init(int nthreads, void *arg) {
+        1:  778:    int         i;
+        1:  779:    int         power;
+        -:  780:
+      257:  781:    for (i = 0; i < POWER_LARGEST; i++) {
+      256:  782:        pthread_mutex_init(&lru_locks[i], NULL);
+        -:  783:    }
+        1:  784:    pthread_mutex_init(&worker_hang_lock, NULL);
+        -:  785:
+        1:  786:    pthread_mutex_init(&init_lock, NULL);
+        1:  787:    pthread_cond_init(&init_cond, NULL);
+        -:  788:
+        1:  789:    pthread_mutex_init(&cqi_freelist_lock, NULL);
+        1:  790:    cqi_freelist = NULL;
+        -:  791:
+        -:  792:    /* Want a wide lock table, but don't waste memory */
+        1:  793:    if (nthreads < 3) {
+        -:  794:        power = 10;
+        1:  795:    } else if (nthreads < 4) {
+        -:  796:        power = 11;
+        1:  797:    } else if (nthreads < 5) {
+        -:  798:        power = 12;
+    #####:  799:    } else if (nthreads <= 10) {
+        -:  800:        power = 13;
+    #####:  801:    } else if (nthreads <= 20) {
+        -:  802:        power = 14;
+        -:  803:    } else {
+        -:  804:        /* 32k buckets. just under the hashpower default. */
+    #####:  805:        power = 15;
+        -:  806:    }
+        -:  807:
+        1:  808:    if (power >= hashpower) {
+    #####:  809:        fprintf(stderr, "Hash table power size (%d) cannot be equal to or less than item lock table (%d)\n", hashpower, power);
+    #####:  810:        fprintf(stderr, "Item lock table grows with `-t N` (worker threadcount)\n");
+    #####:  811:        fprintf(stderr, "Hash table grows with `-o hashpower=N` \n");
+    #####:  812:        exit(1);
+        -:  813:    }
+        -:  814:
+        1:  815:    item_lock_count = hashsize(power);
+        1:  816:    item_lock_hashpower = power;
+        -:  817:
+        1:  818:    item_locks = calloc(item_lock_count, sizeof(pthread_mutex_t));
+        1:  819:    if (! item_locks) {
+    #####:  820:        perror("Can't allocate item locks");
+    #####:  821:        exit(1);
+        -:  822:    }
+     4097:  823:    for (i = 0; i < item_lock_count; i++) {
+     4096:  824:        pthread_mutex_init(&item_locks[i], NULL);
+        -:  825:    }
+        -:  826:
+        1:  827:    threads = calloc(nthreads, sizeof(LIBEVENT_THREAD));
+        1:  828:    if (! threads) {
+    #####:  829:        perror("Can't allocate thread descriptors");
+    #####:  830:        exit(1);
+        -:  831:    }
+        -:  832:
+        5:  833:    for (i = 0; i < nthreads; i++) {
+        4:  834:        int fds[2];
+        4:  835:        if (pipe(fds)) {
+    #####:  836:            perror("Can't create notify pipe");
+    #####:  837:            exit(1);
+        -:  838:        }
+        -:  839:
+        4:  840:        threads[i].notify_receive_fd = fds[0];
+        4:  841:        threads[i].notify_send_fd = fds[1];
+        -:  842:#ifdef EXTSTORE
+        -:  843:        threads[i].storage = arg;
+        -:  844:#endif
+        4:  845:        setup_thread(&threads[i]);
+        -:  846:        /* Reserve three fds for the libevent base, and two for the pipe */
+        4:  847:        stats_state.reserved_fds += 5;
+        -:  848:    }
+        -:  849:
+        -:  850:    /* Create threads after we've done all the libevent setup. */
+        5:  851:    for (i = 0; i < nthreads; i++) {
+        4:  852:        create_worker(worker_libevent, &threads[i]);
+        -:  853:    }
+        -:  854:
+        -:  855:    /* Wait for all the threads to set themselves up before returning. */
+        1:  856:    pthread_mutex_lock(&init_lock);
+        1:  857:    wait_for_thread_registration(nthreads);
+        1:  858:    pthread_mutex_unlock(&init_lock);
+        1:  859:}
 ------------------
 memcached_thread_init:
         1:  777:void memcached_thread_init(int nthreads, void *arg) {

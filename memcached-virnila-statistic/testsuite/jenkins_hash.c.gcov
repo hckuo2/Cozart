@@ -1,5 +1,5 @@
         -:    0:Source:jenkins_hash.c
-        -:    0:Programs:54
+        -:    0:Programs:72
         -:    0:Source is newer than graph
         -:    1:/* -*- Mode: C; tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*- */
         -:    2:/*
@@ -126,32 +126,32 @@
         -:  123:}
         -:  124:
         -:  125:#if HASH_LITTLE_ENDIAN == 1
-   190419:  126:uint32_t jenkins_hash(
+   253892:  126:uint32_t jenkins_hash(
         -:  127:  const void *key,       /* the key to hash */
         -:  128:  size_t      length)    /* length of the key */
         -:  129:{
-   190419:  130:  uint32_t a,b,c;                                          /* internal state */
-   190419:  131:  union { const void *ptr; size_t i; } u;     /* needed for Mac Powerbook G4 */
+   253892:  130:  uint32_t a,b,c;                                          /* internal state */
+   253892:  131:  union { const void *ptr; size_t i; } u;     /* needed for Mac Powerbook G4 */
         -:  132:
         -:  133:  /* Set up the internal state */
-   190419:  134:  a = b = c = 0xdeadbeef + ((uint32_t)length) + 0;
+   253892:  134:  a = b = c = 0xdeadbeef + ((uint32_t)length) + 0;
         -:  135:
-   190419:  136:  u.ptr = key;
-   190419:  137:  if (HASH_LITTLE_ENDIAN && ((u.i & 0x3) == 0)) {
+   253892:  136:  u.ptr = key;
+   253892:  137:  if (HASH_LITTLE_ENDIAN && ((u.i & 0x3) == 0)) {
         -:  138:    const uint32_t *k = key;                           /* read 32-bit chunks */
         -:  139:#ifdef VALGRIND
         -:  140:    const uint8_t  *k8;
         -:  141:#endif /* ifdef VALGRIND */
         -:  142:
         -:  143:    /*------ all but last block: aligned reads and affect 32 bits of (a,b,c) */
-   356565:  144:    while (length > 12)
+   474384:  144:    while (length > 12)
         -:  145:    {
-   166209:  146:      a += k[0];
-   166209:  147:      b += k[1];
-   166209:  148:      c += k[2];
-   166209:  149:      mix(a,b,c);
-   166209:  150:      length -= 12;
-   166209:  151:      k += 3;
+   220500:  146:      a += k[0];
+   220500:  147:      b += k[1];
+   220500:  148:      c += k[2];
+   220500:  149:      mix(a,b,c);
+   220500:  150:      length -= 12;
+   220500:  151:      k += 3;
         -:  152:    }
         -:  153:
         -:  154:    /*----------------------------- handle the last (probably partial) block */
@@ -166,20 +166,20 @@
         -:  163:     */
         -:  164:#ifndef VALGRIND
         -:  165:
-   190356:  166:    switch(length)
+   253884:  166:    switch(length)
         -:  167:    {
-       27:  168:    case 12: c+=k[2]; b+=k[1]; a+=k[0]; break;
-     1107:  169:    case 11: c+=k[2]&0xffffff; b+=k[1]; a+=k[0]; break;
-      507:  170:    case 10: c+=k[2]&0xffff; b+=k[1]; a+=k[0]; break;
-    14967:  171:    case 9 : c+=k[2]&0xff; b+=k[1]; a+=k[0]; break;
-       18:  172:    case 8 : b+=k[1]; a+=k[0]; break;
-      972:  173:    case 7 : b+=k[1]&0xffffff; a+=k[0]; break;
-     1425:  174:    case 6 : b+=k[1]&0xffff; a+=k[0]; break;
-    76581:  175:    case 5 : b+=k[1]&0xff; a+=k[0]; break;
-       87:  176:    case 4 : a+=k[0]; break;
-      237:  177:    case 3 : a+=k[0]&0xffffff; break;
-       15:  178:    case 2 : a+=k[0]&0xffff; break;
-    94413:  179:    case 1 : a+=k[0]&0xff; break;
+       36:  168:    case 12: c+=k[2]; b+=k[1]; a+=k[0]; break;
+     1476:  169:    case 11: c+=k[2]&0xffffff; b+=k[1]; a+=k[0]; break;
+      676:  170:    case 10: c+=k[2]&0xffff; b+=k[1]; a+=k[0]; break;
+    21144:  171:    case 9 : c+=k[2]&0xff; b+=k[1]; a+=k[0]; break;
+       24:  172:    case 8 : b+=k[1]; a+=k[0]; break;
+     1296:  173:    case 7 : b+=k[1]&0xffffff; a+=k[0]; break;
+     1900:  174:    case 6 : b+=k[1]&0xffff; a+=k[0]; break;
+   100920:  175:    case 5 : b+=k[1]&0xff; a+=k[0]; break;
+      116:  176:    case 4 : a+=k[0]; break;
+      316:  177:    case 3 : a+=k[0]&0xffffff; break;
+       20:  178:    case 2 : a+=k[0]&0xffff; break;
+   125960:  179:    case 1 : a+=k[0]&0xff; break;
         -:  180:    case 0 : return c;  /* zero length strings require no mixing */
         -:  181:    }
         -:  182:
@@ -205,24 +205,24 @@
         -:  202:
         -:  203:#endif /* !valgrind */
         -:  204:
-       63:  205:  } else if (HASH_LITTLE_ENDIAN && ((u.i & 0x1) == 0)) {
+        8:  205:  } else if (HASH_LITTLE_ENDIAN && ((u.i & 0x1) == 0)) {
         -:  206:    const uint16_t *k = key;                           /* read 16-bit chunks */
         -:  207:    const uint8_t  *k8;
         -:  208:
         -:  209:    /*--------------- all but last block: aligned reads and different mixing */
-       39:  210:    while (length > 12)
+        4:  210:    while (length > 12)
         -:  211:    {
-       18:  212:      a += k[0] + (((uint32_t)k[1])<<16);
-       18:  213:      b += k[2] + (((uint32_t)k[3])<<16);
-       18:  214:      c += k[4] + (((uint32_t)k[5])<<16);
-       18:  215:      mix(a,b,c);
-       18:  216:      length -= 12;
-       18:  217:      k += 6;
+    #####:  212:      a += k[0] + (((uint32_t)k[1])<<16);
+    #####:  213:      b += k[2] + (((uint32_t)k[3])<<16);
+    #####:  214:      c += k[4] + (((uint32_t)k[5])<<16);
+    #####:  215:      mix(a,b,c);
+    #####:  216:      length -= 12;
+    #####:  217:      k += 6;
         -:  218:    }
         -:  219:
         -:  220:    /*----------------------------- handle the last (probably partial) block */
-       21:  221:    k8 = (const uint8_t *)k;
-       21:  222:    switch(length)
+        4:  221:    k8 = (const uint8_t *)k;
+        4:  222:    switch(length)
         -:  223:    {
     #####:  224:    case 12: c+=k[4]+(((uint32_t)k[5])<<16);
     #####:  225:             b+=k[2]+(((uint32_t)k[3])<<16);
@@ -244,11 +244,11 @@
     #####:  241:    case 5 : b+=k8[4];                      /* @fallthrough */
     #####:  242:    case 4 : a+=k[0]+(((uint32_t)k[1])<<16);
     #####:  243:             break;
-        3:  244:    case 3 : a+=((uint32_t)k8[2])<<16;      /* @fallthrough */
-        3:  245:    case 2 : a+=k[0];
-        3:  246:             break;
-       18:  247:    case 1 : a+=k8[0];
-       18:  248:             break;
+        4:  244:    case 3 : a+=((uint32_t)k8[2])<<16;      /* @fallthrough */
+        4:  245:    case 2 : a+=k[0];
+        4:  246:             break;
+    #####:  247:    case 1 : a+=k8[0];
+    #####:  248:             break;
         -:  249:    case 0 : return c;  /* zero length strings require no mixing */
         -:  250:    }
         -:  251:
@@ -256,27 +256,27 @@
         -:  253:    const uint8_t *k = key;
         -:  254:
         -:  255:    /*--------------- all but the last block: affect some 32 bits of (a,b,c) */
-       81:  256:    while (length > 12)
+        4:  256:    while (length > 12)
         -:  257:    {
-       39:  258:      a += k[0];
-       39:  259:      a += ((uint32_t)k[1])<<8;
-       39:  260:      a += ((uint32_t)k[2])<<16;
-       39:  261:      a += ((uint32_t)k[3])<<24;
-       39:  262:      b += k[4];
-       39:  263:      b += ((uint32_t)k[5])<<8;
-       39:  264:      b += ((uint32_t)k[6])<<16;
-       39:  265:      b += ((uint32_t)k[7])<<24;
-       39:  266:      c += k[8];
-       39:  267:      c += ((uint32_t)k[9])<<8;
-       39:  268:      c += ((uint32_t)k[10])<<16;
-       39:  269:      c += ((uint32_t)k[11])<<24;
-       39:  270:      mix(a,b,c);
-       39:  271:      length -= 12;
-       39:  272:      k += 12;
+    #####:  258:      a += k[0];
+    #####:  259:      a += ((uint32_t)k[1])<<8;
+    #####:  260:      a += ((uint32_t)k[2])<<16;
+    #####:  261:      a += ((uint32_t)k[3])<<24;
+    #####:  262:      b += k[4];
+    #####:  263:      b += ((uint32_t)k[5])<<8;
+    #####:  264:      b += ((uint32_t)k[6])<<16;
+    #####:  265:      b += ((uint32_t)k[7])<<24;
+    #####:  266:      c += k[8];
+    #####:  267:      c += ((uint32_t)k[9])<<8;
+    #####:  268:      c += ((uint32_t)k[10])<<16;
+    #####:  269:      c += ((uint32_t)k[11])<<24;
+    #####:  270:      mix(a,b,c);
+    #####:  271:      length -= 12;
+    #####:  272:      k += 12;
         -:  273:    }
         -:  274:
         -:  275:    /*-------------------------------- last block: affect all 32 bits of (c) */
-       42:  276:    switch(length)                   /* all the case statements fall through */
+        4:  276:    switch(length)                   /* all the case statements fall through */
         -:  277:    {
     #####:  278:    case 12: c+=((uint32_t)k[11])<<24;
     #####:  279:    case 11: c+=((uint32_t)k[10])<<16;
@@ -287,16 +287,16 @@
     #####:  284:    case 6 : b+=((uint32_t)k[5])<<8;
     #####:  285:    case 5 : b+=k[4];
     #####:  286:    case 4 : a+=((uint32_t)k[3])<<24;
-        3:  287:    case 3 : a+=((uint32_t)k[2])<<16;
-        3:  288:    case 2 : a+=((uint32_t)k[1])<<8;
-       42:  289:    case 1 : a+=k[0];
-       42:  290:             break;
+        4:  287:    case 3 : a+=((uint32_t)k[2])<<16;
+        4:  288:    case 2 : a+=((uint32_t)k[1])<<8;
+        4:  289:    case 1 : a+=k[0];
+        4:  290:             break;
         -:  291:    case 0 : return c;  /* zero length strings require no mixing */
         -:  292:    }
-   190419:  293:  }
+   253892:  293:  }
         -:  294:
-   190419:  295:  final(a,b,c);
-   190419:  296:  return c;             /* zero length strings require no mixing */
+   253892:  295:  final(a,b,c);
+   253892:  296:  return c;             /* zero length strings require no mixing */
         -:  297:}
         -:  298:
         -:  299:#elif HASH_BIG_ENDIAN == 1

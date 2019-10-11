@@ -1,5 +1,5 @@
         -:    0:Source:/usr/include/x86_64-linux-gnu/sys/stat.h
-        -:    0:Programs:54
+        -:    0:Programs:72
         -:    1:/* Copyright (C) 1991-2019 Free Software Foundation, Inc.
         -:    2:   This file is part of the GNU C Library.
         -:    3:
@@ -454,14 +454,14 @@
         -:  452:__extern_inline int
         -:  453:__NTH (stat (const char *__path, struct stat *__statbuf))
         -:  454:{
-       3*:  455:  return __xstat (_STAT_VER, __path, __statbuf);
+       4*:  455:  return __xstat (_STAT_VER, __path, __statbuf);
         -:  456:}
         -:  457:
         -:  458:# if defined __USE_MISC || defined __USE_XOPEN_EXTENDED
         -:  459:__extern_inline int
         -:  460:__NTH (lstat (const char *__path, struct stat *__statbuf))
         -:  461:{
-      219:  462:  return __lxstat (_STAT_VER, __path, __statbuf);
+      292:  462:  return __lxstat (_STAT_VER, __path, __statbuf);
         -:  463:}
         -:  464:# endif
         -:  465:
