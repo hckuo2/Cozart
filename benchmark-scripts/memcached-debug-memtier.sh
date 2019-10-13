@@ -1,16 +1,20 @@
 #!/bin/bash
-reqcnt=500
 
 source benchmark-scripts/general-helper.sh
 bootstrap;
-/benchmark-scripts/memcached-src/memcached-debug -u root --port=9111 &
+
+cd /benchmark-scripts/memcached-src
+
+rm *.gcda
+rm *.gcov
+rm *.log
+rm gmon.out
+
+./memcached-debug -u root -p 9132 &  > ser.log 2>&1
 sleep 2;
-for i in `seq 10`; do
-    /benchmark-scripts/memtier_benchmark -p 9111 -P memcache_binary \
-        --requests=$reqcnt --hide-histogram
-    for f in /benchmark-scripts/memcached-src/*.gc*; do
-        mv $f $f.$i
-    done
-done
+
+../memtier_benchmark -p 9132 -P memcache_binary --requests=500  > ben.log 2>&1
+
+gcov -a *  > gcov_fwcj.log 2>&1
 pkill memcached-debug
 sync

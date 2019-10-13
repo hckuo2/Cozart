@@ -1,0 +1,539 @@
+        -:    0:Source:/usr/include/x86_64-linux-gnu/sys/stat.h
+        -:    0:Programs:291
+        -:    1:/* Copyright (C) 1991-2018 Free Software Foundation, Inc.
+        -:    2:   This file is part of the GNU C Library.
+        -:    3:
+        -:    4:   The GNU C Library is free software; you can redistribute it and/or
+        -:    5:   modify it under the terms of the GNU Lesser General Public
+        -:    6:   License as published by the Free Software Foundation; either
+        -:    7:   version 2.1 of the License, or (at your option) any later version.
+        -:    8:
+        -:    9:   The GNU C Library is distributed in the hope that it will be useful,
+        -:   10:   but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   11:   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+        -:   12:   Lesser General Public License for more details.
+        -:   13:
+        -:   14:   You should have received a copy of the GNU Lesser General Public
+        -:   15:   License along with the GNU C Library; if not, see
+        -:   16:   <http://www.gnu.org/licenses/>.  */
+        -:   17:
+        -:   18:/*
+        -:   19: *	POSIX Standard: 5.6 File Characteristics	<sys/stat.h>
+        -:   20: */
+        -:   21:
+        -:   22:#ifndef	_SYS_STAT_H
+        -:   23:#define	_SYS_STAT_H	1
+        -:   24:
+        -:   25:#include <features.h>
+        -:   26:
+        -:   27:#include <bits/types.h>		/* For __mode_t and __dev_t.  */
+        -:   28:
+        -:   29:#ifdef __USE_XOPEN2K8
+        -:   30:# include <bits/types/struct_timespec.h>
+        -:   31:#endif
+        -:   32:
+        -:   33:#if defined __USE_XOPEN || defined __USE_XOPEN2K
+        -:   34:/* The Single Unix specification says that some more types are
+        -:   35:   available here.  */
+        -:   36:
+        -:   37:# include <bits/types/time_t.h>
+        -:   38:
+        -:   39:# ifndef __dev_t_defined
+        -:   40:typedef __dev_t dev_t;
+        -:   41:#  define __dev_t_defined
+        -:   42:# endif
+        -:   43:
+        -:   44:# ifndef __gid_t_defined
+        -:   45:typedef __gid_t gid_t;
+        -:   46:#  define __gid_t_defined
+        -:   47:# endif
+        -:   48:
+        -:   49:# ifndef __ino_t_defined
+        -:   50:#  ifndef __USE_FILE_OFFSET64
+        -:   51:typedef __ino_t ino_t;
+        -:   52:#  else
+        -:   53:typedef __ino64_t ino_t;
+        -:   54:#  endif
+        -:   55:#  define __ino_t_defined
+        -:   56:# endif
+        -:   57:
+        -:   58:# ifndef __mode_t_defined
+        -:   59:typedef __mode_t mode_t;
+        -:   60:#  define __mode_t_defined
+        -:   61:# endif
+        -:   62:
+        -:   63:# ifndef __nlink_t_defined
+        -:   64:typedef __nlink_t nlink_t;
+        -:   65:#  define __nlink_t_defined
+        -:   66:# endif
+        -:   67:
+        -:   68:# ifndef __off_t_defined
+        -:   69:#  ifndef __USE_FILE_OFFSET64
+        -:   70:typedef __off_t off_t;
+        -:   71:#  else
+        -:   72:typedef __off64_t off_t;
+        -:   73:#  endif
+        -:   74:#  define __off_t_defined
+        -:   75:# endif
+        -:   76:
+        -:   77:# ifndef __uid_t_defined
+        -:   78:typedef __uid_t uid_t;
+        -:   79:#  define __uid_t_defined
+        -:   80:# endif
+        -:   81:#endif	/* X/Open */
+        -:   82:
+        -:   83:#ifdef __USE_UNIX98
+        -:   84:# ifndef __blkcnt_t_defined
+        -:   85:#  ifndef __USE_FILE_OFFSET64
+        -:   86:typedef __blkcnt_t blkcnt_t;
+        -:   87:#  else
+        -:   88:typedef __blkcnt64_t blkcnt_t;
+        -:   89:#  endif
+        -:   90:#  define __blkcnt_t_defined
+        -:   91:# endif
+        -:   92:
+        -:   93:# ifndef __blksize_t_defined
+        -:   94:typedef __blksize_t blksize_t;
+        -:   95:#  define __blksize_t_defined
+        -:   96:# endif
+        -:   97:#endif	/* Unix98 */
+        -:   98:
+        -:   99:__BEGIN_DECLS
+        -:  100:
+        -:  101:#include <bits/stat.h>
+        -:  102:
+        -:  103:#if defined __USE_MISC || defined __USE_XOPEN
+        -:  104:# define S_IFMT		__S_IFMT
+        -:  105:# define S_IFDIR	__S_IFDIR
+        -:  106:# define S_IFCHR	__S_IFCHR
+        -:  107:# define S_IFBLK	__S_IFBLK
+        -:  108:# define S_IFREG	__S_IFREG
+        -:  109:# ifdef __S_IFIFO
+        -:  110:#  define S_IFIFO	__S_IFIFO
+        -:  111:# endif
+        -:  112:# ifdef __S_IFLNK
+        -:  113:#  define S_IFLNK	__S_IFLNK
+        -:  114:# endif
+        -:  115:# if (defined __USE_MISC || defined __USE_XOPEN_EXTENDED) \
+        -:  116:     && defined __S_IFSOCK
+        -:  117:#  define S_IFSOCK	__S_IFSOCK
+        -:  118:# endif
+        -:  119:#endif
+        -:  120:
+        -:  121:/* Test macros for file types.	*/
+        -:  122:
+        -:  123:#define	__S_ISTYPE(mode, mask)	(((mode) & __S_IFMT) == (mask))
+        -:  124:
+        -:  125:#define	S_ISDIR(mode)	 __S_ISTYPE((mode), __S_IFDIR)
+        -:  126:#define	S_ISCHR(mode)	 __S_ISTYPE((mode), __S_IFCHR)
+        -:  127:#define	S_ISBLK(mode)	 __S_ISTYPE((mode), __S_IFBLK)
+        -:  128:#define	S_ISREG(mode)	 __S_ISTYPE((mode), __S_IFREG)
+        -:  129:#ifdef __S_IFIFO
+        -:  130:# define S_ISFIFO(mode)	 __S_ISTYPE((mode), __S_IFIFO)
+        -:  131:#endif
+        -:  132:#ifdef __S_IFLNK
+        -:  133:# define S_ISLNK(mode)	 __S_ISTYPE((mode), __S_IFLNK)
+        -:  134:#endif
+        -:  135:
+        -:  136:#if defined __USE_MISC && !defined __S_IFLNK
+        -:  137:# define S_ISLNK(mode)  0
+        -:  138:#endif
+        -:  139:
+        -:  140:#if (defined __USE_XOPEN_EXTENDED || defined __USE_XOPEN2K) \
+        -:  141:    && defined __S_IFSOCK
+        -:  142:# define S_ISSOCK(mode) __S_ISTYPE((mode), __S_IFSOCK)
+        -:  143:#elif defined __USE_XOPEN2K
+        -:  144:# define S_ISSOCK(mode) 0
+        -:  145:#endif
+        -:  146:
+        -:  147:/* These are from POSIX.1b.  If the objects are not implemented using separate
+        -:  148:   distinct file types, the macros always will evaluate to zero.  Unlike the
+        -:  149:   other S_* macros the following three take a pointer to a `struct stat'
+        -:  150:   object as the argument.  */
+        -:  151:#ifdef	__USE_POSIX199309
+        -:  152:# define S_TYPEISMQ(buf) __S_TYPEISMQ(buf)
+        -:  153:# define S_TYPEISSEM(buf) __S_TYPEISSEM(buf)
+        -:  154:# define S_TYPEISSHM(buf) __S_TYPEISSHM(buf)
+        -:  155:#endif
+        -:  156:
+        -:  157:
+        -:  158:/* Protection bits.  */
+        -:  159:
+        -:  160:#define	S_ISUID __S_ISUID	/* Set user ID on execution.  */
+        -:  161:#define	S_ISGID	__S_ISGID	/* Set group ID on execution.  */
+        -:  162:
+        -:  163:#if defined __USE_MISC || defined __USE_XOPEN
+        -:  164:/* Save swapped text after use (sticky bit).  This is pretty well obsolete.  */
+        -:  165:# define S_ISVTX	__S_ISVTX
+        -:  166:#endif
+        -:  167:
+        -:  168:#define	S_IRUSR	__S_IREAD	/* Read by owner.  */
+        -:  169:#define	S_IWUSR	__S_IWRITE	/* Write by owner.  */
+        -:  170:#define	S_IXUSR	__S_IEXEC	/* Execute by owner.  */
+        -:  171:/* Read, write, and execute by owner.  */
+        -:  172:#define	S_IRWXU	(__S_IREAD|__S_IWRITE|__S_IEXEC)
+        -:  173:
+        -:  174:#ifdef __USE_MISC
+        -:  175:# define S_IREAD	S_IRUSR
+        -:  176:# define S_IWRITE	S_IWUSR
+        -:  177:# define S_IEXEC	S_IXUSR
+        -:  178:#endif
+        -:  179:
+        -:  180:#define	S_IRGRP	(S_IRUSR >> 3)	/* Read by group.  */
+        -:  181:#define	S_IWGRP	(S_IWUSR >> 3)	/* Write by group.  */
+        -:  182:#define	S_IXGRP	(S_IXUSR >> 3)	/* Execute by group.  */
+        -:  183:/* Read, write, and execute by group.  */
+        -:  184:#define	S_IRWXG	(S_IRWXU >> 3)
+        -:  185:
+        -:  186:#define	S_IROTH	(S_IRGRP >> 3)	/* Read by others.  */
+        -:  187:#define	S_IWOTH	(S_IWGRP >> 3)	/* Write by others.  */
+        -:  188:#define	S_IXOTH	(S_IXGRP >> 3)	/* Execute by others.  */
+        -:  189:/* Read, write, and execute by others.  */
+        -:  190:#define	S_IRWXO	(S_IRWXG >> 3)
+        -:  191:
+        -:  192:
+        -:  193:#ifdef	__USE_MISC
+        -:  194:/* Macros for common mode bit masks.  */
+        -:  195:# define ACCESSPERMS (S_IRWXU|S_IRWXG|S_IRWXO) /* 0777 */
+        -:  196:# define ALLPERMS (S_ISUID|S_ISGID|S_ISVTX|S_IRWXU|S_IRWXG|S_IRWXO)/* 07777 */
+        -:  197:# define DEFFILEMODE (S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH)/* 0666*/
+        -:  198:
+        -:  199:# define S_BLKSIZE	512	/* Block size for `st_blocks'.  */
+        -:  200:#endif
+        -:  201:
+        -:  202:
+        -:  203:#ifndef __USE_FILE_OFFSET64
+        -:  204:/* Get file attributes for FILE and put them in BUF.  */
+        -:  205:extern int stat (const char *__restrict __file,
+        -:  206:		 struct stat *__restrict __buf) __THROW __nonnull ((1, 2));
+        -:  207:
+        -:  208:/* Get file attributes for the file, device, pipe, or socket
+        -:  209:   that file descriptor FD is open on and put them in BUF.  */
+        -:  210:extern int fstat (int __fd, struct stat *__buf) __THROW __nonnull ((2));
+        -:  211:#else
+        -:  212:# ifdef __REDIRECT_NTH
+        -:  213:extern int __REDIRECT_NTH (stat, (const char *__restrict __file,
+        -:  214:				  struct stat *__restrict __buf), stat64)
+        -:  215:     __nonnull ((1, 2));
+        -:  216:extern int __REDIRECT_NTH (fstat, (int __fd, struct stat *__buf), fstat64)
+        -:  217:     __nonnull ((2));
+        -:  218:# else
+        -:  219:#  define stat stat64
+        -:  220:#  define fstat fstat64
+        -:  221:# endif
+        -:  222:#endif
+        -:  223:#ifdef __USE_LARGEFILE64
+        -:  224:extern int stat64 (const char *__restrict __file,
+        -:  225:		   struct stat64 *__restrict __buf) __THROW __nonnull ((1, 2));
+        -:  226:extern int fstat64 (int __fd, struct stat64 *__buf) __THROW __nonnull ((2));
+        -:  227:#endif
+        -:  228:
+        -:  229:#ifdef __USE_ATFILE
+        -:  230:/* Similar to stat, get the attributes for FILE and put them in BUF.
+        -:  231:   Relative path names are interpreted relative to FD unless FD is
+        -:  232:   AT_FDCWD.  */
+        -:  233:# ifndef __USE_FILE_OFFSET64
+        -:  234:extern int fstatat (int __fd, const char *__restrict __file,
+        -:  235:		    struct stat *__restrict __buf, int __flag)
+        -:  236:     __THROW __nonnull ((2, 3));
+        -:  237:# else
+        -:  238:#  ifdef __REDIRECT_NTH
+        -:  239:extern int __REDIRECT_NTH (fstatat, (int __fd, const char *__restrict __file,
+        -:  240:				     struct stat *__restrict __buf,
+        -:  241:				     int __flag),
+        -:  242:			   fstatat64) __nonnull ((2, 3));
+        -:  243:#  else
+        -:  244:#   define fstatat fstatat64
+        -:  245:#  endif
+        -:  246:# endif
+        -:  247:
+        -:  248:# ifdef __USE_LARGEFILE64
+        -:  249:extern int fstatat64 (int __fd, const char *__restrict __file,
+        -:  250:		      struct stat64 *__restrict __buf, int __flag)
+        -:  251:     __THROW __nonnull ((2, 3));
+        -:  252:# endif
+        -:  253:#endif
+        -:  254:
+        -:  255:#if defined __USE_XOPEN_EXTENDED || defined __USE_XOPEN2K
+        -:  256:# ifndef __USE_FILE_OFFSET64
+        -:  257:/* Get file attributes about FILE and put them in BUF.
+        -:  258:   If FILE is a symbolic link, do not follow it.  */
+        -:  259:extern int lstat (const char *__restrict __file,
+        -:  260:		  struct stat *__restrict __buf) __THROW __nonnull ((1, 2));
+        -:  261:# else
+        -:  262:#  ifdef __REDIRECT_NTH
+        -:  263:extern int __REDIRECT_NTH (lstat,
+        -:  264:			   (const char *__restrict __file,
+        -:  265:			    struct stat *__restrict __buf), lstat64)
+        -:  266:     __nonnull ((1, 2));
+        -:  267:#  else
+        -:  268:#   define lstat lstat64
+        -:  269:#  endif
+        -:  270:# endif
+        -:  271:# ifdef __USE_LARGEFILE64
+        -:  272:extern int lstat64 (const char *__restrict __file,
+        -:  273:		    struct stat64 *__restrict __buf)
+        -:  274:     __THROW __nonnull ((1, 2));
+        -:  275:# endif
+        -:  276:#endif
+        -:  277:
+        -:  278:/* Set file access permissions for FILE to MODE.
+        -:  279:   If FILE is a symbolic link, this affects its target instead.  */
+        -:  280:extern int chmod (const char *__file, __mode_t __mode)
+        -:  281:     __THROW __nonnull ((1));
+        -:  282:
+        -:  283:#ifdef __USE_MISC
+        -:  284:/* Set file access permissions for FILE to MODE.
+        -:  285:   If FILE is a symbolic link, this affects the link itself
+        -:  286:   rather than its target.  */
+        -:  287:extern int lchmod (const char *__file, __mode_t __mode)
+        -:  288:     __THROW __nonnull ((1));
+        -:  289:#endif
+        -:  290:
+        -:  291:/* Set file access permissions of the file FD is open on to MODE.  */
+        -:  292:#if defined __USE_POSIX199309 || defined __USE_XOPEN_EXTENDED
+        -:  293:extern int fchmod (int __fd, __mode_t __mode) __THROW;
+        -:  294:#endif
+        -:  295:
+        -:  296:#ifdef __USE_ATFILE
+        -:  297:/* Set file access permissions of FILE relative to
+        -:  298:   the directory FD is open on.  */
+        -:  299:extern int fchmodat (int __fd, const char *__file, __mode_t __mode,
+        -:  300:		     int __flag)
+        -:  301:     __THROW __nonnull ((2)) __wur;
+        -:  302:#endif /* Use ATFILE.  */
+        -:  303:
+        -:  304:
+        -:  305:
+        -:  306:/* Set the file creation mask of the current process to MASK,
+        -:  307:   and return the old creation mask.  */
+        -:  308:extern __mode_t umask (__mode_t __mask) __THROW;
+        -:  309:
+        -:  310:#ifdef	__USE_GNU
+        -:  311:/* Get the current `umask' value without changing it.
+        -:  312:   This function is only available under the GNU Hurd.  */
+        -:  313:extern __mode_t getumask (void) __THROW;
+        -:  314:#endif
+        -:  315:
+        -:  316:/* Create a new directory named PATH, with permission bits MODE.  */
+        -:  317:extern int mkdir (const char *__path, __mode_t __mode)
+        -:  318:     __THROW __nonnull ((1));
+        -:  319:
+        -:  320:#ifdef __USE_ATFILE
+        -:  321:/* Like mkdir, create a new directory with permission bits MODE.  But
+        -:  322:   interpret relative PATH names relative to the directory associated
+        -:  323:   with FD.  */
+        -:  324:extern int mkdirat (int __fd, const char *__path, __mode_t __mode)
+        -:  325:     __THROW __nonnull ((2));
+        -:  326:#endif
+        -:  327:
+        -:  328:/* Create a device file named PATH, with permission and special bits MODE
+        -:  329:   and device number DEV (which can be constructed from major and minor
+        -:  330:   device numbers with the `makedev' macro above).  */
+        -:  331:#if defined __USE_MISC || defined __USE_XOPEN_EXTENDED
+        -:  332:extern int mknod (const char *__path, __mode_t __mode, __dev_t __dev)
+        -:  333:     __THROW __nonnull ((1));
+        -:  334:
+        -:  335:# ifdef __USE_ATFILE
+        -:  336:/* Like mknod, create a new device file with permission bits MODE and
+        -:  337:   device number DEV.  But interpret relative PATH names relative to
+        -:  338:   the directory associated with FD.  */
+        -:  339:extern int mknodat (int __fd, const char *__path, __mode_t __mode,
+        -:  340:		    __dev_t __dev) __THROW __nonnull ((2));
+        -:  341:# endif
+        -:  342:#endif
+        -:  343:
+        -:  344:
+        -:  345:/* Create a new FIFO named PATH, with permission bits MODE.  */
+        -:  346:extern int mkfifo (const char *__path, __mode_t __mode)
+        -:  347:     __THROW __nonnull ((1));
+        -:  348:
+        -:  349:#ifdef __USE_ATFILE
+        -:  350:/* Like mkfifo, create a new FIFO with permission bits MODE.  But
+        -:  351:   interpret relative PATH names relative to the directory associated
+        -:  352:   with FD.  */
+        -:  353:extern int mkfifoat (int __fd, const char *__path, __mode_t __mode)
+        -:  354:     __THROW __nonnull ((2));
+        -:  355:#endif
+        -:  356:
+        -:  357:#ifdef __USE_ATFILE
+        -:  358:/* Set file access and modification times relative to directory file
+        -:  359:   descriptor.  */
+        -:  360:extern int utimensat (int __fd, const char *__path,
+        -:  361:		      const struct timespec __times[2],
+        -:  362:		      int __flags)
+        -:  363:     __THROW __nonnull ((2));
+        -:  364:#endif
+        -:  365:
+        -:  366:#ifdef __USE_XOPEN2K8
+        -:  367:/* Set file access and modification times of the file associated with FD.  */
+        -:  368:extern int futimens (int __fd, const struct timespec __times[2]) __THROW;
+        -:  369:#endif
+        -:  370:
+        -:  371:/* To allow the `struct stat' structure and the file type `mode_t'
+        -:  372:   bits to vary without changing shared library major version number,
+        -:  373:   the `stat' family of functions and `mknod' are in fact inline
+        -:  374:   wrappers around calls to `xstat', `fxstat', `lxstat', and `xmknod',
+        -:  375:   which all take a leading version-number argument designating the
+        -:  376:   data structure and bits used.  <bits/stat.h> defines _STAT_VER with
+        -:  377:   the version number corresponding to `struct stat' as defined in
+        -:  378:   that file; and _MKNOD_VER with the version number corresponding to
+        -:  379:   the S_IF* macros defined therein.  It is arranged that when not
+        -:  380:   inlined these function are always statically linked; that way a
+        -:  381:   dynamically-linked executable always encodes the version number
+        -:  382:   corresponding to the data structures it uses, so the `x' functions
+        -:  383:   in the shared library can adapt without needing to recompile all
+        -:  384:   callers.  */
+        -:  385:
+        -:  386:#ifndef _STAT_VER
+        -:  387:# define _STAT_VER	0
+        -:  388:#endif
+        -:  389:#ifndef _MKNOD_VER
+        -:  390:# define _MKNOD_VER	0
+        -:  391:#endif
+        -:  392:
+        -:  393:/* Wrappers for stat and mknod system calls.  */
+        -:  394:#ifndef __USE_FILE_OFFSET64
+        -:  395:extern int __fxstat (int __ver, int __fildes, struct stat *__stat_buf)
+        -:  396:     __THROW __nonnull ((3));
+        -:  397:extern int __xstat (int __ver, const char *__filename,
+        -:  398:		    struct stat *__stat_buf) __THROW __nonnull ((2, 3));
+        -:  399:extern int __lxstat (int __ver, const char *__filename,
+        -:  400:		     struct stat *__stat_buf) __THROW __nonnull ((2, 3));
+        -:  401:extern int __fxstatat (int __ver, int __fildes, const char *__filename,
+        -:  402:		       struct stat *__stat_buf, int __flag)
+        -:  403:     __THROW __nonnull ((3, 4));
+        -:  404:#else
+        -:  405:# ifdef __REDIRECT_NTH
+        -:  406:extern int __REDIRECT_NTH (__fxstat, (int __ver, int __fildes,
+        -:  407:				      struct stat *__stat_buf), __fxstat64)
+        -:  408:     __nonnull ((3));
+        -:  409:extern int __REDIRECT_NTH (__xstat, (int __ver, const char *__filename,
+        -:  410:				     struct stat *__stat_buf), __xstat64)
+        -:  411:     __nonnull ((2, 3));
+        -:  412:extern int __REDIRECT_NTH (__lxstat, (int __ver, const char *__filename,
+        -:  413:				      struct stat *__stat_buf), __lxstat64)
+        -:  414:     __nonnull ((2, 3));
+        -:  415:extern int __REDIRECT_NTH (__fxstatat, (int __ver, int __fildes,
+        -:  416:					const char *__filename,
+        -:  417:					struct stat *__stat_buf, int __flag),
+        -:  418:			   __fxstatat64) __nonnull ((3, 4));
+        -:  419:
+        -:  420:# else
+        -:  421:#  define __fxstat __fxstat64
+        -:  422:#  define __xstat __xstat64
+        -:  423:#  define __lxstat __lxstat64
+        -:  424:# endif
+        -:  425:#endif
+        -:  426:
+        -:  427:#ifdef __USE_LARGEFILE64
+        -:  428:extern int __fxstat64 (int __ver, int __fildes, struct stat64 *__stat_buf)
+        -:  429:     __THROW __nonnull ((3));
+        -:  430:extern int __xstat64 (int __ver, const char *__filename,
+        -:  431:		      struct stat64 *__stat_buf) __THROW __nonnull ((2, 3));
+        -:  432:extern int __lxstat64 (int __ver, const char *__filename,
+        -:  433:		       struct stat64 *__stat_buf) __THROW __nonnull ((2, 3));
+        -:  434:extern int __fxstatat64 (int __ver, int __fildes, const char *__filename,
+        -:  435:			 struct stat64 *__stat_buf, int __flag)
+        -:  436:     __THROW __nonnull ((3, 4));
+        -:  437:#endif
+        -:  438:extern int __xmknod (int __ver, const char *__path, __mode_t __mode,
+        -:  439:		     __dev_t *__dev) __THROW __nonnull ((2, 4));
+        -:  440:
+        -:  441:extern int __xmknodat (int __ver, int __fd, const char *__path,
+        -:  442:		       __mode_t __mode, __dev_t *__dev)
+        -:  443:     __THROW __nonnull ((3, 5));
+        -:  444:
+        -:  445:#ifdef __USE_GNU
+        -:  446:# include <bits/statx.h>
+        -:  447:#endif
+        -:  448:
+        -:  449:#ifdef __USE_EXTERN_INLINES
+        -:  450:/* Inlined versions of the real stat and mknod functions.  */
+        -:  451:
+        -:  452:__extern_inline int
+        -:  453:__NTH (stat (const char *__path, struct stat *__statbuf))
+        -:  454:{
+        -:  455:  return __xstat (_STAT_VER, __path, __statbuf);
+        -:  456:}
+        -:  457:
+        -:  458:# if defined __USE_MISC || defined __USE_XOPEN_EXTENDED
+        -:  459:__extern_inline int
+        -:  460:__NTH (lstat (const char *__path, struct stat *__statbuf))
+        -:  461:{
+        -:  462:  return __lxstat (_STAT_VER, __path, __statbuf);
+        -:  463:}
+        -:  464:# endif
+        -:  465:
+        -:  466:__extern_inline int
+        -:  467:__NTH (fstat (int __fd, struct stat *__statbuf))
+        -:  468:{
+     423*:  469:  return __fxstat (_STAT_VER, __fd, __statbuf);
+        -:  470:}
+        -:  471:
+        -:  472:# ifdef __USE_ATFILE
+        -:  473:__extern_inline int
+        -:  474:__NTH (fstatat (int __fd, const char *__filename, struct stat *__statbuf,
+        -:  475:		int __flag))
+        -:  476:{
+        -:  477:  return __fxstatat (_STAT_VER, __fd, __filename, __statbuf, __flag);
+        -:  478:}
+        -:  479:# endif
+        -:  480:
+        -:  481:# ifdef __USE_MISC
+        -:  482:__extern_inline int
+        -:  483:__NTH (mknod (const char *__path, __mode_t __mode, __dev_t __dev))
+        -:  484:{
+        -:  485:  return __xmknod (_MKNOD_VER, __path, __mode, &__dev);
+        -:  486:}
+        -:  487:# endif
+        -:  488:
+        -:  489:# ifdef __USE_ATFILE
+        -:  490:__extern_inline int
+        -:  491:__NTH (mknodat (int __fd, const char *__path, __mode_t __mode,
+        -:  492:		__dev_t __dev))
+        -:  493:{
+        -:  494:  return __xmknodat (_MKNOD_VER, __fd, __path, __mode, &__dev);
+        -:  495:}
+        -:  496:# endif
+        -:  497:
+        -:  498:# if defined __USE_LARGEFILE64 \
+        -:  499:  && (! defined __USE_FILE_OFFSET64 \
+        -:  500:      || (defined __REDIRECT_NTH && defined __OPTIMIZE__))
+        -:  501:__extern_inline int
+        -:  502:__NTH (stat64 (const char *__path, struct stat64 *__statbuf))
+        -:  503:{
+        -:  504:  return __xstat64 (_STAT_VER, __path, __statbuf);
+        -:  505:}
+        -:  506:
+        -:  507:#  if defined __USE_MISC || defined __USE_XOPEN_EXTENDED
+        -:  508:__extern_inline int
+        -:  509:__NTH (lstat64 (const char *__path, struct stat64 *__statbuf))
+        -:  510:{
+        -:  511:  return __lxstat64 (_STAT_VER, __path, __statbuf);
+        -:  512:}
+        -:  513:#  endif
+        -:  514:
+        -:  515:__extern_inline int
+        -:  516:__NTH (fstat64 (int __fd, struct stat64 *__statbuf))
+        -:  517:{
+        -:  518:  return __fxstat64 (_STAT_VER, __fd, __statbuf);
+        -:  519:}
+        -:  520:
+        -:  521:#  ifdef __USE_ATFILE
+        -:  522:__extern_inline int
+        -:  523:__NTH (fstatat64 (int __fd, const char *__filename, struct stat64 *__statbuf,
+        -:  524:		  int __flag))
+        -:  525:{
+        -:  526:  return __fxstatat64 (_STAT_VER, __fd, __filename, __statbuf, __flag);
+        -:  527:}
+        -:  528:#  endif
+        -:  529:
+        -:  530:# endif
+        -:  531:
+        -:  532:#endif
+        -:  533:
+        -:  534:__END_DECLS
+        -:  535:
+        -:  536:
+        -:  537:#endif /* sys/stat.h  */

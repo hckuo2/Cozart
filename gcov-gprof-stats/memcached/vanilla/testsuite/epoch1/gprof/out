@@ -1,0 +1,744 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  us/call  us/call  name    
+ 33.75      0.27     0.27    70548     3.83     3.83  uriencode
+ 25.00      0.47     0.20   185678     1.08     1.08  tcp_read
+ 11.88      0.57     0.10    83139     1.14     5.46  drive_machine
+  7.50      0.63     0.06    29373     2.04    11.24  logger_thread_read
+  6.25      0.68     0.05    80137     0.62     0.62  logger_log
+  3.75      0.71     0.03   100954     0.30     0.30  MurmurHash3_x86_32
+  3.75      0.74     0.03    87662     0.34     1.35  process_update_command
+  2.50      0.76     0.02    87510     0.23     2.66  process_command
+  1.25      0.77     0.01    87561     0.11     0.11  assoc_find
+  1.25      0.78     0.01    79648     0.13     1.10  item_get
+  1.25      0.79     0.01     8002     1.25     2.26  store_item
+  1.25      0.80     0.01                             lru_maintainer_thread
+  0.63      0.80     0.01                             event_handler
+  0.00      0.80     0.00   429422     0.00     0.00  conn_set_state
+  0.00      0.80     0.00    87692     0.00     0.00  add_msghdr
+  0.00      0.80     0.00    87534     0.00     2.66  try_read_command_ascii
+  0.00      0.80     0.00    87414     0.00     0.68  do_item_get
+  0.00      0.80     0.00    85225     0.00     0.00  bipbuf_request
+  0.00      0.80     0.00    83206     0.00     0.00  update_event
+  0.00      0.80     0.00    79753     0.00     0.00  conn_release_items
+  0.00      0.80     0.00    79588     0.00     0.00  tcp_sendmsg
+  0.00      0.80     0.00    79551     0.00     0.00  ensure_iov_space
+  0.00      0.80     0.00    79413     0.00     0.00  add_iov
+  0.00      0.80     0.00    72988     0.00     0.00  bipbuf_push
+  0.00      0.80     0.00    50428     0.00     0.00  bipbuf_peek_all
+  0.00      0.80     0.00    17718     0.00     0.09  lru_pull_tail
+  0.00      0.80     0.00    16650     0.00     0.00  STATS_UNLOCK
+  0.00      0.80     0.00    16546     0.00     0.00  STATS_LOCK
+  0.00      0.80     0.00    16004     0.00     0.00  safe_strtol
+  0.00      0.80     0.00    15870     0.00     0.00  do_item_remove
+  0.00      0.80     0.00    12412     0.00     0.00  do_slabs_alloc
+  0.00      0.80     0.00    12412     0.00     0.00  slabs_alloc
+  0.00      0.80     0.00    10731     0.00     0.00  do_slabs_free
+  0.00      0.80     0.00    10458     0.00     0.00  do_item_link_q
+  0.00      0.80     0.00    10458     0.00     0.00  item_link_q
+  0.00      0.80     0.00    10448     0.00     0.00  logger_thread_poll_watchers
+  0.00      0.80     0.00     8002     0.00     0.00  assoc_insert
+  0.00      0.80     0.00     8002     0.00     2.55  complete_nread
+  0.00      0.80     0.00     8002     0.00     0.07  do_item_alloc
+  0.00      0.80     0.00     8002     0.00     0.07  do_item_alloc_pull
+  0.00      0.80     0.00     8002     0.00     0.00  do_item_link
+  0.00      0.80     0.00     8002     0.00     0.71  do_store_item
+  0.00      0.80     0.00     8002     0.00     0.00  get_cas_id
+  0.00      0.80     0.00     8002     0.00     0.07  item_alloc
+  0.00      0.80     0.00     8002     0.00     0.00  item_stats_sizes_add
+  0.00      0.80     0.00     8002     0.00     0.00  safe_strtoul
+  0.00      0.80     0.00     8002     0.00     0.00  slabs_clsid
+  0.00      0.80     0.00     8001     0.00     0.30  item_remove
+  0.00      0.80     0.00     8001     0.00     0.00  out_string
+  0.00      0.80     0.00     5413     0.00     0.00  item_is_flushed
+  0.00      0.80     0.00     5413     0.00     0.00  item_trylock
+  0.00      0.80     0.00     5413     0.00     0.00  item_trylock_unlock
+  0.00      0.80     0.00     4911     0.00     0.00  do_item_unlink_q
+  0.00      0.80     0.00     4601     0.00     0.00  bipbuf_poll
+  0.00      0.80     0.00     4470     0.00     0.00  do_slabs_newslab
+  0.00      0.80     0.00     3451     0.00     0.00  slabs_available_chunks
+  0.00      0.80     0.00     2455     0.00     0.00  assoc_delete
+  0.00      0.80     0.00     2455     0.00     0.00  do_item_unlink_nolock
+  0.00      0.80     0.00     2455     0.00     0.00  item_free
+  0.00      0.80     0.00     2455     0.00     0.00  item_stats_sizes_remove
+  0.00      0.80     0.00     2455     0.00     0.00  slabs_free
+  0.00      0.80     0.00      388     0.00     0.00  bipbuf_offer
+  0.00      0.80     0.00      255     0.00     0.00  crawler_expired_doneclass
+  0.00      0.80     0.00      255     0.00     0.00  do_item_crawl_q
+  0.00      0.80     0.00      255     0.00     0.00  do_item_linktail_q
+  0.00      0.80     0.00      255     0.00     0.00  do_item_stats_add_crawl
+  0.00      0.80     0.00      255     0.00     0.00  do_item_unlinktail_q
+  0.00      0.80     0.00      255     0.00     0.00  lru_crawler_class_done
+  0.00      0.80     0.00       60     0.00     0.00  grow_slab_list
+  0.00      0.80     0.00       60     0.00     0.00  memory_allocate
+  0.00      0.80     0.00       18     0.00     0.00  tcp_write
+  0.00      0.80     0.00       13     0.00     0.00  bipbuf_new
+  0.00      0.80     0.00        6     0.00     0.00  fill_item_stats_automove
+  0.00      0.80     0.00        6     0.00     0.00  fill_slab_stats_automove
+  0.00      0.80     0.00        6     0.00     0.00  logger_set_flags
+  0.00      0.80     0.00        5     0.00     0.00  assoc_start_expand
+  0.00      0.80     0.00        5     0.00     0.00  conn_new
+  0.00      0.80     0.00        5     0.00     0.00  cq_push
+  0.00      0.80     0.00        5     0.00     0.00  cqi_new
+  0.00      0.80     0.00        5     0.00     0.00  dispatch_conn_new
+  0.00      0.80     0.00        5     0.00     0.00  logger_create
+  0.00      0.80     0.00        5     0.00     0.00  slab_automove_run
+  0.00      0.80     0.00        5     0.00     2.66  try_read_command_negotiate
+  0.00      0.80     0.00        4     0.00     0.00  cache_create
+  0.00      0.80     0.00        4     0.00     0.00  frame_dummy
+  0.00      0.80     0.00        4     0.00     0.00  item_lru_bump_buf_create
+  0.00      0.80     0.00        4     0.00     0.00  logger_add_watcher
+  0.00      0.80     0.00        4     0.00     0.00  register_thread_initialized
+  0.00      0.80     0.00        2     0.00     0.00  bipbuf_free
+  0.00      0.80     0.00        2     0.00     0.00  logger_thread_close_watcher
+  0.00      0.80     0.00        2     0.00     0.00  sidethread_conn_close
+  0.00      0.80     0.00        1     0.00     0.00  conn_cleanup
+  0.00      0.80     0.00        1     0.00     0.00  conn_close
+  0.00      0.80     0.00        1     0.00     0.00  crawler_expired_finalize
+  0.00      0.80     0.00        1     0.00     0.00  crawler_expired_init
+  0.00      0.80     0.00        1     0.00     0.00  lru_crawler_start
+  0.00      0.80     0.00        1     0.00     0.00  slab_automove_init
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2019 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 1.25% of 0.80 seconds
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]     57.4    0.01    0.45                 event_handler [1]
+                0.10    0.36   83139/83139       drive_machine [2]
+-----------------------------------------------
+                0.10    0.36   83139/83139       event_handler [1]
+[2]     56.7    0.10    0.36   83139         drive_machine [2]
+                0.00    0.23   87529/87534       try_read_command_ascii [6]
+                0.11    0.00   98135/185678      tcp_read [8]
+                0.00    0.02    8002/8002        complete_nread [14]
+                0.00    0.00       5/5           try_read_command_negotiate [24]
+                0.00    0.00  333781/429422      conn_set_state [25]
+                0.00    0.00   83206/83206       update_event [28]
+                0.00    0.00   79752/79753       conn_release_items [29]
+                0.00    0.00   79588/79588       tcp_sendmsg [30]
+                0.00    0.00       5/5           dispatch_conn_new [82]
+                0.00    0.00       1/1           conn_close [94]
+                0.00    0.00       1/79413       add_iov [32]
+-----------------------------------------------
+                0.06    0.27   29373/29373       logger_thread [4]
+[3]     41.2    0.06    0.27   29373         logger_thread_read [3]
+                0.27    0.00   70548/70548       uriencode [5]
+                0.00    0.00   29382/50428       bipbuf_peek_all [34]
+                0.00    0.00    5014/85225       bipbuf_request [27]
+                0.00    0.00    4589/10448       logger_thread_poll_watchers [44]
+                0.00    0.00    4584/4601        bipbuf_poll [56]
+                0.00    0.00     384/388         bipbuf_offer [64]
+                0.00    0.00       1/72988       bipbuf_push [33]
+-----------------------------------------------
+                                                 <spontaneous>
+[4]     41.2    0.00    0.33                 logger_thread [4]
+                0.06    0.27   29373/29373       logger_thread_read [3]
+                0.00    0.00    5868/16650       STATS_UNLOCK [35]
+                0.00    0.00    5859/10448       logger_thread_poll_watchers [44]
+                0.00    0.00    5765/16546       STATS_LOCK [36]
+-----------------------------------------------
+                0.27    0.00   70548/70548       logger_thread_read [3]
+[5]     33.7    0.27    0.00   70548         uriencode [5]
+-----------------------------------------------
+                0.00    0.00       5/87534       try_read_command_negotiate [24]
+                0.00    0.23   87529/87534       drive_machine [2]
+[6]     29.1    0.00    0.23   87534         try_read_command_ascii [6]
+                0.02    0.21   87510/87510       process_command [7]
+-----------------------------------------------
+                0.02    0.21   87510/87510       try_read_command_ascii [6]
+[7]     29.1    0.02    0.21   87510         process_command [7]
+                0.03    0.09   87662/87662       process_update_command [9]
+                0.09    0.00   87543/185678      tcp_read [8]
+                0.00    0.00   87691/87692       add_msghdr [26]
+                0.00    0.00       4/4           frame_dummy [86]
+                0.00    0.00       4/4           logger_add_watcher [88]
+                0.00    0.00       4/429422      conn_set_state [25]
+-----------------------------------------------
+                0.09    0.00   87543/185678      process_command [7]
+                0.11    0.00   98135/185678      drive_machine [2]
+[8]     25.0    0.20    0.00  185678         tcp_read [8]
+-----------------------------------------------
+                0.03    0.09   87662/87662       process_command [7]
+[9]     14.8    0.03    0.09   87662         process_update_command [9]
+                0.01    0.08   79648/79648       item_get [10]
+                0.00    0.00    8002/8002        item_alloc [23]
+                0.00    0.00   87635/429422      conn_set_state [25]
+                0.00    0.00   79412/79413       add_iov [32]
+                0.00    0.00   16004/16004       safe_strtol [37]
+                0.00    0.00    8002/8002        safe_strtoul [49]
+-----------------------------------------------
+                0.01    0.08   79648/79648       process_update_command [9]
+[10]    11.0    0.01    0.08   79648         item_get [10]
+                0.00    0.05   79412/87414       do_item_get [11]
+                0.02    0.00   79538/100954      MurmurHash3_x86_32 [13]
+-----------------------------------------------
+                0.00    0.01    8002/87414       do_store_item [18]
+                0.00    0.05   79412/87414       item_get [10]
+[11]     7.5    0.00    0.06   87414         do_item_get [11]
+                0.05    0.00   79815/80137       logger_log [12]
+                0.01    0.00   87561/87561       assoc_find [17]
+-----------------------------------------------
+                0.00    0.00       1/80137       lru_pull_tail [20]
+                0.00    0.00     321/80137       do_store_item [18]
+                0.05    0.00   79815/80137       do_item_get [11]
+[12]     6.2    0.05    0.00   80137         logger_log [12]
+                0.00    0.00   80211/85225       bipbuf_request [27]
+                0.00    0.00   72987/72988       bipbuf_push [33]
+-----------------------------------------------
+                0.00    0.00    5413/100954      lru_pull_tail [20]
+                0.00    0.00    8001/100954      item_remove [19]
+                0.00    0.00    8002/100954      store_item [15]
+                0.02    0.00   79538/100954      item_get [10]
+[13]     3.7    0.03    0.00  100954         MurmurHash3_x86_32 [13]
+-----------------------------------------------
+                0.00    0.02    8002/8002        drive_machine [2]
+[14]     2.6    0.00    0.02    8002         complete_nread [14]
+                0.01    0.01    8002/8002        store_item [15]
+                0.00    0.00    8001/8001        item_remove [19]
+                0.00    0.00    8001/8001        out_string [51]
+-----------------------------------------------
+                0.01    0.01    8002/8002        complete_nread [14]
+[15]     2.3    0.01    0.01    8002         store_item [15]
+                0.00    0.01    8002/8002        do_store_item [18]
+                0.00    0.00    8002/100954      MurmurHash3_x86_32 [13]
+-----------------------------------------------
+                                                 <spontaneous>
+[16]     1.4    0.01    0.00                 lru_maintainer_thread [16]
+                0.00    0.00   11353/17718       lru_pull_tail [20]
+                0.00    0.00    3451/3451        slabs_available_chunks [58]
+                0.00    0.00     220/50428       bipbuf_peek_all [34]
+                0.00    0.00      55/16650       STATS_UNLOCK [35]
+                0.00    0.00      54/16546       STATS_LOCK [36]
+                0.00    0.00       5/5           slab_automove_run [84]
+                0.00    0.00       1/5           logger_create [83]
+                0.00    0.00       1/1           slab_automove_init [98]
+                0.00    0.00       1/1           lru_crawler_start [97]
+-----------------------------------------------
+                0.01    0.00   87561/87561       do_item_get [11]
+[17]     1.2    0.01    0.00   87561         assoc_find [17]
+-----------------------------------------------
+                0.00    0.01    8002/8002        store_item [15]
+[18]     0.7    0.00    0.01    8002         do_store_item [18]
+                0.00    0.01    8002/87414       do_item_get [11]
+                0.00    0.00     321/80137       logger_log [12]
+                0.00    0.00    8002/8002        do_item_link [46]
+-----------------------------------------------
+                0.00    0.00    8001/8001        complete_nread [14]
+[19]     0.3    0.00    0.00    8001         item_remove [19]
+                0.00    0.00    8001/100954      MurmurHash3_x86_32 [13]
+                0.00    0.00    8002/15870       do_item_remove [38]
+-----------------------------------------------
+                0.00    0.00    6365/17718       do_item_alloc_pull [22]
+                0.00    0.00   11353/17718       lru_maintainer_thread [16]
+[20]     0.2    0.00    0.00   17718         lru_pull_tail [20]
+                0.00    0.00    5413/100954      MurmurHash3_x86_32 [13]
+                0.00    0.00       1/80137       logger_log [12]
+                0.00    0.00    5413/5413        item_trylock [53]
+                0.00    0.00    5413/5413        item_is_flushed [52]
+                0.00    0.00    5413/15870       do_item_remove [38]
+                0.00    0.00    5413/5413        item_trylock_unlock [54]
+                0.00    0.00    2456/10458       item_link_q [43]
+                0.00    0.00    2456/4911        do_item_unlink_q [55]
+                0.00    0.00    2455/2455        do_item_unlink_nolock [60]
+-----------------------------------------------
+                0.00    0.00    8002/8002        item_alloc [23]
+[21]     0.1    0.00    0.00    8002         do_item_alloc [21]
+                0.00    0.00    8002/8002        do_item_alloc_pull [22]
+                0.00    0.00    8002/8002        slabs_clsid [50]
+-----------------------------------------------
+                0.00    0.00    8002/8002        do_item_alloc [21]
+[22]     0.1    0.00    0.00    8002         do_item_alloc_pull [22]
+                0.00    0.00    6365/17718       lru_pull_tail [20]
+                0.00    0.00   12412/12412       slabs_alloc [40]
+-----------------------------------------------
+                0.00    0.00    8002/8002        process_update_command [9]
+[23]     0.1    0.00    0.00    8002         item_alloc [23]
+                0.00    0.00    8002/8002        do_item_alloc [21]
+-----------------------------------------------
+                0.00    0.00       5/5           drive_machine [2]
+[24]     0.0    0.00    0.00       5         try_read_command_negotiate [24]
+                0.00    0.00       5/87534       try_read_command_ascii [6]
+-----------------------------------------------
+                0.00    0.00       1/429422      conn_close [94]
+                0.00    0.00       4/429422      process_command [7]
+                0.00    0.00    8001/429422      out_string [51]
+                0.00    0.00   87635/429422      process_update_command [9]
+                0.00    0.00  333781/429422      drive_machine [2]
+[25]     0.0    0.00    0.00  429422         conn_set_state [25]
+-----------------------------------------------
+                0.00    0.00       1/87692       out_string [51]
+                0.00    0.00   87691/87692       process_command [7]
+[26]     0.0    0.00    0.00   87692         add_msghdr [26]
+-----------------------------------------------
+                0.00    0.00    5014/85225       logger_thread_read [3]
+                0.00    0.00   80211/85225       logger_log [12]
+[27]     0.0    0.00    0.00   85225         bipbuf_request [27]
+-----------------------------------------------
+                0.00    0.00   83206/83206       drive_machine [2]
+[28]     0.0    0.00    0.00   83206         update_event [28]
+-----------------------------------------------
+                0.00    0.00       1/79753       conn_cleanup [93]
+                0.00    0.00   79752/79753       drive_machine [2]
+[29]     0.0    0.00    0.00   79753         conn_release_items [29]
+-----------------------------------------------
+                0.00    0.00   79588/79588       drive_machine [2]
+[30]     0.0    0.00    0.00   79588         tcp_sendmsg [30]
+-----------------------------------------------
+                0.00    0.00   79551/79551       add_iov [32]
+[31]     0.0    0.00    0.00   79551         ensure_iov_space [31]
+-----------------------------------------------
+                0.00    0.00       1/79413       drive_machine [2]
+                0.00    0.00   79412/79413       process_update_command [9]
+[32]     0.0    0.00    0.00   79413         add_iov [32]
+                0.00    0.00   79551/79551       ensure_iov_space [31]
+-----------------------------------------------
+                0.00    0.00       1/72988       logger_thread_read [3]
+                0.00    0.00   72987/72988       logger_log [12]
+[33]     0.0    0.00    0.00   72988         bipbuf_push [33]
+-----------------------------------------------
+                0.00    0.00     220/50428       lru_maintainer_thread [16]
+                0.00    0.00   20826/50428       logger_thread_poll_watchers [44]
+                0.00    0.00   29382/50428       logger_thread_read [3]
+[34]     0.0    0.00    0.00   50428         bipbuf_peek_all [34]
+-----------------------------------------------
+                0.00    0.00       1/16650       conn_close [94]
+                0.00    0.00       1/16650       assoc_init [105]
+                0.00    0.00       1/16650       logger_init [185]
+                0.00    0.00       1/16650       item_crawler_thread [162]
+                0.00    0.00      10/16650       conn_new [79]
+                0.00    0.00      55/16650       lru_maintainer_thread [16]
+                0.00    0.00     256/16650       lru_crawler_start [97]
+                0.00    0.00    2455/16650       do_item_unlink_nolock [60]
+                0.00    0.00    5868/16650       logger_thread [4]
+                0.00    0.00    8002/16650       do_item_link [46]
+[35]     0.0    0.00    0.00   16650         STATS_UNLOCK [35]
+-----------------------------------------------
+                0.00    0.00       1/16546       conn_close [94]
+                0.00    0.00       1/16546       assoc_init [105]
+                0.00    0.00       1/16546       logger_init [185]
+                0.00    0.00       1/16546       item_crawler_thread [162]
+                0.00    0.00      10/16546       conn_new [79]
+                0.00    0.00      54/16546       lru_maintainer_thread [16]
+                0.00    0.00     256/16546       lru_crawler_start [97]
+                0.00    0.00    2455/16546       do_item_unlink_nolock [60]
+                0.00    0.00    5765/16546       logger_thread [4]
+                0.00    0.00    8002/16546       do_item_link [46]
+[36]     0.0    0.00    0.00   16546         STATS_LOCK [36]
+-----------------------------------------------
+                0.00    0.00   16004/16004       process_update_command [9]
+[37]     0.0    0.00    0.00   16004         safe_strtol [37]
+-----------------------------------------------
+                0.00    0.00    2455/15870       do_item_unlink_nolock [60]
+                0.00    0.00    5413/15870       lru_pull_tail [20]
+                0.00    0.00    8002/15870       item_remove [19]
+[38]     0.0    0.00    0.00   15870         do_item_remove [38]
+                0.00    0.00    2455/2455        item_free [61]
+-----------------------------------------------
+                0.00    0.00   12412/12412       slabs_alloc [40]
+[39]     0.0    0.00    0.00   12412         do_slabs_alloc [39]
+                0.00    0.00    4470/4470        do_slabs_newslab [57]
+-----------------------------------------------
+                0.00    0.00   12412/12412       do_item_alloc_pull [22]
+[40]     0.0    0.00    0.00   12412         slabs_alloc [40]
+                0.00    0.00   12412/12412       do_slabs_alloc [39]
+-----------------------------------------------
+                0.00    0.00    2455/10731       slabs_free [63]
+                0.00    0.00    8276/10731       do_slabs_newslab [57]
+[41]     0.0    0.00    0.00   10731         do_slabs_free [41]
+-----------------------------------------------
+                0.00    0.00   10458/10458       item_link_q [43]
+[42]     0.0    0.00    0.00   10458         do_item_link_q [42]
+-----------------------------------------------
+                0.00    0.00    2456/10458       lru_pull_tail [20]
+                0.00    0.00    8002/10458       do_item_link [46]
+[43]     0.0    0.00    0.00   10458         item_link_q [43]
+                0.00    0.00   10458/10458       do_item_link_q [42]
+-----------------------------------------------
+                0.00    0.00    4589/10448       logger_thread_read [3]
+                0.00    0.00    5859/10448       logger_thread [4]
+[44]     0.0    0.00    0.00   10448         logger_thread_poll_watchers [44]
+                0.00    0.00   20826/50428       bipbuf_peek_all [34]
+                0.00    0.00      18/18          tcp_write [73]
+                0.00    0.00      17/4601        bipbuf_poll [56]
+                0.00    0.00       2/2           logger_thread_close_watcher [91]
+-----------------------------------------------
+                0.00    0.00    8002/8002        do_item_link [46]
+[45]     0.0    0.00    0.00    8002         assoc_insert [45]
+-----------------------------------------------
+                0.00    0.00    8002/8002        do_store_item [18]
+[46]     0.0    0.00    0.00    8002         do_item_link [46]
+                0.00    0.00    8002/16546       STATS_LOCK [36]
+                0.00    0.00    8002/16650       STATS_UNLOCK [35]
+                0.00    0.00    8002/8002        assoc_insert [45]
+                0.00    0.00    8002/10458       item_link_q [43]
+                0.00    0.00    8002/8002        item_stats_sizes_add [48]
+                0.00    0.00    8002/8002        get_cas_id [47]
+-----------------------------------------------
+                0.00    0.00    8002/8002        do_item_link [46]
+[47]     0.0    0.00    0.00    8002         get_cas_id [47]
+-----------------------------------------------
+                0.00    0.00    8002/8002        do_item_link [46]
+[48]     0.0    0.00    0.00    8002         item_stats_sizes_add [48]
+-----------------------------------------------
+                0.00    0.00    8002/8002        process_update_command [9]
+[49]     0.0    0.00    0.00    8002         safe_strtoul [49]
+-----------------------------------------------
+                0.00    0.00    8002/8002        do_item_alloc [21]
+[50]     0.0    0.00    0.00    8002         slabs_clsid [50]
+-----------------------------------------------
+                0.00    0.00    8001/8001        complete_nread [14]
+[51]     0.0    0.00    0.00    8001         out_string [51]
+                0.00    0.00    8001/429422      conn_set_state [25]
+                0.00    0.00       1/87692       add_msghdr [26]
+-----------------------------------------------
+                0.00    0.00    5413/5413        lru_pull_tail [20]
+[52]     0.0    0.00    0.00    5413         item_is_flushed [52]
+-----------------------------------------------
+                0.00    0.00    5413/5413        lru_pull_tail [20]
+[53]     0.0    0.00    0.00    5413         item_trylock [53]
+-----------------------------------------------
+                0.00    0.00    5413/5413        lru_pull_tail [20]
+[54]     0.0    0.00    0.00    5413         item_trylock_unlock [54]
+-----------------------------------------------
+                0.00    0.00    2455/4911        do_item_unlink_nolock [60]
+                0.00    0.00    2456/4911        lru_pull_tail [20]
+[55]     0.0    0.00    0.00    4911         do_item_unlink_q [55]
+-----------------------------------------------
+                0.00    0.00      17/4601        logger_thread_poll_watchers [44]
+                0.00    0.00    4584/4601        logger_thread_read [3]
+[56]     0.0    0.00    0.00    4601         bipbuf_poll [56]
+-----------------------------------------------
+                0.00    0.00    4470/4470        do_slabs_alloc [39]
+[57]     0.0    0.00    0.00    4470         do_slabs_newslab [57]
+                0.00    0.00    8276/10731       do_slabs_free [41]
+                0.00    0.00      60/60          grow_slab_list [71]
+                0.00    0.00      60/60          memory_allocate [72]
+-----------------------------------------------
+                0.00    0.00    3451/3451        lru_maintainer_thread [16]
+[58]     0.0    0.00    0.00    3451         slabs_available_chunks [58]
+-----------------------------------------------
+                0.00    0.00    2455/2455        do_item_unlink_nolock [60]
+[59]     0.0    0.00    0.00    2455         assoc_delete [59]
+-----------------------------------------------
+                0.00    0.00    2455/2455        lru_pull_tail [20]
+[60]     0.0    0.00    0.00    2455         do_item_unlink_nolock [60]
+                0.00    0.00    2455/16546       STATS_LOCK [36]
+                0.00    0.00    2455/16650       STATS_UNLOCK [35]
+                0.00    0.00    2455/2455        item_stats_sizes_remove [62]
+                0.00    0.00    2455/2455        assoc_delete [59]
+                0.00    0.00    2455/4911        do_item_unlink_q [55]
+                0.00    0.00    2455/15870       do_item_remove [38]
+-----------------------------------------------
+                0.00    0.00    2455/2455        do_item_remove [38]
+[61]     0.0    0.00    0.00    2455         item_free [61]
+                0.00    0.00    2455/2455        slabs_free [63]
+-----------------------------------------------
+                0.00    0.00    2455/2455        do_item_unlink_nolock [60]
+[62]     0.0    0.00    0.00    2455         item_stats_sizes_remove [62]
+-----------------------------------------------
+                0.00    0.00    2455/2455        item_free [61]
+[63]     0.0    0.00    0.00    2455         slabs_free [63]
+                0.00    0.00    2455/10731       do_slabs_free [41]
+-----------------------------------------------
+                0.00    0.00       4/388         logger_add_watcher [88]
+                0.00    0.00     384/388         logger_thread_read [3]
+[64]     0.0    0.00    0.00     388         bipbuf_offer [64]
+-----------------------------------------------
+                0.00    0.00     255/255         lru_crawler_class_done [70]
+[65]     0.0    0.00    0.00     255         crawler_expired_doneclass [65]
+-----------------------------------------------
+                0.00    0.00     255/255         item_crawler_thread [162]
+[66]     0.0    0.00    0.00     255         do_item_crawl_q [66]
+-----------------------------------------------
+                0.00    0.00     255/255         lru_crawler_start [97]
+[67]     0.0    0.00    0.00     255         do_item_linktail_q [67]
+-----------------------------------------------
+                0.00    0.00     255/255         lru_crawler_class_done [70]
+[68]     0.0    0.00    0.00     255         do_item_stats_add_crawl [68]
+-----------------------------------------------
+                0.00    0.00     255/255         lru_crawler_class_done [70]
+[69]     0.0    0.00    0.00     255         do_item_unlinktail_q [69]
+-----------------------------------------------
+                0.00    0.00     255/255         item_crawler_thread [162]
+[70]     0.0    0.00    0.00     255         lru_crawler_class_done [70]
+                0.00    0.00     255/255         do_item_unlinktail_q [69]
+                0.00    0.00     255/255         do_item_stats_add_crawl [68]
+                0.00    0.00     255/255         crawler_expired_doneclass [65]
+-----------------------------------------------
+                0.00    0.00      60/60          do_slabs_newslab [57]
+[71]     0.0    0.00    0.00      60         grow_slab_list [71]
+-----------------------------------------------
+                0.00    0.00      60/60          do_slabs_newslab [57]
+[72]     0.0    0.00    0.00      60         memory_allocate [72]
+-----------------------------------------------
+                0.00    0.00      18/18          logger_thread_poll_watchers [44]
+[73]     0.0    0.00    0.00      18         tcp_write [73]
+-----------------------------------------------
+                0.00    0.00       4/13          item_lru_bump_buf_create [87]
+                0.00    0.00       4/13          logger_add_watcher [88]
+                0.00    0.00       5/13          logger_create [83]
+[74]     0.0    0.00    0.00      13         bipbuf_new [74]
+-----------------------------------------------
+                0.00    0.00       1/6           slab_automove_init [98]
+                0.00    0.00       5/6           slab_automove_run [84]
+[75]     0.0    0.00    0.00       6         fill_item_stats_automove [75]
+-----------------------------------------------
+                0.00    0.00       1/6           slab_automove_init [98]
+                0.00    0.00       5/6           slab_automove_run [84]
+[76]     0.0    0.00    0.00       6         fill_slab_stats_automove [76]
+-----------------------------------------------
+                0.00    0.00       2/6           logger_thread_close_watcher [91]
+                0.00    0.00       4/6           logger_add_watcher [88]
+[77]     0.0    0.00    0.00       6         logger_set_flags [77]
+-----------------------------------------------
+                0.00    0.00       5/5           clock_handler [122]
+[78]     0.0    0.00    0.00       5         assoc_start_expand [78]
+-----------------------------------------------
+                0.00    0.00       5/5           thread_libevent_process [242]
+[79]     0.0    0.00    0.00       5         conn_new [79]
+                0.00    0.00      10/16546       STATS_LOCK [36]
+                0.00    0.00      10/16650       STATS_UNLOCK [35]
+-----------------------------------------------
+                0.00    0.00       5/5           dispatch_conn_new [82]
+[80]     0.0    0.00    0.00       5         cq_push [80]
+-----------------------------------------------
+                0.00    0.00       5/5           dispatch_conn_new [82]
+[81]     0.0    0.00    0.00       5         cqi_new [81]
+-----------------------------------------------
+                0.00    0.00       5/5           drive_machine [2]
+[82]     0.0    0.00    0.00       5         dispatch_conn_new [82]
+                0.00    0.00       5/5           cqi_new [81]
+                0.00    0.00       5/5           cq_push [80]
+-----------------------------------------------
+                0.00    0.00       1/5           lru_maintainer_thread [16]
+                0.00    0.00       4/5           worker_libevent [250]
+[83]     0.0    0.00    0.00       5         logger_create [83]
+                0.00    0.00       5/13          bipbuf_new [74]
+-----------------------------------------------
+                0.00    0.00       5/5           lru_maintainer_thread [16]
+[84]     0.0    0.00    0.00       5         slab_automove_run [84]
+                0.00    0.00       5/6           fill_item_stats_automove [75]
+                0.00    0.00       5/6           fill_slab_stats_automove [76]
+-----------------------------------------------
+                0.00    0.00       4/4           memcached_thread_init [196]
+[85]     0.0    0.00    0.00       4         cache_create [85]
+-----------------------------------------------
+                0.00    0.00       4/4           process_command [7]
+[86]     0.0    0.00    0.00       4         frame_dummy [86]
+-----------------------------------------------
+                0.00    0.00       4/4           worker_libevent [250]
+[87]     0.0    0.00    0.00       4         item_lru_bump_buf_create [87]
+                0.00    0.00       4/13          bipbuf_new [74]
+-----------------------------------------------
+                0.00    0.00       4/4           process_command [7]
+[88]     0.0    0.00    0.00       4         logger_add_watcher [88]
+                0.00    0.00       4/13          bipbuf_new [74]
+                0.00    0.00       4/388         bipbuf_offer [64]
+                0.00    0.00       4/6           logger_set_flags [77]
+-----------------------------------------------
+                0.00    0.00       4/4           worker_libevent [250]
+[89]     0.0    0.00    0.00       4         register_thread_initialized [89]
+-----------------------------------------------
+                0.00    0.00       2/2           logger_thread_close_watcher [91]
+[90]     0.0    0.00    0.00       2         bipbuf_free [90]
+-----------------------------------------------
+                0.00    0.00       2/2           logger_thread_poll_watchers [44]
+[91]     0.0    0.00    0.00       2         logger_thread_close_watcher [91]
+                0.00    0.00       2/2           sidethread_conn_close [92]
+                0.00    0.00       2/2           bipbuf_free [90]
+                0.00    0.00       2/6           logger_set_flags [77]
+-----------------------------------------------
+                0.00    0.00       2/2           logger_thread_close_watcher [91]
+[92]     0.0    0.00    0.00       2         sidethread_conn_close [92]
+-----------------------------------------------
+                0.00    0.00       1/1           conn_close [94]
+[93]     0.0    0.00    0.00       1         conn_cleanup [93]
+                0.00    0.00       1/79753       conn_release_items [29]
+-----------------------------------------------
+                0.00    0.00       1/1           drive_machine [2]
+[94]     0.0    0.00    0.00       1         conn_close [94]
+                0.00    0.00       1/1           conn_cleanup [93]
+                0.00    0.00       1/429422      conn_set_state [25]
+                0.00    0.00       1/16546       STATS_LOCK [36]
+                0.00    0.00       1/16650       STATS_UNLOCK [35]
+-----------------------------------------------
+                0.00    0.00       1/1           item_crawler_thread [162]
+[95]     0.0    0.00    0.00       1         crawler_expired_finalize [95]
+-----------------------------------------------
+                0.00    0.00       1/1           lru_crawler_start [97]
+[96]     0.0    0.00    0.00       1         crawler_expired_init [96]
+-----------------------------------------------
+                0.00    0.00       1/1           lru_maintainer_thread [16]
+[97]     0.0    0.00    0.00       1         lru_crawler_start [97]
+                0.00    0.00     256/16546       STATS_LOCK [36]
+                0.00    0.00     256/16650       STATS_UNLOCK [35]
+                0.00    0.00     255/255         do_item_linktail_q [67]
+                0.00    0.00       1/1           crawler_expired_init [96]
+-----------------------------------------------
+                0.00    0.00       1/1           lru_maintainer_thread [16]
+[98]     0.0    0.00    0.00       1         slab_automove_init [98]
+                0.00    0.00       1/6           fill_item_stats_automove [75]
+                0.00    0.00       1/6           fill_slab_stats_automove [76]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012-2019 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+  [13] MurmurHash3_x86_32     [46] do_item_link           [12] logger_log
+  [36] STATS_LOCK             [42] do_item_link_q (items.c) [77] logger_set_flags (logger.c)
+  [35] STATS_UNLOCK           [67] do_item_linktail_q     [91] logger_thread_close_watcher (logger.c)
+  [32] add_iov (memcached.c)  [38] do_item_remove         [44] logger_thread_poll_watchers (logger.c)
+  [26] add_msghdr (memcached.c) [68] do_item_stats_add_crawl [3] logger_thread_read (logger.c)
+  [59] assoc_delete           [60] do_item_unlink_nolock  [70] lru_crawler_class_done (crawler.c)
+  [17] assoc_find             [55] do_item_unlink_q (items.c) [97] lru_crawler_start
+  [45] assoc_insert           [69] do_item_unlinktail_q   [16] lru_maintainer_thread (items.c)
+  [78] assoc_start_expand     [39] do_slabs_alloc (slabs.c) [20] lru_pull_tail
+  [90] bipbuf_free            [41] do_slabs_free (slabs.c) [72] memory_allocate (slabs.c)
+  [74] bipbuf_new             [57] do_slabs_newslab (slabs.c) [51] out_string (memcached.c)
+  [64] bipbuf_offer           [18] do_store_item           [7] process_command (memcached.c)
+  [34] bipbuf_peek_all         [2] drive_machine (memcached.c) [9] process_update_command (memcached.c)
+  [56] bipbuf_poll            [31] ensure_iov_space (memcached.c) [89] register_thread_initialized (thread.c)
+  [33] bipbuf_push             [1] event_handler (memcached.c) [37] safe_strtol
+  [27] bipbuf_request         [75] fill_item_stats_automove [49] safe_strtoul
+  [85] cache_create           [76] fill_slab_stats_automove [92] sidethread_conn_close
+  [14] complete_nread (memcached.c) [86] frame_dummy      [98] slab_automove_init
+  [93] conn_cleanup (memcached.c) [47] get_cas_id         [84] slab_automove_run
+  [94] conn_close (memcached.c) [71] grow_slab_list (slabs.c) [40] slabs_alloc
+  [79] conn_new               [23] item_alloc             [58] slabs_available_chunks
+  [29] conn_release_items (memcached.c) [61] item_free    [50] slabs_clsid
+  [25] conn_set_state (memcached.c) [10] item_get         [63] slabs_free
+  [80] cq_push (thread.c)     [52] item_is_flushed        [15] store_item
+  [81] cqi_new (thread.c)     [43] item_link_q (items.c)   [8] tcp_read (memcached.c)
+  [65] crawler_expired_doneclass (crawler.c) [87] item_lru_bump_buf_create [30] tcp_sendmsg (memcached.c)
+  [95] crawler_expired_finalize (crawler.c) [19] item_remove [73] tcp_write (memcached.c)
+  [96] crawler_expired_init (crawler.c) [48] item_stats_sizes_add [6] try_read_command_ascii (memcached.c)
+  [82] dispatch_conn_new      [62] item_stats_sizes_remove [24] try_read_command_negotiate (memcached.c)
+  [21] do_item_alloc          [53] item_trylock           [28] update_event (memcached.c)
+  [22] do_item_alloc_pull     [54] item_trylock_unlock     [5] uriencode
+  [66] do_item_crawl_q        [88] logger_add_watcher
+  [11] do_item_get            [83] logger_create

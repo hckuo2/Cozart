@@ -1,0 +1,44 @@
+00-RELEASENOTES.gcno:cannot open notes file
+00-RELEASENOTES.gcda:cannot open data file, assuming not executed
+BUGS.gcno:cannot open notes file
+BUGS.gcda:cannot open data file, assuming not executed
+CONTRIBUTING.gcno:cannot open notes file
+CONTRIBUTING.gcda:cannot open data file, assuming not executed
+COPYING.gcno:cannot open notes file
+COPYING.gcda:cannot open data file, assuming not executed
+INSTALL.gcno:cannot open notes file
+INSTALL.gcda:cannot open data file, assuming not executed
+MANIFESTO.gcno:cannot open notes file
+MANIFESTO.gcda:cannot open data file, assuming not executed
+Makefile.gcno:cannot open notes file
+Makefile.gcda:cannot open data file, assuming not executed
+README.gcno:cannot open notes file
+README.gcda:cannot open data file, assuming not executed
+cluster.gcno:cannot open notes file
+cluster.gcda:cannot open data file, assuming not executed
+deps.gcno:cannot open notes file
+deps.gcda:cannot open data file, assuming not executed
+dump.gcno:cannot open notes file
+dump.gcda:cannot open data file, assuming not executed
+gmon.gcno:cannot open notes file
+gmon.gcda:cannot open data file, assuming not executed
+mt.gcno:cannot open notes file
+mt.gcda:cannot open data file, assuming not executed
+mtsential.gcno:cannot open notes file
+mtsential.gcda:cannot open data file, assuming not executed
+redis.gcno:cannot open notes file
+redis.gcda:cannot open data file, assuming not executed
+runtest.gcno:cannot open notes file
+runtest.gcda:cannot open data file, assuming not executed
+runtest-cluster.gcno:cannot open notes file
+runtest-cluster.gcda:cannot open data file, assuming not executed
+runtest-sentinel.gcno:cannot open notes file
+runtest-sentinel.gcda:cannot open data file, assuming not executed
+sentinel.gcno:cannot open notes file
+sentinel.gcda:cannot open data file, assuming not executed
+src.gcno:cannot open notes file
+src.gcda:cannot open data file, assuming not executed
+tests.gcno:cannot open notes file
+tests.gcda:cannot open data file, assuming not executed
+utils.gcno:cannot open notes file
+utils.gcda:cannot open data file, assuming not executed

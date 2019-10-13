@@ -1,0 +1,79 @@
+        -:    0:Source:/usr/include/x86_64-linux-gnu/bits/socket2.h
+        -:    0:Programs:73
+        -:    1:/* Checking macros for socket functions.
+        -:    2:   Copyright (C) 2005-2018 Free Software Foundation, Inc.
+        -:    3:   This file is part of the GNU C Library.
+        -:    4:
+        -:    5:   The GNU C Library is free software; you can redistribute it and/or
+        -:    6:   modify it under the terms of the GNU Lesser General Public
+        -:    7:   License as published by the Free Software Foundation; either
+        -:    8:   version 2.1 of the License, or (at your option) any later version.
+        -:    9:
+        -:   10:   The GNU C Library is distributed in the hope that it will be useful,
+        -:   11:   but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12:   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+        -:   13:   Lesser General Public License for more details.
+        -:   14:
+        -:   15:   You should have received a copy of the GNU Lesser General Public
+        -:   16:   License along with the GNU C Library; if not, see
+        -:   17:   <http://www.gnu.org/licenses/>.  */
+        -:   18:
+        -:   19:#ifndef _SYS_SOCKET_H
+        -:   20:# error "Never include <bits/socket2.h> directly; use <sys/socket.h> instead."
+        -:   21:#endif
+        -:   22:
+        -:   23:extern ssize_t __recv_chk (int __fd, void *__buf, size_t __n, size_t __buflen,
+        -:   24:			   int __flags);
+        -:   25:extern ssize_t __REDIRECT (__recv_alias, (int __fd, void *__buf, size_t __n,
+        -:   26:					  int __flags), recv);
+        -:   27:extern ssize_t __REDIRECT (__recv_chk_warn,
+        -:   28:			   (int __fd, void *__buf, size_t __n, size_t __buflen,
+        -:   29:			    int __flags), __recv_chk)
+        -:   30:     __warnattr ("recv called with bigger length than size of destination "
+        -:   31:		 "buffer");
+        -:   32:
+        -:   33:__fortify_function ssize_t
+        -:   34:recv (int __fd, void *__buf, size_t __n, int __flags)
+        -:   35:{
+        -:   36:  if (__bos0 (__buf) != (size_t) -1)
+        -:   37:    {
+        -:   38:      if (!__builtin_constant_p (__n))
+        -:   39:	return __recv_chk (__fd, __buf, __n, __bos0 (__buf), __flags);
+        -:   40:
+        -:   41:      if (__n > __bos0 (__buf))
+        -:   42:	return __recv_chk_warn (__fd, __buf, __n, __bos0 (__buf), __flags);
+        -:   43:    }
+        -:   44:  return __recv_alias (__fd, __buf, __n, __flags);
+        -:   45:}
+        -:   46:
+        -:   47:extern ssize_t __recvfrom_chk (int __fd, void *__restrict __buf, size_t __n,
+        -:   48:			       size_t __buflen, int __flags,
+        -:   49:			       __SOCKADDR_ARG __addr,
+        -:   50:			       socklen_t *__restrict __addr_len);
+        -:   51:extern ssize_t __REDIRECT (__recvfrom_alias,
+        -:   52:			   (int __fd, void *__restrict __buf, size_t __n,
+        -:   53:			    int __flags, __SOCKADDR_ARG __addr,
+        -:   54:			    socklen_t *__restrict __addr_len), recvfrom);
+        -:   55:extern ssize_t __REDIRECT (__recvfrom_chk_warn,
+        -:   56:			   (int __fd, void *__restrict __buf, size_t __n,
+        -:   57:			    size_t __buflen, int __flags,
+        -:   58:			    __SOCKADDR_ARG __addr,
+        -:   59:			    socklen_t *__restrict __addr_len), __recvfrom_chk)
+        -:   60:     __warnattr ("recvfrom called with bigger length than size of "
+        -:   61:		 "destination buffer");
+        -:   62:
+        -:   63:__fortify_function ssize_t
+        -:   64:recvfrom (int __fd, void *__restrict __buf, size_t __n, int __flags,
+        -:   65:	  __SOCKADDR_ARG __addr, socklen_t *__restrict __addr_len)
+        -:   66:{
+       90:   67:  if (__bos0 (__buf) != (size_t) -1)
+        -:   68:    {
+    #####:   69:      if (!__builtin_constant_p (__n))
+    #####:   70:	return __recvfrom_chk (__fd, __buf, __n, __bos0 (__buf), __flags,
+        -:   71:			       __addr, __addr_len);
+    #####:   72:      if (__n > __bos0 (__buf))
+    #####:   73:	return __recvfrom_chk_warn (__fd, __buf, __n, __bos0 (__buf), __flags,
+        -:   74:				    __addr, __addr_len);
+        -:   75:    }
+       90:   76:  return __recvfrom_alias (__fd, __buf, __n, __flags, __addr, __addr_len);
+        -:   77:}

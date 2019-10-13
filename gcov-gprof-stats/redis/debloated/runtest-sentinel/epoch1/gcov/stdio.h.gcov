@@ -1,0 +1,197 @@
+        -:    0:Source:/usr/include/x86_64-linux-gnu/bits/stdio.h
+        -:    0:Programs:291
+        -:    1:/* Optimizing macros and inline functions for stdio functions.
+        -:    2:   Copyright (C) 1998-2018 Free Software Foundation, Inc.
+        -:    3:   This file is part of the GNU C Library.
+        -:    4:
+        -:    5:   The GNU C Library is free software; you can redistribute it and/or
+        -:    6:   modify it under the terms of the GNU Lesser General Public
+        -:    7:   License as published by the Free Software Foundation; either
+        -:    8:   version 2.1 of the License, or (at your option) any later version.
+        -:    9:
+        -:   10:   The GNU C Library is distributed in the hope that it will be useful,
+        -:   11:   but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12:   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+        -:   13:   Lesser General Public License for more details.
+        -:   14:
+        -:   15:   You should have received a copy of the GNU Lesser General Public
+        -:   16:   License along with the GNU C Library; if not, see
+        -:   17:   <http://www.gnu.org/licenses/>.  */
+        -:   18:
+        -:   19:#ifndef _BITS_STDIO_H
+        -:   20:#define _BITS_STDIO_H 1
+        -:   21:
+        -:   22:#ifndef _STDIO_H
+        -:   23:# error "Never include <bits/stdio.h> directly; use <stdio.h> instead."
+        -:   24:#endif
+        -:   25:
+        -:   26:#ifndef __extern_inline
+        -:   27:# define __STDIO_INLINE inline
+        -:   28:#else
+        -:   29:# define __STDIO_INLINE __extern_inline
+        -:   30:#endif
+        -:   31:
+        -:   32:
+        -:   33:#ifdef __USE_EXTERN_INLINES
+        -:   34:/* For -D_FORTIFY_SOURCE{,=2} bits/stdio2.h will define a different
+        -:   35:   inline.  */
+        -:   36:# if !(__USE_FORTIFY_LEVEL > 0 && defined __fortify_function)
+        -:   37:/* Write formatted output to stdout from argument list ARG.  */
+        -:   38:__STDIO_INLINE int
+        -:   39:vprintf (const char *__restrict __fmt, __gnuc_va_list __arg)
+        -:   40:{
+        -:   41:  return vfprintf (stdout, __fmt, __arg);
+        -:   42:}
+        -:   43:# endif
+        -:   44:
+        -:   45:/* Read a character from stdin.  */
+        -:   46:__STDIO_INLINE int
+        -:   47:getchar (void)
+        -:   48:{
+        -:   49:  return getc (stdin);
+        -:   50:}
+        -:   51:
+        -:   52:
+        -:   53:# ifdef __USE_MISC
+        -:   54:/* Faster version when locking is not necessary.  */
+        -:   55:__STDIO_INLINE int
+        -:   56:fgetc_unlocked (FILE *__fp)
+        -:   57:{
+        -:   58:  return __getc_unlocked_body (__fp);
+        -:   59:}
+        -:   60:# endif /* misc */
+        -:   61:
+        -:   62:
+        -:   63:# ifdef __USE_POSIX
+        -:   64:/* This is defined in POSIX.1:1996.  */
+        -:   65:__STDIO_INLINE int
+        -:   66:getc_unlocked (FILE *__fp)
+        -:   67:{
+        -:   68:  return __getc_unlocked_body (__fp);
+        -:   69:}
+        -:   70:
+        -:   71:/* This is defined in POSIX.1:1996.  */
+        -:   72:__STDIO_INLINE int
+        -:   73:getchar_unlocked (void)
+        -:   74:{
+        -:   75:  return __getc_unlocked_body (stdin);
+        -:   76:}
+        -:   77:# endif	/* POSIX */
+        -:   78:
+        -:   79:
+        -:   80:/* Write a character to stdout.  */
+        -:   81:__STDIO_INLINE int
+        -:   82:putchar (int __c)
+        -:   83:{
+    #####:   84:  return putc (__c, stdout);
+        -:   85:}
+        -:   86:
+        -:   87:
+        -:   88:# ifdef __USE_MISC
+        -:   89:/* Faster version when locking is not necessary.  */
+        -:   90:__STDIO_INLINE int
+        -:   91:fputc_unlocked (int __c, FILE *__stream)
+        -:   92:{
+        -:   93:  return __putc_unlocked_body (__c, __stream);
+        -:   94:}
+        -:   95:# endif /* misc */
+        -:   96:
+        -:   97:
+        -:   98:# ifdef __USE_POSIX
+        -:   99:/* This is defined in POSIX.1:1996.  */
+        -:  100:__STDIO_INLINE int
+        -:  101:putc_unlocked (int __c, FILE *__stream)
+        -:  102:{
+        -:  103:  return __putc_unlocked_body (__c, __stream);
+        -:  104:}
+        -:  105:
+        -:  106:/* This is defined in POSIX.1:1996.  */
+        -:  107:__STDIO_INLINE int
+        -:  108:putchar_unlocked (int __c)
+        -:  109:{
+        -:  110:  return __putc_unlocked_body (__c, stdout);
+        -:  111:}
+        -:  112:# endif	/* POSIX */
+        -:  113:
+        -:  114:
+        -:  115:# ifdef	__USE_GNU
+        -:  116:/* Like `getdelim', but reads up to a newline.  */
+        -:  117:__STDIO_INLINE __ssize_t
+        -:  118:getline (char **__lineptr, size_t *__n, FILE *__stream)
+        -:  119:{
+        -:  120:  return __getdelim (__lineptr, __n, '\n', __stream);
+        -:  121:}
+        -:  122:# endif /* GNU */
+        -:  123:
+        -:  124:
+        -:  125:# ifdef __USE_MISC
+        -:  126:/* Faster versions when locking is not required.  */
+        -:  127:__STDIO_INLINE int
+        -:  128:__NTH (feof_unlocked (FILE *__stream))
+        -:  129:{
+        -:  130:  return __feof_unlocked_body (__stream);
+        -:  131:}
+        -:  132:
+        -:  133:/* Faster versions when locking is not required.  */
+        -:  134:__STDIO_INLINE int
+        -:  135:__NTH (ferror_unlocked (FILE *__stream))
+        -:  136:{
+        -:  137:  return __ferror_unlocked_body (__stream);
+        -:  138:}
+        -:  139:# endif /* misc */
+        -:  140:
+        -:  141:#endif /* Use extern inlines.  */
+        -:  142:
+        -:  143:
+        -:  144:#if defined __USE_MISC && defined __GNUC__ && defined __OPTIMIZE__ \
+        -:  145:    && !defined __cplusplus
+        -:  146:/* Perform some simple optimizations.  */
+        -:  147:# define fread_unlocked(ptr, size, n, stream) \
+        -:  148:  (__extension__ ((__builtin_constant_p (size) && __builtin_constant_p (n)    \
+        -:  149:		   && (size_t) (size) * (size_t) (n) <= 8		      \
+        -:  150:		   && (size_t) (size) != 0)				      \
+        -:  151:		  ? ({ char *__ptr = (char *) (ptr);			      \
+        -:  152:		       FILE *__stream = (stream);			      \
+        -:  153:		       size_t __cnt;					      \
+        -:  154:		       for (__cnt = (size_t) (size) * (size_t) (n);	      \
+        -:  155:			    __cnt > 0; --__cnt)				      \
+        -:  156:			 {						      \
+        -:  157:			   int __c = getc_unlocked (__stream);		      \
+        -:  158:			   if (__c == EOF)				      \
+        -:  159:			     break;					      \
+        -:  160:			   *__ptr++ = __c;				      \
+        -:  161:			 }						      \
+        -:  162:		       ((size_t) (size) * (size_t) (n) - __cnt)		      \
+        -:  163:			/ (size_t) (size); })				      \
+        -:  164:		  : (((__builtin_constant_p (size) && (size_t) (size) == 0)   \
+        -:  165:		      || (__builtin_constant_p (n) && (size_t) (n) == 0))     \
+        -:  166:			/* Evaluate all parameters once.  */		      \
+        -:  167:		     ? ((void) (ptr), (void) (stream), (void) (size),	      \
+        -:  168:			(void) (n), (size_t) 0)				      \
+        -:  169:		     : fread_unlocked (ptr, size, n, stream))))
+        -:  170:
+        -:  171:# define fwrite_unlocked(ptr, size, n, stream) \
+        -:  172:  (__extension__ ((__builtin_constant_p (size) && __builtin_constant_p (n)    \
+        -:  173:		   && (size_t) (size) * (size_t) (n) <= 8		      \
+        -:  174:		   && (size_t) (size) != 0)				      \
+        -:  175:		  ? ({ const char *__ptr = (const char *) (ptr);	      \
+        -:  176:		       FILE *__stream = (stream);			      \
+        -:  177:		       size_t __cnt;					      \
+        -:  178:		       for (__cnt = (size_t) (size) * (size_t) (n);	      \
+        -:  179:			    __cnt > 0; --__cnt)				      \
+        -:  180:			 if (putc_unlocked (*__ptr++, __stream) == EOF)	      \
+        -:  181:			   break;					      \
+        -:  182:		       ((size_t) (size) * (size_t) (n) - __cnt)		      \
+        -:  183:			/ (size_t) (size); })				      \
+        -:  184:		  : (((__builtin_constant_p (size) && (size_t) (size) == 0)   \
+        -:  185:		      || (__builtin_constant_p (n) && (size_t) (n) == 0))     \
+        -:  186:			/* Evaluate all parameters once.  */		      \
+        -:  187:		     ? ((void) (ptr), (void) (stream), (void) (size),	      \
+        -:  188:			(void) (n), (size_t) 0)				      \
+        -:  189:		     : fwrite_unlocked (ptr, size, n, stream))))
+        -:  190:#endif
+        -:  191:
+        -:  192:/* Define helper macro.  */
+        -:  193:#undef __STDIO_INLINE
+        -:  194:
+        -:  195:#endif /* bits/stdio.h.  */

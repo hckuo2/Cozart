@@ -1,0 +1,680 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  us/call  us/call  name    
+ 31.48      0.17     0.17    86975     1.95     6.09  drive_machine
+ 12.96      0.24     0.07    83941     0.83     1.13  try_read_command_binary
+ 11.11      0.30     0.06   516606     0.12     0.12  conn_set_state
+  7.41      0.34     0.04    84673     0.47     0.47  htonll
+  5.56      0.37     0.03    86143     0.35     0.35  tcp_read
+  5.56      0.40     0.03    84506     0.36     0.36  conn_release_items
+  3.70      0.42     0.02    94176     0.21     0.21  MurmurHash3_x86_32
+  1.85      0.43     0.01   170641     0.06     0.06  add_msghdr
+  1.85      0.44     0.01   163512     0.06     0.06  add_iov
+  1.85      0.45     0.01    85979     0.12     0.12  tcp_sendmsg
+  1.85      0.46     0.01    85934     0.12     0.12  ntohll
+  1.85      0.47     0.01    85360     0.12     0.12  assoc_find
+  1.85      0.48     0.01    85298     0.12     0.71  add_bin_header
+  1.85      0.49     0.01    82542     0.12     0.12  update_event
+  1.85      0.50     0.01    75325     0.13     1.04  write_bin_error
+  1.85      0.51     0.01    10167     0.98     0.99  lru_pull_tail
+  1.85      0.52     0.01     7979     1.25     1.47  item_remove
+  1.85      0.53     0.01     7646     1.31     1.31  slabs_alloc
+  1.85      0.54     0.01     7432     1.35     1.35  slabs_clsid
+  0.00      0.54     0.00   165446     0.00     0.00  ensure_iov_space
+  0.00      0.54     0.00    93193     0.00     1.56  complete_nread
+  0.00      0.54     0.00    84199     0.00     0.12  bin_read_key
+  0.00      0.54     0.00    83640     0.00     0.12  do_item_get
+  0.00      0.54     0.00    75103     0.00     0.34  item_get
+  0.00      0.54     0.00    24553     0.00     0.00  do_item_remove
+  0.00      0.54     0.00    17375     0.00     0.00  STATS_LOCK
+  0.00      0.54     0.00    16961     0.00     0.00  STATS_UNLOCK
+  0.00      0.54     0.00    16734     0.00     0.00  do_slabs_free
+  0.00      0.54     0.00     8245     0.00     0.00  do_item_unlink
+  0.00      0.54     0.00     8208     0.00     0.00  item_is_flushed
+  0.00      0.54     0.00     8135     0.00     0.00  do_item_replace
+  0.00      0.54     0.00     8128     0.00     0.00  item_link_q
+  0.00      0.54     0.00     8127     0.00     0.00  item_free
+  0.00      0.54     0.00     8121     0.00     0.00  item_stats_sizes_add
+  0.00      0.54     0.00     8091     0.00     0.00  slabs_free
+  0.00      0.54     0.00     8082     0.00     0.00  do_item_link_q
+  0.00      0.54     0.00     8054     0.00     0.00  assoc_insert
+  0.00      0.54     0.00     8003     0.00     0.84  try_read_command_asciiauth
+  0.00      0.54     0.00     8001     0.00     0.00  do_item_unlink_q
+  0.00      0.54     0.00     7995     0.00     0.00  assoc_delete
+  0.00      0.54     0.00     7992     0.00     0.00  get_cas_id
+  0.00      0.54     0.00     7972     0.00     0.00  do_item_link
+  0.00      0.54     0.00     7933     0.00     0.00  item_unlink_q
+  0.00      0.54     0.00     7877     0.00     0.12  do_store_item
+  0.00      0.54     0.00     7789     0.00     0.00  item_stats_sizes_remove
+  0.00      0.54     0.00     7732     0.00     0.00  item_replace
+  0.00      0.54     0.00     7710     0.00     0.34  store_item
+  0.00      0.54     0.00     7661     0.00     2.61  do_item_alloc
+  0.00      0.54     0.00     7615     0.00     0.00  do_slabs_alloc
+  0.00      0.54     0.00     7573     0.00     1.32  do_item_alloc_pull
+  0.00      0.54     0.00     7491     0.00     0.00  binary_get_request
+  0.00      0.54     0.00     7411     0.00     2.70  item_alloc
+  0.00      0.54     0.00     3366     0.00     0.00  slabs_available_chunks
+  0.00      0.54     0.00     1201     0.00     0.00  bipbuf_peek_all
+  0.00      0.54     0.00      449     0.00     0.00  item_trylock_unlock
+  0.00      0.54     0.00      433     0.00     0.00  item_trylock
+  0.00      0.54     0.00      255     0.00     0.00  crawler_expired_doneclass
+  0.00      0.54     0.00      255     0.00     0.00  do_item_linktail_q
+  0.00      0.54     0.00      255     0.00     0.00  do_item_unlinktail_q
+  0.00      0.54     0.00      254     0.00     0.00  do_item_stats_add_crawl
+  0.00      0.54     0.00      254     0.00     0.00  lru_crawler_class_done
+  0.00      0.54     0.00      252     0.00     0.00  do_item_crawl_q
+  0.00      0.54     0.00      241     0.00     0.00  logger_thread_read
+  0.00      0.54     0.00      197     0.00     0.00  conn_new
+  0.00      0.54     0.00      196     0.00     0.00  cq_push
+  0.00      0.54     0.00      196     0.00     0.00  dispatch_conn_new
+  0.00      0.54     0.00      195     0.00     0.00  cqi_new
+  0.00      0.54     0.00      191     0.00     0.47  conn_close
+  0.00      0.54     0.00      188     0.00     0.36  conn_cleanup
+  0.00      0.54     0.00      143     0.00     1.20  try_read_command_negotiate
+  0.00      0.54     0.00       49     0.00     0.00  logger_thread_poll_watchers
+  0.00      0.54     0.00        9     0.00     0.00  bipbuf_new
+  0.00      0.54     0.00        5     0.00     0.00  fill_item_stats_automove
+  0.00      0.54     0.00        5     0.00     0.00  fill_slab_stats_automove
+  0.00      0.54     0.00        5     0.00     0.00  logger_create
+  0.00      0.54     0.00        4     0.00     0.00  assoc_start_expand
+  0.00      0.54     0.00        4     0.00     0.00  cache_create
+  0.00      0.54     0.00        4     0.00     0.00  item_lru_bump_buf_create
+  0.00      0.54     0.00        4     0.00     0.00  register_thread_initialized
+  0.00      0.54     0.00        4     0.00     0.00  slab_automove_run
+  0.00      0.54     0.00        1     0.00     0.00  crawler_expired_finalize
+  0.00      0.54     0.00        1     0.00     0.00  crawler_expired_init
+  0.00      0.54     0.00        1     0.00     0.00  do_slabs_newslab
+  0.00      0.54     0.00        1     0.00     0.00  grow_slab_list
+  0.00      0.54     0.00        1     0.00     0.00  lru_crawler_start
+  0.00      0.54     0.00        1     0.00     0.00  memory_allocate
+  0.00      0.54     0.00        1     0.00     0.00  slab_automove_init
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2019 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 1.85% of 0.54 seconds
+
+index % time    self  children    called     name
+                0.17    0.36   86975/86975       event_handler [2]
+[1]     98.1    0.17    0.36   86975         drive_machine [1]
+                0.00    0.15   93193/93193       complete_nread [3]
+                0.07    0.02   83789/83941       try_read_command_binary [4]
+                0.04    0.00  336960/516606      conn_set_state [7]
+                0.03    0.00   86143/86143       tcp_read [9]
+                0.03    0.00   84315/84506       conn_release_items [10]
+                0.01    0.00   85979/85979       tcp_sendmsg [20]
+                0.01    0.00   82542/82542       update_event [24]
+                0.00    0.00     143/143         try_read_command_negotiate [32]
+                0.00    0.00     191/191         conn_close [33]
+                0.00    0.00     196/196         dispatch_conn_new [71]
+-----------------------------------------------
+                                                 <spontaneous>
+[2]     98.1    0.00    0.53                 event_handler [2]
+                0.17    0.36   86975/86975       drive_machine [1]
+-----------------------------------------------
+                0.00    0.15   93193/93193       drive_machine [1]
+[3]     27.0    0.00    0.15   93193         complete_nread [3]
+                0.01    0.07   75325/75325       write_bin_error [5]
+                0.00    0.03   75103/75103       item_get [11]
+                0.00    0.02    7411/7411        item_alloc [14]
+                0.01    0.00    7979/7979        item_remove [15]
+                0.00    0.01    8003/8003        try_read_command_asciiauth [29]
+                0.00    0.00    7710/7710        store_item [30]
+                0.00    0.00    7912/516606      conn_set_state [7]
+                0.00    0.00    7491/7491        binary_get_request [57]
+-----------------------------------------------
+                0.00    0.00     152/83941       try_read_command_negotiate [32]
+                0.07    0.02   83789/83941       drive_machine [1]
+[4]     17.6    0.07    0.02   83941         try_read_command_binary [4]
+                0.01    0.00   85934/85934       ntohll [21]
+                0.00    0.01   84199/84199       bin_read_key [28]
+                0.01    0.00   85407/170641      add_msghdr [18]
+-----------------------------------------------
+                0.01    0.07   75325/75325       complete_nread [3]
+[5]     14.5    0.01    0.07   75325         write_bin_error [5]
+                0.01    0.05   77094/85298       add_bin_header [6]
+                0.01    0.00   77889/516606      conn_set_state [7]
+                0.00    0.00   76099/163512      add_iov [19]
+-----------------------------------------------
+                0.00    0.00    8204/85298       try_read_command_asciiauth [29]
+                0.01    0.05   77094/85298       write_bin_error [5]
+[6]     11.2    0.01    0.05   85298         add_bin_header [6]
+                0.04    0.00   84673/84673       htonll [8]
+                0.01    0.00   87413/163512      add_iov [19]
+                0.00    0.00   85234/170641      add_msghdr [18]
+-----------------------------------------------
+                0.00    0.00     192/516606      conn_close [33]
+                0.00    0.00    7863/516606      try_read_command_asciiauth [29]
+                0.00    0.00    7912/516606      complete_nread [3]
+                0.01    0.00   77889/516606      write_bin_error [5]
+                0.01    0.00   85790/516606      bin_read_key [28]
+                0.04    0.00  336960/516606      drive_machine [1]
+[7]     11.1    0.06    0.00  516606         conn_set_state [7]
+-----------------------------------------------
+                0.04    0.00   84673/84673       add_bin_header [6]
+[8]      7.4    0.04    0.00   84673         htonll [8]
+-----------------------------------------------
+                0.03    0.00   86143/86143       drive_machine [1]
+[9]      5.6    0.03    0.00   86143         tcp_read [9]
+-----------------------------------------------
+                0.00    0.00     191/84506       conn_cleanup [34]
+                0.03    0.00   84315/84506       drive_machine [1]
+[10]     5.6    0.03    0.00   84506         conn_release_items [10]
+-----------------------------------------------
+                0.00    0.03   75103/75103       complete_nread [3]
+[11]     4.7    0.00    0.03   75103         item_get [11]
+                0.02    0.00   77458/94176       MurmurHash3_x86_32 [12]
+                0.00    0.01   75662/83640       do_item_get [23]
+-----------------------------------------------
+                0.00    0.00     433/94176       lru_pull_tail [16]
+                0.00    0.00    8020/94176       store_item [30]
+                0.00    0.00    8265/94176       item_remove [15]
+                0.02    0.00   77458/94176       item_get [11]
+[12]     3.7    0.02    0.00   94176         MurmurHash3_x86_32 [12]
+-----------------------------------------------
+                0.00    0.02    7661/7661        item_alloc [14]
+[13]     3.7    0.00    0.02    7661         do_item_alloc [13]
+                0.00    0.01    7573/7573        do_item_alloc_pull [26]
+                0.01    0.00    7432/7432        slabs_clsid [27]
+-----------------------------------------------
+                0.00    0.02    7411/7411        complete_nread [3]
+[14]     3.7    0.00    0.02    7411         item_alloc [14]
+                0.00    0.02    7661/7661        do_item_alloc [13]
+-----------------------------------------------
+                0.01    0.00    7979/7979        complete_nread [3]
+[15]     2.2    0.01    0.00    7979         item_remove [15]
+                0.00    0.00    8265/94176       MurmurHash3_x86_32 [12]
+                0.00    0.00    8269/24553       do_item_remove [36]
+-----------------------------------------------
+                0.01    0.00   10167/10167       lru_maintainer_thread [17]
+[16]     1.9    0.01    0.00   10167         lru_pull_tail [16]
+                0.00    0.00     433/94176       MurmurHash3_x86_32 [12]
+                0.00    0.00     449/449         item_trylock_unlock [60]
+                0.00    0.00     441/24553       do_item_remove [36]
+                0.00    0.00     438/8208        item_is_flushed [41]
+                0.00    0.00     433/433         item_trylock [61]
+                0.00    0.00      42/8001        do_item_unlink_q [49]
+                0.00    0.00      36/8128        item_link_q [43]
+-----------------------------------------------
+                                                 <spontaneous>
+[17]     1.9    0.00    0.01                 lru_maintainer_thread [17]
+                0.01    0.00   10167/10167       lru_pull_tail [16]
+                0.00    0.00    3366/3366        slabs_available_chunks [58]
+                0.00    0.00     963/1201        bipbuf_peek_all [59]
+                0.00    0.00     237/17375       STATS_LOCK [37]
+                0.00    0.00     223/16961       STATS_UNLOCK [38]
+                0.00    0.00       4/4           slab_automove_run [82]
+                0.00    0.00       1/5           logger_create [77]
+                0.00    0.00       1/1           slab_automove_init [89]
+                0.00    0.00       1/1           lru_crawler_start [87]
+-----------------------------------------------
+                0.00    0.00   85234/170641      add_bin_header [6]
+                0.01    0.00   85407/170641      try_read_command_binary [4]
+[18]     1.9    0.01    0.00  170641         add_msghdr [18]
+-----------------------------------------------
+                0.00    0.00   76099/163512      write_bin_error [5]
+                0.01    0.00   87413/163512      add_bin_header [6]
+[19]     1.9    0.01    0.00  163512         add_iov [19]
+                0.00    0.00  165446/165446      ensure_iov_space [35]
+-----------------------------------------------
+                0.01    0.00   85979/85979       drive_machine [1]
+[20]     1.9    0.01    0.00   85979         tcp_sendmsg [20]
+-----------------------------------------------
+                0.01    0.00   85934/85934       try_read_command_binary [4]
+[21]     1.9    0.01    0.00   85934         ntohll [21]
+-----------------------------------------------
+                0.01    0.00   85360/85360       do_item_get [23]
+[22]     1.9    0.01    0.00   85360         assoc_find [22]
+-----------------------------------------------
+                0.00    0.00    7978/83640       do_store_item [31]
+                0.00    0.01   75662/83640       item_get [11]
+[23]     1.9    0.00    0.01   83640         do_item_get [23]
+                0.01    0.00   85360/85360       assoc_find [22]
+                0.00    0.00    7770/8208        item_is_flushed [41]
+-----------------------------------------------
+                0.01    0.00   82542/82542       drive_machine [1]
+[24]     1.9    0.01    0.00   82542         update_event [24]
+-----------------------------------------------
+                0.01    0.00    7646/7646        do_item_alloc_pull [26]
+[25]     1.9    0.01    0.00    7646         slabs_alloc [25]
+                0.00    0.00    7615/7615        do_slabs_alloc [56]
+-----------------------------------------------
+                0.00    0.01    7573/7573        do_item_alloc [13]
+[26]     1.9    0.00    0.01    7573         do_item_alloc_pull [26]
+                0.01    0.00    7646/7646        slabs_alloc [25]
+-----------------------------------------------
+                0.01    0.00    7432/7432        do_item_alloc [13]
+[27]     1.9    0.01    0.00    7432         slabs_clsid [27]
+-----------------------------------------------
+                0.00    0.01   84199/84199       try_read_command_binary [4]
+[28]     1.8    0.00    0.01   84199         bin_read_key [28]
+                0.01    0.00   85790/516606      conn_set_state [7]
+-----------------------------------------------
+                0.00    0.01    8003/8003        complete_nread [3]
+[29]     1.2    0.00    0.01    8003         try_read_command_asciiauth [29]
+                0.00    0.00    8204/85298       add_bin_header [6]
+                0.00    0.00    7863/516606      conn_set_state [7]
+-----------------------------------------------
+                0.00    0.00    7710/7710        complete_nread [3]
+[30]     0.5    0.00    0.00    7710         store_item [30]
+                0.00    0.00    8020/94176       MurmurHash3_x86_32 [12]
+                0.00    0.00    7877/7877        do_store_item [31]
+-----------------------------------------------
+                0.00    0.00    7877/7877        store_item [30]
+[31]     0.2    0.00    0.00    7877         do_store_item [31]
+                0.00    0.00    7978/83640       do_item_get [23]
+                0.00    0.00    8055/24553       do_item_remove [36]
+                0.00    0.00    7732/7732        item_replace [55]
+                0.00    0.00      37/7972        do_item_link [52]
+-----------------------------------------------
+                0.00    0.00     143/143         drive_machine [1]
+[32]     0.0    0.00    0.00     143         try_read_command_negotiate [32]
+                0.00    0.00     152/83941       try_read_command_binary [4]
+-----------------------------------------------
+                0.00    0.00     191/191         drive_machine [1]
+[33]     0.0    0.00    0.00     191         conn_close [33]
+                0.00    0.00     188/188         conn_cleanup [34]
+                0.00    0.00     192/516606      conn_set_state [7]
+                0.00    0.00     195/17375       STATS_LOCK [37]
+                0.00    0.00     192/16961       STATS_UNLOCK [38]
+-----------------------------------------------
+                0.00    0.00     188/188         conn_close [33]
+[34]     0.0    0.00    0.00     188         conn_cleanup [34]
+                0.00    0.00     191/84506       conn_release_items [10]
+-----------------------------------------------
+                0.00    0.00  165446/165446      add_iov [19]
+[35]     0.0    0.00    0.00  165446         ensure_iov_space [35]
+-----------------------------------------------
+                0.00    0.00     441/24553       lru_pull_tail [16]
+                0.00    0.00    7788/24553       do_item_unlink [40]
+                0.00    0.00    8055/24553       do_store_item [31]
+                0.00    0.00    8269/24553       item_remove [15]
+[36]     0.0    0.00    0.00   24553         do_item_remove [36]
+                0.00    0.00    8127/8127        item_free [44]
+-----------------------------------------------
+                0.00    0.00       1/17375       assoc_init [95]
+                0.00    0.00       1/17375       logger_init [176]
+                0.00    0.00       1/17375       item_crawler_thread [154]
+                0.00    0.00      49/17375       logger_thread [179]
+                0.00    0.00     195/17375       conn_close [33]
+                0.00    0.00     237/17375       lru_maintainer_thread [17]
+                0.00    0.00     256/17375       lru_crawler_start [87]
+                0.00    0.00     397/17375       conn_new [69]
+                0.00    0.00    7901/17375       do_item_unlink [40]
+                0.00    0.00    8337/17375       do_item_link [52]
+[37]     0.0    0.00    0.00   17375         STATS_LOCK [37]
+-----------------------------------------------
+                0.00    0.00       1/16961       assoc_init [95]
+                0.00    0.00       1/16961       logger_init [176]
+                0.00    0.00       1/16961       item_crawler_thread [154]
+                0.00    0.00      50/16961       logger_thread [179]
+                0.00    0.00     192/16961       conn_close [33]
+                0.00    0.00     223/16961       lru_maintainer_thread [17]
+                0.00    0.00     256/16961       lru_crawler_start [87]
+                0.00    0.00     396/16961       conn_new [69]
+                0.00    0.00    7844/16961       do_item_unlink [40]
+                0.00    0.00    7997/16961       do_item_link [52]
+[38]     0.0    0.00    0.00   16961         STATS_UNLOCK [38]
+-----------------------------------------------
+                0.00    0.00    7996/16734       slabs_free [46]
+                0.00    0.00    8738/16734       do_slabs_newslab [85]
+[39]     0.0    0.00    0.00   16734         do_slabs_free [39]
+-----------------------------------------------
+                0.00    0.00    8245/8245        do_item_replace [42]
+[40]     0.0    0.00    0.00    8245         do_item_unlink [40]
+                0.00    0.00    7995/7995        assoc_delete [50]
+                0.00    0.00    7933/7933        item_unlink_q [53]
+                0.00    0.00    7901/17375       STATS_LOCK [37]
+                0.00    0.00    7844/16961       STATS_UNLOCK [38]
+                0.00    0.00    7789/7789        item_stats_sizes_remove [54]
+                0.00    0.00    7788/24553       do_item_remove [36]
+-----------------------------------------------
+                0.00    0.00     438/8208        lru_pull_tail [16]
+                0.00    0.00    7770/8208        do_item_get [23]
+[41]     0.0    0.00    0.00    8208         item_is_flushed [41]
+-----------------------------------------------
+                0.00    0.00    8135/8135        item_replace [55]
+[42]     0.0    0.00    0.00    8135         do_item_replace [42]
+                0.00    0.00    8245/8245        do_item_unlink [40]
+                0.00    0.00    7935/7972        do_item_link [52]
+-----------------------------------------------
+                0.00    0.00      36/8128        lru_pull_tail [16]
+                0.00    0.00    8092/8128        do_item_link [52]
+[43]     0.0    0.00    0.00    8128         item_link_q [43]
+                0.00    0.00    8082/8082        do_item_link_q [47]
+-----------------------------------------------
+                0.00    0.00    8127/8127        do_item_remove [36]
+[44]     0.0    0.00    0.00    8127         item_free [44]
+                0.00    0.00    8091/8091        slabs_free [46]
+-----------------------------------------------
+                0.00    0.00    8121/8121        do_item_link [52]
+[45]     0.0    0.00    0.00    8121         item_stats_sizes_add [45]
+-----------------------------------------------
+                0.00    0.00    8091/8091        item_free [44]
+[46]     0.0    0.00    0.00    8091         slabs_free [46]
+                0.00    0.00    7996/16734       do_slabs_free [39]
+-----------------------------------------------
+                0.00    0.00    8082/8082        item_link_q [43]
+[47]     0.0    0.00    0.00    8082         do_item_link_q [47]
+-----------------------------------------------
+                0.00    0.00    8054/8054        do_item_link [52]
+[48]     0.0    0.00    0.00    8054         assoc_insert [48]
+-----------------------------------------------
+                0.00    0.00      42/8001        lru_pull_tail [16]
+                0.00    0.00    7959/8001        item_unlink_q [53]
+[49]     0.0    0.00    0.00    8001         do_item_unlink_q [49]
+-----------------------------------------------
+                0.00    0.00    7995/7995        do_item_unlink [40]
+[50]     0.0    0.00    0.00    7995         assoc_delete [50]
+-----------------------------------------------
+                0.00    0.00    7992/7992        do_item_link [52]
+[51]     0.0    0.00    0.00    7992         get_cas_id [51]
+-----------------------------------------------
+                0.00    0.00      37/7972        do_store_item [31]
+                0.00    0.00    7935/7972        do_item_replace [42]
+[52]     0.0    0.00    0.00    7972         do_item_link [52]
+                0.00    0.00    8337/17375       STATS_LOCK [37]
+                0.00    0.00    8121/8121        item_stats_sizes_add [45]
+                0.00    0.00    8092/8128        item_link_q [43]
+                0.00    0.00    8054/8054        assoc_insert [48]
+                0.00    0.00    7997/16961       STATS_UNLOCK [38]
+                0.00    0.00    7992/7992        get_cas_id [51]
+-----------------------------------------------
+                0.00    0.00    7933/7933        do_item_unlink [40]
+[53]     0.0    0.00    0.00    7933         item_unlink_q [53]
+                0.00    0.00    7959/8001        do_item_unlink_q [49]
+-----------------------------------------------
+                0.00    0.00    7789/7789        do_item_unlink [40]
+[54]     0.0    0.00    0.00    7789         item_stats_sizes_remove [54]
+-----------------------------------------------
+                0.00    0.00    7732/7732        do_store_item [31]
+[55]     0.0    0.00    0.00    7732         item_replace [55]
+                0.00    0.00    8135/8135        do_item_replace [42]
+-----------------------------------------------
+                0.00    0.00    7615/7615        slabs_alloc [25]
+[56]     0.0    0.00    0.00    7615         do_slabs_alloc [56]
+                0.00    0.00       1/1           do_slabs_newslab [85]
+-----------------------------------------------
+                0.00    0.00    7491/7491        complete_nread [3]
+[57]     0.0    0.00    0.00    7491         binary_get_request [57]
+-----------------------------------------------
+                0.00    0.00    3366/3366        lru_maintainer_thread [17]
+[58]     0.0    0.00    0.00    3366         slabs_available_chunks [58]
+-----------------------------------------------
+                0.00    0.00     238/1201        logger_thread_read [68]
+                0.00    0.00     963/1201        lru_maintainer_thread [17]
+[59]     0.0    0.00    0.00    1201         bipbuf_peek_all [59]
+-----------------------------------------------
+                0.00    0.00     449/449         lru_pull_tail [16]
+[60]     0.0    0.00    0.00     449         item_trylock_unlock [60]
+-----------------------------------------------
+                0.00    0.00     433/433         lru_pull_tail [16]
+[61]     0.0    0.00    0.00     433         item_trylock [61]
+-----------------------------------------------
+                0.00    0.00     255/255         lru_crawler_class_done [66]
+[62]     0.0    0.00    0.00     255         crawler_expired_doneclass [62]
+-----------------------------------------------
+                0.00    0.00     255/255         lru_crawler_start [87]
+[63]     0.0    0.00    0.00     255         do_item_linktail_q [63]
+-----------------------------------------------
+                0.00    0.00     255/255         lru_crawler_class_done [66]
+[64]     0.0    0.00    0.00     255         do_item_unlinktail_q [64]
+-----------------------------------------------
+                0.00    0.00     254/254         lru_crawler_class_done [66]
+[65]     0.0    0.00    0.00     254         do_item_stats_add_crawl [65]
+-----------------------------------------------
+                0.00    0.00     254/254         item_crawler_thread [154]
+[66]     0.0    0.00    0.00     254         lru_crawler_class_done [66]
+                0.00    0.00     255/255         do_item_unlinktail_q [64]
+                0.00    0.00     255/255         crawler_expired_doneclass [62]
+                0.00    0.00     254/254         do_item_stats_add_crawl [65]
+-----------------------------------------------
+                0.00    0.00     252/252         item_crawler_thread [154]
+[67]     0.0    0.00    0.00     252         do_item_crawl_q [67]
+-----------------------------------------------
+                0.00    0.00     241/241         logger_thread [179]
+[68]     0.0    0.00    0.00     241         logger_thread_read [68]
+                0.00    0.00     238/1201        bipbuf_peek_all [59]
+-----------------------------------------------
+                                   2             conn_new [69]
+                0.00    0.00       1/197         server_sockets [208]
+                0.00    0.00     196/197         thread_libevent_process [243]
+[69]     0.0    0.00    0.00     197+2       conn_new [69]
+                0.00    0.00     397/17375       STATS_LOCK [37]
+                0.00    0.00     396/16961       STATS_UNLOCK [38]
+                                   2             conn_new [69]
+-----------------------------------------------
+                0.00    0.00     196/196         dispatch_conn_new [71]
+[70]     0.0    0.00    0.00     196         cq_push [70]
+-----------------------------------------------
+                0.00    0.00     196/196         drive_machine [1]
+[71]     0.0    0.00    0.00     196         dispatch_conn_new [71]
+                0.00    0.00     196/196         cq_push [70]
+                0.00    0.00     195/195         cqi_new [72]
+-----------------------------------------------
+                0.00    0.00     195/195         dispatch_conn_new [71]
+[72]     0.0    0.00    0.00     195         cqi_new [72]
+-----------------------------------------------
+                0.00    0.00      49/49          logger_thread [179]
+[73]     0.0    0.00    0.00      49         logger_thread_poll_watchers [73]
+-----------------------------------------------
+                0.00    0.00       4/9           item_lru_bump_buf_create [80]
+                0.00    0.00       5/9           logger_create [77]
+[74]     0.0    0.00    0.00       9         bipbuf_new [74]
+-----------------------------------------------
+                0.00    0.00       1/5           slab_automove_init [89]
+                0.00    0.00       4/5           slab_automove_run [82]
+[75]     0.0    0.00    0.00       5         fill_item_stats_automove [75]
+-----------------------------------------------
+                0.00    0.00       1/5           slab_automove_init [89]
+                0.00    0.00       4/5           slab_automove_run [82]
+[76]     0.0    0.00    0.00       5         fill_slab_stats_automove [76]
+-----------------------------------------------
+                0.00    0.00       1/5           lru_maintainer_thread [17]
+                0.00    0.00       4/5           worker_libevent [251]
+[77]     0.0    0.00    0.00       5         logger_create [77]
+                0.00    0.00       5/9           bipbuf_new [74]
+-----------------------------------------------
+                0.00    0.00       4/4           clock_handler [115]
+[78]     0.0    0.00    0.00       4         assoc_start_expand [78]
+-----------------------------------------------
+                0.00    0.00       4/4           memcached_thread_init [191]
+[79]     0.0    0.00    0.00       4         cache_create [79]
+-----------------------------------------------
+                0.00    0.00       4/4           worker_libevent [251]
+[80]     0.0    0.00    0.00       4         item_lru_bump_buf_create [80]
+                0.00    0.00       4/9           bipbuf_new [74]
+-----------------------------------------------
+                0.00    0.00       4/4           worker_libevent [251]
+[81]     0.0    0.00    0.00       4         register_thread_initialized [81]
+-----------------------------------------------
+                0.00    0.00       4/4           lru_maintainer_thread [17]
+[82]     0.0    0.00    0.00       4         slab_automove_run [82]
+                0.00    0.00       4/5           fill_item_stats_automove [75]
+                0.00    0.00       4/5           fill_slab_stats_automove [76]
+-----------------------------------------------
+                0.00    0.00       1/1           item_crawler_thread [154]
+[83]     0.0    0.00    0.00       1         crawler_expired_finalize [83]
+-----------------------------------------------
+                0.00    0.00       1/1           lru_crawler_start [87]
+[84]     0.0    0.00    0.00       1         crawler_expired_init [84]
+-----------------------------------------------
+                0.00    0.00       1/1           do_slabs_alloc [56]
+[85]     0.0    0.00    0.00       1         do_slabs_newslab [85]
+                0.00    0.00    8738/16734       do_slabs_free [39]
+                0.00    0.00       1/1           grow_slab_list [86]
+                0.00    0.00       1/1           memory_allocate [88]
+-----------------------------------------------
+                0.00    0.00       1/1           do_slabs_newslab [85]
+[86]     0.0    0.00    0.00       1         grow_slab_list [86]
+-----------------------------------------------
+                0.00    0.00       1/1           lru_maintainer_thread [17]
+[87]     0.0    0.00    0.00       1         lru_crawler_start [87]
+                0.00    0.00     256/17375       STATS_LOCK [37]
+                0.00    0.00     256/16961       STATS_UNLOCK [38]
+                0.00    0.00     255/255         do_item_linktail_q [63]
+                0.00    0.00       1/1           crawler_expired_init [84]
+-----------------------------------------------
+                0.00    0.00       1/1           do_slabs_newslab [85]
+[88]     0.0    0.00    0.00       1         memory_allocate [88]
+-----------------------------------------------
+                0.00    0.00       1/1           lru_maintainer_thread [17]
+[89]     0.0    0.00    0.00       1         slab_automove_init [89]
+                0.00    0.00       1/5           fill_item_stats_automove [75]
+                0.00    0.00       1/5           fill_slab_stats_automove [76]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012-2019 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+  [12] MurmurHash3_x86_32     [67] do_item_crawl_q        [55] item_replace
+  [37] STATS_LOCK             [23] do_item_get            [45] item_stats_sizes_add
+  [38] STATS_UNLOCK           [52] do_item_link           [54] item_stats_sizes_remove
+   [6] add_bin_header (memcached.c) [47] do_item_link_q (items.c) [61] item_trylock
+  [19] add_iov (memcached.c)  [63] do_item_linktail_q     [60] item_trylock_unlock
+  [18] add_msghdr (memcached.c) [36] do_item_remove       [53] item_unlink_q (items.c)
+  [50] assoc_delete           [42] do_item_replace        [77] logger_create
+  [22] assoc_find             [65] do_item_stats_add_crawl [73] logger_thread_poll_watchers (logger.c)
+  [48] assoc_insert           [40] do_item_unlink         [68] logger_thread_read (logger.c)
+  [78] assoc_start_expand     [49] do_item_unlink_q (items.c) [66] lru_crawler_class_done (crawler.c)
+  [28] bin_read_key (memcached.c) [64] do_item_unlinktail_q [87] lru_crawler_start
+  [57] binary_get_request (memcached.c) [56] do_slabs_alloc (slabs.c) [16] lru_pull_tail
+  [74] bipbuf_new             [39] do_slabs_free (slabs.c) [88] memory_allocate (slabs.c)
+  [59] bipbuf_peek_all        [85] do_slabs_newslab (slabs.c) [21] ntohll
+  [79] cache_create           [31] do_store_item          [81] register_thread_initialized (thread.c)
+   [3] complete_nread (memcached.c) [1] drive_machine (memcached.c) [89] slab_automove_init
+  [34] conn_cleanup (memcached.c) [35] ensure_iov_space (memcached.c) [82] slab_automove_run
+  [33] conn_close (memcached.c) [75] fill_item_stats_automove [25] slabs_alloc
+  [69] conn_new               [76] fill_slab_stats_automove [58] slabs_available_chunks
+  [10] conn_release_items (memcached.c) [51] get_cas_id   [27] slabs_clsid
+   [7] conn_set_state (memcached.c) [86] grow_slab_list (slabs.c) [46] slabs_free
+  [70] cq_push (thread.c)      [8] htonll                 [30] store_item
+  [72] cqi_new (thread.c)     [14] item_alloc              [9] tcp_read (memcached.c)
+  [62] crawler_expired_doneclass (crawler.c) [44] item_free [20] tcp_sendmsg (memcached.c)
+  [83] crawler_expired_finalize (crawler.c) [11] item_get [29] try_read_command_asciiauth (memcached.c)
+  [84] crawler_expired_init (crawler.c) [41] item_is_flushed [4] try_read_command_binary (memcached.c)
+  [71] dispatch_conn_new      [43] item_link_q (items.c)  [32] try_read_command_negotiate (memcached.c)
+  [13] do_item_alloc          [80] item_lru_bump_buf_create [24] update_event (memcached.c)
+  [26] do_item_alloc_pull     [15] item_remove             [5] write_bin_error (memcached.c)

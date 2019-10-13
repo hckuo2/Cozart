@@ -1,0 +1,1359 @@
+        -:    0:Source:/usr/include/x86_64-linux-gnu/bits/stdio2.h
+        -:    0:Programs:0
+        -:    1:/* Checking macros for stdio functions.
+        -:    2:   Copyright (C) 2004-2018 Free Software Foundation, Inc.
+        -:    3:   This file is part of the GNU C Library.
+        -:    4:
+        -:    5:   The GNU C Library is free software; you can redistribute it and/or
+        -:    6:   modify it under the terms of the GNU Lesser General Public
+        -:    7:   License as published by the Free Software Foundation; either
+        -:    8:   version 2.1 of the License, or (at your option) any later version.
+        -:    9:
+        -:   10:   The GNU C Library is distributed in the hope that it will be useful,
+        -:   11:   but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12:   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+        -:   13:   Lesser General Public License for more details.
+        -:   14:
+        -:   15:   You should have received a copy of the GNU Lesser General Public
+        -:   16:   License along with the GNU C Library; if not, see
+        -:   17:   <http://www.gnu.org/licenses/>.  */
+        -:   18:
+        -:   19:#ifndef _BITS_STDIO2_H
+        -:   20:#define _BITS_STDIO2_H 1
+        -:   21:
+        -:   22:#ifndef _STDIO_H
+        -:   23:# error "Never include <bits/stdio2.h> directly; use <stdio.h> instead."
+        -:   24:#endif
+        -:   25:
+        -:   26:extern int __sprintf_chk (char *__restrict __s, int __flag, size_t __slen,
+        -:   27:			  const char *__restrict __format, ...) __THROW;
+        -:   28:extern int __vsprintf_chk (char *__restrict __s, int __flag, size_t __slen,
+        -:   29:			   const char *__restrict __format,
+        -:   30:			   __gnuc_va_list __ap) __THROW;
+        -:   31:
+        -:   32:#ifdef __va_arg_pack
+        -:   33:__fortify_function int
+        -:   34:__NTH (sprintf (char *__restrict __s, const char *__restrict __fmt, ...))
+        -:   35:{
+    #####:   36:  return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    %%%%%:   36-block  2
+    %%%%%:   36-block  3
+    %%%%%:   36-block  4
+    %%%%%:   36-block  5
+    %%%%%:   36-block  6
+    %%%%%:   36-block  7
+    %%%%%:   36-block  8
+    %%%%%:   36-block  9
+    %%%%%:   36-block 10
+    %%%%%:   36-block 11
+        -:   37:				  __bos (__s), __fmt, __va_arg_pack ());
+        -:   38:}
+        -:   39:#elif !defined __cplusplus
+        -:   40:# define sprintf(str, ...) \
+        -:   41:  __builtin___sprintf_chk (str, __USE_FORTIFY_LEVEL - 1, __bos (str), \
+        -:   42:			   __VA_ARGS__)
+        -:   43:#endif
+        -:   44:
+        -:   45:__fortify_function int
+        -:   46:__NTH (vsprintf (char *__restrict __s, const char *__restrict __fmt,
+        -:   47:		 __gnuc_va_list __ap))
+        -:   48:{
+        -:   49:  return __builtin___vsprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
+        -:   50:				   __bos (__s), __fmt, __ap);
+        -:   51:}
+        -:   52:
+        -:   53:#if defined __USE_ISOC99 || defined __USE_UNIX98
+        -:   54:
+        -:   55:extern int __snprintf_chk (char *__restrict __s, size_t __n, int __flag,
+        -:   56:			   size_t __slen, const char *__restrict __format,
+        -:   57:			   ...) __THROW;
+        -:   58:extern int __vsnprintf_chk (char *__restrict __s, size_t __n, int __flag,
+        -:   59:			    size_t __slen, const char *__restrict __format,
+        -:   60:			    __gnuc_va_list __ap) __THROW;
+        -:   61:
+        -:   62:# ifdef __va_arg_pack
+        -:   63:__fortify_function int
+        -:   64:__NTH (snprintf (char *__restrict __s, size_t __n,
+        -:   65:		 const char *__restrict __fmt, ...))
+        -:   66:{
+    #####:   67:  return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+    %%%%%:   67-block  0
+    %%%%%:   67-block  1
+    %%%%%:   67-block  2
+    %%%%%:   67-block  3
+    %%%%%:   67-block  4
+    %%%%%:   67-block  5
+    %%%%%:   67-block  6
+    %%%%%:   67-block  7
+    %%%%%:   67-block  8
+    %%%%%:   67-block  9
+    %%%%%:   67-block 10
+    %%%%%:   67-block 11
+    %%%%%:   67-block 12
+    %%%%%:   67-block 13
+    %%%%%:   67-block 14
+    %%%%%:   67-block 15
+    %%%%%:   67-block 16
+    %%%%%:   67-block 17
+    %%%%%:   67-block 18
+    %%%%%:   67-block 19
+    %%%%%:   67-block 20
+    %%%%%:   67-block 21
+    %%%%%:   67-block 22
+    %%%%%:   67-block 23
+    %%%%%:   67-block 24
+    %%%%%:   67-block 25
+    %%%%%:   67-block 26
+    %%%%%:   67-block 27
+    %%%%%:   67-block 28
+    %%%%%:   67-block 29
+    %%%%%:   67-block 30
+    %%%%%:   67-block 31
+    %%%%%:   67-block 32
+    %%%%%:   67-block 33
+    %%%%%:   67-block 34
+    %%%%%:   67-block 35
+    %%%%%:   67-block 36
+    %%%%%:   67-block 37
+    %%%%%:   67-block 38
+    %%%%%:   67-block 39
+    %%%%%:   67-block 40
+    %%%%%:   67-block 41
+    %%%%%:   67-block 42
+    %%%%%:   67-block 43
+    %%%%%:   67-block 44
+    %%%%%:   67-block 45
+    %%%%%:   67-block 46
+    %%%%%:   67-block 47
+    %%%%%:   67-block 48
+    %%%%%:   67-block 49
+    %%%%%:   67-block 50
+    %%%%%:   67-block 51
+    %%%%%:   67-block 52
+    %%%%%:   67-block 53
+    %%%%%:   67-block 54
+    %%%%%:   67-block 55
+    %%%%%:   67-block 56
+    %%%%%:   67-block 57
+    %%%%%:   67-block 58
+    %%%%%:   67-block 59
+    %%%%%:   67-block 60
+    %%%%%:   67-block 61
+    %%%%%:   67-block 62
+    %%%%%:   67-block 63
+    %%%%%:   67-block 64
+    %%%%%:   67-block 65
+    %%%%%:   67-block 66
+    %%%%%:   67-block 67
+    %%%%%:   67-block 68
+    %%%%%:   67-block 69
+    %%%%%:   67-block 70
+    %%%%%:   67-block 71
+    %%%%%:   67-block 72
+    %%%%%:   67-block 73
+    %%%%%:   67-block 74
+    %%%%%:   67-block 75
+    %%%%%:   67-block 76
+    %%%%%:   67-block 77
+    %%%%%:   67-block 78
+    %%%%%:   67-block 79
+    %%%%%:   67-block 80
+    %%%%%:   67-block 81
+    %%%%%:   67-block 82
+    %%%%%:   67-block 83
+    %%%%%:   67-block 84
+    %%%%%:   67-block 85
+    %%%%%:   67-block 86
+    %%%%%:   67-block 87
+    %%%%%:   67-block 88
+    %%%%%:   67-block 89
+    %%%%%:   67-block 90
+    %%%%%:   67-block 91
+    %%%%%:   67-block 92
+    %%%%%:   67-block 93
+    %%%%%:   67-block 94
+    %%%%%:   67-block 95
+    %%%%%:   67-block 96
+    %%%%%:   67-block 97
+    %%%%%:   67-block 98
+    %%%%%:   67-block 99
+    %%%%%:   67-block 100
+    %%%%%:   67-block 101
+    %%%%%:   67-block 102
+    %%%%%:   67-block 103
+    %%%%%:   67-block 104
+    %%%%%:   67-block 105
+    %%%%%:   67-block 106
+    %%%%%:   67-block 107
+    %%%%%:   67-block 108
+    %%%%%:   67-block 109
+    %%%%%:   67-block 110
+    %%%%%:   67-block 111
+    %%%%%:   67-block 112
+    %%%%%:   67-block 113
+    %%%%%:   67-block 114
+    %%%%%:   67-block 115
+    %%%%%:   67-block 116
+    %%%%%:   67-block 117
+    %%%%%:   67-block 118
+    %%%%%:   67-block 119
+    %%%%%:   67-block 120
+    %%%%%:   67-block 121
+        -:   68:				   __bos (__s), __fmt, __va_arg_pack ());
+        -:   69:}
+        -:   70:# elif !defined __cplusplus
+        -:   71:#  define snprintf(str, len, ...) \
+        -:   72:  __builtin___snprintf_chk (str, len, __USE_FORTIFY_LEVEL - 1, __bos (str), \
+        -:   73:			    __VA_ARGS__)
+        -:   74:# endif
+        -:   75:
+        -:   76:__fortify_function int
+        -:   77:__NTH (vsnprintf (char *__restrict __s, size_t __n,
+        -:   78:		  const char *__restrict __fmt, __gnuc_va_list __ap))
+        -:   79:{
+    #####:   80:  return __builtin___vsnprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+    %%%%%:   80-block  0
+    %%%%%:   80-block  1
+    %%%%%:   80-block  2
+    %%%%%:   80-block  3
+    %%%%%:   80-block  4
+    %%%%%:   80-block  5
+    %%%%%:   80-block  6
+    %%%%%:   80-block  7
+    %%%%%:   80-block  8
+    %%%%%:   80-block  9
+    %%%%%:   80-block 10
+        -:   81:				    __bos (__s), __fmt, __ap);
+        -:   82:}
+        -:   83:
+        -:   84:#endif
+        -:   85:
+        -:   86:#if __USE_FORTIFY_LEVEL > 1
+        -:   87:
+        -:   88:extern int __fprintf_chk (FILE *__restrict __stream, int __flag,
+        -:   89:			  const char *__restrict __format, ...);
+        -:   90:extern int __printf_chk (int __flag, const char *__restrict __format, ...);
+        -:   91:extern int __vfprintf_chk (FILE *__restrict __stream, int __flag,
+        -:   92:			   const char *__restrict __format, __gnuc_va_list __ap);
+        -:   93:extern int __vprintf_chk (int __flag, const char *__restrict __format,
+        -:   94:			  __gnuc_va_list __ap);
+        -:   95:
+        -:   96:# ifdef __va_arg_pack
+        -:   97:__fortify_function int
+        -:   98:fprintf (FILE *__restrict __stream, const char *__restrict __fmt, ...)
+        -:   99:{
+    #####:  100:  return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+    %%%%%:  100-block  0
+    %%%%%:  100-block  1
+    %%%%%:  100-block  2
+    %%%%%:  100-block  3
+    %%%%%:  100-block  4
+    %%%%%:  100-block  5
+    %%%%%:  100-block  6
+    %%%%%:  100-block  7
+    %%%%%:  100-block  8
+    %%%%%:  100-block  9
+    %%%%%:  100-block 10
+    %%%%%:  100-block 11
+    %%%%%:  100-block 12
+    %%%%%:  100-block 13
+    %%%%%:  100-block 14
+    %%%%%:  100-block 15
+    %%%%%:  100-block 16
+    %%%%%:  100-block 17
+    %%%%%:  100-block 18
+    %%%%%:  100-block 19
+    %%%%%:  100-block 20
+    %%%%%:  100-block 21
+    %%%%%:  100-block 22
+    %%%%%:  100-block 23
+    %%%%%:  100-block 24
+    %%%%%:  100-block 25
+    %%%%%:  100-block 26
+    %%%%%:  100-block 27
+    %%%%%:  100-block 28
+    %%%%%:  100-block 29
+    %%%%%:  100-block 30
+    %%%%%:  100-block 31
+    %%%%%:  100-block 32
+    %%%%%:  100-block 33
+    %%%%%:  100-block 34
+    %%%%%:  100-block 35
+    %%%%%:  100-block 36
+    %%%%%:  100-block 37
+    %%%%%:  100-block 38
+    %%%%%:  100-block 39
+    %%%%%:  100-block 40
+    %%%%%:  100-block 41
+    %%%%%:  100-block 42
+    %%%%%:  100-block 43
+    %%%%%:  100-block 44
+    %%%%%:  100-block 45
+    %%%%%:  100-block 46
+    %%%%%:  100-block 47
+    %%%%%:  100-block 48
+    %%%%%:  100-block 49
+    %%%%%:  100-block 50
+    %%%%%:  100-block 51
+    %%%%%:  100-block 52
+    %%%%%:  100-block 53
+    %%%%%:  100-block 54
+    %%%%%:  100-block 55
+    %%%%%:  100-block 56
+    %%%%%:  100-block 57
+    %%%%%:  100-block 58
+    %%%%%:  100-block 59
+    %%%%%:  100-block 60
+    %%%%%:  100-block 61
+    %%%%%:  100-block 62
+    %%%%%:  100-block 63
+    %%%%%:  100-block 64
+    %%%%%:  100-block 65
+    %%%%%:  100-block 66
+    %%%%%:  100-block 67
+    %%%%%:  100-block 68
+    %%%%%:  100-block 69
+    %%%%%:  100-block 70
+    %%%%%:  100-block 71
+    %%%%%:  100-block 72
+    %%%%%:  100-block 73
+    %%%%%:  100-block 74
+    %%%%%:  100-block 75
+    %%%%%:  100-block 76
+    %%%%%:  100-block 77
+    %%%%%:  100-block 78
+    %%%%%:  100-block 79
+    %%%%%:  100-block 80
+    %%%%%:  100-block 81
+    %%%%%:  100-block 82
+    %%%%%:  100-block 83
+    %%%%%:  100-block 84
+    %%%%%:  100-block 85
+    %%%%%:  100-block 86
+    %%%%%:  100-block 87
+    %%%%%:  100-block 88
+    %%%%%:  100-block 89
+    %%%%%:  100-block 90
+    %%%%%:  100-block 91
+    %%%%%:  100-block 92
+    %%%%%:  100-block 93
+    %%%%%:  100-block 94
+    %%%%%:  100-block 95
+    %%%%%:  100-block 96
+    %%%%%:  100-block 97
+    %%%%%:  100-block 98
+    %%%%%:  100-block 99
+    %%%%%:  100-block 100
+    %%%%%:  100-block 101
+    %%%%%:  100-block 102
+    %%%%%:  100-block 103
+    %%%%%:  100-block 104
+    %%%%%:  100-block 105
+    %%%%%:  100-block 106
+    %%%%%:  100-block 107
+    %%%%%:  100-block 108
+    %%%%%:  100-block 109
+    %%%%%:  100-block 110
+    %%%%%:  100-block 111
+    %%%%%:  100-block 112
+    %%%%%:  100-block 113
+    %%%%%:  100-block 114
+    %%%%%:  100-block 115
+    %%%%%:  100-block 116
+    %%%%%:  100-block 117
+    %%%%%:  100-block 118
+    %%%%%:  100-block 119
+    %%%%%:  100-block 120
+    %%%%%:  100-block 121
+    %%%%%:  100-block 122
+    %%%%%:  100-block 123
+    %%%%%:  100-block 124
+    %%%%%:  100-block 125
+    %%%%%:  100-block 126
+    %%%%%:  100-block 127
+    %%%%%:  100-block 128
+    %%%%%:  100-block 129
+    %%%%%:  100-block 130
+    %%%%%:  100-block 131
+    %%%%%:  100-block 132
+    %%%%%:  100-block 133
+    %%%%%:  100-block 134
+    %%%%%:  100-block 135
+    %%%%%:  100-block 136
+    %%%%%:  100-block 137
+    %%%%%:  100-block 138
+    %%%%%:  100-block 139
+    %%%%%:  100-block 140
+    %%%%%:  100-block 141
+    %%%%%:  100-block 142
+    %%%%%:  100-block 143
+    %%%%%:  100-block 144
+    %%%%%:  100-block 145
+    %%%%%:  100-block 146
+    %%%%%:  100-block 147
+    %%%%%:  100-block 148
+    %%%%%:  100-block 149
+    %%%%%:  100-block 150
+    %%%%%:  100-block 151
+    %%%%%:  100-block 152
+    %%%%%:  100-block 153
+    %%%%%:  100-block 154
+    %%%%%:  100-block 155
+    %%%%%:  100-block 156
+    %%%%%:  100-block 157
+    %%%%%:  100-block 158
+    %%%%%:  100-block 159
+    %%%%%:  100-block 160
+    %%%%%:  100-block 161
+    %%%%%:  100-block 162
+    %%%%%:  100-block 163
+    %%%%%:  100-block 164
+    %%%%%:  100-block 165
+    %%%%%:  100-block 166
+    %%%%%:  100-block 167
+    %%%%%:  100-block 168
+    %%%%%:  100-block 169
+    %%%%%:  100-block 170
+    %%%%%:  100-block 171
+    %%%%%:  100-block 172
+    %%%%%:  100-block 173
+    %%%%%:  100-block 174
+    %%%%%:  100-block 175
+    %%%%%:  100-block 176
+    %%%%%:  100-block 177
+    %%%%%:  100-block 178
+    %%%%%:  100-block 179
+    %%%%%:  100-block 180
+    %%%%%:  100-block 181
+    %%%%%:  100-block 182
+    %%%%%:  100-block 183
+    %%%%%:  100-block 184
+    %%%%%:  100-block 185
+    %%%%%:  100-block 186
+    %%%%%:  100-block 187
+    %%%%%:  100-block 188
+    %%%%%:  100-block 189
+    %%%%%:  100-block 190
+    %%%%%:  100-block 191
+    %%%%%:  100-block 192
+    %%%%%:  100-block 193
+    %%%%%:  100-block 194
+    %%%%%:  100-block 195
+    %%%%%:  100-block 196
+    %%%%%:  100-block 197
+    %%%%%:  100-block 198
+    %%%%%:  100-block 199
+    %%%%%:  100-block 200
+    %%%%%:  100-block 201
+    %%%%%:  100-block 202
+    %%%%%:  100-block 203
+    %%%%%:  100-block 204
+    %%%%%:  100-block 205
+    %%%%%:  100-block 206
+    %%%%%:  100-block 207
+    %%%%%:  100-block 208
+    %%%%%:  100-block 209
+    %%%%%:  100-block 210
+    %%%%%:  100-block 211
+    %%%%%:  100-block 212
+    %%%%%:  100-block 213
+    %%%%%:  100-block 214
+    %%%%%:  100-block 215
+    %%%%%:  100-block 216
+    %%%%%:  100-block 217
+    %%%%%:  100-block 218
+    %%%%%:  100-block 219
+    %%%%%:  100-block 220
+    %%%%%:  100-block 221
+    %%%%%:  100-block 222
+    %%%%%:  100-block 223
+    %%%%%:  100-block 224
+    %%%%%:  100-block 225
+    %%%%%:  100-block 226
+    %%%%%:  100-block 227
+    %%%%%:  100-block 228
+    %%%%%:  100-block 229
+    %%%%%:  100-block 230
+    %%%%%:  100-block 231
+    %%%%%:  100-block 232
+    %%%%%:  100-block 233
+    %%%%%:  100-block 234
+    %%%%%:  100-block 235
+    %%%%%:  100-block 236
+    %%%%%:  100-block 237
+    %%%%%:  100-block 238
+    %%%%%:  100-block 239
+    %%%%%:  100-block 240
+    %%%%%:  100-block 241
+    %%%%%:  100-block 242
+    %%%%%:  100-block 243
+    %%%%%:  100-block 244
+    %%%%%:  100-block 245
+    %%%%%:  100-block 246
+    %%%%%:  100-block 247
+    %%%%%:  100-block 248
+    %%%%%:  100-block 249
+    %%%%%:  100-block 250
+    %%%%%:  100-block 251
+    %%%%%:  100-block 252
+    %%%%%:  100-block 253
+    %%%%%:  100-block 254
+    %%%%%:  100-block 255
+    %%%%%:  100-block 256
+    %%%%%:  100-block 257
+    %%%%%:  100-block 258
+    %%%%%:  100-block 259
+    %%%%%:  100-block 260
+    %%%%%:  100-block 261
+    %%%%%:  100-block 262
+    %%%%%:  100-block 263
+    %%%%%:  100-block 264
+    %%%%%:  100-block 265
+    %%%%%:  100-block 266
+    %%%%%:  100-block 267
+    %%%%%:  100-block 268
+    %%%%%:  100-block 269
+    %%%%%:  100-block 270
+    %%%%%:  100-block 271
+    %%%%%:  100-block 272
+    %%%%%:  100-block 273
+    %%%%%:  100-block 274
+    %%%%%:  100-block 275
+    %%%%%:  100-block 276
+    %%%%%:  100-block 277
+    %%%%%:  100-block 278
+    %%%%%:  100-block 279
+    %%%%%:  100-block 280
+    %%%%%:  100-block 281
+    %%%%%:  100-block 282
+    %%%%%:  100-block 283
+    %%%%%:  100-block 284
+    %%%%%:  100-block 285
+    %%%%%:  100-block 286
+    %%%%%:  100-block 287
+    %%%%%:  100-block 288
+    %%%%%:  100-block 289
+    %%%%%:  100-block 290
+    %%%%%:  100-block 291
+    %%%%%:  100-block 292
+    %%%%%:  100-block 293
+    %%%%%:  100-block 294
+    %%%%%:  100-block 295
+    %%%%%:  100-block 296
+    %%%%%:  100-block 297
+    %%%%%:  100-block 298
+    %%%%%:  100-block 299
+    %%%%%:  100-block 300
+    %%%%%:  100-block 301
+    %%%%%:  100-block 302
+    %%%%%:  100-block 303
+    %%%%%:  100-block 304
+    %%%%%:  100-block 305
+    %%%%%:  100-block 306
+    %%%%%:  100-block 307
+    %%%%%:  100-block 308
+    %%%%%:  100-block 309
+    %%%%%:  100-block 310
+    %%%%%:  100-block 311
+    %%%%%:  100-block 312
+    %%%%%:  100-block 313
+    %%%%%:  100-block 314
+    %%%%%:  100-block 315
+    %%%%%:  100-block 316
+    %%%%%:  100-block 317
+    %%%%%:  100-block 318
+    %%%%%:  100-block 319
+    %%%%%:  100-block 320
+    %%%%%:  100-block 321
+    %%%%%:  100-block 322
+    %%%%%:  100-block 323
+    %%%%%:  100-block 324
+    %%%%%:  100-block 325
+    %%%%%:  100-block 326
+    %%%%%:  100-block 327
+    %%%%%:  100-block 328
+    %%%%%:  100-block 329
+    %%%%%:  100-block 330
+    %%%%%:  100-block 331
+    %%%%%:  100-block 332
+    %%%%%:  100-block 333
+    %%%%%:  100-block 334
+    %%%%%:  100-block 335
+    %%%%%:  100-block 336
+    %%%%%:  100-block 337
+    %%%%%:  100-block 338
+    %%%%%:  100-block 339
+    %%%%%:  100-block 340
+    %%%%%:  100-block 341
+    %%%%%:  100-block 342
+    %%%%%:  100-block 343
+    %%%%%:  100-block 344
+    %%%%%:  100-block 345
+    %%%%%:  100-block 346
+    %%%%%:  100-block 347
+    %%%%%:  100-block 348
+    %%%%%:  100-block 349
+    %%%%%:  100-block 350
+    %%%%%:  100-block 351
+    %%%%%:  100-block 352
+    %%%%%:  100-block 353
+    %%%%%:  100-block 354
+    %%%%%:  100-block 355
+    %%%%%:  100-block 356
+    %%%%%:  100-block 357
+    %%%%%:  100-block 358
+    %%%%%:  100-block 359
+    %%%%%:  100-block 360
+    %%%%%:  100-block 361
+    %%%%%:  100-block 362
+    %%%%%:  100-block 363
+    %%%%%:  100-block 364
+    %%%%%:  100-block 365
+    %%%%%:  100-block 366
+    %%%%%:  100-block 367
+    %%%%%:  100-block 368
+    %%%%%:  100-block 369
+    %%%%%:  100-block 370
+    %%%%%:  100-block 371
+    %%%%%:  100-block 372
+    %%%%%:  100-block 373
+    %%%%%:  100-block 374
+    %%%%%:  100-block 375
+    %%%%%:  100-block 376
+    %%%%%:  100-block 377
+    %%%%%:  100-block 378
+    %%%%%:  100-block 379
+    %%%%%:  100-block 380
+    %%%%%:  100-block 381
+    %%%%%:  100-block 382
+    %%%%%:  100-block 383
+    %%%%%:  100-block 384
+    %%%%%:  100-block 385
+    %%%%%:  100-block 386
+    %%%%%:  100-block 387
+    %%%%%:  100-block 388
+    %%%%%:  100-block 389
+    %%%%%:  100-block 390
+    %%%%%:  100-block 391
+    %%%%%:  100-block 392
+    %%%%%:  100-block 393
+    %%%%%:  100-block 394
+    %%%%%:  100-block 395
+    %%%%%:  100-block 396
+    %%%%%:  100-block 397
+    %%%%%:  100-block 398
+    %%%%%:  100-block 399
+    %%%%%:  100-block 400
+    %%%%%:  100-block 401
+    %%%%%:  100-block 402
+    %%%%%:  100-block 403
+    %%%%%:  100-block 404
+    %%%%%:  100-block 405
+    %%%%%:  100-block 406
+    %%%%%:  100-block 407
+    %%%%%:  100-block 408
+    %%%%%:  100-block 409
+    %%%%%:  100-block 410
+    %%%%%:  100-block 411
+    %%%%%:  100-block 412
+    %%%%%:  100-block 413
+    %%%%%:  100-block 414
+    %%%%%:  100-block 415
+    %%%%%:  100-block 416
+    %%%%%:  100-block 417
+    %%%%%:  100-block 418
+    %%%%%:  100-block 419
+    %%%%%:  100-block 420
+    %%%%%:  100-block 421
+    %%%%%:  100-block 422
+    %%%%%:  100-block 423
+    %%%%%:  100-block 424
+    %%%%%:  100-block 425
+    %%%%%:  100-block 426
+    %%%%%:  100-block 427
+    %%%%%:  100-block 428
+    %%%%%:  100-block 429
+    %%%%%:  100-block 430
+    %%%%%:  100-block 431
+    %%%%%:  100-block 432
+    %%%%%:  100-block 433
+    %%%%%:  100-block 434
+    %%%%%:  100-block 435
+    %%%%%:  100-block 436
+    %%%%%:  100-block 437
+    %%%%%:  100-block 438
+    %%%%%:  100-block 439
+    %%%%%:  100-block 440
+    %%%%%:  100-block 441
+    %%%%%:  100-block 442
+    %%%%%:  100-block 443
+    %%%%%:  100-block 444
+    %%%%%:  100-block 445
+    %%%%%:  100-block 446
+    %%%%%:  100-block 447
+    %%%%%:  100-block 448
+    %%%%%:  100-block 449
+    %%%%%:  100-block 450
+    %%%%%:  100-block 451
+    %%%%%:  100-block 452
+    %%%%%:  100-block 453
+    %%%%%:  100-block 454
+    %%%%%:  100-block 455
+    %%%%%:  100-block 456
+    %%%%%:  100-block 457
+    %%%%%:  100-block 458
+    %%%%%:  100-block 459
+    %%%%%:  100-block 460
+    %%%%%:  100-block 461
+    %%%%%:  100-block 462
+    %%%%%:  100-block 463
+    %%%%%:  100-block 464
+    %%%%%:  100-block 465
+    %%%%%:  100-block 466
+    %%%%%:  100-block 467
+    %%%%%:  100-block 468
+    %%%%%:  100-block 469
+    %%%%%:  100-block 470
+    %%%%%:  100-block 471
+    %%%%%:  100-block 472
+    %%%%%:  100-block 473
+    %%%%%:  100-block 474
+    %%%%%:  100-block 475
+    %%%%%:  100-block 476
+    %%%%%:  100-block 477
+    %%%%%:  100-block 478
+    %%%%%:  100-block 479
+    %%%%%:  100-block 480
+    %%%%%:  100-block 481
+    %%%%%:  100-block 482
+    %%%%%:  100-block 483
+    %%%%%:  100-block 484
+    %%%%%:  100-block 485
+    %%%%%:  100-block 486
+    %%%%%:  100-block 487
+    %%%%%:  100-block 488
+    %%%%%:  100-block 489
+    %%%%%:  100-block 490
+    %%%%%:  100-block 491
+    %%%%%:  100-block 492
+    %%%%%:  100-block 493
+    %%%%%:  100-block 494
+    %%%%%:  100-block 495
+    %%%%%:  100-block 496
+    %%%%%:  100-block 497
+    %%%%%:  100-block 498
+    %%%%%:  100-block 499
+    %%%%%:  100-block 500
+    %%%%%:  100-block 501
+    %%%%%:  100-block 502
+    %%%%%:  100-block 503
+    %%%%%:  100-block 504
+    %%%%%:  100-block 505
+    %%%%%:  100-block 506
+    %%%%%:  100-block 507
+    %%%%%:  100-block 508
+    %%%%%:  100-block 509
+    %%%%%:  100-block 510
+    %%%%%:  100-block 511
+    %%%%%:  100-block 512
+    %%%%%:  100-block 513
+    %%%%%:  100-block 514
+    %%%%%:  100-block 515
+    %%%%%:  100-block 516
+    %%%%%:  100-block 517
+    %%%%%:  100-block 518
+    %%%%%:  100-block 519
+    %%%%%:  100-block 520
+    %%%%%:  100-block 521
+    %%%%%:  100-block 522
+    %%%%%:  100-block 523
+    %%%%%:  100-block 524
+    %%%%%:  100-block 525
+    %%%%%:  100-block 526
+    %%%%%:  100-block 527
+    %%%%%:  100-block 528
+    %%%%%:  100-block 529
+    %%%%%:  100-block 530
+    %%%%%:  100-block 531
+    %%%%%:  100-block 532
+    %%%%%:  100-block 533
+    %%%%%:  100-block 534
+    %%%%%:  100-block 535
+    %%%%%:  100-block 536
+    %%%%%:  100-block 537
+    %%%%%:  100-block 538
+    %%%%%:  100-block 539
+    %%%%%:  100-block 540
+    %%%%%:  100-block 541
+    %%%%%:  100-block 542
+    %%%%%:  100-block 543
+    %%%%%:  100-block 544
+    %%%%%:  100-block 545
+    %%%%%:  100-block 546
+    %%%%%:  100-block 547
+    %%%%%:  100-block 548
+    %%%%%:  100-block 549
+    %%%%%:  100-block 550
+    %%%%%:  100-block 551
+    %%%%%:  100-block 552
+    %%%%%:  100-block 553
+    %%%%%:  100-block 554
+    %%%%%:  100-block 555
+    %%%%%:  100-block 556
+    %%%%%:  100-block 557
+    %%%%%:  100-block 558
+    %%%%%:  100-block 559
+    %%%%%:  100-block 560
+    %%%%%:  100-block 561
+    %%%%%:  100-block 562
+    %%%%%:  100-block 563
+    %%%%%:  100-block 564
+    %%%%%:  100-block 565
+    %%%%%:  100-block 566
+    %%%%%:  100-block 567
+    %%%%%:  100-block 568
+    %%%%%:  100-block 569
+    %%%%%:  100-block 570
+    %%%%%:  100-block 571
+    %%%%%:  100-block 572
+    %%%%%:  100-block 573
+    %%%%%:  100-block 574
+    %%%%%:  100-block 575
+    %%%%%:  100-block 576
+    %%%%%:  100-block 577
+    %%%%%:  100-block 578
+    %%%%%:  100-block 579
+    %%%%%:  100-block 580
+    %%%%%:  100-block 581
+    %%%%%:  100-block 582
+    %%%%%:  100-block 583
+    %%%%%:  100-block 584
+    %%%%%:  100-block 585
+    %%%%%:  100-block 586
+    %%%%%:  100-block 587
+    %%%%%:  100-block 588
+    %%%%%:  100-block 589
+    %%%%%:  100-block 590
+    %%%%%:  100-block 591
+    %%%%%:  100-block 592
+    %%%%%:  100-block 593
+    %%%%%:  100-block 594
+    %%%%%:  100-block 595
+    %%%%%:  100-block 596
+    %%%%%:  100-block 597
+    %%%%%:  100-block 598
+    %%%%%:  100-block 599
+    %%%%%:  100-block 600
+    %%%%%:  100-block 601
+    %%%%%:  100-block 602
+    %%%%%:  100-block 603
+    %%%%%:  100-block 604
+    %%%%%:  100-block 605
+    %%%%%:  100-block 606
+    %%%%%:  100-block 607
+    %%%%%:  100-block 608
+    %%%%%:  100-block 609
+    %%%%%:  100-block 610
+    %%%%%:  100-block 611
+    %%%%%:  100-block 612
+    %%%%%:  100-block 613
+    %%%%%:  100-block 614
+    %%%%%:  100-block 615
+    %%%%%:  100-block 616
+    %%%%%:  100-block 617
+    %%%%%:  100-block 618
+    %%%%%:  100-block 619
+    %%%%%:  100-block 620
+    %%%%%:  100-block 621
+    %%%%%:  100-block 622
+    %%%%%:  100-block 623
+    %%%%%:  100-block 624
+    %%%%%:  100-block 625
+    %%%%%:  100-block 626
+    %%%%%:  100-block 627
+    %%%%%:  100-block 628
+    %%%%%:  100-block 629
+    %%%%%:  100-block 630
+    %%%%%:  100-block 631
+    %%%%%:  100-block 632
+    %%%%%:  100-block 633
+    %%%%%:  100-block 634
+    %%%%%:  100-block 635
+    %%%%%:  100-block 636
+    %%%%%:  100-block 637
+    %%%%%:  100-block 638
+    %%%%%:  100-block 639
+    %%%%%:  100-block 640
+    %%%%%:  100-block 641
+    %%%%%:  100-block 642
+    %%%%%:  100-block 643
+    %%%%%:  100-block 644
+    %%%%%:  100-block 645
+    %%%%%:  100-block 646
+    %%%%%:  100-block 647
+    %%%%%:  100-block 648
+    %%%%%:  100-block 649
+    %%%%%:  100-block 650
+    %%%%%:  100-block 651
+    %%%%%:  100-block 652
+    %%%%%:  100-block 653
+    %%%%%:  100-block 654
+    %%%%%:  100-block 655
+    %%%%%:  100-block 656
+    %%%%%:  100-block 657
+    %%%%%:  100-block 658
+    %%%%%:  100-block 659
+    %%%%%:  100-block 660
+    %%%%%:  100-block 661
+    %%%%%:  100-block 662
+    %%%%%:  100-block 663
+    %%%%%:  100-block 664
+    %%%%%:  100-block 665
+    %%%%%:  100-block 666
+    %%%%%:  100-block 667
+    %%%%%:  100-block 668
+    %%%%%:  100-block 669
+    %%%%%:  100-block 670
+    %%%%%:  100-block 671
+    %%%%%:  100-block 672
+    %%%%%:  100-block 673
+    %%%%%:  100-block 674
+    %%%%%:  100-block 675
+    %%%%%:  100-block 676
+    %%%%%:  100-block 677
+    %%%%%:  100-block 678
+    %%%%%:  100-block 679
+    %%%%%:  100-block 680
+    %%%%%:  100-block 681
+    %%%%%:  100-block 682
+    %%%%%:  100-block 683
+    %%%%%:  100-block 684
+    %%%%%:  100-block 685
+    %%%%%:  100-block 686
+    %%%%%:  100-block 687
+    %%%%%:  100-block 688
+    %%%%%:  100-block 689
+    %%%%%:  100-block 690
+    %%%%%:  100-block 691
+    %%%%%:  100-block 692
+    %%%%%:  100-block 693
+    %%%%%:  100-block 694
+    %%%%%:  100-block 695
+    %%%%%:  100-block 696
+    %%%%%:  100-block 697
+    %%%%%:  100-block 698
+    %%%%%:  100-block 699
+    %%%%%:  100-block 700
+    %%%%%:  100-block 701
+    %%%%%:  100-block 702
+    %%%%%:  100-block 703
+    %%%%%:  100-block 704
+    %%%%%:  100-block 705
+    %%%%%:  100-block 706
+    %%%%%:  100-block 707
+    %%%%%:  100-block 708
+    %%%%%:  100-block 709
+    %%%%%:  100-block 710
+    %%%%%:  100-block 711
+    %%%%%:  100-block 712
+    %%%%%:  100-block 713
+    %%%%%:  100-block 714
+    %%%%%:  100-block 715
+    %%%%%:  100-block 716
+    %%%%%:  100-block 717
+    %%%%%:  100-block 718
+    %%%%%:  100-block 719
+    %%%%%:  100-block 720
+    %%%%%:  100-block 721
+    %%%%%:  100-block 722
+    %%%%%:  100-block 723
+    %%%%%:  100-block 724
+    %%%%%:  100-block 725
+    %%%%%:  100-block 726
+    %%%%%:  100-block 727
+    %%%%%:  100-block 728
+    %%%%%:  100-block 729
+    %%%%%:  100-block 730
+    %%%%%:  100-block 731
+    %%%%%:  100-block 732
+    %%%%%:  100-block 733
+    %%%%%:  100-block 734
+    %%%%%:  100-block 735
+    %%%%%:  100-block 736
+    %%%%%:  100-block 737
+    %%%%%:  100-block 738
+    %%%%%:  100-block 739
+    %%%%%:  100-block 740
+    %%%%%:  100-block 741
+    %%%%%:  100-block 742
+    %%%%%:  100-block 743
+    %%%%%:  100-block 744
+    %%%%%:  100-block 745
+    %%%%%:  100-block 746
+    %%%%%:  100-block 747
+    %%%%%:  100-block 748
+    %%%%%:  100-block 749
+    %%%%%:  100-block 750
+    %%%%%:  100-block 751
+    %%%%%:  100-block 752
+    %%%%%:  100-block 753
+    %%%%%:  100-block 754
+    %%%%%:  100-block 755
+    %%%%%:  100-block 756
+    %%%%%:  100-block 757
+    %%%%%:  100-block 758
+    %%%%%:  100-block 759
+    %%%%%:  100-block 760
+    %%%%%:  100-block 761
+    %%%%%:  100-block 762
+    %%%%%:  100-block 763
+    %%%%%:  100-block 764
+    %%%%%:  100-block 765
+    %%%%%:  100-block 766
+    %%%%%:  100-block 767
+    %%%%%:  100-block 768
+    %%%%%:  100-block 769
+    %%%%%:  100-block 770
+    %%%%%:  100-block 771
+    %%%%%:  100-block 772
+    %%%%%:  100-block 773
+    %%%%%:  100-block 774
+    %%%%%:  100-block 775
+    %%%%%:  100-block 776
+    %%%%%:  100-block 777
+    %%%%%:  100-block 778
+    %%%%%:  100-block 779
+    %%%%%:  100-block 780
+    %%%%%:  100-block 781
+    %%%%%:  100-block 782
+    %%%%%:  100-block 783
+    %%%%%:  100-block 784
+    %%%%%:  100-block 785
+    %%%%%:  100-block 786
+    %%%%%:  100-block 787
+    %%%%%:  100-block 788
+    %%%%%:  100-block 789
+    %%%%%:  100-block 790
+        -:  101:			__va_arg_pack ());
+        -:  102:}
+        -:  103:
+        -:  104:__fortify_function int
+        -:  105:printf (const char *__restrict __fmt, ...)
+        -:  106:{
+    #####:  107:  return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
+    %%%%%:  107-block  0
+    %%%%%:  107-block  1
+    %%%%%:  107-block  2
+    %%%%%:  107-block  3
+    %%%%%:  107-block  4
+    %%%%%:  107-block  5
+    %%%%%:  107-block  6
+    %%%%%:  107-block  7
+    %%%%%:  107-block  8
+    %%%%%:  107-block  9
+    %%%%%:  107-block 10
+    %%%%%:  107-block 11
+    %%%%%:  107-block 12
+    %%%%%:  107-block 13
+    %%%%%:  107-block 14
+    %%%%%:  107-block 15
+        -:  108:}
+        -:  109:# elif !defined __cplusplus
+        -:  110:#  define printf(...) \
+        -:  111:  __printf_chk (__USE_FORTIFY_LEVEL - 1, __VA_ARGS__)
+        -:  112:#  define fprintf(stream, ...) \
+        -:  113:  __fprintf_chk (stream, __USE_FORTIFY_LEVEL - 1, __VA_ARGS__)
+        -:  114:# endif
+        -:  115:
+        -:  116:__fortify_function int
+        -:  117:vprintf (const char *__restrict __fmt, __gnuc_va_list __ap)
+        -:  118:{
+        -:  119:#ifdef __USE_EXTERN_INLINES
+        -:  120:  return __vfprintf_chk (stdout, __USE_FORTIFY_LEVEL - 1, __fmt, __ap);
+        -:  121:#else
+        -:  122:  return __vprintf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __ap);
+        -:  123:#endif
+        -:  124:}
+        -:  125:
+        -:  126:__fortify_function int
+        -:  127:vfprintf (FILE *__restrict __stream,
+        -:  128:	  const char *__restrict __fmt, __gnuc_va_list __ap)
+        -:  129:{
+        -:  130:  return __vfprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt, __ap);
+        -:  131:}
+        -:  132:
+        -:  133:# ifdef __USE_XOPEN2K8
+        -:  134:extern int __dprintf_chk (int __fd, int __flag, const char *__restrict __fmt,
+        -:  135:			  ...) __attribute__ ((__format__ (__printf__, 3, 4)));
+        -:  136:extern int __vdprintf_chk (int __fd, int __flag,
+        -:  137:			   const char *__restrict __fmt, __gnuc_va_list __arg)
+        -:  138:     __attribute__ ((__format__ (__printf__, 3, 0)));
+        -:  139:
+        -:  140:#  ifdef __va_arg_pack
+        -:  141:__fortify_function int
+        -:  142:dprintf (int __fd, const char *__restrict __fmt, ...)
+        -:  143:{
+        -:  144:  return __dprintf_chk (__fd, __USE_FORTIFY_LEVEL - 1, __fmt,
+        -:  145:			__va_arg_pack ());
+        -:  146:}
+        -:  147:#  elif !defined __cplusplus
+        -:  148:#   define dprintf(fd, ...) \
+        -:  149:  __dprintf_chk (fd, __USE_FORTIFY_LEVEL - 1, __VA_ARGS__)
+        -:  150:#  endif
+        -:  151:
+        -:  152:__fortify_function int
+        -:  153:vdprintf (int __fd, const char *__restrict __fmt, __gnuc_va_list __ap)
+        -:  154:{
+        -:  155:  return __vdprintf_chk (__fd, __USE_FORTIFY_LEVEL - 1, __fmt, __ap);
+        -:  156:}
+        -:  157:# endif
+        -:  158:
+        -:  159:# ifdef __USE_GNU
+        -:  160:
+        -:  161:extern int __asprintf_chk (char **__restrict __ptr, int __flag,
+        -:  162:			   const char *__restrict __fmt, ...)
+        -:  163:     __THROW __attribute__ ((__format__ (__printf__, 3, 4))) __wur;
+        -:  164:extern int __vasprintf_chk (char **__restrict __ptr, int __flag,
+        -:  165:			    const char *__restrict __fmt, __gnuc_va_list __arg)
+        -:  166:     __THROW __attribute__ ((__format__ (__printf__, 3, 0))) __wur;
+        -:  167:extern int __obstack_printf_chk (struct obstack *__restrict __obstack,
+        -:  168:				 int __flag, const char *__restrict __format,
+        -:  169:				 ...)
+        -:  170:     __THROW __attribute__ ((__format__ (__printf__, 3, 4)));
+        -:  171:extern int __obstack_vprintf_chk (struct obstack *__restrict __obstack,
+        -:  172:				  int __flag,
+        -:  173:				  const char *__restrict __format,
+        -:  174:				  __gnuc_va_list __args)
+        -:  175:     __THROW __attribute__ ((__format__ (__printf__, 3, 0)));
+        -:  176:
+        -:  177:#  ifdef __va_arg_pack
+        -:  178:__fortify_function int
+        -:  179:__NTH (asprintf (char **__restrict __ptr, const char *__restrict __fmt, ...))
+        -:  180:{
+        -:  181:  return __asprintf_chk (__ptr, __USE_FORTIFY_LEVEL - 1, __fmt,
+        -:  182:			 __va_arg_pack ());
+        -:  183:}
+        -:  184:
+        -:  185:__fortify_function int
+        -:  186:__NTH (__asprintf (char **__restrict __ptr, const char *__restrict __fmt,
+        -:  187:		   ...))
+        -:  188:{
+        -:  189:  return __asprintf_chk (__ptr, __USE_FORTIFY_LEVEL - 1, __fmt,
+        -:  190:			 __va_arg_pack ());
+        -:  191:}
+        -:  192:
+        -:  193:__fortify_function int
+        -:  194:__NTH (obstack_printf (struct obstack *__restrict __obstack,
+        -:  195:		       const char *__restrict __fmt, ...))
+        -:  196:{
+        -:  197:  return __obstack_printf_chk (__obstack, __USE_FORTIFY_LEVEL - 1, __fmt,
+        -:  198:			       __va_arg_pack ());
+        -:  199:}
+        -:  200:#  elif !defined __cplusplus
+        -:  201:#   define asprintf(ptr, ...) \
+        -:  202:  __asprintf_chk (ptr, __USE_FORTIFY_LEVEL - 1, __VA_ARGS__)
+        -:  203:#   define __asprintf(ptr, ...) \
+        -:  204:  __asprintf_chk (ptr, __USE_FORTIFY_LEVEL - 1, __VA_ARGS__)
+        -:  205:#   define obstack_printf(obstack, ...) \
+        -:  206:  __obstack_printf_chk (obstack, __USE_FORTIFY_LEVEL - 1, __VA_ARGS__)
+        -:  207:#  endif
+        -:  208:
+        -:  209:__fortify_function int
+        -:  210:__NTH (vasprintf (char **__restrict __ptr, const char *__restrict __fmt,
+        -:  211:		  __gnuc_va_list __ap))
+        -:  212:{
+        -:  213:  return __vasprintf_chk (__ptr, __USE_FORTIFY_LEVEL - 1, __fmt, __ap);
+        -:  214:}
+        -:  215:
+        -:  216:__fortify_function int
+        -:  217:__NTH (obstack_vprintf (struct obstack *__restrict __obstack,
+        -:  218:			const char *__restrict __fmt, __gnuc_va_list __ap))
+        -:  219:{
+        -:  220:  return __obstack_vprintf_chk (__obstack, __USE_FORTIFY_LEVEL - 1, __fmt,
+        -:  221:				__ap);
+        -:  222:}
+        -:  223:
+        -:  224:# endif
+        -:  225:
+        -:  226:#endif
+        -:  227:
+        -:  228:#if __GLIBC_USE (DEPRECATED_GETS)
+        -:  229:extern char *__gets_chk (char *__str, size_t) __wur;
+        -:  230:extern char *__REDIRECT (__gets_warn, (char *__str), gets)
+        -:  231:     __wur __warnattr ("please use fgets or getline instead, gets can't "
+        -:  232:		       "specify buffer size");
+        -:  233:
+        -:  234:__fortify_function __wur char *
+        -:  235:gets (char *__str)
+        -:  236:{
+        -:  237:  if (__bos (__str) != (size_t) -1)
+        -:  238:    return __gets_chk (__str, __bos (__str));
+        -:  239:  return __gets_warn (__str);
+        -:  240:}
+        -:  241:#endif
+        -:  242:
+        -:  243:extern char *__fgets_chk (char *__restrict __s, size_t __size, int __n,
+        -:  244:			  FILE *__restrict __stream) __wur;
+        -:  245:extern char *__REDIRECT (__fgets_alias,
+        -:  246:			 (char *__restrict __s, int __n,
+        -:  247:			  FILE *__restrict __stream), fgets) __wur;
+        -:  248:extern char *__REDIRECT (__fgets_chk_warn,
+        -:  249:			 (char *__restrict __s, size_t __size, int __n,
+        -:  250:			  FILE *__restrict __stream), __fgets_chk)
+        -:  251:     __wur __warnattr ("fgets called with bigger size than length "
+        -:  252:		       "of destination buffer");
+        -:  253:
+        -:  254:__fortify_function __wur char *
+        -:  255:fgets (char *__restrict __s, int __n, FILE *__restrict __stream)
+        -:  256:{
+    #####:  257:  if (__bos (__s) != (size_t) -1)
+    %%%%%:  257-block  0
+    %%%%%:  257-block  1
+    %%%%%:  257-block  2
+        -:  258:    {
+    #####:  259:      if (!__builtin_constant_p (__n) || __n <= 0)
+        -:  260:	return __fgets_chk (__s, __bos (__s), __n, __stream);
+        -:  261:
+    #####:  262:      if ((size_t) __n > __bos (__s))
+    %%%%%:  262-block  0
+    %%%%%:  262-block  1
+    %%%%%:  262-block  2
+    #####:  263:	return __fgets_chk_warn (__s, __bos (__s), __n, __stream);
+    %%%%%:  263-block  0
+    %%%%%:  263-block  1
+    %%%%%:  263-block  2
+        -:  264:    }
+    #####:  265:  return __fgets_alias (__s, __n, __stream);
+    %%%%%:  265-block  0
+    %%%%%:  265-block  1
+    %%%%%:  265-block  2
+    %%%%%:  265-block  3
+    %%%%%:  265-block  4
+    %%%%%:  265-block  5
+    %%%%%:  265-block  6
+    %%%%%:  265-block  7
+    %%%%%:  265-block  8
+    %%%%%:  265-block  9
+        -:  266:}
+        -:  267:
+        -:  268:extern size_t __fread_chk (void *__restrict __ptr, size_t __ptrlen,
+        -:  269:			   size_t __size, size_t __n,
+        -:  270:			   FILE *__restrict __stream) __wur;
+        -:  271:extern size_t __REDIRECT (__fread_alias,
+        -:  272:			  (void *__restrict __ptr, size_t __size,
+        -:  273:			   size_t __n, FILE *__restrict __stream),
+        -:  274:			  fread) __wur;
+        -:  275:extern size_t __REDIRECT (__fread_chk_warn,
+        -:  276:			  (void *__restrict __ptr, size_t __ptrlen,
+        -:  277:			   size_t __size, size_t __n,
+        -:  278:			   FILE *__restrict __stream),
+        -:  279:			  __fread_chk)
+        -:  280:     __wur __warnattr ("fread called with bigger size * nmemb than length "
+        -:  281:		       "of destination buffer");
+        -:  282:
+        -:  283:__fortify_function __wur size_t
+        -:  284:fread (void *__restrict __ptr, size_t __size, size_t __n,
+        -:  285:       FILE *__restrict __stream)
+        -:  286:{
+        -:  287:  if (__bos0 (__ptr) != (size_t) -1)
+        -:  288:    {
+        -:  289:      if (!__builtin_constant_p (__size)
+        -:  290:	  || !__builtin_constant_p (__n)
+        -:  291:	  || (__size | __n) >= (((size_t) 1) << (8 * sizeof (size_t) / 2)))
+        -:  292:	return __fread_chk (__ptr, __bos0 (__ptr), __size, __n, __stream);
+        -:  293:
+        -:  294:      if (__size * __n > __bos0 (__ptr))
+        -:  295:	return __fread_chk_warn (__ptr, __bos0 (__ptr), __size, __n, __stream);
+        -:  296:    }
+        -:  297:  return __fread_alias (__ptr, __size, __n, __stream);
+        -:  298:}
+        -:  299:
+        -:  300:#ifdef __USE_GNU
+        -:  301:extern char *__fgets_unlocked_chk (char *__restrict __s, size_t __size,
+        -:  302:				   int __n, FILE *__restrict __stream) __wur;
+        -:  303:extern char *__REDIRECT (__fgets_unlocked_alias,
+        -:  304:			 (char *__restrict __s, int __n,
+        -:  305:			  FILE *__restrict __stream), fgets_unlocked) __wur;
+        -:  306:extern char *__REDIRECT (__fgets_unlocked_chk_warn,
+        -:  307:			 (char *__restrict __s, size_t __size, int __n,
+        -:  308:			  FILE *__restrict __stream), __fgets_unlocked_chk)
+        -:  309:     __wur __warnattr ("fgets_unlocked called with bigger size than length "
+        -:  310:		       "of destination buffer");
+        -:  311:
+        -:  312:__fortify_function __wur char *
+        -:  313:fgets_unlocked (char *__restrict __s, int __n, FILE *__restrict __stream)
+        -:  314:{
+        -:  315:  if (__bos (__s) != (size_t) -1)
+        -:  316:    {
+        -:  317:      if (!__builtin_constant_p (__n) || __n <= 0)
+        -:  318:	return __fgets_unlocked_chk (__s, __bos (__s), __n, __stream);
+        -:  319:
+        -:  320:      if ((size_t) __n > __bos (__s))
+        -:  321:	return __fgets_unlocked_chk_warn (__s, __bos (__s), __n, __stream);
+        -:  322:    }
+        -:  323:  return __fgets_unlocked_alias (__s, __n, __stream);
+        -:  324:}
+        -:  325:#endif
+        -:  326:
+        -:  327:#ifdef __USE_MISC
+        -:  328:# undef fread_unlocked
+        -:  329:extern size_t __fread_unlocked_chk (void *__restrict __ptr, size_t __ptrlen,
+        -:  330:				    size_t __size, size_t __n,
+        -:  331:				    FILE *__restrict __stream) __wur;
+        -:  332:extern size_t __REDIRECT (__fread_unlocked_alias,
+        -:  333:			  (void *__restrict __ptr, size_t __size,
+        -:  334:			   size_t __n, FILE *__restrict __stream),
+        -:  335:			  fread_unlocked) __wur;
+        -:  336:extern size_t __REDIRECT (__fread_unlocked_chk_warn,
+        -:  337:			  (void *__restrict __ptr, size_t __ptrlen,
+        -:  338:			   size_t __size, size_t __n,
+        -:  339:			   FILE *__restrict __stream),
+        -:  340:			  __fread_unlocked_chk)
+        -:  341:     __wur __warnattr ("fread_unlocked called with bigger size * nmemb than "
+        -:  342:		       "length of destination buffer");
+        -:  343:
+        -:  344:__fortify_function __wur size_t
+        -:  345:fread_unlocked (void *__restrict __ptr, size_t __size, size_t __n,
+        -:  346:		FILE *__restrict __stream)
+        -:  347:{
+        -:  348:  if (__bos0 (__ptr) != (size_t) -1)
+        -:  349:    {
+        -:  350:      if (!__builtin_constant_p (__size)
+        -:  351:	  || !__builtin_constant_p (__n)
+        -:  352:	  || (__size | __n) >= (((size_t) 1) << (8 * sizeof (size_t) / 2)))
+        -:  353:	return __fread_unlocked_chk (__ptr, __bos0 (__ptr), __size, __n,
+        -:  354:				     __stream);
+        -:  355:
+        -:  356:      if (__size * __n > __bos0 (__ptr))
+        -:  357:	return __fread_unlocked_chk_warn (__ptr, __bos0 (__ptr), __size, __n,
+        -:  358:					  __stream);
+        -:  359:    }
+        -:  360:
+        -:  361:# ifdef __USE_EXTERN_INLINES
+        -:  362:  if (__builtin_constant_p (__size)
+        -:  363:      && __builtin_constant_p (__n)
+        -:  364:      && (__size | __n) < (((size_t) 1) << (8 * sizeof (size_t) / 2))
+        -:  365:      && __size * __n <= 8)
+        -:  366:    {
+        -:  367:      size_t __cnt = __size * __n;
+        -:  368:      char *__cptr = (char *) __ptr;
+        -:  369:      if (__cnt == 0)
+        -:  370:	return 0;
+        -:  371:
+        -:  372:      for (; __cnt > 0; --__cnt)
+        -:  373:	{
+        -:  374:	  int __c = getc_unlocked (__stream);
+        -:  375:	  if (__c == EOF)
+        -:  376:	    break;
+        -:  377:	  *__cptr++ = __c;
+        -:  378:	}
+        -:  379:      return (__cptr - (char *) __ptr) / __size;
+        -:  380:    }
+        -:  381:# endif
+        -:  382:  return __fread_unlocked_alias (__ptr, __size, __n, __stream);
+        -:  383:}
+        -:  384:#endif
+        -:  385:
+        -:  386:#endif /* bits/stdio2.h.  */

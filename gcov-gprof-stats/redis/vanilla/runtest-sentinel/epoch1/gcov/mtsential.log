@@ -1,0 +1,114 @@
+cd src && make test-sentinel
+make[1]: Entering directory '/benchmark-scripts/redis-src/src'
+Starting sentinel #0 at port 20000
+Starting sentinel #1 at port 20001
+Starting sentinel #2 at port 20002
+Starting sentinel #3 at port 20003
+Starting sentinel #4 at port 20004
+Starting redis #0 at port 30000
+Starting redis #1 at port 30001
+Starting redis #2 at port 30002
+Starting redis #3 at port 30003
+Starting redis #4 at port 30004
+Testing unit: 00-base.tcl
+21:00:01> (init) Restart killed instances: OK
+21:00:01> (init) Remove old master entry from sentinels: OK
+21:00:01> (init) Create a master-slaves cluster of 5 instances: OK
+21:00:02> (init) Sentinels can start monitoring a master: OK
+21:00:03> (init) Sentinels can talk with the master: OK
+21:00:03> (init) Sentinels are able to auto-discover other sentinels: OK
+21:00:04> (init) Sentinels are able to auto-discover slaves: OK
+21:00:04> Basic failover works if the master is down: OK
+21:00:08> New master 127.0.0.1:30002 role matches: OK
+21:00:08> All the other slaves now point to the new master: OK
+21:00:08> The old master eventually gets reconfigured as a slave: OK
+21:00:19> ODOWN is not possible without N (quorum) Sentinels reports: OK
+21:00:19> Failover is not possible without majority agreement: OK
+21:00:23> Failover works if we configure for absolute agreement: OK
+21:00:28> New master 127.0.0.1:30003 role matches: OK
+Testing unit: 01-conf-update.tcl
+21:00:28> (init) Restart killed instances: OK
+21:00:28> (init) Remove old master entry from sentinels: OK
+21:00:28> (init) Create a master-slaves cluster of 5 instances: OK
+21:00:29> (init) Sentinels can start monitoring a master: OK
+21:00:29> (init) Sentinels can talk with the master: OK
+21:00:29> (init) Sentinels are able to auto-discover other sentinels: OK
+21:00:31> (init) Sentinels are able to auto-discover slaves: OK
+21:00:31> We can failover with Sentinel 1 crashed: OK
+21:00:35> After Sentinel 1 is restarted, its config gets updated: OK
+21:00:36> New master 127.0.0.1:30003 role matches: OK
+Testing unit: 02-slaves-reconf.tcl
+21:00:36> (init) Restart killed instances: OK
+21:00:36> (init) Remove old master entry from sentinels: OK
+21:00:36> (init) Create a master-slaves cluster of 5 instances: OK
+21:00:37> (init) Sentinels can start monitoring a master: OK
+21:00:37> (init) Sentinels can talk with the master: OK
+21:00:37> (init) Sentinels are able to auto-discover other sentinels: OK
+21:00:39> (init) Sentinels are able to auto-discover slaves: OK
+21:00:39> Check that slaves replicate from current master: OK
+21:00:39> Crash the master and force a failover: OK
+21:00:42> Check that slaves replicate from current master: OK
+21:00:43> Kill a slave instance: OK
+21:00:44> Crash the master and force a failover: OK
+21:00:47> Check that slaves replicate from current master: OK
+21:00:59> Wait for failover to end: OK
+21:00:59> Restart killed slave and test replication of slaves again...: OK
+21:00:59> Check that slaves replicate from current master: OK
+Testing unit: 03-runtime-reconf.tcl
+Testing unit: 04-slave-selection.tcl
+Testing unit: 05-manual.tcl
+21:01:20> (init) Restart killed instances: OK
+21:01:20> (init) Remove old master entry from sentinels: OK
+21:01:20> (init) Create a master-slaves cluster of 5 instances: OK
+21:01:21> (init) Sentinels can start monitoring a master: OK
+21:01:21> (init) Sentinels can talk with the master: OK
+21:01:21> (init) Sentinels are able to auto-discover other sentinels: OK
+21:01:23> (init) Sentinels are able to auto-discover slaves: OK
+21:01:23> Manual failover works: OK
+21:01:24> New master 127.0.0.1:30004 role matches: OK
+21:01:24> All the other slaves now point to the new master: OK
+21:01:24> The old master eventually gets reconfigured as a slave: OK
+Testing unit: 06-ckquorum.tcl
+21:01:34> (init) Restart killed instances: OK
+21:01:34> (init) Remove old master entry from sentinels: OK
+21:01:35> (init) Create a master-slaves cluster of 5 instances: OK
+21:01:36> (init) Sentinels can start monitoring a master: OK
+21:01:36> (init) Sentinels can talk with the master: OK
+21:01:36> (init) Sentinels are able to auto-discover other sentinels: OK
+21:01:38> (init) Sentinels are able to auto-discover slaves: OK
+21:01:38> CKQUORUM reports OK and the right amount of Sentinels: OK
+21:01:38> CKQUORUM detects quorum cannot be reached: OK
+21:01:38> CKQUORUM detects failover authorization cannot be reached: OK
+Testing unit: 07-down-conditions.tcl
+21:01:46> (init) Restart killed instances: OK
+21:01:46> (init) Remove old master entry from sentinels: OK
+21:01:46> (init) Create a master-slaves cluster of 5 instances: OK
+21:01:46> (init) Sentinels can start monitoring a master: OK
+21:01:47> (init) Sentinels can talk with the master: OK
+21:01:47> (init) Sentinels are able to auto-discover other sentinels: OK
+21:01:49> (init) Sentinels are able to auto-discover slaves: OK
+21:01:49> Crash the majority of Sentinels to prevent failovers for this unit: OK
+21:01:51> SDOWN is triggered by non-responding but not crashed instance: couldn't execute "../../../src/redis-cli": no such file or directory
+    while executing
+"exec ../../../src/redis-cli -h $host -p $port debug sleep 10 > /dev/null &"
+    ("uplevel" body line 4)
+    invoked from within
+"uplevel 1 $code"
+    (procedure "test" line 6)
+    invoked from within
+"test "SDOWN is triggered by non-responding but not crashed instance" {
+    lassign [S 4 SENTINEL GET-MASTER-ADDR-BY-NAME mymaster] host port
+    ensur..."
+    (file "../tests/07-down-conditions.tcl" line 28)
+    invoked from within
+"source $test"
+    (procedure "run_tests" line 9)
+    invoked from within
+"run_tests"
+    (procedure "main" line 5)
+    invoked from within
+"main"
+Cleaning up...
+make[1]: *** [Makefile:245: test-sentinel] Error 1
+make[1]: Leaving directory '/benchmark-scripts/redis-src/src'
+make: *** [Makefile:6: test-sentinel] Error 2

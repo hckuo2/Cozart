@@ -1,0 +1,4725 @@
+AUTHORS.gcno:cannot open notes file
+AUTHORS.gcda:cannot open data file, assuming not executed
+BUILD.gcno:cannot open notes file
+BUILD.gcda:cannot open data file, assuming not executed
+CONTRIBUTING.gcno:cannot open notes file
+CONTRIBUTING.gcda:cannot open data file, assuming not executed
+COPYING.gcno:cannot open notes file
+COPYING.gcda:cannot open data file, assuming not executed
+ChangeLog.gcno:cannot open notes file
+ChangeLog.gcda:cannot open data file, assuming not executed
+Doxyfile.gcno:cannot open notes file
+Doxyfile.gcda:cannot open data file, assuming not executed
+HACKING.gcno:cannot open notes file
+HACKING.gcda:cannot open data file, assuming not executed
+LICENSE.gcno:cannot open notes file
+LICENSE.gcda:cannot open data file, assuming not executed
+LICENSE.gcno:cannot open notes file
+LICENSE.gcda:cannot open data file, assuming not executed
+LICENSE.gcno:cannot open notes file
+LICENSE.gcda:cannot open data file, assuming not executed
+Makefile.gcno:cannot open notes file
+Makefile.gcda:cannot open data file, assuming not executed
+Makefile.gcno:cannot open notes file
+Makefile.gcda:cannot open data file, assuming not executed
+Makefile.gcno:cannot open notes file
+Makefile.gcda:cannot open data file, assuming not executed
+NEWS.gcno:cannot open notes file
+NEWS.gcda:cannot open data file, assuming not executed
+README.gcno:cannot open notes file
+README.gcda:cannot open data file, assuming not executed
+aclocal.gcno:cannot open notes file
+aclocal.gcda:cannot open data file, assuming not executed
+assoc.c.gcno:cannot open notes file
+assoc.c.gcda:cannot open data file, assuming not executed
+authfile.c.gcno:cannot open notes file
+authfile.c.gcda:cannot open data file, assuming not executed
+autogen.gcno:cannot open notes file
+autogen.gcda:cannot open data file, assuming not executed
+autom4te.gcno:cannot open notes file
+autom4te.gcda:cannot open data file, assuming not executed
+bipbuffer.c.gcno:cannot open notes file
+bipbuffer.c.gcda:cannot open data file, assuming not executed
+byteswap.h.gcno:cannot open notes file
+byteswap.h.gcda:cannot open data file, assuming not executed
+cache.c.gcno:cannot open notes file
+cache.c.gcda:cannot open data file, assuming not executed
+compile.gcno:cannot open notes file
+compile.gcda:cannot open data file, assuming not executed
+config.gcno:cannot open notes file
+config.gcda:cannot open data file, assuming not executed
+config.gcno:cannot open notes file
+config.gcda:cannot open data file, assuming not executed
+config.h.gcno:cannot open notes file
+config.h.gcda:cannot open data file, assuming not executed
+config.gcno:cannot open notes file
+config.gcda:cannot open data file, assuming not executed
+config.gcno:cannot open notes file
+config.gcda:cannot open data file, assuming not executed
+configure.gcno:cannot open notes file
+configure.gcda:cannot open data file, assuming not executed
+configure.gcno:cannot open notes file
+configure.gcda:cannot open data file, assuming not executed
+crawler.c.gcno:cannot open notes file
+crawler.c.gcda:cannot open data file, assuming not executed
+crc32c.gcno:cannot open notes file
+crc32c.gcda:cannot open data file, assuming not executed
+crc32c.gcno:cannot open notes file
+crc32c.gcda:cannot open data file, assuming not executed
+daemon.c.gcno:cannot open notes file
+daemon.c.gcda:cannot open data file, assuming not executed
+depcomp.gcno:cannot open notes file
+depcomp.gcda:cannot open data file, assuming not executed
+devtools.gcno:cannot open notes file
+devtools.gcda:cannot open data file, assuming not executed
+doc.gcno:cannot open notes file
+doc.gcda:cannot open data file, assuming not executed
+docker-compose.gcno:cannot open notes file
+docker-compose.gcda:cannot open data file, assuming not executed
+extstore.gcno:cannot open notes file
+extstore.gcda:cannot open data file, assuming not executed
+extstore.gcno:cannot open notes file
+extstore.gcda:cannot open data file, assuming not executed
+fcntl2.h.gcno:cannot open notes file
+fcntl2.h.gcda:cannot open data file, assuming not executed
+freebsd_priv.gcno:cannot open notes file
+freebsd_priv.gcda:cannot open data file, assuming not executed
+globals.gcno:cannot open notes file
+globals.gcda:cannot open data file, assuming not executed
+gmon.gcno:cannot open notes file
+gmon.gcda:cannot open data file, assuming not executed
+hash.c.gcno:cannot open notes file
+hash.c.gcda:cannot open data file, assuming not executed
+install-sh.gcno:cannot open notes file
+install-sh.gcda:cannot open data file, assuming not executed
+items.c.gcno:cannot open notes file
+items.c.gcda:cannot open data file, assuming not executed
+itoa_ljust.c.gcno:cannot open notes file
+itoa_ljust.c.gcda:cannot open data file, assuming not executed
+jenkins_hash.c.gcno:cannot open notes file
+jenkins_hash.c.gcda:cannot open data file, assuming not executed
+linux_priv.gcno:cannot open notes file
+linux_priv.gcda:cannot open data file, assuming not executed
+log.gcno:cannot open notes file
+log.gcda:cannot open data file, assuming not executed
+logger.c.gcno:cannot open notes file
+logger.c.gcda:cannot open data file, assuming not executed
+m4.gcno:cannot open notes file
+m4.gcda:cannot open data file, assuming not executed
+memcached-assoc.gcno:cannot open notes file
+memcached-assoc.gcda:cannot open data file, assuming not executed
+memcached-authfile.gcno:cannot open notes file
+memcached-authfile.gcda:cannot open data file, assuming not executed
+memcached-bipbuffer.gcno:cannot open notes file
+memcached-bipbuffer.gcda:cannot open data file, assuming not executed
+memcached-cache.gcno:cannot open notes file
+memcached-cache.gcda:cannot open data file, assuming not executed
+memcached-crawler.gcno:cannot open notes file
+memcached-crawler.gcda:cannot open data file, assuming not executed
+memcached-daemon.gcno:cannot open notes file
+memcached-daemon.gcda:cannot open data file, assuming not executed
+memcached-debug.gcno:cannot open notes file
+memcached-debug.gcda:cannot open data file, assuming not executed
+memcached-hash.gcno:cannot open notes file
+memcached-hash.gcda:cannot open data file, assuming not executed
+memcached-items.gcno:cannot open notes file
+memcached-items.gcda:cannot open data file, assuming not executed
+memcached-itoa_ljust.gcno:cannot open notes file
+memcached-itoa_ljust.gcda:cannot open data file, assuming not executed
+memcached-jenkins_hash.gcno:cannot open notes file
+memcached-jenkins_hash.gcda:cannot open data file, assuming not executed
+memcached-logger.gcno:cannot open notes file
+memcached-logger.gcda:cannot open data file, assuming not executed
+memcached-memcached.gcno:cannot open notes file
+memcached-memcached.gcda:cannot open data file, assuming not executed
+memcached-murmur3_hash.gcno:cannot open notes file
+memcached-murmur3_hash.gcda:cannot open data file, assuming not executed
+memcached-slab_automove.gcno:cannot open notes file
+memcached-slab_automove.gcda:cannot open data file, assuming not executed
+memcached-slabs.gcno:cannot open notes file
+memcached-slabs.gcda:cannot open data file, assuming not executed
+memcached-stats.gcno:cannot open notes file
+memcached-stats.gcda:cannot open data file, assuming not executed
+memcached-thread.gcno:cannot open notes file
+memcached-thread.gcda:cannot open data file, assuming not executed
+memcached-util.gcno:cannot open notes file
+memcached-util.gcda:cannot open data file, assuming not executed
+memcached.c.gcno:cannot open notes file
+memcached.c.gcda:cannot open data file, assuming not executed
+memcached.spec.gcno:cannot open notes file
+memcached.spec.gcda:cannot open data file, assuming not executed
+memcached_debug-assoc.gcno:cannot open notes file
+memcached_debug-assoc.gcda:cannot open data file, assuming not executed
+memcached_debug-authfile.gcno:cannot open notes file
+memcached_debug-authfile.gcda:cannot open data file, assuming not executed
+memcached_debug-bipbuffer.gcno:cannot open notes file
+memcached_debug-bipbuffer.gcda:cannot open data file, assuming not executed
+memcached_debug-cache.gcno:cannot open notes file
+memcached_debug-cache.gcda:cannot open data file, assuming not executed
+memcached_debug-crawler.gcno:cannot open notes file
+memcached_debug-crawler.gcda:cannot open data file, assuming not executed
+memcached_debug-daemon.gcno:cannot open notes file
+memcached_debug-daemon.gcda:cannot open data file, assuming not executed
+memcached_debug-hash.gcno:cannot open notes file
+memcached_debug-hash.gcda:cannot open data file, assuming not executed
+memcached_debug-items.gcno:cannot open notes file
+memcached_debug-items.gcda:cannot open data file, assuming not executed
+memcached_debug-itoa_ljust.gcno:cannot open notes file
+memcached_debug-itoa_ljust.gcda:cannot open data file, assuming not executed
+memcached_debug-jenkins_hash.gcno:cannot open notes file
+memcached_debug-jenkins_hash.gcda:cannot open data file, assuming not executed
+memcached_debug-logger.gcno:cannot open notes file
+memcached_debug-logger.gcda:cannot open data file, assuming not executed
+memcached_debug-memcached.gcno:cannot open notes file
+memcached_debug-memcached.gcda:cannot open data file, assuming not executed
+memcached_debug-murmur3_hash.gcno:cannot open notes file
+memcached_debug-murmur3_hash.gcda:cannot open data file, assuming not executed
+memcached_debug-slab_automove.gcno:cannot open notes file
+memcached_debug-slab_automove.gcda:cannot open data file, assuming not executed
+memcached_debug-slabs.gcno:cannot open notes file
+memcached_debug-slabs.gcda:cannot open data file, assuming not executed
+memcached_debug-stats.gcno:cannot open notes file
+memcached_debug-stats.gcda:cannot open data file, assuming not executed
+memcached_debug-thread.gcno:cannot open notes file
+memcached_debug-thread.gcda:cannot open data file, assuming not executed
+memcached_debug-util.gcno:cannot open notes file
+memcached_debug-util.gcda:cannot open data file, assuming not executed
+memcached_dtrace.gcno:cannot open notes file
+memcached_dtrace.gcda:cannot open data file, assuming not executed
+meta_memcached_virnila.gcno:cannot open notes file
+meta_memcached_virnila.gcda:cannot open data file, assuming not executed
+missing.gcno:cannot open notes file
+missing.gcda:cannot open data file, assuming not executed
+murmur3_hash.c.gcno:cannot open notes file
+murmur3_hash.c.gcda:cannot open data file, assuming not executed
+n.gcno:cannot open notes file
+n.gcda:cannot open data file, assuming not executed
+openbsd_priv.gcno:cannot open notes file
+openbsd_priv.gcda:cannot open data file, assuming not executed
+poll2.h.gcno:cannot open notes file
+poll2.h.gcda:cannot open data file, assuming not executed
+protocol_binary.gcno:cannot open notes file
+protocol_binary.gcda:cannot open data file, assuming not executed
+sasl_defs.gcno:cannot open notes file
+sasl_defs.gcda:cannot open data file, assuming not executed
+sasl_defs.gcno:cannot open notes file
+sasl_defs.gcda:cannot open data file, assuming not executed
+scripts.gcno:cannot open notes file
+scripts.gcda:cannot open data file, assuming not executed
+sizes.gcno:cannot open notes file
+sizes.gcda:cannot open data file, assuming not executed
+sizes.gcno:cannot open notes file
+sizes.gcda:cannot open data file, assuming not executed
+sizes.gcno:cannot open notes file
+sizes.gcda:cannot open data file, assuming not executed
+slab_automove.c.gcno:cannot open notes file
+slab_automove.c.gcda:cannot open data file, assuming not executed
+slab_automove_extstore.gcno:cannot open notes file
+slab_automove_extstore.gcda:cannot open data file, assuming not executed
+slab_automove_extstore.gcno:cannot open notes file
+slab_automove_extstore.gcda:cannot open data file, assuming not executed
+slabs.c.gcno:cannot open notes file
+slabs.c.gcda:cannot open data file, assuming not executed
+socket2.h.gcno:cannot open notes file
+socket2.h.gcda:cannot open data file, assuming not executed
+solaris_priv.gcno:cannot open notes file
+solaris_priv.gcda:cannot open data file, assuming not executed
+stamp-h1.gcno:cannot open notes file
+stamp-h1.gcda:cannot open data file, assuming not executed
+stat.h.gcno:cannot open notes file
+stat.h.gcda:cannot open data file, assuming not executed
+stats.c.gcno:cannot open notes file
+stats.c.gcda:cannot open data file, assuming not executed
+stdio2.h.gcno:cannot open notes file
+stdio2.h.gcda:cannot open data file, assuming not executed
+stdlib-float.h.gcno:cannot open notes file
+stdlib-float.h.gcda:cannot open data file, assuming not executed
+stdlib.h.gcno:cannot open notes file
+stdlib.h.gcda:cannot open data file, assuming not executed
+storage.gcno:cannot open notes file
+storage.gcda:cannot open data file, assuming not executed
+storage.gcno:cannot open notes file
+storage.gcda:cannot open data file, assuming not executed
+string_fortified.h.gcno:cannot open notes file
+string_fortified.h.gcda:cannot open data file, assuming not executed
+t.gcno:cannot open notes file
+t.gcda:cannot open data file, assuming not executed
+t.gcno:cannot open notes file
+t.gcda:cannot open data file, assuming not executed
+testapp.gcno:cannot open notes file
+testapp.gcda:cannot open data file, assuming not executed
+testapp.gcno:cannot open notes file
+testapp.gcda:cannot open data file, assuming not executed
+testapp.gcno:cannot open notes file
+testapp.gcda:cannot open data file, assuming not executed
+thread.c.gcno:cannot open notes file
+thread.c.gcda:cannot open data file, assuming not executed
+timedrun.gcno:cannot open notes file
+timedrun.gcda:cannot open data file, assuming not executed
+timedrun.gcno:cannot open notes file
+timedrun.gcda:cannot open data file, assuming not executed
+timedrun.gcno:cannot open notes file
+timedrun.gcda:cannot open data file, assuming not executed
+tls.gcno:cannot open notes file
+tls.gcda:cannot open data file, assuming not executed
+tls.gcno:cannot open notes file
+tls.gcda:cannot open data file, assuming not executed
+trace.gcno:cannot open notes file
+trace.gcda:cannot open data file, assuming not executed
+unistd.h.gcno:cannot open notes file
+unistd.h.gcda:cannot open data file, assuming not executed
+util.c.gcno:cannot open notes file
+util.c.gcda:cannot open data file, assuming not executed
+version.gcno:cannot open notes file
+version.gcda:cannot open data file, assuming not executed
+version.gcno:cannot open notes file
+version.gcda:cannot open data file, assuming not executed
+version.gcno:cannot open notes file
+version.gcda:cannot open data file, assuming not executed
+Function 'stop_assoc_maintenance_thread'
+No executable lines
+
+Function 'start_assoc_maintenance_thread'
+Lines executed:0.00% of 2
+
+Function 'assoc_maintenance_thread'
+No executable lines
+
+Function 'assoc_delete'
+No executable lines
+
+Function 'assoc_insert'
+No executable lines
+
+Function 'assoc_start_expand'
+No executable lines
+
+Function 'assoc_expand'
+No executable lines
+
+Function '_hashitem_before'
+No executable lines
+
+Function 'assoc_find'
+No executable lines
+
+Function 'assoc_init'
+No executable lines
+
+Function 'stop_assoc_maintenance_thread'
+No executable lines
+
+Function 'start_assoc_maintenance_thread'
+No executable lines
+
+Function 'assoc_maintenance_thread'
+No executable lines
+
+Function 'assoc_delete'
+No executable lines
+
+Function 'assoc_insert'
+No executable lines
+
+Function 'assoc_start_expand'
+No executable lines
+
+Function 'assoc_expand'
+No executable lines
+
+Function '_hashitem_before'
+No executable lines
+
+Function 'assoc_find'
+No executable lines
+
+Function 'assoc_init'
+No executable lines
+
+Function 'stop_assoc_maintenance_thread'
+No executable lines
+
+Function 'start_assoc_maintenance_thread'
+No executable lines
+
+Function 'assoc_maintenance_thread'
+No executable lines
+
+Function 'assoc_delete'
+No executable lines
+
+Function 'assoc_insert'
+No executable lines
+
+Function 'assoc_start_expand'
+No executable lines
+
+Function 'assoc_expand'
+No executable lines
+
+Function '_hashitem_before'
+No executable lines
+
+Function 'assoc_find'
+No executable lines
+
+Function 'assoc_init'
+No executable lines
+
+Function 'stop_assoc_maintenance_thread'
+No executable lines
+
+Function 'start_assoc_maintenance_thread'
+No executable lines
+
+Function 'assoc_maintenance_thread'
+No executable lines
+
+Function 'assoc_delete'
+No executable lines
+
+Function 'assoc_insert'
+No executable lines
+
+Function 'assoc_start_expand'
+No executable lines
+
+Function 'assoc_expand'
+No executable lines
+
+Function '_hashitem_before'
+No executable lines
+
+Function 'assoc_find'
+No executable lines
+
+Function 'assoc_init'
+No executable lines
+
+Function 'authfile_check'
+No executable lines
+
+Function 'authfile_load'
+Lines executed:57.14% of 7
+
+Function 'authfile_check'
+No executable lines
+
+Function 'authfile_load'
+No executable lines
+
+Function 'authfile_check'
+No executable lines
+
+Function 'authfile_load'
+No executable lines
+
+Function 'authfile_check'
+No executable lines
+
+Function 'authfile_load'
+No executable lines
+
+Function 'bipbuf_poll'
+Lines executed:100.00% of 3
+
+Function 'bipbuf_peek_all'
+No executable lines
+
+Function 'bipbuf_peek'
+No executable lines
+
+Function 'bipbuf_offer'
+Lines executed:66.67% of 3
+
+Function 'bipbuf_push'
+No executable lines
+
+Function 'bipbuf_request'
+No executable lines
+
+Function 'bipbuf_is_empty'
+No executable lines
+
+Function 'bipbuf_free'
+No executable lines
+
+Function 'bipbuf_new'
+Lines executed:100.00% of 4
+
+Function 'bipbuf_init'
+No executable lines
+
+Function 'bipbuf_used'
+No executable lines
+
+Function 'bipbuf_size'
+No executable lines
+
+Function 'bipbuf_unused'
+No executable lines
+
+Function 'bipbuf_poll'
+No executable lines
+
+Function 'bipbuf_peek_all'
+No executable lines
+
+Function 'bipbuf_peek'
+No executable lines
+
+Function 'bipbuf_offer'
+No executable lines
+
+Function 'bipbuf_push'
+No executable lines
+
+Function 'bipbuf_request'
+No executable lines
+
+Function 'bipbuf_is_empty'
+No executable lines
+
+Function 'bipbuf_free'
+No executable lines
+
+Function 'bipbuf_new'
+No executable lines
+
+Function 'bipbuf_init'
+No executable lines
+
+Function 'bipbuf_used'
+No executable lines
+
+Function 'bipbuf_size'
+No executable lines
+
+Function 'bipbuf_unused'
+No executable lines
+
+Function 'bipbuf_poll'
+No executable lines
+
+Function 'bipbuf_peek_all'
+No executable lines
+
+Function 'bipbuf_peek'
+No executable lines
+
+Function 'bipbuf_offer'
+No executable lines
+
+Function 'bipbuf_push'
+No executable lines
+
+Function 'bipbuf_request'
+No executable lines
+
+Function 'bipbuf_is_empty'
+No executable lines
+
+Function 'bipbuf_free'
+No executable lines
+
+Function 'bipbuf_new'
+No executable lines
+
+Function 'bipbuf_init'
+No executable lines
+
+Function 'bipbuf_used'
+No executable lines
+
+Function 'bipbuf_size'
+No executable lines
+
+Function 'bipbuf_unused'
+No executable lines
+
+Function 'bipbuf_poll'
+No executable lines
+
+Function 'bipbuf_peek_all'
+No executable lines
+
+Function 'bipbuf_peek'
+No executable lines
+
+Function 'bipbuf_offer'
+No executable lines
+
+Function 'bipbuf_push'
+No executable lines
+
+Function 'bipbuf_request'
+No executable lines
+
+Function 'bipbuf_is_empty'
+No executable lines
+
+Function 'bipbuf_free'
+No executable lines
+
+Function 'bipbuf_new'
+No executable lines
+
+Function 'bipbuf_init'
+No executable lines
+
+Function 'bipbuf_used'
+No executable lines
+
+Function 'bipbuf_size'
+No executable lines
+
+Function 'bipbuf_unused'
+No executable lines
+
+Function 'do_cache_free'
+No executable lines
+
+Function 'cache_free'
+No executable lines
+
+Function 'do_cache_alloc'
+Lines executed:100.00% of 2
+
+Function 'cache_alloc'
+No executable lines
+
+Function 'cache_destroy'
+No executable lines
+
+Function 'cache_create'
+No executable lines
+
+Function 'do_cache_free'
+No executable lines
+
+Function 'cache_free'
+No executable lines
+
+Function 'do_cache_alloc'
+No executable lines
+
+Function 'cache_alloc'
+No executable lines
+
+Function 'cache_destroy'
+No executable lines
+
+Function 'cache_create'
+No executable lines
+
+Function 'do_cache_free'
+No executable lines
+
+Function 'cache_free'
+No executable lines
+
+Function 'do_cache_alloc'
+No executable lines
+
+Function 'cache_alloc'
+No executable lines
+
+Function 'cache_destroy'
+No executable lines
+
+Function 'cache_create'
+No executable lines
+
+Function 'do_cache_free'
+No executable lines
+
+Function 'cache_free'
+No executable lines
+
+Function 'do_cache_alloc'
+No executable lines
+
+Function 'cache_alloc'
+No executable lines
+
+Function 'cache_destroy'
+No executable lines
+
+Function 'cache_create'
+No executable lines
+
+Function 'do_cache_free'
+No executable lines
+
+Function 'cache_free'
+No executable lines
+
+Function 'do_cache_alloc'
+No executable lines
+
+Function 'cache_alloc'
+No executable lines
+
+Function 'cache_destroy'
+No executable lines
+
+Function 'cache_create'
+No executable lines
+
+Function 'init_lru_crawler'
+No executable lines
+
+Function 'lru_crawler_resume'
+No executable lines
+
+Function 'lru_crawler_pause'
+No executable lines
+
+Function 'lru_crawler_crawl'
+Lines executed:100.00% of 1
+
+Function 'lru_crawler_start'
+Lines executed:100.00% of 6
+
+Function 'do_lru_crawler_start'
+No executable lines
+
+Function 'start_item_crawler_thread'
+No executable lines
+
+Function 'stop_item_crawler_thread'
+No executable lines
+
+Function 'item_crawler_thread'
+No executable lines
+
+Function 'lru_crawler_class_done'
+No executable lines
+
+Function 'lru_crawler_client_getbuf'
+No executable lines
+
+Function 'lru_crawler_poll'
+Lines executed:100.00% of 4
+
+Function 'crawler_metadump_finalize'
+No executable lines
+
+Function 'crawler_metadump_eval'
+Lines executed:100.00% of 1
+
+Function 'crawler_expired_eval'
+No executable lines
+
+Function 'crawler_expired_finalize'
+No executable lines
+
+Function 'crawler_expired_doneclass'
+No executable lines
+
+Function 'crawler_expired_init'
+No executable lines
+
+Function 'lru_crawler_release_client'
+No executable lines
+
+Function 'lru_crawler_close_client'
+No executable lines
+
+Function 'init_lru_crawler'
+No executable lines
+
+Function 'lru_crawler_resume'
+No executable lines
+
+Function 'lru_crawler_pause'
+No executable lines
+
+Function 'lru_crawler_crawl'
+No executable lines
+
+Function 'lru_crawler_start'
+No executable lines
+
+Function 'do_lru_crawler_start'
+No executable lines
+
+Function 'start_item_crawler_thread'
+No executable lines
+
+Function 'stop_item_crawler_thread'
+No executable lines
+
+Function 'item_crawler_thread'
+No executable lines
+
+Function 'lru_crawler_class_done'
+No executable lines
+
+Function 'lru_crawler_client_getbuf'
+No executable lines
+
+Function 'lru_crawler_poll'
+No executable lines
+
+Function 'crawler_metadump_finalize'
+No executable lines
+
+Function 'crawler_metadump_eval'
+No executable lines
+
+Function 'crawler_expired_eval'
+No executable lines
+
+Function 'crawler_expired_finalize'
+No executable lines
+
+Function 'crawler_expired_doneclass'
+No executable lines
+
+Function 'crawler_expired_init'
+No executable lines
+
+Function 'lru_crawler_release_client'
+No executable lines
+
+Function 'lru_crawler_close_client'
+No executable lines
+
+Function 'init_lru_crawler'
+No executable lines
+
+Function 'lru_crawler_resume'
+No executable lines
+
+Function 'lru_crawler_pause'
+No executable lines
+
+Function 'lru_crawler_crawl'
+No executable lines
+
+Function 'lru_crawler_start'
+No executable lines
+
+Function 'do_lru_crawler_start'
+No executable lines
+
+Function 'start_item_crawler_thread'
+No executable lines
+
+Function 'stop_item_crawler_thread'
+No executable lines
+
+Function 'item_crawler_thread'
+No executable lines
+
+Function 'lru_crawler_class_done'
+No executable lines
+
+Function 'lru_crawler_client_getbuf'
+No executable lines
+
+Function 'lru_crawler_poll'
+No executable lines
+
+Function 'crawler_metadump_finalize'
+No executable lines
+
+Function 'crawler_metadump_eval'
+No executable lines
+
+Function 'crawler_expired_eval'
+No executable lines
+
+Function 'crawler_expired_finalize'
+No executable lines
+
+Function 'crawler_expired_doneclass'
+No executable lines
+
+Function 'crawler_expired_init'
+No executable lines
+
+Function 'lru_crawler_release_client'
+No executable lines
+
+Function 'lru_crawler_close_client'
+No executable lines
+
+Function 'init_lru_crawler'
+No executable lines
+
+Function 'lru_crawler_resume'
+No executable lines
+
+Function 'lru_crawler_pause'
+No executable lines
+
+Function 'lru_crawler_crawl'
+No executable lines
+
+Function 'lru_crawler_start'
+No executable lines
+
+Function 'do_lru_crawler_start'
+No executable lines
+
+Function 'start_item_crawler_thread'
+No executable lines
+
+Function 'stop_item_crawler_thread'
+No executable lines
+
+Function 'item_crawler_thread'
+No executable lines
+
+Function 'lru_crawler_class_done'
+No executable lines
+
+Function 'lru_crawler_client_getbuf'
+No executable lines
+
+Function 'lru_crawler_poll'
+No executable lines
+
+Function 'crawler_metadump_finalize'
+No executable lines
+
+Function 'crawler_metadump_eval'
+No executable lines
+
+Function 'crawler_expired_eval'
+No executable lines
+
+Function 'crawler_expired_finalize'
+No executable lines
+
+Function 'crawler_expired_doneclass'
+No executable lines
+
+Function 'crawler_expired_init'
+No executable lines
+
+Function 'lru_crawler_release_client'
+No executable lines
+
+Function 'lru_crawler_close_client'
+No executable lines
+
+Function 'daemonize'
+Lines executed:100.00% of 4
+
+Function 'daemonize'
+No executable lines
+
+Function 'daemonize'
+No executable lines
+
+Function 'hash_init'
+No executable lines
+
+Function 'hash_init'
+No executable lines
+
+Function 'hash_init'
+No executable lines
+
+Function 'hash_init'
+No executable lines
+
+Function 'do_item_crawl_q'
+No executable lines
+
+Function 'do_item_unlinktail_q'
+No executable lines
+
+Function 'do_item_linktail_q'
+No executable lines
+
+Function 'init_lru_maintainer'
+No executable lines
+
+Function 'lru_maintainer_resume'
+No executable lines
+
+Function 'lru_maintainer_pause'
+No executable lines
+
+Function 'start_lru_maintainer_thread'
+No executable lines
+
+Function 'stop_lru_maintainer_thread'
+No executable lines
+
+Function 'lru_maintainer_thread'
+No executable lines
+
+Function 'lru_maintainer_crawler_check'
+No executable lines
+
+Function 'lru_maintainer_juggle'
+Lines executed:100.00% of 7
+
+Function 'lru_total_bumps_dropped'
+No executable lines
+
+Function 'lru_maintainer_bumps'
+No executable lines
+
+Function 'lru_bump_async'
+No executable lines
+
+Function 'item_lru_bump_buf_create'
+No executable lines
+
+Function 'lru_bump_buf_link_q'
+No executable lines
+
+Function 'lru_pull_tail'
+No executable lines
+
+Function 'do_item_touch'
+No executable lines
+
+Function 'do_item_get'
+No executable lines
+
+Function 'item_stats_sizes'
+No executable lines
+
+Function 'item_stats_sizes_remove'
+No executable lines
+
+Function 'item_stats_sizes_add'
+No executable lines
+
+Function 'item_stats_sizes_disable'
+No executable lines
+
+Function 'item_stats_sizes_enable'
+No executable lines
+
+Function 'item_stats_sizes_init'
+No executable lines
+
+Function 'item_stats_sizes_status'
+No executable lines
+
+Function 'item_stats'
+No executable lines
+
+Function 'item_stats_totals'
+No executable lines
+
+Function 'fill_item_stats_automove'
+No executable lines
+
+Function 'item_cachedump'
+Lines executed:100.00% of 1
+
+Function 'do_item_replace'
+No executable lines
+
+Function 'do_item_update'
+No executable lines
+
+Function 'do_item_update_nolock'
+No executable lines
+
+Function 'do_item_remove'
+No executable lines
+
+Function 'do_item_unlink_nolock'
+No executable lines
+
+Function 'do_item_unlink'
+No executable lines
+
+Function 'do_item_link'
+No executable lines
+
+Function 'item_unlink_q'
+No executable lines
+
+Function 'do_item_unlink_q'
+No executable lines
+
+Function 'item_link_q_warm'
+No executable lines
+
+Function 'item_link_q'
+No executable lines
+
+Function 'do_item_link_q'
+No executable lines
+
+Function 'item_size_ok'
+Lines executed:100.00% of 3
+
+Function 'item_free'
+No executable lines
+
+Function 'do_item_alloc'
+No executable lines
+
+Function 'do_item_alloc_chunk'
+No executable lines
+
+Function 'do_item_alloc_pull'
+No executable lines
+
+Function 'do_get_lru_size'
+No executable lines
+
+Function 'item_is_flushed'
+No executable lines
+
+Function 'get_cas_id'
+No executable lines
+
+Function 'do_item_stats_add_crawl'
+No executable lines
+
+Function 'item_stats_reset'
+No executable lines
+
+Function 'do_item_crawl_q'
+No executable lines
+
+Function 'do_item_unlinktail_q'
+No executable lines
+
+Function 'do_item_linktail_q'
+No executable lines
+
+Function 'init_lru_maintainer'
+No executable lines
+
+Function 'lru_maintainer_resume'
+No executable lines
+
+Function 'lru_maintainer_pause'
+No executable lines
+
+Function 'start_lru_maintainer_thread'
+No executable lines
+
+Function 'stop_lru_maintainer_thread'
+No executable lines
+
+Function 'lru_maintainer_thread'
+No executable lines
+
+Function 'lru_maintainer_crawler_check'
+No executable lines
+
+Function 'lru_maintainer_juggle'
+No executable lines
+
+Function 'lru_total_bumps_dropped'
+No executable lines
+
+Function 'lru_maintainer_bumps'
+No executable lines
+
+Function 'lru_bump_async'
+No executable lines
+
+Function 'item_lru_bump_buf_create'
+No executable lines
+
+Function 'lru_bump_buf_link_q'
+No executable lines
+
+Function 'lru_pull_tail'
+No executable lines
+
+Function 'do_item_touch'
+No executable lines
+
+Function 'do_item_get'
+No executable lines
+
+Function 'item_stats_sizes'
+No executable lines
+
+Function 'item_stats_sizes_remove'
+No executable lines
+
+Function 'item_stats_sizes_add'
+No executable lines
+
+Function 'item_stats_sizes_disable'
+No executable lines
+
+Function 'item_stats_sizes_enable'
+No executable lines
+
+Function 'item_stats_sizes_init'
+No executable lines
+
+Function 'item_stats_sizes_status'
+No executable lines
+
+Function 'item_stats'
+No executable lines
+
+Function 'item_stats_totals'
+No executable lines
+
+Function 'fill_item_stats_automove'
+No executable lines
+
+Function 'item_cachedump'
+No executable lines
+
+Function 'do_item_replace'
+No executable lines
+
+Function 'do_item_update'
+No executable lines
+
+Function 'do_item_update_nolock'
+No executable lines
+
+Function 'do_item_remove'
+No executable lines
+
+Function 'do_item_unlink_nolock'
+No executable lines
+
+Function 'do_item_unlink'
+No executable lines
+
+Function 'do_item_link'
+No executable lines
+
+Function 'item_unlink_q'
+No executable lines
+
+Function 'do_item_unlink_q'
+No executable lines
+
+Function 'item_link_q_warm'
+No executable lines
+
+Function 'item_link_q'
+No executable lines
+
+Function 'do_item_link_q'
+No executable lines
+
+Function 'item_size_ok'
+No executable lines
+
+Function 'item_free'
+No executable lines
+
+Function 'do_item_alloc'
+No executable lines
+
+Function 'do_item_alloc_chunk'
+No executable lines
+
+Function 'do_item_alloc_pull'
+No executable lines
+
+Function 'do_get_lru_size'
+No executable lines
+
+Function 'item_is_flushed'
+No executable lines
+
+Function 'get_cas_id'
+No executable lines
+
+Function 'do_item_stats_add_crawl'
+No executable lines
+
+Function 'item_stats_reset'
+No executable lines
+
+Function 'do_item_crawl_q'
+No executable lines
+
+Function 'do_item_unlinktail_q'
+No executable lines
+
+Function 'do_item_linktail_q'
+No executable lines
+
+Function 'init_lru_maintainer'
+No executable lines
+
+Function 'lru_maintainer_resume'
+No executable lines
+
+Function 'lru_maintainer_pause'
+No executable lines
+
+Function 'start_lru_maintainer_thread'
+No executable lines
+
+Function 'stop_lru_maintainer_thread'
+No executable lines
+
+Function 'lru_maintainer_thread'
+No executable lines
+
+Function 'lru_maintainer_crawler_check'
+No executable lines
+
+Function 'lru_maintainer_juggle'
+No executable lines
+
+Function 'lru_total_bumps_dropped'
+No executable lines
+
+Function 'lru_maintainer_bumps'
+No executable lines
+
+Function 'lru_bump_async'
+No executable lines
+
+Function 'item_lru_bump_buf_create'
+No executable lines
+
+Function 'lru_bump_buf_link_q'
+No executable lines
+
+Function 'lru_pull_tail'
+No executable lines
+
+Function 'do_item_touch'
+No executable lines
+
+Function 'do_item_get'
+No executable lines
+
+Function 'item_stats_sizes'
+No executable lines
+
+Function 'item_stats_sizes_remove'
+No executable lines
+
+Function 'item_stats_sizes_add'
+No executable lines
+
+Function 'item_stats_sizes_disable'
+No executable lines
+
+Function 'item_stats_sizes_enable'
+No executable lines
+
+Function 'item_stats_sizes_init'
+No executable lines
+
+Function 'item_stats_sizes_status'
+No executable lines
+
+Function 'item_stats'
+No executable lines
+
+Function 'item_stats_totals'
+No executable lines
+
+Function 'fill_item_stats_automove'
+No executable lines
+
+Function 'item_cachedump'
+No executable lines
+
+Function 'do_item_replace'
+No executable lines
+
+Function 'do_item_update'
+No executable lines
+
+Function 'do_item_update_nolock'
+No executable lines
+
+Function 'do_item_remove'
+No executable lines
+
+Function 'do_item_unlink_nolock'
+No executable lines
+
+Function 'do_item_unlink'
+No executable lines
+
+Function 'do_item_link'
+No executable lines
+
+Function 'item_unlink_q'
+No executable lines
+
+Function 'do_item_unlink_q'
+No executable lines
+
+Function 'item_link_q_warm'
+No executable lines
+
+Function 'item_link_q'
+No executable lines
+
+Function 'do_item_link_q'
+No executable lines
+
+Function 'item_size_ok'
+No executable lines
+
+Function 'item_free'
+No executable lines
+
+Function 'do_item_alloc'
+No executable lines
+
+Function 'do_item_alloc_chunk'
+No executable lines
+
+Function 'do_item_alloc_pull'
+No executable lines
+
+Function 'do_get_lru_size'
+No executable lines
+
+Function 'item_is_flushed'
+No executable lines
+
+Function 'get_cas_id'
+No executable lines
+
+Function 'do_item_stats_add_crawl'
+No executable lines
+
+Function 'item_stats_reset'
+No executable lines
+
+Function 'do_item_crawl_q'
+No executable lines
+
+Function 'do_item_unlinktail_q'
+No executable lines
+
+Function 'do_item_linktail_q'
+No executable lines
+
+Function 'init_lru_maintainer'
+No executable lines
+
+Function 'lru_maintainer_resume'
+No executable lines
+
+Function 'lru_maintainer_pause'
+No executable lines
+
+Function 'start_lru_maintainer_thread'
+No executable lines
+
+Function 'stop_lru_maintainer_thread'
+No executable lines
+
+Function 'lru_maintainer_thread'
+No executable lines
+
+Function 'lru_maintainer_crawler_check'
+No executable lines
+
+Function 'lru_maintainer_juggle'
+No executable lines
+
+Function 'lru_total_bumps_dropped'
+No executable lines
+
+Function 'lru_maintainer_bumps'
+No executable lines
+
+Function 'lru_bump_async'
+No executable lines
+
+Function 'item_lru_bump_buf_create'
+No executable lines
+
+Function 'lru_bump_buf_link_q'
+No executable lines
+
+Function 'lru_pull_tail'
+No executable lines
+
+Function 'do_item_touch'
+No executable lines
+
+Function 'do_item_get'
+No executable lines
+
+Function 'item_stats_sizes'
+No executable lines
+
+Function 'item_stats_sizes_remove'
+No executable lines
+
+Function 'item_stats_sizes_add'
+No executable lines
+
+Function 'item_stats_sizes_disable'
+No executable lines
+
+Function 'item_stats_sizes_enable'
+No executable lines
+
+Function 'item_stats_sizes_init'
+No executable lines
+
+Function 'item_stats_sizes_status'
+No executable lines
+
+Function 'item_stats'
+No executable lines
+
+Function 'item_stats_totals'
+No executable lines
+
+Function 'fill_item_stats_automove'
+No executable lines
+
+Function 'item_cachedump'
+No executable lines
+
+Function 'do_item_replace'
+No executable lines
+
+Function 'do_item_update'
+No executable lines
+
+Function 'do_item_update_nolock'
+No executable lines
+
+Function 'do_item_remove'
+No executable lines
+
+Function 'do_item_unlink_nolock'
+No executable lines
+
+Function 'do_item_unlink'
+No executable lines
+
+Function 'do_item_link'
+No executable lines
+
+Function 'item_unlink_q'
+No executable lines
+
+Function 'do_item_unlink_q'
+No executable lines
+
+Function 'item_link_q_warm'
+No executable lines
+
+Function 'item_link_q'
+No executable lines
+
+Function 'do_item_link_q'
+No executable lines
+
+Function 'item_size_ok'
+No executable lines
+
+Function 'item_free'
+No executable lines
+
+Function 'do_item_alloc'
+No executable lines
+
+Function 'do_item_alloc_chunk'
+No executable lines
+
+Function 'do_item_alloc_pull'
+No executable lines
+
+Function 'do_get_lru_size'
+No executable lines
+
+Function 'item_is_flushed'
+No executable lines
+
+Function 'get_cas_id'
+No executable lines
+
+Function 'do_item_stats_add_crawl'
+No executable lines
+
+Function 'item_stats_reset'
+No executable lines
+
+Function 'itoa_64'
+No executable lines
+
+Function 'itoa_u64'
+Lines executed:100.00% of 2
+
+Function 'itoa_32'
+No executable lines
+
+Function 'itoa_u32'
+Lines executed:100.00% of 4
+
+Function 'itoa'
+Lines executed:100.00% of 2
+
+Function 'itoa_64'
+No executable lines
+
+Function 'itoa_u64'
+No executable lines
+
+Function 'itoa_32'
+No executable lines
+
+Function 'itoa_u32'
+No executable lines
+
+Function 'itoa'
+No executable lines
+
+Function 'itoa_64'
+No executable lines
+
+Function 'itoa_u64'
+No executable lines
+
+Function 'itoa_32'
+No executable lines
+
+Function 'itoa_u32'
+No executable lines
+
+Function 'itoa'
+No executable lines
+
+Function 'itoa_64'
+No executable lines
+
+Function 'itoa_u64'
+No executable lines
+
+Function 'itoa_32'
+No executable lines
+
+Function 'itoa_u32'
+No executable lines
+
+Function 'itoa'
+No executable lines
+
+Function 'jenkins_hash'
+No executable lines
+
+Function 'jenkins_hash'
+No executable lines
+
+Function 'jenkins_hash'
+No executable lines
+
+Function 'jenkins_hash'
+No executable lines
+
+Function 'logger_add_watcher'
+No executable lines
+
+Function 'logger_log'
+Lines executed:89.47% of 19
+
+Function '_logger_log_evictions'
+No executable lines
+
+Function 'logger_create'
+No executable lines
+
+Function 'logger_init'
+No executable lines
+
+Function 'start_logger_thread'
+No executable lines
+
+Function 'logger_thread'
+No executable lines
+
+Function 'logger_thread_sum_stats'
+No executable lines
+
+Function 'logger_thread_poll_watchers'
+Lines executed:50.00% of 2
+
+Function 'logger_thread_read'
+No executable lines
+
+Function 'logger_thread_close_watcher'
+No executable lines
+
+Function 'logger_thread_write_entry'
+No executable lines
+
+Function 'logger_thread_parse_entry'
+No executable lines
+
+Function '_logger_thread_parse_ee'
+No executable lines
+
+Function '_logger_thread_parse_ige'
+No executable lines
+
+Function '_logger_thread_parse_ise'
+No executable lines
+
+Function 'logger_set_flags'
+No executable lines
+
+Function 'logger_link_q'
+No executable lines
+
+Function 'logger_add_watcher'
+No executable lines
+
+Function 'logger_log'
+No executable lines
+
+Function '_logger_log_evictions'
+No executable lines
+
+Function 'logger_create'
+No executable lines
+
+Function 'logger_init'
+No executable lines
+
+Function 'start_logger_thread'
+No executable lines
+
+Function 'logger_thread'
+No executable lines
+
+Function 'logger_thread_sum_stats'
+No executable lines
+
+Function 'logger_thread_poll_watchers'
+No executable lines
+
+Function 'logger_thread_read'
+No executable lines
+
+Function 'logger_thread_close_watcher'
+No executable lines
+
+Function 'logger_thread_write_entry'
+No executable lines
+
+Function 'logger_thread_parse_entry'
+No executable lines
+
+Function '_logger_thread_parse_ee'
+No executable lines
+
+Function '_logger_thread_parse_ige'
+No executable lines
+
+Function '_logger_thread_parse_ise'
+No executable lines
+
+Function 'logger_set_flags'
+No executable lines
+
+Function 'logger_link_q'
+No executable lines
+
+Function 'logger_add_watcher'
+No executable lines
+
+Function 'logger_log'
+No executable lines
+
+Function '_logger_log_evictions'
+No executable lines
+
+Function 'logger_create'
+No executable lines
+
+Function 'logger_init'
+No executable lines
+
+Function 'start_logger_thread'
+No executable lines
+
+Function 'logger_thread'
+No executable lines
+
+Function 'logger_thread_sum_stats'
+No executable lines
+
+Function 'logger_thread_poll_watchers'
+No executable lines
+
+Function 'logger_thread_read'
+No executable lines
+
+Function 'logger_thread_close_watcher'
+No executable lines
+
+Function 'logger_thread_write_entry'
+No executable lines
+
+Function 'logger_thread_parse_entry'
+No executable lines
+
+Function '_logger_thread_parse_ee'
+No executable lines
+
+Function '_logger_thread_parse_ige'
+No executable lines
+
+Function '_logger_thread_parse_ise'
+No executable lines
+
+Function 'logger_set_flags'
+No executable lines
+
+Function 'logger_link_q'
+No executable lines
+
+Function 'logger_add_watcher'
+No executable lines
+
+Function 'logger_log'
+No executable lines
+
+Function '_logger_log_evictions'
+No executable lines
+
+Function 'logger_create'
+No executable lines
+
+Function 'logger_init'
+No executable lines
+
+Function 'start_logger_thread'
+No executable lines
+
+Function 'logger_thread'
+No executable lines
+
+Function 'logger_thread_sum_stats'
+No executable lines
+
+Function 'logger_thread_poll_watchers'
+No executable lines
+
+Function 'logger_thread_read'
+No executable lines
+
+Function 'logger_thread_close_watcher'
+No executable lines
+
+Function 'logger_thread_write_entry'
+No executable lines
+
+Function 'logger_thread_parse_entry'
+No executable lines
+
+Function '_logger_thread_parse_ee'
+No executable lines
+
+Function '_logger_thread_parse_ige'
+No executable lines
+
+Function '_logger_thread_parse_ise'
+No executable lines
+
+Function 'logger_set_flags'
+No executable lines
+
+Function 'logger_link_q'
+No executable lines
+
+Function 'main'
+Lines executed:100.00% of 2
+
+Function '_parse_slab_sizes'
+No executable lines
+
+Function 'sanitycheck'
+No executable lines
+
+Function 'enable_large_pages'
+No executable lines
+
+Function 'sighup_handler'
+No executable lines
+
+Function 'sig_handler'
+No executable lines
+
+Function 'remove_pidfile'
+No executable lines
+
+Function 'save_pid'
+No executable lines
+
+Function 'usage_license'
+No executable lines
+
+Function 'usage'
+No executable lines
+
+Function 'clock_handler'
+No executable lines
+
+Function 'server_socket_unix'
+Lines executed:100.00% of 1
+
+Function 'new_socket_unix'
+No executable lines
+
+Function 'server_sockets'
+No executable lines
+
+Function 'server_socket'
+Lines executed:100.00% of 1
+
+Function 'maximize_sndbuf'
+No executable lines
+
+Function 'new_socket'
+No executable lines
+
+Function 'event_handler'
+No executable lines
+
+Function 'drive_machine'
+Lines executed:100.00% of 1
+
+Function 'read_into_chunked_item'
+No executable lines
+
+Function 'transmit'
+No executable lines
+
+Function 'do_accept_new_conns'
+No executable lines
+
+Function 'update_event'
+No executable lines
+
+Function 'try_read_network'
+No executable lines
+
+Function 'try_read_udp'
+Lines executed:33.33% of 6
+
+Function 'try_read_command_ascii'
+No executable lines
+
+Function 'try_read_command_asciiauth'
+No executable lines
+
+Function 'try_read_command_binary'
+Lines executed:100.00% of 1
+
+Function 'try_read_command_udp'
+No executable lines
+
+Function 'try_read_command_negotiate'
+Lines executed:0.00% of 12
+
+Function 'process_command'
+Lines executed:100.00% of 5
+
+Function 'process_lru_command'
+No executable lines
+
+Function 'process_memlimit_command'
+No executable lines
+
+Function 'process_watch_command'
+No executable lines
+
+Function 'process_slabs_automove_command'
+No executable lines
+
+Function 'process_misbehave_command'
+No executable lines
+
+Function 'process_verbosity_command'
+No executable lines
+
+Function 'process_delete_command'
+No executable lines
+
+Function 'do_add_delta'
+No executable lines
+
+Function 'process_arithmetic_command'
+No executable lines
+
+Function 'process_touch_command'
+No executable lines
+
+Function 'process_update_command'
+No executable lines
+
+Function 'process_get_command'
+No executable lines
+
+Function '_ascii_get_suffix_buf'
+No executable lines
+
+Function '_ascii_get_expand_ilist'
+No executable lines
+
+Function 'limited_get'
+No executable lines
+
+Function 'make_ascii_get_suffix'
+No executable lines
+
+Function 'process_stat'
+No executable lines
+
+Function 'process_stats_conns'
+Lines executed:100.00% of 2
+
+Function 'conn_to_str'
+Lines executed:33.33% of 3
+
+Function 'process_stat_settings'
+No executable lines
+
+Function 'server_stats'
+No executable lines
+
+Function 'process_stats_detail'
+No executable lines
+
+Function 'append_stat'
+No executable lines
+
+Function 'set_noreply_maybe'
+No executable lines
+
+Function 'write_and_free'
+No executable lines
+
+Function 'tokenize_command'
+No executable lines
+
+Function 'do_store_item'
+No executable lines
+
+Function '_store_item_copy_data'
+No executable lines
+
+Function '_store_item_copy_chunks'
+No executable lines
+
+Function 'complete_nread'
+No executable lines
+
+Function 'reset_cmd_handler'
+No executable lines
+
+Function 'complete_nread_binary'
+No executable lines
+
+Function 'process_bin_delete'
+Lines executed:100.00% of 1
+
+Function 'process_bin_flush'
+No executable lines
+
+Function 'process_bin_append_prepend'
+No executable lines
+
+Function 'process_bin_update'
+No executable lines
+
+Function 'dispatch_bin_command'
+No executable lines
+
+Function 'authenticated'
+No executable lines
+
+Function 'process_bin_complete_sasl_auth'
+No executable lines
+
+Function 'process_bin_sasl_auth'
+No executable lines
+
+Function 'bin_list_sasl_mechs'
+No executable lines
+
+Function 'init_sasl_conn'
+No executable lines
+
+Function 'handle_binary_protocol_error'
+No executable lines
+
+Function 'bin_read_key'
+No executable lines
+
+Function 'process_bin_stat'
+No executable lines
+
+Function 'append_stats'
+No executable lines
+
+Function 'grow_stats_buf'
+No executable lines
+
+Function 'append_ascii_stats'
+No executable lines
+
+Function 'append_bin_stats'
+No executable lines
+
+Function 'process_bin_get_or_touch'
+Lines executed:100.00% of 2
+
+Function 'write_bin_miss_response'
+No executable lines
+
+Function 'complete_update_bin'
+No executable lines
+
+Function 'complete_incr_bin'
+No executable lines
+
+Function 'write_bin_response'
+No executable lines
+
+Function 'write_bin_error'
+No executable lines
+
+Function 'add_bin_header'
+No executable lines
+
+Function 'binary_get_key'
+No executable lines
+
+Function 'binary_get_request'
+No executable lines
+
+Function 'complete_nread_ascii'
+No executable lines
+
+Function 'out_of_memory'
+No executable lines
+
+Function 'out_string'
+No executable lines
+
+Function 'build_udp_headers'
+No executable lines
+
+Function 'add_chunked_item_iovs'
+No executable lines
+
+Function 'add_iov'
+No executable lines
+
+Function 'ensure_iov_space'
+No executable lines
+
+Function 'conn_set_state'
+No executable lines
+
+Function 'conn_shrink'
+No executable lines
+
+Function 'conn_close'
+No executable lines
+
+Function 'conn_free'
+No executable lines
+
+Function 'conn_cleanup'
+No executable lines
+
+Function 'conn_release_items'
+No executable lines
+
+Function 'conn_new'
+No executable lines
+
+Function 'conn_worker_readd'
+No executable lines
+
+Function 'conn_close_idle'
+No executable lines
+
+Function 'conn_init'
+No executable lines
+
+Function 'start_conn_timeout_thread'
+No executable lines
+
+Function 'conn_timeout_thread'
+No executable lines
+
+Function 'add_msghdr'
+No executable lines
+
+Function 'settings_init'
+No executable lines
+
+Function 'stats_reset'
+No executable lines
+
+Function 'stats_init'
+No executable lines
+
+Function 'maxconns_handler'
+No executable lines
+
+Function 'tcp_write'
+No executable lines
+
+Function 'tcp_sendmsg'
+No executable lines
+
+Function 'tcp_read'
+Lines executed:33.33% of 6
+
+Function 'main'
+No executable lines
+
+Function '_parse_slab_sizes'
+No executable lines
+
+Function 'sanitycheck'
+No executable lines
+
+Function 'enable_large_pages'
+No executable lines
+
+Function 'sighup_handler'
+No executable lines
+
+Function 'sig_handler'
+No executable lines
+
+Function 'remove_pidfile'
+No executable lines
+
+Function 'save_pid'
+No executable lines
+
+Function 'usage_license'
+No executable lines
+
+Function 'usage'
+No executable lines
+
+Function 'clock_handler'
+No executable lines
+
+Function 'server_socket_unix'
+No executable lines
+
+Function 'new_socket_unix'
+No executable lines
+
+Function 'server_sockets'
+No executable lines
+
+Function 'server_socket'
+No executable lines
+
+Function 'maximize_sndbuf'
+No executable lines
+
+Function 'new_socket'
+No executable lines
+
+Function 'event_handler'
+No executable lines
+
+Function 'drive_machine'
+No executable lines
+
+Function 'read_into_chunked_item'
+No executable lines
+
+Function 'transmit'
+No executable lines
+
+Function 'do_accept_new_conns'
+No executable lines
+
+Function 'update_event'
+No executable lines
+
+Function 'try_read_network'
+No executable lines
+
+Function 'try_read_udp'
+No executable lines
+
+Function 'try_read_command_ascii'
+No executable lines
+
+Function 'try_read_command_asciiauth'
+No executable lines
+
+Function 'try_read_command_binary'
+No executable lines
+
+Function 'try_read_command_udp'
+No executable lines
+
+Function 'try_read_command_negotiate'
+No executable lines
+
+Function 'process_command'
+No executable lines
+
+Function 'process_lru_command'
+No executable lines
+
+Function 'process_memlimit_command'
+No executable lines
+
+Function 'process_watch_command'
+No executable lines
+
+Function 'process_slabs_automove_command'
+No executable lines
+
+Function 'process_misbehave_command'
+No executable lines
+
+Function 'process_verbosity_command'
+No executable lines
+
+Function 'process_delete_command'
+No executable lines
+
+Function 'do_add_delta'
+No executable lines
+
+Function 'process_arithmetic_command'
+No executable lines
+
+Function 'process_touch_command'
+No executable lines
+
+Function 'process_update_command'
+No executable lines
+
+Function 'process_get_command'
+No executable lines
+
+Function '_ascii_get_suffix_buf'
+No executable lines
+
+Function '_ascii_get_expand_ilist'
+No executable lines
+
+Function 'limited_get'
+No executable lines
+
+Function 'make_ascii_get_suffix'
+No executable lines
+
+Function 'process_stat'
+No executable lines
+
+Function 'process_stats_conns'
+No executable lines
+
+Function 'conn_to_str'
+No executable lines
+
+Function 'process_stat_settings'
+No executable lines
+
+Function 'server_stats'
+No executable lines
+
+Function 'process_stats_detail'
+No executable lines
+
+Function 'append_stat'
+No executable lines
+
+Function 'set_noreply_maybe'
+No executable lines
+
+Function 'write_and_free'
+No executable lines
+
+Function 'tokenize_command'
+No executable lines
+
+Function 'do_store_item'
+No executable lines
+
+Function '_store_item_copy_data'
+No executable lines
+
+Function '_store_item_copy_chunks'
+No executable lines
+
+Function 'complete_nread'
+No executable lines
+
+Function 'reset_cmd_handler'
+No executable lines
+
+Function 'complete_nread_binary'
+No executable lines
+
+Function 'process_bin_delete'
+No executable lines
+
+Function 'process_bin_flush'
+No executable lines
+
+Function 'process_bin_append_prepend'
+No executable lines
+
+Function 'process_bin_update'
+No executable lines
+
+Function 'dispatch_bin_command'
+No executable lines
+
+Function 'authenticated'
+No executable lines
+
+Function 'process_bin_complete_sasl_auth'
+No executable lines
+
+Function 'process_bin_sasl_auth'
+No executable lines
+
+Function 'bin_list_sasl_mechs'
+No executable lines
+
+Function 'init_sasl_conn'
+No executable lines
+
+Function 'handle_binary_protocol_error'
+No executable lines
+
+Function 'bin_read_key'
+No executable lines
+
+Function 'process_bin_stat'
+No executable lines
+
+Function 'append_stats'
+No executable lines
+
+Function 'grow_stats_buf'
+No executable lines
+
+Function 'append_ascii_stats'
+No executable lines
+
+Function 'append_bin_stats'
+No executable lines
+
+Function 'process_bin_get_or_touch'
+No executable lines
+
+Function 'write_bin_miss_response'
+No executable lines
+
+Function 'complete_update_bin'
+No executable lines
+
+Function 'complete_incr_bin'
+No executable lines
+
+Function 'write_bin_response'
+No executable lines
+
+Function 'write_bin_error'
+No executable lines
+
+Function 'add_bin_header'
+No executable lines
+
+Function 'binary_get_key'
+No executable lines
+
+Function 'binary_get_request'
+No executable lines
+
+Function 'complete_nread_ascii'
+No executable lines
+
+Function 'out_of_memory'
+No executable lines
+
+Function 'out_string'
+No executable lines
+
+Function 'build_udp_headers'
+No executable lines
+
+Function 'add_chunked_item_iovs'
+No executable lines
+
+Function 'add_iov'
+No executable lines
+
+Function 'ensure_iov_space'
+No executable lines
+
+Function 'conn_set_state'
+No executable lines
+
+Function 'conn_shrink'
+No executable lines
+
+Function 'conn_close'
+No executable lines
+
+Function 'conn_free'
+No executable lines
+
+Function 'conn_cleanup'
+No executable lines
+
+Function 'conn_release_items'
+No executable lines
+
+Function 'conn_new'
+No executable lines
+
+Function 'conn_worker_readd'
+No executable lines
+
+Function 'conn_close_idle'
+No executable lines
+
+Function 'conn_init'
+No executable lines
+
+Function 'start_conn_timeout_thread'
+No executable lines
+
+Function 'conn_timeout_thread'
+No executable lines
+
+Function 'add_msghdr'
+No executable lines
+
+Function 'settings_init'
+No executable lines
+
+Function 'stats_reset'
+No executable lines
+
+Function 'stats_init'
+No executable lines
+
+Function 'maxconns_handler'
+No executable lines
+
+Function 'tcp_write'
+No executable lines
+
+Function 'tcp_sendmsg'
+No executable lines
+
+Function 'tcp_read'
+No executable lines
+
+Function 'main'
+No executable lines
+
+Function '_parse_slab_sizes'
+No executable lines
+
+Function 'sanitycheck'
+No executable lines
+
+Function 'enable_large_pages'
+No executable lines
+
+Function 'sighup_handler'
+No executable lines
+
+Function 'sig_handler'
+No executable lines
+
+Function 'remove_pidfile'
+No executable lines
+
+Function 'save_pid'
+No executable lines
+
+Function 'usage_license'
+No executable lines
+
+Function 'usage'
+No executable lines
+
+Function 'clock_handler'
+No executable lines
+
+Function 'server_socket_unix'
+No executable lines
+
+Function 'new_socket_unix'
+No executable lines
+
+Function 'server_sockets'
+No executable lines
+
+Function 'server_socket'
+No executable lines
+
+Function 'maximize_sndbuf'
+No executable lines
+
+Function 'new_socket'
+No executable lines
+
+Function 'event_handler'
+No executable lines
+
+Function 'drive_machine'
+No executable lines
+
+Function 'read_into_chunked_item'
+No executable lines
+
+Function 'transmit'
+No executable lines
+
+Function 'do_accept_new_conns'
+No executable lines
+
+Function 'update_event'
+No executable lines
+
+Function 'try_read_network'
+No executable lines
+
+Function 'try_read_udp'
+No executable lines
+
+Function 'try_read_command_ascii'
+No executable lines
+
+Function 'try_read_command_asciiauth'
+No executable lines
+
+Function 'try_read_command_binary'
+No executable lines
+
+Function 'try_read_command_udp'
+No executable lines
+
+Function 'try_read_command_negotiate'
+No executable lines
+
+Function 'process_command'
+No executable lines
+
+Function 'process_lru_command'
+No executable lines
+
+Function 'process_memlimit_command'
+No executable lines
+
+Function 'process_watch_command'
+No executable lines
+
+Function 'process_slabs_automove_command'
+No executable lines
+
+Function 'process_misbehave_command'
+No executable lines
+
+Function 'process_verbosity_command'
+No executable lines
+
+Function 'process_delete_command'
+No executable lines
+
+Function 'do_add_delta'
+No executable lines
+
+Function 'process_arithmetic_command'
+No executable lines
+
+Function 'process_touch_command'
+No executable lines
+
+Function 'process_update_command'
+No executable lines
+
+Function 'process_get_command'
+No executable lines
+
+Function '_ascii_get_suffix_buf'
+No executable lines
+
+Function '_ascii_get_expand_ilist'
+No executable lines
+
+Function 'limited_get'
+No executable lines
+
+Function 'make_ascii_get_suffix'
+No executable lines
+
+Function 'process_stat'
+No executable lines
+
+Function 'process_stats_conns'
+No executable lines
+
+Function 'conn_to_str'
+No executable lines
+
+Function 'process_stat_settings'
+No executable lines
+
+Function 'server_stats'
+No executable lines
+
+Function 'process_stats_detail'
+No executable lines
+
+Function 'append_stat'
+No executable lines
+
+Function 'set_noreply_maybe'
+No executable lines
+
+Function 'write_and_free'
+No executable lines
+
+Function 'tokenize_command'
+No executable lines
+
+Function 'do_store_item'
+No executable lines
+
+Function '_store_item_copy_data'
+No executable lines
+
+Function '_store_item_copy_chunks'
+No executable lines
+
+Function 'complete_nread'
+No executable lines
+
+Function 'reset_cmd_handler'
+No executable lines
+
+Function 'complete_nread_binary'
+No executable lines
+
+Function 'process_bin_delete'
+No executable lines
+
+Function 'process_bin_flush'
+No executable lines
+
+Function 'process_bin_append_prepend'
+No executable lines
+
+Function 'process_bin_update'
+No executable lines
+
+Function 'dispatch_bin_command'
+No executable lines
+
+Function 'authenticated'
+No executable lines
+
+Function 'process_bin_complete_sasl_auth'
+No executable lines
+
+Function 'process_bin_sasl_auth'
+No executable lines
+
+Function 'bin_list_sasl_mechs'
+No executable lines
+
+Function 'init_sasl_conn'
+No executable lines
+
+Function 'handle_binary_protocol_error'
+No executable lines
+
+Function 'bin_read_key'
+No executable lines
+
+Function 'process_bin_stat'
+No executable lines
+
+Function 'append_stats'
+No executable lines
+
+Function 'grow_stats_buf'
+No executable lines
+
+Function 'append_ascii_stats'
+No executable lines
+
+Function 'append_bin_stats'
+No executable lines
+
+Function 'process_bin_get_or_touch'
+No executable lines
+
+Function 'write_bin_miss_response'
+No executable lines
+
+Function 'complete_update_bin'
+No executable lines
+
+Function 'complete_incr_bin'
+No executable lines
+
+Function 'write_bin_response'
+No executable lines
+
+Function 'write_bin_error'
+No executable lines
+
+Function 'add_bin_header'
+No executable lines
+
+Function 'binary_get_key'
+No executable lines
+
+Function 'binary_get_request'
+No executable lines
+
+Function 'complete_nread_ascii'
+No executable lines
+
+Function 'out_of_memory'
+No executable lines
+
+Function 'out_string'
+No executable lines
+
+Function 'build_udp_headers'
+No executable lines
+
+Function 'add_chunked_item_iovs'
+No executable lines
+
+Function 'add_iov'
+No executable lines
+
+Function 'ensure_iov_space'
+No executable lines
+
+Function 'conn_set_state'
+No executable lines
+
+Function 'conn_shrink'
+No executable lines
+
+Function 'conn_close'
+No executable lines
+
+Function 'conn_free'
+No executable lines
+
+Function 'conn_cleanup'
+No executable lines
+
+Function 'conn_release_items'
+No executable lines
+
+Function 'conn_new'
+No executable lines
+
+Function 'conn_worker_readd'
+No executable lines
+
+Function 'conn_close_idle'
+No executable lines
+
+Function 'conn_init'
+No executable lines
+
+Function 'start_conn_timeout_thread'
+No executable lines
+
+Function 'conn_timeout_thread'
+No executable lines
+
+Function 'add_msghdr'
+No executable lines
+
+Function 'settings_init'
+No executable lines
+
+Function 'stats_reset'
+No executable lines
+
+Function 'stats_init'
+No executable lines
+
+Function 'maxconns_handler'
+No executable lines
+
+Function 'tcp_write'
+No executable lines
+
+Function 'tcp_sendmsg'
+No executable lines
+
+Function 'tcp_read'
+No executable lines
+
+Function 'main'
+No executable lines
+
+Function '_parse_slab_sizes'
+No executable lines
+
+Function 'sanitycheck'
+No executable lines
+
+Function 'enable_large_pages'
+No executable lines
+
+Function 'sighup_handler'
+No executable lines
+
+Function 'sig_handler'
+No executable lines
+
+Function 'remove_pidfile'
+No executable lines
+
+Function 'save_pid'
+No executable lines
+
+Function 'usage_license'
+No executable lines
+
+Function 'usage'
+No executable lines
+
+Function 'clock_handler'
+No executable lines
+
+Function 'server_socket_unix'
+No executable lines
+
+Function 'new_socket_unix'
+No executable lines
+
+Function 'server_sockets'
+No executable lines
+
+Function 'server_socket'
+No executable lines
+
+Function 'maximize_sndbuf'
+No executable lines
+
+Function 'new_socket'
+No executable lines
+
+Function 'event_handler'
+No executable lines
+
+Function 'drive_machine'
+No executable lines
+
+Function 'read_into_chunked_item'
+No executable lines
+
+Function 'transmit'
+No executable lines
+
+Function 'do_accept_new_conns'
+No executable lines
+
+Function 'update_event'
+No executable lines
+
+Function 'try_read_network'
+No executable lines
+
+Function 'try_read_udp'
+No executable lines
+
+Function 'try_read_command_ascii'
+No executable lines
+
+Function 'try_read_command_asciiauth'
+No executable lines
+
+Function 'try_read_command_binary'
+No executable lines
+
+Function 'try_read_command_udp'
+No executable lines
+
+Function 'try_read_command_negotiate'
+No executable lines
+
+Function 'process_command'
+No executable lines
+
+Function 'process_lru_command'
+No executable lines
+
+Function 'process_memlimit_command'
+No executable lines
+
+Function 'process_watch_command'
+No executable lines
+
+Function 'process_slabs_automove_command'
+No executable lines
+
+Function 'process_misbehave_command'
+No executable lines
+
+Function 'process_verbosity_command'
+No executable lines
+
+Function 'process_delete_command'
+No executable lines
+
+Function 'do_add_delta'
+No executable lines
+
+Function 'process_arithmetic_command'
+No executable lines
+
+Function 'process_touch_command'
+No executable lines
+
+Function 'process_update_command'
+No executable lines
+
+Function 'process_get_command'
+No executable lines
+
+Function '_ascii_get_suffix_buf'
+No executable lines
+
+Function '_ascii_get_expand_ilist'
+No executable lines
+
+Function 'limited_get'
+No executable lines
+
+Function 'make_ascii_get_suffix'
+No executable lines
+
+Function 'process_stat'
+No executable lines
+
+Function 'process_stats_conns'
+No executable lines
+
+Function 'conn_to_str'
+No executable lines
+
+Function 'process_stat_settings'
+No executable lines
+
+Function 'server_stats'
+No executable lines
+
+Function 'process_stats_detail'
+No executable lines
+
+Function 'append_stat'
+No executable lines
+
+Function 'set_noreply_maybe'
+No executable lines
+
+Function 'write_and_free'
+No executable lines
+
+Function 'tokenize_command'
+No executable lines
+
+Function 'do_store_item'
+No executable lines
+
+Function '_store_item_copy_data'
+No executable lines
+
+Function '_store_item_copy_chunks'
+No executable lines
+
+Function 'complete_nread'
+No executable lines
+
+Function 'reset_cmd_handler'
+No executable lines
+
+Function 'complete_nread_binary'
+No executable lines
+
+Function 'process_bin_delete'
+No executable lines
+
+Function 'process_bin_flush'
+No executable lines
+
+Function 'process_bin_append_prepend'
+No executable lines
+
+Function 'process_bin_update'
+No executable lines
+
+Function 'dispatch_bin_command'
+No executable lines
+
+Function 'authenticated'
+No executable lines
+
+Function 'process_bin_complete_sasl_auth'
+No executable lines
+
+Function 'process_bin_sasl_auth'
+No executable lines
+
+Function 'bin_list_sasl_mechs'
+No executable lines
+
+Function 'init_sasl_conn'
+No executable lines
+
+Function 'handle_binary_protocol_error'
+No executable lines
+
+Function 'bin_read_key'
+No executable lines
+
+Function 'process_bin_stat'
+No executable lines
+
+Function 'append_stats'
+No executable lines
+
+Function 'grow_stats_buf'
+No executable lines
+
+Function 'append_ascii_stats'
+No executable lines
+
+Function 'append_bin_stats'
+No executable lines
+
+Function 'process_bin_get_or_touch'
+No executable lines
+
+Function 'write_bin_miss_response'
+No executable lines
+
+Function 'complete_update_bin'
+No executable lines
+
+Function 'complete_incr_bin'
+No executable lines
+
+Function 'write_bin_response'
+No executable lines
+
+Function 'write_bin_error'
+No executable lines
+
+Function 'add_bin_header'
+No executable lines
+
+Function 'binary_get_key'
+No executable lines
+
+Function 'binary_get_request'
+No executable lines
+
+Function 'complete_nread_ascii'
+No executable lines
+
+Function 'out_of_memory'
+No executable lines
+
+Function 'out_string'
+No executable lines
+
+Function 'build_udp_headers'
+No executable lines
+
+Function 'add_chunked_item_iovs'
+No executable lines
+
+Function 'add_iov'
+No executable lines
+
+Function 'ensure_iov_space'
+No executable lines
+
+Function 'conn_set_state'
+No executable lines
+
+Function 'conn_shrink'
+No executable lines
+
+Function 'conn_close'
+No executable lines
+
+Function 'conn_free'
+No executable lines
+
+Function 'conn_cleanup'
+No executable lines
+
+Function 'conn_release_items'
+No executable lines
+
+Function 'conn_new'
+No executable lines
+
+Function 'conn_worker_readd'
+No executable lines
+
+Function 'conn_close_idle'
+No executable lines
+
+Function 'conn_init'
+No executable lines
+
+Function 'start_conn_timeout_thread'
+No executable lines
+
+Function 'conn_timeout_thread'
+No executable lines
+
+Function 'add_msghdr'
+No executable lines
+
+Function 'settings_init'
+No executable lines
+
+Function 'stats_reset'
+No executable lines
+
+Function 'stats_init'
+No executable lines
+
+Function 'maxconns_handler'
+No executable lines
+
+Function 'tcp_write'
+No executable lines
+
+Function 'tcp_sendmsg'
+No executable lines
+
+Function 'tcp_read'
+No executable lines
+
+Function 'main'
+No executable lines
+
+Function '_parse_slab_sizes'
+No executable lines
+
+Function 'sanitycheck'
+No executable lines
+
+Function 'enable_large_pages'
+No executable lines
+
+Function 'sighup_handler'
+No executable lines
+
+Function 'sig_handler'
+No executable lines
+
+Function 'remove_pidfile'
+No executable lines
+
+Function 'save_pid'
+No executable lines
+
+Function 'usage_license'
+No executable lines
+
+Function 'usage'
+No executable lines
+
+Function 'clock_handler'
+No executable lines
+
+Function 'server_socket_unix'
+No executable lines
+
+Function 'new_socket_unix'
+No executable lines
+
+Function 'server_sockets'
+No executable lines
+
+Function 'server_socket'
+No executable lines
+
+Function 'maximize_sndbuf'
+No executable lines
+
+Function 'new_socket'
+No executable lines
+
+Function 'event_handler'
+No executable lines
+
+Function 'drive_machine'
+No executable lines
+
+Function 'read_into_chunked_item'
+No executable lines
+
+Function 'transmit'
+No executable lines
+
+Function 'do_accept_new_conns'
+No executable lines
+
+Function 'update_event'
+No executable lines
+
+Function 'try_read_network'
+No executable lines
+
+Function 'try_read_udp'
+No executable lines
+
+Function 'try_read_command_ascii'
+No executable lines
+
+Function 'try_read_command_asciiauth'
+No executable lines
+
+Function 'try_read_command_binary'
+No executable lines
+
+Function 'try_read_command_udp'
+No executable lines
+
+Function 'try_read_command_negotiate'
+No executable lines
+
+Function 'process_command'
+No executable lines
+
+Function 'process_lru_command'
+No executable lines
+
+Function 'process_memlimit_command'
+No executable lines
+
+Function 'process_watch_command'
+No executable lines
+
+Function 'process_slabs_automove_command'
+No executable lines
+
+Function 'process_misbehave_command'
+No executable lines
+
+Function 'process_verbosity_command'
+No executable lines
+
+Function 'process_delete_command'
+No executable lines
+
+Function 'do_add_delta'
+No executable lines
+
+Function 'process_arithmetic_command'
+No executable lines
+
+Function 'process_touch_command'
+No executable lines
+
+Function 'process_update_command'
+No executable lines
+
+Function 'process_get_command'
+No executable lines
+
+Function '_ascii_get_suffix_buf'
+No executable lines
+
+Function '_ascii_get_expand_ilist'
+No executable lines
+
+Function 'limited_get'
+No executable lines
+
+Function 'make_ascii_get_suffix'
+No executable lines
+
+Function 'process_stat'
+No executable lines
+
+Function 'process_stats_conns'
+No executable lines
+
+Function 'conn_to_str'
+No executable lines
+
+Function 'process_stat_settings'
+No executable lines
+
+Function 'server_stats'
+No executable lines
+
+Function 'process_stats_detail'
+No executable lines
+
+Function 'append_stat'
+No executable lines
+
+Function 'set_noreply_maybe'
+No executable lines
+
+Function 'write_and_free'
+No executable lines
+
+Function 'tokenize_command'
+No executable lines
+
+Function 'do_store_item'
+No executable lines
+
+Function '_store_item_copy_data'
+No executable lines
+
+Function '_store_item_copy_chunks'
+No executable lines
+
+Function 'complete_nread'
+No executable lines
+
+Function 'reset_cmd_handler'
+No executable lines
+
+Function 'complete_nread_binary'
+No executable lines
+
+Function 'process_bin_delete'
+No executable lines
+
+Function 'process_bin_flush'
+No executable lines
+
+Function 'process_bin_append_prepend'
+No executable lines
+
+Function 'process_bin_update'
+No executable lines
+
+Function 'dispatch_bin_command'
+No executable lines
+
+Function 'authenticated'
+No executable lines
+
+Function 'process_bin_complete_sasl_auth'
+No executable lines
+
+Function 'process_bin_sasl_auth'
+No executable lines
+
+Function 'bin_list_sasl_mechs'
+No executable lines
+
+Function 'init_sasl_conn'
+No executable lines
+
+Function 'handle_binary_protocol_error'
+No executable lines
+
+Function 'bin_read_key'
+No executable lines
+
+Function 'process_bin_stat'
+No executable lines
+
+Function 'append_stats'
+No executable lines
+
+Function 'grow_stats_buf'
+No executable lines
+
+Function 'append_ascii_stats'
+No executable lines
+
+Function 'append_bin_stats'
+No executable lines
+
+Function 'process_bin_get_or_touch'
+No executable lines
+
+Function 'write_bin_miss_response'
+No executable lines
+
+Function 'complete_update_bin'
+No executable lines
+
+Function 'complete_incr_bin'
+No executable lines
+
+Function 'write_bin_response'
+No executable lines
+
+Function 'write_bin_error'
+No executable lines
+
+Function 'add_bin_header'
+No executable lines
+
+Function 'binary_get_key'
+No executable lines
+
+Function 'binary_get_request'
+No executable lines
+
+Function 'complete_nread_ascii'
+No executable lines
+
+Function 'out_of_memory'
+No executable lines
+
+Function 'out_string'
+No executable lines
+
+Function 'build_udp_headers'
+No executable lines
+
+Function 'add_chunked_item_iovs'
+No executable lines
+
+Function 'add_iov'
+No executable lines
+
+Function 'ensure_iov_space'
+No executable lines
+
+Function 'conn_set_state'
+No executable lines
+
+Function 'conn_shrink'
+No executable lines
+
+Function 'conn_close'
+No executable lines
+
+Function 'conn_free'
+No executable lines
+
+Function 'conn_cleanup'
+No executable lines
+
+Function 'conn_release_items'
+No executable lines
+
+Function 'conn_new'
+No executable lines
+
+Function 'conn_worker_readd'
+No executable lines
+
+Function 'conn_close_idle'
+No executable lines
+
+Function 'conn_init'
+No executable lines
+
+Function 'start_conn_timeout_thread'
+No executable lines
+
+Function 'conn_timeout_thread'
+No executable lines
+
+Function 'add_msghdr'
+No executable lines
+
+Function 'settings_init'
+No executable lines
+
+Function 'stats_reset'
+No executable lines
+
+Function 'stats_init'
+No executable lines
+
+Function 'maxconns_handler'
+No executable lines
+
+Function 'tcp_write'
+No executable lines
+
+Function 'tcp_sendmsg'
+No executable lines
+
+Function 'tcp_read'
+No executable lines
+
+Function 'MurmurHash3_x86_32'
+Lines executed:100.00% of 8
+
+Function 'MurmurHash3_x86_32'
+No executable lines
+
+Function 'MurmurHash3_x86_32'
+No executable lines
+
+Function 'MurmurHash3_x86_32'
+No executable lines
+
+Function 'slab_automove_run'
+Lines executed:100.00% of 5
+
+Function 'slab_automove_free'
+No executable lines
+
+Function 'slab_automove_init'
+No executable lines
+
+Function 'slab_automove_run'
+No executable lines
+
+Function 'slab_automove_free'
+No executable lines
+
+Function 'slab_automove_init'
+No executable lines
+
+Function 'slab_automove_run'
+No executable lines
+
+Function 'slab_automove_free'
+No executable lines
+
+Function 'slab_automove_init'
+No executable lines
+
+Function 'slab_automove_run'
+No executable lines
+
+Function 'slab_automove_free'
+No executable lines
+
+Function 'slab_automove_init'
+No executable lines
+
+Function 'stop_slab_maintenance_thread'
+No executable lines
+
+Function 'start_slab_maintenance_thread'
+No executable lines
+
+Function 'slabs_rebalancer_resume'
+No executable lines
+
+Function 'slabs_rebalancer_pause'
+No executable lines
+
+Function 'slabs_reassign'
+No executable lines
+
+Function 'do_slabs_reassign'
+Lines executed:0.00% of 8
+
+Function 'slab_rebalance_thread'
+No executable lines
+
+Function 'slab_rebalance_finish'
+Lines executed:100.00% of 3
+
+Function 'slab_rebalance_move'
+No executable lines
+
+Function 'slab_rebalance_cut_free'
+No executable lines
+
+Function 'slab_rebalance_alloc'
+No executable lines
+
+Function 'slab_rebalance_start'
+No executable lines
+
+Function 'slabs_munlock'
+No executable lines
+
+Function 'slabs_mlock'
+No executable lines
+
+Function 'slabs_available_chunks'
+No executable lines
+
+Function 'slabs_adjust_mem_requested'
+No executable lines
+
+Function 'slabs_adjust_mem_limit'
+Lines executed:100.00% of 6
+
+Function 'slabs_stats'
+No executable lines
+
+Function 'slabs_free'
+No executable lines
+
+Function 'slabs_alloc'
+No executable lines
+
+Function 'memory_release'
+Lines executed:100.00% of 5
+
+Function 'memory_allocate'
+No executable lines
+
+Function 'do_slabs_stats'
+No executable lines
+
+Function 'get_stats'
+No executable lines
+
+Function 'nz_strcmp'
+No executable lines
+
+Function 'global_page_pool_size'
+No executable lines
+
+Function 'fill_slab_stats_automove'
+No executable lines
+
+Function 'do_slabs_free'
+No executable lines
+
+Function 'do_slabs_free_chunked'
+No executable lines
+
+Function 'do_slabs_alloc'
+No executable lines
+
+Function 'do_slabs_newslab'
+No executable lines
+
+Function 'grow_slab_list'
+No executable lines
+
+Function 'slabs_preallocate'
+No executable lines
+
+Function 'slabs_prefill_global'
+No executable lines
+
+Function 'slabs_init'
+Lines executed:100.00% of 1
+
+Function 'alloc_large_chunk_linux'
+No executable lines
+
+Function 'slabs_clsid'
+No executable lines
+
+Function 'stop_slab_maintenance_thread'
+No executable lines
+
+Function 'start_slab_maintenance_thread'
+No executable lines
+
+Function 'slabs_rebalancer_resume'
+No executable lines
+
+Function 'slabs_rebalancer_pause'
+No executable lines
+
+Function 'slabs_reassign'
+No executable lines
+
+Function 'do_slabs_reassign'
+No executable lines
+
+Function 'slab_rebalance_thread'
+No executable lines
+
+Function 'slab_rebalance_finish'
+No executable lines
+
+Function 'slab_rebalance_move'
+No executable lines
+
+Function 'slab_rebalance_cut_free'
+No executable lines
+
+Function 'slab_rebalance_alloc'
+No executable lines
+
+Function 'slab_rebalance_start'
+No executable lines
+
+Function 'slabs_munlock'
+No executable lines
+
+Function 'slabs_mlock'
+No executable lines
+
+Function 'slabs_available_chunks'
+No executable lines
+
+Function 'slabs_adjust_mem_requested'
+No executable lines
+
+Function 'slabs_adjust_mem_limit'
+No executable lines
+
+Function 'slabs_stats'
+No executable lines
+
+Function 'slabs_free'
+No executable lines
+
+Function 'slabs_alloc'
+No executable lines
+
+Function 'memory_release'
+No executable lines
+
+Function 'memory_allocate'
+No executable lines
+
+Function 'do_slabs_stats'
+No executable lines
+
+Function 'get_stats'
+No executable lines
+
+Function 'nz_strcmp'
+No executable lines
+
+Function 'global_page_pool_size'
+No executable lines
+
+Function 'fill_slab_stats_automove'
+No executable lines
+
+Function 'do_slabs_free'
+No executable lines
+
+Function 'do_slabs_free_chunked'
+No executable lines
+
+Function 'do_slabs_alloc'
+No executable lines
+
+Function 'do_slabs_newslab'
+No executable lines
+
+Function 'grow_slab_list'
+No executable lines
+
+Function 'slabs_preallocate'
+No executable lines
+
+Function 'slabs_prefill_global'
+No executable lines
+
+Function 'slabs_init'
+No executable lines
+
+Function 'alloc_large_chunk_linux'
+No executable lines
+
+Function 'slabs_clsid'
+No executable lines
+
+Function 'stop_slab_maintenance_thread'
+No executable lines
+
+Function 'start_slab_maintenance_thread'
+No executable lines
+
+Function 'slabs_rebalancer_resume'
+No executable lines
+
+Function 'slabs_rebalancer_pause'
+No executable lines
+
+Function 'slabs_reassign'
+No executable lines
+
+Function 'do_slabs_reassign'
+No executable lines
+
+Function 'slab_rebalance_thread'
+No executable lines
+
+Function 'slab_rebalance_finish'
+No executable lines
+
+Function 'slab_rebalance_move'
+No executable lines
+
+Function 'slab_rebalance_cut_free'
+No executable lines
+
+Function 'slab_rebalance_alloc'
+No executable lines
+
+Function 'slab_rebalance_start'
+No executable lines
+
+Function 'slabs_munlock'
+No executable lines
+
+Function 'slabs_mlock'
+No executable lines
+
+Function 'slabs_available_chunks'
+No executable lines
+
+Function 'slabs_adjust_mem_requested'
+No executable lines
+
+Function 'slabs_adjust_mem_limit'
+No executable lines
+
+Function 'slabs_stats'
+No executable lines
+
+Function 'slabs_free'
+No executable lines
+
+Function 'slabs_alloc'
+No executable lines
+
+Function 'memory_release'
+No executable lines
+
+Function 'memory_allocate'
+No executable lines
+
+Function 'do_slabs_stats'
+No executable lines
+
+Function 'get_stats'
+No executable lines
+
+Function 'nz_strcmp'
+No executable lines
+
+Function 'global_page_pool_size'
+No executable lines
+
+Function 'fill_slab_stats_automove'
+No executable lines
+
+Function 'do_slabs_free'
+No executable lines
+
+Function 'do_slabs_free_chunked'
+No executable lines
+
+Function 'do_slabs_alloc'
+No executable lines
+
+Function 'do_slabs_newslab'
+No executable lines
+
+Function 'grow_slab_list'
+No executable lines
+
+Function 'slabs_preallocate'
+No executable lines
+
+Function 'slabs_prefill_global'
+No executable lines
+
+Function 'slabs_init'
+No executable lines
+
+Function 'alloc_large_chunk_linux'
+No executable lines
+
+Function 'slabs_clsid'
+No executable lines
+
+Function 'stop_slab_maintenance_thread'
+No executable lines
+
+Function 'start_slab_maintenance_thread'
+No executable lines
+
+Function 'slabs_rebalancer_resume'
+No executable lines
+
+Function 'slabs_rebalancer_pause'
+No executable lines
+
+Function 'slabs_reassign'
+No executable lines
+
+Function 'do_slabs_reassign'
+No executable lines
+
+Function 'slab_rebalance_thread'
+No executable lines
+
+Function 'slab_rebalance_finish'
+No executable lines
+
+Function 'slab_rebalance_move'
+No executable lines
+
+Function 'slab_rebalance_cut_free'
+No executable lines
+
+Function 'slab_rebalance_alloc'
+No executable lines
+
+Function 'slab_rebalance_start'
+No executable lines
+
+Function 'slabs_munlock'
+No executable lines
+
+Function 'slabs_mlock'
+No executable lines
+
+Function 'slabs_available_chunks'
+No executable lines
+
+Function 'slabs_adjust_mem_requested'
+No executable lines
+
+Function 'slabs_adjust_mem_limit'
+No executable lines
+
+Function 'slabs_stats'
+No executable lines
+
+Function 'slabs_free'
+No executable lines
+
+Function 'slabs_alloc'
+No executable lines
+
+Function 'memory_release'
+No executable lines
+
+Function 'memory_allocate'
+No executable lines
+
+Function 'do_slabs_stats'
+No executable lines
+
+Function 'get_stats'
+No executable lines
+
+Function 'nz_strcmp'
+No executable lines
+
+Function 'global_page_pool_size'
+No executable lines
+
+Function 'fill_slab_stats_automove'
+No executable lines
+
+Function 'do_slabs_free'
+No executable lines
+
+Function 'do_slabs_free_chunked'
+No executable lines
+
+Function 'do_slabs_alloc'
+No executable lines
+
+Function 'do_slabs_newslab'
+No executable lines
+
+Function 'grow_slab_list'
+No executable lines
+
+Function 'slabs_preallocate'
+No executable lines
+
+Function 'slabs_prefill_global'
+No executable lines
+
+Function 'slabs_init'
+No executable lines
+
+Function 'alloc_large_chunk_linux'
+No executable lines
+
+Function 'slabs_clsid'
+No executable lines
+
+Function 'stats_prefix_dump'
+No executable lines
+
+Function 'stats_prefix_record_set'
+No executable lines
+
+Function 'stats_prefix_record_delete'
+No executable lines
+
+Function 'stats_prefix_record_get'
+No executable lines
+
+Function 'stats_prefix_find'
+No executable lines
+
+Function 'stats_prefix_clear'
+No executable lines
+
+Function 'stats_prefix_init'
+No executable lines
+
+Function 'stats_prefix_dump'
+No executable lines
+
+Function 'stats_prefix_record_set'
+No executable lines
+
+Function 'stats_prefix_record_delete'
+No executable lines
+
+Function 'stats_prefix_record_get'
+No executable lines
+
+Function 'stats_prefix_find'
+No executable lines
+
+Function 'stats_prefix_clear'
+No executable lines
+
+Function 'stats_prefix_init'
+No executable lines
+
+Function 'stats_prefix_dump'
+No executable lines
+
+Function 'stats_prefix_record_set'
+No executable lines
+
+Function 'stats_prefix_record_delete'
+No executable lines
+
+Function 'stats_prefix_record_get'
+No executable lines
+
+Function 'stats_prefix_find'
+No executable lines
+
+Function 'stats_prefix_clear'
+No executable lines
+
+Function 'stats_prefix_init'
+No executable lines
+
+Function 'stats_prefix_dump'
+No executable lines
+
+Function 'stats_prefix_record_set'
+No executable lines
+
+Function 'stats_prefix_record_delete'
+No executable lines
+
+Function 'stats_prefix_record_get'
+No executable lines
+
+Function 'stats_prefix_find'
+No executable lines
+
+Function 'stats_prefix_clear'
+No executable lines
+
+Function 'stats_prefix_init'
+No executable lines
+
+Function 'memcached_thread_init'
+Lines executed:100.00% of 2
+
+Function 'slab_stats_aggregate'
+No executable lines
+
+Function 'threadlocal_stats_aggregate'
+No executable lines
+
+Function 'threadlocal_stats_reset'
+No executable lines
+
+Function 'STATS_UNLOCK'
+No executable lines
+
+Function 'STATS_LOCK'
+No executable lines
+
+Function 'store_item'
+Lines executed:100.00% of 2
+
+Function 'add_delta'
+No executable lines
+
+Function 'item_unlink'
+No executable lines
+
+Function 'item_replace'
+No executable lines
+
+Function 'item_remove'
+No executable lines
+
+Function 'item_link'
+No executable lines
+
+Function 'item_touch'
+No executable lines
+
+Function 'item_get_locked'
+No executable lines
+
+Function 'item_get'
+No executable lines
+
+Function 'item_alloc'
+No executable lines
+
+Function 'sidethread_conn_close'
+Lines executed:100.00% of 2
+
+Function 'redispatch_conn'
+No executable lines
+
+Function 'dispatch_conn_new'
+No executable lines
+
+Function 'thread_libevent_process'
+No executable lines
+
+Function 'worker_libevent'
+No executable lines
+
+Function 'setup_thread'
+Lines executed:100.00% of 3
+
+Function 'accept_new_conns'
+No executable lines
+
+Function 'create_worker'
+No executable lines
+
+Function 'cqi_free'
+No executable lines
+
+Function 'cqi_new'
+No executable lines
+
+Function 'cq_push'
+No executable lines
+
+Function 'cq_pop'
+No executable lines
+
+Function 'pause_threads'
+No executable lines
+
+Function 'register_thread_initialized'
+No executable lines
+
+Function 'item_unlock'
+No executable lines
+
+Function 'item_trylock_unlock'
+No executable lines
+
+Function 'item_trylock'
+No executable lines
+
+Function 'item_lock'
+No executable lines
+
+Function 'memcached_thread_init'
+No executable lines
+
+Function 'slab_stats_aggregate'
+No executable lines
+
+Function 'threadlocal_stats_aggregate'
+No executable lines
+
+Function 'threadlocal_stats_reset'
+No executable lines
+
+Function 'STATS_UNLOCK'
+No executable lines
+
+Function 'STATS_LOCK'
+No executable lines
+
+Function 'store_item'
+No executable lines
+
+Function 'add_delta'
+No executable lines
+
+Function 'item_unlink'
+No executable lines
+
+Function 'item_replace'
+No executable lines
+
+Function 'item_remove'
+No executable lines
+
+Function 'item_link'
+No executable lines
+
+Function 'item_touch'
+No executable lines
+
+Function 'item_get_locked'
+No executable lines
+
+Function 'item_get'
+No executable lines
+
+Function 'item_alloc'
+No executable lines
+
+Function 'sidethread_conn_close'
+No executable lines
+
+Function 'redispatch_conn'
+No executable lines
+
+Function 'dispatch_conn_new'
+No executable lines
+
+Function 'thread_libevent_process'
+No executable lines
+
+Function 'worker_libevent'
+No executable lines
+
+Function 'setup_thread'
+No executable lines
+
+Function 'accept_new_conns'
+No executable lines
+
+Function 'create_worker'
+No executable lines
+
+Function 'cqi_free'
+No executable lines
+
+Function 'cqi_new'
+No executable lines
+
+Function 'cq_push'
+No executable lines
+
+Function 'cq_pop'
+No executable lines
+
+Function 'pause_threads'
+No executable lines
+
+Function 'register_thread_initialized'
+No executable lines
+
+Function 'item_unlock'
+No executable lines
+
+Function 'item_trylock_unlock'
+No executable lines
+
+Function 'item_trylock'
+No executable lines
+
+Function 'item_lock'
+No executable lines
+
+Function 'memcached_thread_init'
+No executable lines
+
+Function 'slab_stats_aggregate'
+No executable lines
+
+Function 'threadlocal_stats_aggregate'
+No executable lines
+
+Function 'threadlocal_stats_reset'
+No executable lines
+
+Function 'STATS_UNLOCK'
+No executable lines
+
+Function 'STATS_LOCK'
+No executable lines
+
+Function 'store_item'
+No executable lines
+
+Function 'add_delta'
+No executable lines
+
+Function 'item_unlink'
+No executable lines
+
+Function 'item_replace'
+No executable lines
+
+Function 'item_remove'
+No executable lines
+
+Function 'item_link'
+No executable lines
+
+Function 'item_touch'
+No executable lines
+
+Function 'item_get_locked'
+No executable lines
+
+Function 'item_get'
+No executable lines
+
+Function 'item_alloc'
+No executable lines
+
+Function 'sidethread_conn_close'
+No executable lines
+
+Function 'redispatch_conn'
+No executable lines
+
+Function 'dispatch_conn_new'
+No executable lines
+
+Function 'thread_libevent_process'
+No executable lines
+
+Function 'worker_libevent'
+No executable lines
+
+Function 'setup_thread'
+No executable lines
+
+Function 'accept_new_conns'
+No executable lines
+
+Function 'create_worker'
+No executable lines
+
+Function 'cqi_free'
+No executable lines
+
+Function 'cqi_new'
+No executable lines
+
+Function 'cq_push'
+No executable lines
+
+Function 'cq_pop'
+No executable lines
+
+Function 'pause_threads'
+No executable lines
+
+Function 'register_thread_initialized'
+No executable lines
+
+Function 'item_unlock'
+No executable lines
+
+Function 'item_trylock_unlock'
+No executable lines
+
+Function 'item_trylock'
+No executable lines
+
+Function 'item_lock'
+No executable lines
+
+Function 'htonll'
+Lines executed:100.00% of 6
+
+Function 'ntohll'
+No executable lines
+
+Function 'vperror'
+No executable lines
+
+Function 'safe_strtod'
+No executable lines
+
+Function 'safe_strtol'
+No executable lines
+
+Function 'safe_strtoul'
+No executable lines
+
+Function 'safe_strtoll'
+No executable lines
+
+Function 'safe_strtoull'
+No executable lines
+
+Function 'uriencode'
+No executable lines
+
+Function 'uriencode_init'
+No executable lines
+
+Function 'htonll'
+No executable lines
+
+Function 'ntohll'
+No executable lines
+
+Function 'vperror'
+No executable lines
+
+Function 'safe_strtod'
+No executable lines
+
+Function 'safe_strtol'
+No executable lines
+
+Function 'safe_strtoul'
+No executable lines
+
+Function 'safe_strtoll'
+No executable lines
+
+Function 'safe_strtoull'
+No executable lines
+
+Function 'uriencode'
+No executable lines
+
+Function 'uriencode_init'
+No executable lines
+
+Function 'htonll'
+No executable lines
+
+Function 'ntohll'
+No executable lines
+
+Function 'vperror'
+No executable lines
+
+Function 'safe_strtod'
+No executable lines
+
+Function 'safe_strtol'
+No executable lines
+
+Function 'safe_strtoul'
+No executable lines
+
+Function 'safe_strtoll'
+No executable lines
+
+Function 'safe_strtoull'
+No executable lines
+
+Function 'uriencode'
+No executable lines
+
+Function 'uriencode_init'
+No executable lines
+
+Function 'htonll'
+No executable lines
+
+Function 'ntohll'
+No executable lines
+
+Function 'vperror'
+No executable lines
+
+Function 'safe_strtod'
+No executable lines
+
+Function 'safe_strtol'
+No executable lines
+
+Function 'safe_strtoul'
+No executable lines
+
+Function 'safe_strtoll'
+No executable lines
+
+Function 'safe_strtoull'
+No executable lines
+
+Function 'uriencode'
+No executable lines
+
+Function 'uriencode_init'
+No executable lines
+
+Function 'htonll'
+No executable lines
+
+Function 'ntohll'
+No executable lines
+
+Function 'vperror'
+No executable lines
+
+Function 'safe_strtod'
+No executable lines
+
+Function 'safe_strtol'
+No executable lines
+
+Function 'safe_strtoul'
+No executable lines
+
+Function 'safe_strtoll'
+No executable lines
+
+Function 'safe_strtoull'
+No executable lines
+
+Function 'uriencode'
+No executable lines
+
+Function 'uriencode_init'
+No executable lines
+
+File 'assoc.c'
+Lines executed:46.51% of 129
+Creating 'assoc.c.gcov'
+
+File '/usr/include/stdlib.h'
+Lines executed:100.00% of 2
+Creating 'stdlib.h.gcov'
+
+File '/usr/include/x86_64-linux-gnu/bits/stdio2.h'
+Lines executed:70.00% of 10
+Creating 'stdio2.h.gcov'
+
+File 'authfile.c'
+Lines executed:86.96% of 46
+Creating 'authfile.c.gcov'
+
+File '/usr/include/x86_64-linux-gnu/sys/stat.h'
+Lines executed:100.00% of 2
+Creating 'stat.h.gcov'
+
+File '/usr/include/x86_64-linux-gnu/bits/string_fortified.h'
+Lines executed:66.67% of 6
+Creating 'string_fortified.h.gcov'
+
+File 'bipbuffer.c'
+Lines executed:81.54% of 65
+Creating 'bipbuffer.c.gcov'
+
+File 'cache.c'
+Lines executed:46.99% of 83
+Creating 'cache.c.gcov'
+
+File 'crawler.c'
+Lines executed:77.93% of 358
+Creating 'crawler.c.gcov'
+
+File '/usr/include/x86_64-linux-gnu/bits/poll2.h'
+Lines executed:66.67% of 6
+Creating 'poll2.h.gcov'
+
+File 'daemon.c'
+Lines executed:52.00% of 25
+Creating 'daemon.c.gcov'
+
+File '/usr/include/x86_64-linux-gnu/bits/fcntl2.h'
+Lines executed:100.00% of 4
+Creating 'fcntl2.h.gcov'
+
+File 'hash.c'
+Lines executed:100.00% of 10
+Creating 'hash.c.gcov'
+
+File 'items.c'
+Lines executed:86.75% of 1057
+Creating 'items.c.gcov'
+
+File 'itoa_ljust.c'
+Lines executed:76.92% of 52
+Creating 'itoa_ljust.c.gcov'
+
+File 'jenkins_hash.c'
+Lines executed:63.83% of 94
+Creating 'jenkins_hash.c.gcov'
+
+File 'logger.c'
+Lines executed:76.61% of 389
+Creating 'logger.c.gcov'
+
+File 'memcached.c'
+Lines executed:68.76% of 3985
+Creating 'memcached.c.gcov'
+
+File '/usr/include/x86_64-linux-gnu/bits/stdlib-float.h'
+Lines executed:0.00% of 1
+Creating 'stdlib-float.h.gcov'
+
+File '/usr/include/x86_64-linux-gnu/bits/byteswap.h'
+Lines executed:100.00% of 2
+Creating 'byteswap.h.gcov'
+
+File '/usr/include/x86_64-linux-gnu/bits/socket2.h'
+Lines executed:33.33% of 6
+Creating 'socket2.h.gcov'
+
+File '/usr/include/x86_64-linux-gnu/bits/unistd.h'
+Lines executed:33.33% of 6
+Creating 'unistd.h.gcov'
+
+File 'murmur3_hash.c'
+Lines executed:100.00% of 34
+Creating 'murmur3_hash.c.gcov'
+
+File 'slab_automove.c'
+Lines executed:81.69% of 71
+Creating 'slab_automove.c.gcov'
+
+File 'slabs.c'
+Lines executed:72.25% of 681
+Creating 'slabs.c.gcov'
+
+File 'stats.c'
+Lines executed:91.58% of 95
+Creating 'stats.c.gcov'
+
+File 'thread.c'
+Lines executed:74.05% of 393
+Creating 'thread.c.gcov'
+
+File 'util.c'
+Lines executed:77.78% of 99
+Creating 'util.c.gcov'
+

@@ -1,0 +1,79 @@
+Starting redis #0 at port 30000
+Starting redis #1 at port 30001
+Starting redis #2 at port 30002
+Starting redis #3 at port 30003
+Starting redis #4 at port 30004
+Starting redis #5 at port 30005
+Starting redis #6 at port 30006
+Starting redis #7 at port 30007
+Starting redis #8 at port 30008
+Starting redis #9 at port 30009
+Starting redis #10 at port 30010
+Starting redis #11 at port 30011
+Starting redis #12 at port 30012
+Starting redis #13 at port 30013
+Starting redis #14 at port 30014
+Starting redis #15 at port 30015
+Starting redis #16 at port 30016
+Starting redis #17 at port 30017
+Starting redis #18 at port 30018
+Starting redis #19 at port 30019
+Testing unit: 00-base.tcl
+20:42:37> (init) Restart killed instances: OK
+20:42:37> Cluster nodes are reachable: OK
+20:42:37> Cluster nodes hard reset: OK
+20:42:38> Cluster Join and auto-discovery test: OK
+20:42:45> Before slots allocation, all nodes report cluster failure: OK
+20:42:45> Different nodes have different IDs: OK
+20:42:45> It is possible to perform slot allocation: OK
+20:42:45> After the join, every node gets a different config epoch: .OK
+20:42:47> Nodes should report cluster_state is ok now: OK
+20:42:49> It is possible to write and read from the cluster: OK
+Testing unit: 01-faildet.tcl
+20:42:49> (init) Restart killed instances: OK
+20:42:49> Cluster nodes are reachable: OK
+20:42:49> Cluster nodes hard reset: OK
+20:42:54> Cluster Join and auto-discovery test: OK
+20:43:00> Before slots allocation, all nodes report cluster failure: OK
+20:43:00> Create a 5 nodes cluster: OK
+20:43:04> Cluster should start ok: OK
+20:43:04> Killing two slave nodes: OK
+20:43:06> Cluster should be still up: OK
+20:43:06> Killing one master node: OK
+20:43:06> Cluster should be down now: OK
+20:43:09> Restarting master node: OK
+20:43:10> Cluster should be up again: OK
+Testing unit: 02-failover.tcl
+20:43:17> (init) Restart killed instances: redis/5 redis/6 OK
+20:43:17> Cluster nodes are reachable: OK
+20:43:17> Cluster nodes hard reset: OK
+20:43:22> Cluster Join and auto-discovery test: OK
+20:43:28> Before slots allocation, all nodes report cluster failure: OK
+20:43:28> Create a 5 nodes cluster: OK
+20:43:32> Cluster is up: OK
+20:43:32> Cluster is writable: OK
+20:43:32> Instance #5 is a slave: OK
+20:43:32> Instance #5 synced with the master: OK
+20:43:32> Killing one master node: OK
+20:43:33> Wait for failover: OK
+20:43:37> Cluster should eventually be up again: OK
+20:43:38> Cluster is writable: OK
+20:43:38> Instance #5 is now a master: OK
+20:43:38> Restarting the previously killed master node: OK
+20:43:38> Instance #0 gets converted into a slave: OK
+Testing unit: 03-failover-loop.tcl
+20:43:38> (init) Restart killed instances: OK
+20:43:38> Cluster nodes are reachable: OK
+20:43:38> Cluster nodes hard reset: OK
+20:43:43> Cluster Join and auto-discovery test: OK
+20:43:49> Before slots allocation, all nodes report cluster failure: OK
+20:43:49> Create a 5 nodes cluster: OK
+20:43:53> Cluster is up: OK
+--- Iteration 19 ---
+20:43:53> Cluster is writable before failover: OK
+20:43:53> Killing node #6: OK
+20:43:53> Cluster should eventually be up again: OK
+20:43:53> Cluster is writable again: OK
+20:43:53> Restarting node #6: WARNING: Aborting the test.
+>>>>>>>> Problems starting redis #6: ping timeout
+Cleaning up...
