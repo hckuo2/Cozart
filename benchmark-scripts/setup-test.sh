@@ -10,13 +10,13 @@ setuptest_apache() {
     cd $DIR/test-apache
     wget --no-clobber https://www-eu.apache.org/dist//httpd/httpd-2.4.39.tar.gz
     tar -zvxf httpd-2.4.39.tar.gz
-    wget --no-clobber https://www-eu.apache.org/dist/perl/mod_perl-2.0.10.tar.gz
-    tar -zvxf mod_perl-2.0.10.tar.gz
+    wget --no-clobber https://www-eu.apache.org/dist/perl/mod_perl-2.0.11.tar.gz
+    tar -zvxf mod_perl-2.0.11.tar.gz
     cd httpd-2.4.39
     ./configure --prefix=$DIR/test-apache/httpd/prefork --with-mpm=prefork
     make -j`nproc` && make install
     cd $DIR/test-apache
-    cd mod_perl-2.0.10
+    cd mod_perl-2.0.11
     perl Makefile.PL MP_AP_PREFIX=$DIR/test-apache/httpd/prefork
     make -j`nproc`
     chmod -R 777 $DIR/test-apache
