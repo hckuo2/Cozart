@@ -2,7 +2,7 @@
 source constant.sh
 
 help() {
-    echo "./trace-kernel.sh linux initProgram [local=true]"
+    echo "./trace-kernel.sh initProgram [local=true]"
     echo "The third argument is for observe a local view."
 }
 

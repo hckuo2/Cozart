@@ -9,11 +9,11 @@ init_baseline() {
     base_overall=$((base_lkm+base_default))
 }
 tmp=$(mktemp)
+trap "rm $tmp" EXIT
 printf "%s %s %s %s %s %s\n" "type" \
     Application yes_configs mod_configs total-mod-size loaded-mod-size
 
-for app in "$@"; do
-    dir="$kernelbuild/$linux/$base/$app"
+for dir in "$@"; do
     vmlinuz=$(find $dir | grep vmlinuz-)
     config=$(find $dir | grep config-)
     $linux/scripts/extract-vmlinux $vmlinuz > $tmp
@@ -26,4 +26,3 @@ for app in "$@"; do
     printf "%s %s %s %s %s %s\n" "$name" "$binary_info" \
         "$yes_count" "$mod_count" "$total_mod_size" "$loaded_mod_size"
 done
-
