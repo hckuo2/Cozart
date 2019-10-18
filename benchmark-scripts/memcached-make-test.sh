@@ -11,6 +11,6 @@ rm gmon.out
 sync
 for i in `seq 1`; do
     make test > t.log 2>&1
-    gcov -f -w -c -j * > gcov_fwcj.log 2>&1
+    gcov -f -w -c -j * 2>&1 | tee gcov_fwcj.log
 done
 sync

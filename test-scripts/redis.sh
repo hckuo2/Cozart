@@ -7,6 +7,7 @@ target_src="/benchmark-scripts/redis-src/src"
 stat_folder=$workdir/gcov-gprof-stats/redis
 vanilla="/vanilla"
 debloated="/debloated"
+disk=qemu-disk.ext4.redis
 
 # vanilla kernel
 # run redis-make-test.sh, copy all generated fils
@@ -16,7 +17,7 @@ if (($control == "1" || $control == "0"))
 then
   for i in `seq $epoch`; do
     cd $workdir
-    ./boot-kernel.sh kernelbuild/linux-cosmic/cosmic/base/vmlinuz-4.18.20-linux-cosmic-cosmic-base /benchmark-scripts/redis-make-test.sh
+    ./boot-kernel.sh kernelbuild/linux-cosmic/cosmic/base/vmlinuz-4.18.20-linux-cosmic-cosmic-base /benchmark-scripts/redis-make-test.sh $disk
 
     rm -r $stat_folder$vanilla/testsuite/epoch$i
     base=$stat_folder$vanilla/testsuite/epoch$i
@@ -50,7 +51,7 @@ if (($control == "11" || $control == "0"))
 then
   for i in `seq $epoch`; do
     cd $workdir
-    ./boot-kernel.sh kernelbuild/linux-cosmic/cosmic/base/vmlinuz-4.18.20-linux-cosmic-cosmic-base /benchmark-scripts/redis-cluster.sh
+    ./boot-kernel.sh kernelbuild/linux-cosmic/cosmic/base/vmlinuz-4.18.20-linux-cosmic-cosmic-base /benchmark-scripts/redis-cluster.sh $disk
 
     rm -r $stat_folder$vanilla/runtest-cluster/epoch$i
     mkdir $stat_folder$vanilla/runtest-cluster
@@ -85,7 +86,7 @@ if (($control == "12" || $control == "0"))
 then
   for i in `seq $epoch`; do
     cd $workdir
-    ./boot-kernel.sh kernelbuild/linux-cosmic/cosmic/base/vmlinuz-4.18.20-linux-cosmic-cosmic-base /benchmark-scripts/redis-sent.sh
+    ./boot-kernel.sh kernelbuild/linux-cosmic/cosmic/base/vmlinuz-4.18.20-linux-cosmic-cosmic-base /benchmark-scripts/redis-sent.sh $disk
 
     rm -r $stat_folder$vanilla/runtest-sentinel/epoch$i
     mkdir $stat_folder$vanilla/runtest-sentinel
@@ -120,7 +121,7 @@ if (($control == "10" || $control == "0"))
 then
   for i in `seq $epoch`; do
     cd $workdir
-    ./boot-kernel.sh kernelbuild/linux-cosmic/cosmic/base/vmlinuz-4.18.20-linux-cosmic-cosmic-base /benchmark-scripts/redis-aggr.sh
+    ./boot-kernel.sh kernelbuild/linux-cosmic/cosmic/base/vmlinuz-4.18.20-linux-cosmic-cosmic-base /benchmark-scripts/redis-aggr.sh $disk
 
     rm -r $stat_folder$vanilla/runtest-aggr/epoch$i
     mkdir $stat_folder$vanilla/runtest-aggr
@@ -158,7 +159,7 @@ if (($control == "2" || $control == "0"))
 then
   for i in `seq $epoch`; do
     cd $workdir
-    ./boot-kernel.sh kernelbuild/linux-cosmic/cosmic/base/vmlinuz-4.18.20-linux-cosmic-cosmic-base /benchmark-scripts/redis-bench.sh
+    ./boot-kernel.sh kernelbuild/linux-cosmic/cosmic/base/vmlinuz-4.18.20-linux-cosmic-cosmic-base /benchmark-scripts/redis-bench.sh $disk
 
     rm -r $stat_folder$vanilla/bench/epoch$i
     base=$stat_folder$vanilla/bench/epoch$i
@@ -194,7 +195,7 @@ if (($control == "3" || $control == "0"))
 then
   for i in `seq $epoch`; do
     cd $workdir
-    ./boot-kernel.sh kernelbuild/linux-cosmic/cosmic/redis/vmlinuz-4.18.20-linux-cosmic-cosmic-redis  /benchmark-scripts/redis-make-test.sh
+    ./boot-kernel.sh kernelbuild/linux-cosmic/cosmic/redis-test/vmlinuz-4.18.20-linux-cosmic-cosmic-redis-test  /benchmark-scripts/redis-make-test.sh $disk
 
     rm -r $stat_folder$debloated/testsuite/epoch$i
     base=$stat_folder$debloated/testsuite/epoch$i
@@ -300,7 +301,7 @@ if (($control == "30" || $control == "0"))
 then
   for i in `seq $epoch`; do
     cd $workdir
-    ./boot-kernel.sh kernelbuild/linux-cosmic/cosmic/redis/vmlinuz-4.18.20-linux-cosmic-cosmic-redis /benchmark-scripts/redis-aggr.sh
+    ./boot-kernel.sh kernelbuild/linux-cosmic/cosmic/redis-test/vmlinuz-4.18.20-linux-cosmic-cosmic-redis-test /benchmark-scripts/redis-aggr.sh $disk
 
     rm -r $stat_folder$debloated/runtest-aggr/epoch$i
     mkdir $stat_folder$debloated/runtest-aggr
@@ -337,7 +338,7 @@ then
 	
   for i in `seq $epoch`; do
     cd $workdir
-    ./boot-kernel.sh kernelbuild/linux-cosmic/cosmic/redis/vmlinuz-4.18.20-linux-cosmic-cosmic-redis  /benchmark-scripts/redis-bench.sh
+    ./boot-kernel.sh kernelbuild/linux-cosmic/cosmic/redis/vmlinuz-4.18.20-linux-cosmic-cosmic-redis  /benchmark-scripts/redis-bench.sh $disk
 
     rm -r $stat_folder$debloated/bench/epoch$i
     base=$stat_folder$debloated/bench/epoch$i

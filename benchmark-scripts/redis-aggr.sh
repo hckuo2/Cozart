@@ -8,10 +8,10 @@ rm *.gcov
 rm *.log
 rm gmon.out
 
-make test > mt.log 2>&1
-./runtest-cluster > cluster.log 2>&1
+make test 2>&1 | mt.log
+./runtest-cluster 2>&1 | tee cluster.log
 wait
-make test-sentinel > mtsential.log 2>&1
+make test-sentinel 2>&1 | tee mtsentinel.log
 
-gcov -f -w -c -j * > gcov_fwcj.log 2>&1
+gcov -f -w -c -j * 2>&1 | tee gcov_fwcj.log
 sync
