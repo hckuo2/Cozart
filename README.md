@@ -1,4 +1,4 @@
-# Cozart (Configuration + Mozart)
+# Cozart: Mozart for OS Kernel Configuration
 Silm your kernel with better configuration.
 
 ## Setup
