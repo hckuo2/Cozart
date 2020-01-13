@@ -3,10 +3,37 @@
 [SIGMETRICS'20] Set the Configuration for the Heart of the OS:
 On the Practicality of Operating System Kernel Debloating 
 
+## What's the problem?
+
+
+We find that less than 20% of an Ubuntu kernel is used for running a HTTP
+server. Lots of modules(features) are not used and they can be disabled by
+configurations. However, Linux has so many options and the number of options
+is still growing... Since it is not practical to spend hours to reconfigure
+the kernel every time we deploying an application, we need an automatic tool
+that specialize the bloated kernels.
+
+| Version  | # Options  |
+|:--------:| -------------:|
+| 3.0      |    __11,328__    |
+| 4.0      |    __14,406__    |
+| 5.0      |    __16,527__    |
+
+## What can Cozart do?
+
+Cozart generates *APPLETS* for each applications and *BASELETS* for each deployment
+environment. Cozart then can compose one BASELET and one or multiple APPLETS to
+generate the final configuration.
+
+
 ## Setup
 
 ```
 source constants.sh
-make setup-qemu setup-linux debootstrap build-db build-base
+make setup-qemu # patch the qemu to enable PC tracing
+make setup-linux # clone the linux source
+make build-db # parse the linux source to extract the relationships between the configuration options and code
+make build-base # build the vanilla kernel as the baseline
+make debootstrap # create a rootfs for the VM
 ```
 
