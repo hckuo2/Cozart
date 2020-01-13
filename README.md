@@ -1,11 +1,12 @@
 # Cozart: Mozart for OS Kernel Configuration
-Silm your kernel with better configuration.
+
+[SIGMETRICS'20] Set the Configuration for the Heart of the OS:
+On the Practicality of Operating System Kernel Debloating 
 
 ## Setup
-`source constants.sh`
 
-`make setup-qemu setup-linux debootstrap build-db`
-
-`make build-base`
-
+```
+source constants.sh
+make setup-qemu setup-linux debootstrap build-db build-base
+```
 
