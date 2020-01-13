@@ -40,5 +40,5 @@ make debootstrap # create a rootfs for the VM
 
 ## Questions
 
-If you have any questions, please let me know at hckuo2@illinois.edu
+If you have any questions, please let me know at hckuo2@illinois.edu.
 Any feedbacks (good or bad) are also welcomed.
