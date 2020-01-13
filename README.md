@@ -26,7 +26,7 @@ environment. Cozart then can compose one BASELET and one or multiple APPLETS to
 generate the final configuration.
 
 
-## Setup
+## How can I use Cozart?
 
 ```
 source constants.sh
@@ -37,3 +37,8 @@ make build-base # build the vanilla kernel as the baseline
 make debootstrap # create a rootfs for the VM
 ```
 
+
+## Questions
+
+If you have any questions, please let me know at hckuo2@illinois.edu
+Any feedbacks (good or bad) are also welcomed.
