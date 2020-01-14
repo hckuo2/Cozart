@@ -37,8 +37,9 @@ make build-base # build the vanilla kernel as the baseline
 make debootstrap # create a rootfs for the VM
 ```
 
-
 ## Questions
 
 If you have any questions, please let me know at hckuo2@illinois.edu.
 Any feedbacks (good or bad) are also welcomed.
+
+[Test coverage data in the paper](https://bit.ly/2uMFr3e)
