@@ -35,6 +35,7 @@ make setup-linux # clone the linux source
 make build-db # parse the linux source to extract the relationships between the configuration options and code
 make build-base # build the vanilla kernel as the baseline
 make debootstrap # create a rootfs for the VM
+./trace-kernel.sh [program in the guest] # trace the workload and generate the configuration 
 ```
 
 ## Questions
