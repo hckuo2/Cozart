@@ -1,7 +1,7 @@
 # Cozart: Mozart for OS Kernel Configuration
 
 [SIGMETRICS'20] Set the Configuration for the Heart of the OS:
-On the Practicality of Operating System Kernel Debloating 
+On the Practicality of Operating System Kernel Debloating [[pdf]](https://hckuo.github.io/pdfs/cozart.pdf)
 
 ## What's the problem?
 
