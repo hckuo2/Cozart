@@ -63,7 +63,7 @@ debootstrap: $(disk) $(mnt)
 	sudo mount -o loop $(disk) $(mnt)
 	sudo debootstrap --components=main,universe \
 		--include="build-essential vim kmod net-tools apache2 apache2-utils haveged cgroupfs-mount iptables libltdl7 redis-server redis-tools nginx sysbench php memcached" \
-		--arch=amd64 cosmic $(mnt) http://archive.ubuntu.com/ubuntu
+		--arch=amd64 cosmic $(mnt) http://old-releases.ubuntu.com/ubuntu
 	sudo umount --recursive $(mnt)
 	make install-docker install-mark sync-scripts
 
