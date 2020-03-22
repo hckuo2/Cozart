@@ -29,7 +29,7 @@ generate the final configuration.
 ## How can I use Cozart?
 
 ```
-source constants.sh
+source constant.sh
 make $mnt; make $disk # set-up mnt folder and qemu disk
 make setup-qemu # patch the qemu to enable PC tracing
 make setup-linux # clone the linux source
