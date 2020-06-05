@@ -14,7 +14,7 @@ build-db:
 		awk -f postproc-fndb.awk >filename.db
 
 setup-linux:
-	git clone --depth=1 git://kernel.ubuntu.com/ubuntu/linux.git $(linux)
+	git clone --depth=1 git://kernel.ubuntu.com/ubuntu/ubuntu-cosmic.git $(linux)
 	make remove-makefile-escaped-newlines
 	cp $(linux)/debian/scripts/retpoline-extract-one $(linux)/scripts/ubuntu-retpoline-extract-one
 
