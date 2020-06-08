@@ -45,5 +45,6 @@ bootstrap() {
     mount_fs;
     enable_network;
     randomd;
+    write_modules;
     sleep 3;
 }
