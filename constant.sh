@@ -25,6 +25,8 @@ export linux="linux-cosmic"
 
 export base="cosmic"
 
+alias awk="gawk"
+
 rebase-linuxdir() {
     sed -r "s/.+$linux/$linux/"
 }

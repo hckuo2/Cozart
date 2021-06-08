@@ -42,7 +42,7 @@ $(mnt):
 	mkdir -p $(mnt)
 
 $(disk):
-	dd if=/dev/zero of=$(disk) bs=1 count=0 seek=20G 
+	dd if=/dev/zero of=$(disk) bs=1 count=0 seek=20G
 
 clean:
 	rm -rf *.tmp
@@ -59,7 +59,7 @@ install-kernel-modules:
 
 debootstrap: $(disk) $(mnt)
 	-sudo umount --recursive $(mnt)
-	sudo mkfs.ext4 $(disk)
+	sudo mkfs.ext4 -f $(disk)
 	sudo mount -o loop $(disk) $(mnt)
 	sudo debootstrap --components=main,universe \
 		--include="build-essential vim kmod net-tools apache2 apache2-utils haveged cgroupfs-mount iptables libltdl7 redis-server redis-tools nginx sysbench php memcached" \
