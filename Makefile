@@ -24,7 +24,7 @@ setup-qemu:
 		git submodule init && git submodule update --recursive && \
 		git apply -v ../patches/cpu-exec.patch && \
 		git apply -v ../patches/trace-events.patch && \
-		./configure --enable-trace-backend=log --target-list=x86_64-softmmu && \
+		./configure --disable-werror --enable-trace-backend=log --target-list=x86_64-softmmu && \
 		make -j`nproc`
 
 build-base:
