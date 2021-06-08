@@ -122,9 +122,9 @@ setuptest_redis() {
 
 setuptest_nginx() {
     cd $DIR
-    wget --no-clobber https://github.com/nginx/nginx-tests/archive/master.zip
-    unzip master.zip
-    mv nginx-tests-master nginx-tests
+    wget --no-clobber https://github.com/nginx/nginx-tests/archive/0172d49de35ddc3ac4c4e80804fd9ac53eaf9072.zip
+    unzip 0172d49de35ddc3ac4c4e80804fd9ac53eaf9072.zip
+    mv nginx-tests-0172d49de35ddc3ac4c4e80804fd9ac53eaf9072 nginx-tests
     cd $DIR/nginx-tests
     make -j8
 }
@@ -136,9 +136,9 @@ setuptest_nginx_gg() {
 	apt install libxslt-dev
 	apt install libssl-dev    
     cd $DIR 
-    wget --no-clobber https://github.com/nginx/nginx-tests/archive/master.zip
-    unzip master.zip
-    mv nginx-tests-master nginx-tests
+    wget --no-clobber https://github.com/nginx/nginx-tests/archive/0172d49de35ddc3ac4c4e80804fd9ac53eaf9072.zip
+    unzip 0172d49de35ddc3ac4c4e80804fd9ac53eaf9072.zip
+    mv nginx-tests-0172d49de35ddc3ac4c4e80804fd9ac53eaf9072 nginx-tests
 
     wget --no-clobber https://github.com/nginx/nginx/archive/release-1.15.5.tar.gz
     rm -rf $DIR/nginx-src
