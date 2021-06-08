@@ -31,7 +31,7 @@ setuptest_apache() {
     rm -rf $DIR/test-apache
     mkdir -p $DIR/test-apache
     cd $DIR/test-apache
-    wget --no-clobber https://www-eu.apache.org/dist//httpd/httpd-2.4.39.tar.gz
+    wget --no-clobber https://archive.apache.org/dist/httpd/httpd-2.4.39.tar.gz
     tar -zvxf httpd-2.4.39.tar.gz
     wget --no-clobber https://www-eu.apache.org/dist/perl/mod_perl-2.0.11.tar.gz
     tar -zvxf mod_perl-2.0.11.tar.gz
@@ -51,7 +51,7 @@ setuptest_apache_gg() {
     rm -rf $DIR/test-apache/
     mkdir -p $DIR/test-apache
     cd $DIR/test-apache
-    wget --no-clobber https://www-eu.apache.org/dist//httpd/httpd-2.4.39.tar.gz
+    wget --no-clobber https://archive.apache.org/dist/httpd/httpd-2.4.39.tar.gz
     tar -zvxf httpd-2.4.39.tar.gz
     wget --no-clobber https://www-eu.apache.org/dist/perl/mod_perl-2.0.11.tar.gz
     tar -zvxf mod_perl-2.0.11.tar.gz
