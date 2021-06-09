@@ -59,7 +59,7 @@ install-kernel-modules:
 
 debootstrap: $(disk) $(mnt)
 	-sudo umount --recursive $(mnt)
-	sudo mkfs.ext4 -f $(disk)
+	sudo mkfs.ext4 -F $(disk)
 	sudo mount -o loop $(disk) $(mnt)
 	sudo debootstrap --components=main,universe \
 		--include="build-essential vim kmod net-tools apache2 apache2-utils haveged cgroupfs-mount iptables libltdl7 redis-server redis-tools nginx sysbench php memcached" \
