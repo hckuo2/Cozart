@@ -1,0 +1,12 @@
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index 9af07fd92..759a19841 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -1996,6 +1996,7 @@ config WATCHDOG_PRETIMEOUT_GOV_NOOP
+ 
+ config WATCHDOG_PRETIMEOUT_GOV_PANIC
+ 	tristate "Panic watchdog pretimeout governor"
++	depends on WATCHDOG_CORE
+ 	help
+ 	  Panic watchdog pretimeout governor, on watchdog pretimeout
+ 	  event put the kernel into panic.
