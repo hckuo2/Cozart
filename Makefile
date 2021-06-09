@@ -11,7 +11,7 @@ build-db:
 	./directive-extracter.sh $(linux) >directives.db
 	find $(linux) -name Makefile \
 		| xargs awk -f extract-makefile.awk | sort -u -t' ' -k2,2 -k1,1 -r | \
-		awk -f postproc-fndb.awk >filename.db
+		awk -f postproc-fndb.awk | sed 's/^\.\///' >filename.db
 
 setup-linux:
 	git clone --depth=1 git://kernel.ubuntu.com/ubuntu/ubuntu-cosmic.git $(linux)
