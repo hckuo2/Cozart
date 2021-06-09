@@ -67,22 +67,21 @@ benchmark() {
     make toggle-benchmark-mode
     for app in $@; do
         echo "Benchmark $app on cozarted kernel"
-        qemu-system-x86_64 -cpu $cpu -enable-kvm -smp $cores -m $mem \
-            -kernel $kernelbuild/$linux/$base/$app-test/vmlinuz* \
+        $qemubin -cpu $cpu -enable-kvm -smp $cores -m $mem \
+            -kernel $kernelbuild/$linux/$base/$app/vmlinuz* \
             -drive file="$(pwd)/qemu-disk.ext4",if=ide,format=raw \
             -nographic -no-reboot \
             -append "panic=-1 console=ttyS0 root=/dev/sda rw init=/benchmark-scripts/$app.sh" \
             > $app.cozart.benchresult;
 
         echo "Benchmark $app on base kernel"
-       qemu-system-x86_64 -cpu $cpu -enable-kvm -smp $cores -m $mem \
+       $qemubin -cpu $cpu -enable-kvm -smp $cores -m $mem \
             -kernel $kernelbuild/$linux/$base/base/vmlinuz* \
             -drive file="$(pwd)/qemu-disk.ext4",if=ide,format=raw \
             -nographic -no-reboot \
             -append "panic=-1 console=ttyS0 root=/dev/sda rw init=/benchmark-scripts/$app.sh" \
             > $app.base.benchresult;
 
-       dos2unix --force $app.*.benchresult
     done
 }
 

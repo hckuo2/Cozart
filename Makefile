@@ -15,7 +15,8 @@ build-db:
 
 setup-linux:
 	git clone --depth=1 git://kernel.ubuntu.com/ubuntu/ubuntu-cosmic.git $(linux)
-	git apply -v ../patches/watchdog.patch
+	cd $(linux) && \
+		git apply -v ../patches/watchdog.patch
 	make remove-makefile-escaped-newlines
 	cp $(linux)/debian/scripts/retpoline-extract-one $(linux)/scripts/ubuntu-retpoline-extract-one
 
