@@ -53,7 +53,7 @@ make build-base # build the vanilla kernel as the baseline
 ./job.sh trace boot # generate a baselet
 ./job.sh trace apache # generate an applet for apache (the executed workload in the VM is in /benchmark-scripts/apache.sh)
 ./job.sh compose apache # compose apache applet with boot baselet
-./job.sh benchmark apache #
+./job.sh benchmark apache # benchmark the debloated kernel
 ```
 
 ## Questions
