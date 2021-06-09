@@ -28,13 +28,21 @@ generate the final configuration.
 
 ## How can I use Cozart?
 
+### Setup
+```
+git@github.com:hckuo/Cozart.git
+cd Cozart/docker;
+docker build -f Dockerfile -t cozart-env:latest .
+```
+
+### Run
+```
+cd Cozart # project root directory
+docker run -v $PWD:/Cozart --privileged -it --name cozart cozart-env /bin/bash # start up the docker container 
+```
+### In docker container
 ```
 mknod /dev/loop0 b 7 0 # create loop device if not exist
-apt install gawk # you MUST use gawk!
-apt install python3 python3-pip # for kconfiglib
-python3 -m pip install kconfiglib
-apt install golang bison build-essential flex bc libelf-dev openssl libssl-dev debootstrap \
-             git pkg-config libglib2.0-dev libpixman-1-dev # kernel/qemu building deps
 source constant.sh
 make $mnt; make $disk # set-up mnt folder and qemu disk
 make setup-qemu # patch the qemu to enable PC tracing
@@ -42,7 +50,10 @@ make setup-linux # clone the linux source
 make build-db # parse the linux source to extract the relationships between the configuration options and code
 make debootstrap # create a rootfs for the VM
 make build-base # build the vanilla kernel as the baseline
-./trace-kernel.sh [program in the guest] # trace the workload and generate the configuration 
+./job.sh trace boot # generate a baselet
+./job.sh trace apache # generate an applet for apache (the executed workload in the VM is in /benchmark-scripts/apache.sh)
+./job.sh compose apache # compose apache applet with boot baselet
+./job.sh benchmark apache #
 ```
 
 ## Questions
