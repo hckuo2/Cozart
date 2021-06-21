@@ -43,7 +43,7 @@ docker run -v $PWD:/Cozart --privileged -it --name cozart cozart-env /bin/bash #
 ### In docker container
 ```
 mknod /dev/loop0 b 7 0 # create loop device if not exist
-cd Cozart/
+cd /Cozart
 source constant.sh
 make $mnt; make $disk # set-up mnt folder and qemu disk
 make setup-qemu # patch the qemu to enable PC tracing
