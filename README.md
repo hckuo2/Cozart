@@ -51,6 +51,7 @@ make setup-linux # clone the linux source
 make build-db # parse the linux source to extract the relationships between the configuration options and code
 make debootstrap # create a rootfs for the VM
 make build-base # build the vanilla kernel as the baseline
+./install_mysql_host.sh # only required for mysql
 ./job.sh trace boot # generate a baselet
 ./job.sh trace apache # generate an applet for apache (the executed workload in the VM is in /benchmark-scripts/apache.sh)
 ./job.sh compose apache # compose apache applet with boot baselet
