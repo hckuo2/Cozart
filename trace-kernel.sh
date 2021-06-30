@@ -17,9 +17,9 @@ trace-kernel() {
     make clean
     # rawtrace=$(mktemp --tmpdir=/tmp cozart-XXXXX)
     $qemubin -trace exec_tb_block -smp $cores -m $mem -cpu $cpu \
-        -drive file="$workdir/qemu-disk.ext4,if=ide,format=raw" \
+        -drive file="$workdir/qemu-disk.ext4,if=virtio,format=raw" \
         -kernel $kernelbuild/$linux/$base/base/vmlinuz* -nographic -no-reboot \
-        -append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=$1" \
+        -append "nokaslr panic=-1 console=ttyS0 root=/dev/vda rw init=$1" \
         3>&1 1>trace-stdout.tmp 2>&3 | awk $awkoption --file extract-trace.awk > unsorted-trace.tmp
 
     cat unsorted-trace.tmp | sort >trace.tmp

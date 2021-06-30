@@ -11,19 +11,21 @@ export whoami=$(whoami)
 export kernelbuild="$workdir/kernelbuild"
 
 # for python pkg kconfiglib
-export srctree="linux-cosmic"
+export srctree="linux-alpine"
 export SRCARCH="x86"
 export ARCH="x86"
+export CC=gcc
+export LD=ld
 
 # Cozart constants
 # A Linux version has multiple base configurations.
 # A base configuration has multiple applications.
 #
 
-export linux="linux-cosmic"
+export linux="linux-alpine"
 # default is the kernel defconfig
 
-export base="cosmic"
+export base="alpine"
 
 alias awk="gawk"
 

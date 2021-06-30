@@ -20,6 +20,11 @@ setup-linux:
 	make remove-makefile-escaped-newlines
 	cp $(linux)/debian/scripts/retpoline-extract-one $(linux)/scripts/ubuntu-retpoline-extract-one
 
+setup-linux-alpine:
+	wget https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/snapshot/linux-5.10.43.tar.gz
+	tar -xvzf linux-5.10.43.tar.gz
+	mv linux-5.10.43 linux-alpine
+
 setup-qemu:
 	-git clone --depth 1 -b stable-2.12 https://github.com/qemu/qemu.git
 	cd qemu && \

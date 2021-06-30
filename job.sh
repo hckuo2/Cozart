@@ -27,8 +27,6 @@ compose() {
         echo "Aggregate $app"
         ./aggregate-config.sh \
             config-db/$linux/$base/base.config \
-            config-db/$linux/$base/base-choice.config \
-            config-db/$linux/$base/disable.config \
             config-db/$linux/$base/boot.config \
             $(locate_config_file $(decompose_app $app))
         cd $linux
@@ -69,17 +67,17 @@ benchmark() {
         echo "Benchmark $app on cozarted kernel"
         $qemubin -cpu $cpu -enable-kvm -smp $cores -m $mem \
             -kernel $kernelbuild/$linux/$base/$app/vmlinuz* \
-            -drive file="$(pwd)/qemu-disk.ext4",if=ide,format=raw \
+            -drive file="$(pwd)/qemu-disk.ext4",if=virtio,format=raw \
             -nographic -no-reboot \
-            -append "panic=-1 console=ttyS0 root=/dev/sda rw init=/benchmark-scripts/$app.sh" \
+            -append "panic=-1 console=ttyS0 root=/dev/vda rw init=/benchmark-scripts/$app.sh" \
             > $app.cozart.benchresult;
 
         echo "Benchmark $app on base kernel"
        $qemubin -cpu $cpu -enable-kvm -smp $cores -m $mem \
             -kernel $kernelbuild/$linux/$base/base/vmlinuz* \
-            -drive file="$(pwd)/qemu-disk.ext4",if=ide,format=raw \
+            -drive file="$(pwd)/qemu-disk.ext4",if=virtio,format=raw \
             -nographic -no-reboot \
-            -append "panic=-1 console=ttyS0 root=/dev/sda rw init=/benchmark-scripts/$app.sh" \
+            -append "panic=-1 console=ttyS0 root=/dev/vda rw init=/benchmark-scripts/$app.sh" \
             > $app.base.benchresult;
 
     done
