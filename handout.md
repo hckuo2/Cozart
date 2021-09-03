@@ -79,5 +79,13 @@ service nginx stop
 ```
 
  `make build-base` builds a vanilla kernel by Ubuntu cosmic config and store it at `kernelbuild/`. (This can take a while.)
-
-
+ This vanilla kernel will be used as the baseline for debloating.
+ 
+ ## Tracing
+ We finally prepare all necessary files for debloating including QEMU, kernel source, compiled kernel, application and its workload. We are about to trace our workload to debloat the kernel. Cozart divide the configuration into `baselet` and `applet`.
+ A `baselet` is the configuration to boot and a `applet` is the configuration option for the application.
+ 
+ We generate the baselet by running `./job.sh trace boot`. This will start up a VM and trace it until it successfully boots. A baselet, `config-db/linux-cosmic/cosmic/boot.config`, will be generated.
+ 
+ We generate the applet for Nginx by running `./job.sh trace nginx`. This will start up a VM and trace it until the designated Nginx workload is finished. An applet, `config-db/linux-cosmic/cosmic/nginx.config`, will be generated.
+ 
