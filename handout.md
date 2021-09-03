@@ -88,4 +88,36 @@ service nginx stop
  We generate the baselet by running `./job.sh trace boot`. This will start up a VM and trace it until it successfully boots. A baselet, `config-db/linux-cosmic/cosmic/boot.config`, will be generated.
  
  We generate the applet for Nginx by running `./job.sh trace nginx`. This will start up a VM and trace it until the designated Nginx workload is finished. An applet, `config-db/linux-cosmic/cosmic/nginx.config`, will be generated.
+ The way to distinguish the phase of booting and the phase of running Nginx workload is a marker program. This program makes the program counter to a magic location i.e., `0x333333333000` and `0x222222222000`. We need to execute the marker before and after the workload to know the phase of workload by inspecting the trace.
  
+ ```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/mman.h>
+
+int main(int argc, char **argv) {
+        char *ptr = NULL;
+        if(argc == 1) {
+                ptr = mmap(0x333333333000, 0x1000, PROT_READ|PROT_WRITE|PROT_EXEC,
+                                MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+        }
+        else {
+                ptr = mmap(0x222222222000, 0x1000, PROT_READ|PROT_WRITE|PROT_EXEC,
+                                MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+        }
+
+        memset(ptr, 0xc3, 0x1000);
+        ((void(*)())ptr)();
+        printf("ptr: %p\n", ptr);
+
+}
+```
+## Composing
+Now, we have a baselet and an applet for Nginx. We need to compose them together for the final kernel configuration by running `./job.sh compose ngnix`.
+A debloated kernel will be built and placed in `kernelbuild/linux-cosmic/cosmic/nginx`. (You will notice the building time is a lot shorter compared to building the vanilla kernel.).
+
+You can use the following command to test if the debloated kernel works.
+```
+$qemubin -enable-kvm -smp $cores -m $mem -cpu $cpu -drive file="$workdir/qemu-disk.ext4,if=ide,format=raw" -kernel $kernelbuild/$linux/$base/nginx/vmlinuz* -nographic -no-reboot -append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=/benchmark-scripts/nginx.sh"
+```
