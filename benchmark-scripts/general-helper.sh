@@ -13,6 +13,7 @@ mount_fs() {
 }
 
 enable_network() {
+    depmod
     modprobe e1000;
     hostname qemu
     echo "127.0.0.1  localhost.localdomain localhost" > /etc/hosts
