@@ -30,7 +30,7 @@ generate the final configuration.
 
 ### Setup
 ```
-git@github.com:hckuo/Cozart.git
+git clone git@github.com:hckuo/Cozart.git
 cd Cozart/docker;
 docker build -f Dockerfile -t cozart-env:latest .
 ```
