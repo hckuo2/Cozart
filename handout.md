@@ -121,3 +121,10 @@ You can use the following command to test if the debloated kernel works.
 ```
 $qemubin -enable-kvm -smp $cores -m $mem -cpu $cpu -drive file="$workdir/qemu-disk.ext4,if=ide,format=raw" -kernel $kernelbuild/$linux/$base/nginx/vmlinuz* -nographic -no-reboot -append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=/benchmark-scripts/nginx.sh"
 ```
+We compare the kernel size by running the command. `size $linux/vmlinux kernelbuild/linux-cosmic/cosmic/base/vmlinux`
+The first line represents the Nginx kernel that we just built and the second line is the vanilla kernel. We see a 24% reduction.
+```
+   text    data     bss     dec     hex filename
+13576072        5792766 1187840 20556678        139ab86 linux-cosmic/vmlinux
+15825782        8519002 2576384 26921168        19ac8d0 kernelbuild/linux-cosmic/cosmic/base/vmlinux
+```
