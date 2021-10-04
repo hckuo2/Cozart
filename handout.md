@@ -5,7 +5,7 @@
 We clone Cozart source files from the repository and checkout the branch `s4_demo`. We will next build a docker image that will be used for Cozart to work.
 
 ```bash
-git clone git@github.com:hckuo/Cozart.git ~
+git clone https://github.com/hckuo/Cozart.git ~/Cozart
 cd ~/Cozart/docker
 git checkout s4_demo
 sudo docker build -f Dockerfile -t cozart-env:latest .
