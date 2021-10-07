@@ -1,5 +1,7 @@
 # SSSS Cozart demo handout
-
+TODO:
+- slides for handon
+- expand with details
 ## Setup
 
 We clone Cozart source files from the repository and checkout the branch `s4_demo`. We will next build a docker image that will be used for Cozart to work.
