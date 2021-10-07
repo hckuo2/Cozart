@@ -34,7 +34,7 @@ make build-db # parse the linux source to extract the relationships between the 
 make debootstrap # create a rootfs for the VM
 make build-base # build the vanilla kernel as the baseline
 ./job.sh trace boot # generate a baselet
-./job.sh trace nginx # generate an applet for apache (the executed workload in the VM is in /benchmark-scripts/apache.sh)
+./job.sh trace nginx # generate an applet for apache (the executed workload in the VM is in /benchmark-scripts/nginx.sh)
 ./job.sh compose nginx # compose apache applet with boot baselet
 ```
 
