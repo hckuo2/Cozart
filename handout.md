@@ -30,11 +30,12 @@ sudo docker run -v $PWD:/Cozart --privileged -it --name cozart cozart-env /bin/b
 cd /Cozart
 source constant.sh
 make $mnt; make $disk # set-up mnt folder and qemu disk
+make debootstrap # create a rootfs for the VM
 make setup-qemu # patch the qemu to enable PC tracing
 make setup-linux # clone the linux source
-make build-db # parse the linux source to extract the relationships between the configuration options and code
-make debootstrap # create a rootfs for the VM
 make build-base # build the vanilla kernel as the baseline
+make build-db # parse the linux source to extract the relationships between the configuration options and code
+
 ./job.sh trace boot # generate a baselet
 ./job.sh trace nginx # generate an applet for apache (the executed workload in the VM is in /benchmark-scripts/nginx.sh)
 ./job.sh compose nginx # compose apache applet with boot baselet
