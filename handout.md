@@ -4,7 +4,7 @@ There are four major steps in this tutorial.
 1. Setup the environemnt
 2. Trace the workload to generate configlets
 3. Compose the configlets
-4. Build the debloated kernel
+4. Test the debloated kernel
 
 ## Setup
 
@@ -126,13 +126,14 @@ int main(int argc, char **argv) {
 
 }
 ```
-## Compose and build
+## Compose
 ```bash
 ./job.sh compose nginx # compose apache applet with boot baselet
 ```
 Now, we have a baselet and an applet for Nginx. We need to compose them together for the final kernel configuration by running `./job.sh compose ngnix`.
 A debloated kernel will be built and placed in `kernelbuild/linux-cosmic/cosmic/nginx`. (You will notice the building time is a lot shorter compared to building the vanilla kernel.).
 
+## Test
 You can use the following command to test if the debloated kernel works.
 
 ```bash
