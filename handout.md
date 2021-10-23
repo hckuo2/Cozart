@@ -1,14 +1,14 @@
 # SSSS Cozart demo handout
 
 There are four major steps in this tutorial.
-1. Setup the environemnt
+1. Setting up the environemnt
 2. Trace the workload to generate configlets
 3. Compose the configlets
 4. Test the debloated kernel
 
 ## Setup
 
-The environemnt is packed in a contianer image. If staring from scratch you can use the following command the setup the environment. These commands clone the git repository, switch to `s4_demo` branch, build the container image from a Dockerfile and, finally, run a container.
+The environment is packed in a container image. If starting from scratch, you can use the following commands to setup the environment. These commands clone the git repository, switch to `s4_demo` branch, build the container image from a Dockerfile and, finally, run a container.
 
 ```bash
 git clone https://github.com/hckuo/Cozart.git ~/Cozart
@@ -19,7 +19,7 @@ cd ~/Cozart
 sudo docker run -v $PWD:/Cozart --privileged -it --name cozart cozart-env /bin/bash
 ```
 
-If you have the container running already (verified by `sudo docker ps -a | grep cozart`), you can use the following command the enter the container. 
+If you have the container running already (verified by `sudo docker ps -a | grep cozart`), you can use the following commands to enter the container. 
 
 ```bash
 sudo docker start cozart
@@ -27,7 +27,7 @@ sudo docker exec -it cozart /bin/bash
 ```
 ----
 **Starting from this point, you are in the container and should see a bash prompt.**
-Execute the following commands should be executed in the container.
+Execute the following commands in the container.
 
 
 The following block can be skipped for the demo because these steps take a long time to compile QEMU and Linux and we have done these for you. 
@@ -92,11 +92,11 @@ linux-cosmic/drivers/zorro/zorro-sysfs.c CONFIG_ZORR
 ./job.sh trace boot # generate a baselet
 ./job.sh trace nginx # generate an applet for apache (the executed workload in the VM is in /benchmark-scripts/nginx.sh)
 ```
- We finally prepare all necessary files for debloating including QEMU, kernel source, compiled kernel, application and its workload. We are about to trace our workload to debloat the kernel. Cozart divide the configuration into `baselet` and `applet`.
+ We finally prepare all necessary files for debloating including QEMU, kernel source, compiled kernel, application and its workload. We are about to trace our workload to debloat the kernel. Cozart divides the configuration into `baselet` and `applet`.
  A `baselet` is the configuration to boot and a `applet` is the configuration option for the application.
 
- `./job.sh trace` runs QEMU with trace enabled (emulation mode). QEMU would log all executed PC locations then the script translate the PC into
- kernel source code lines by `addr2line` and maps the lines to configuration options.
+ `./job.sh trace` runs QEMU with trace enabled (emulation mode). QEMU would log all executed PC locations then a script will translate the PC into
+ kernel source code lines by `addr2line` and will map the lines to configuration options.
  
  We generate the baselet by running `./job.sh trace boot`. This will start up a VM and trace it until it successfully boots. A baselet, `config-db/linux-cosmic/cosmic/boot.config`, will be generated.
  
@@ -140,7 +140,7 @@ You can use the following command to test if the debloated kernel works.
 $qemubin -smp $cores -m $mem -cpu $cpu -drive file="$workdir/qemu-disk.ext4,if=ide,format=raw" -kernel $kernelbuild/$linux/$base/nginx/vmlinuz* -nographic -no-reboot -append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=/benchmark-scripts/nginx.sh"
 ```
 We compare the kernel size by running the command. `size $linux/vmlinux kernelbuild/linux-cosmic/cosmic/base/vmlinux`
-The first line represents the Nginx kernel that we just built and the second line is the vanilla kernel. We see a 24% reduction.
+The first line represents the Nginx kernel that we just built and the second line is the vanilla kernel. We see a 24% reduction in size.
 ```
    text    data     bss     dec     hex filename
 13576072        5792766 1187840 20556678        139ab86 linux-cosmic/vmlinux
