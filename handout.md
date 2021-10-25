@@ -7,18 +7,6 @@ There are four major steps in this tutorial.
 4. Test the debloated kernel
 
 ## Setup
-
-The environment is packed in a container image. If starting from scratch, you can use the following commands to setup the environment. These commands clone the git repository, switch to `s4_demo` branch, build the container image from a Dockerfile and, finally, run a container.
-
-```bash
-git clone https://github.com/hckuo/Cozart.git ~/Cozart
-cd ~/Cozart/docker
-git checkout s4_demo
-sudo docker build -f Dockerfile -t cozart-env:latest .
-cd ~/Cozart
-sudo docker run -v $PWD:/Cozart --privileged -it --name cozart cozart-env /bin/bash
-```
-
 If you have the container running already (verified by `sudo docker ps -a | grep cozart`), you can use the following commands to enter the container. 
 
 ```bash
@@ -28,19 +16,6 @@ sudo docker exec -it cozart /bin/bash
 ----
 **Starting from this point, you are in the container and should see a bash prompt.**
 Execute the following commands in the container.
-
-
-The following block can be skipped for the demo because these steps take a long time to compile QEMU and Linux and we have done these for you. 
-```bash
-cd /Cozart
-source constant.sh
-make $mnt; make $disk # set-up mnt folder and qemu disk
-make debootstrap # create a rootfs for the VM
-make setup-qemu # patch the qemu to enable PC tracing
-make setup-linux # clone the linux source
-make build-base # build the vanilla kernel as the baseline
-```
-You can start from here.
 ```bash
 cd /Cozart
 source constant.sh
@@ -145,4 +120,26 @@ The first line represents the Nginx kernel that we just built and the second lin
    text    data     bss     dec     hex filename
 13576072        5792766 1187840 20556678        139ab86 linux-cosmic/vmlinux
 15825782        8519002 2576384 26921168        19ac8d0 kernelbuild/linux-cosmic/cosmic/base/vmlinux
+```
+
+## Starting from scratch
+The environment is packed in a container image. If starting from scratch, you can use the following commands to setup the environment. These commands clone the git repository, switch to `s4_demo` branch, build the container image from a Dockerfile and, finally, run a container.
+
+```bash
+git clone https://github.com/hckuo/Cozart.git ~/Cozart
+cd ~/Cozart/docker
+git checkout s4_demo
+sudo docker build -f Dockerfile -t cozart-env:latest .
+cd ~/Cozart
+sudo docker run -v $PWD:/Cozart --privileged -it --name cozart cozart-env /bin/bash
+```
+In the docker container:
+```bash
+cd /Cozart
+source constant.sh
+make $mnt; make $disk # set-up mnt folder and qemu disk
+make debootstrap # create a rootfs for the VM
+make setup-qemu # patch the qemu to enable PC tracing
+make setup-linux # clone the linux source
+make build-base # build the vanilla kernel as the baseline
 ```
