@@ -14,8 +14,11 @@ sudo docker start cozart
 sudo docker exec -it cozart /bin/bash
 ```
 ----
+
 **Starting from this point, you are in the container and should see a bash prompt.**
+
 Execute the following commands in the container.
+
 ```bash
 cd /Cozart
 source constant.sh
@@ -33,9 +36,11 @@ done
 service nginx stop
 ...
 ```
--  `make build-db` parses the Linux source files to extract the relationships between source files and kernel configurations. It generates two files: `directives.db` and `filename.db`.
 
-`directives.db` contains the mapping of C directives and source code lines as the following:
+-  `make build-db` parses the Linux source files to extract the relationships 
+between source files and kernel configurations. It generates two files: `directives.db` and `filename.db`.
+
+- `directives.db` contains the mapping of C directives and source code lines as the following:
 
 ```
 linux-cosmic/arch/x86/boot/compressed/head_32.S:264:#ifdef CONFIG_EFI_STUB
@@ -44,7 +49,7 @@ linux-cosmic/arch/x86/boot/compressed/head_64.S:101:#ifdef CONFIG_RELOCATABLE
 linux-cosmic/arch/x86/boot/compressed/head_64.S:110:#endif
 ```
 
-`filename.db` contains the mapping of Makefiles and configuration as the following:
+- `filename.db` contains the mapping of Makefiles and configuration as the following:
 
 ```
 linux-cosmic/drivers/iio/pressure/zpa2326.c CONFIG_ZPA2326
@@ -55,51 +60,72 @@ linux-cosmic/drivers/zorro/zorro-sysfs.c CONFIG_ZORR
 ```
 
  
- ## Trace
- ```bash
+## Trace
+
+```bash
 ./job.sh trace boot # generate a baselet
 ./job.sh trace nginx # generate an applet for apache (the executed workload in the VM is in /benchmark-scripts/nginx.sh)
 ```
- We finally prepare all necessary files for debloating including QEMU, kernel source, compiled kernel, application and its workload. We are about to trace our workload to debloat the kernel. Cozart divides the configuration into `baselet` and `applet`.
- A `baselet` is the configuration to boot and a `applet` is the configuration option for the application.
 
- `./job.sh trace` runs QEMU with trace enabled (emulation mode). QEMU would log all executed PC locations then a script will translate the PC into
- kernel source code lines by `addr2line` and will map the lines to configuration options.
+We finally prepare all necessary files for debloating including QEMU, kernel
+source, compiled kernel, application and its workload. We are about to trace
+our workload to debloat the kernel. Cozart divides the configuration into
+`baselet` and `applet`.
+
+- A `baselet` is the configuration to boot and a `applet` is the configuration
+option for the application.
+
+- `./job.sh trace` runs QEMU with trace enabled (emulation mode). QEMU would log all executed PC locations then a script will translate the PC into
+kernel source code lines by `addr2line` and will map the lines to configuration options.
  
- We generate the baselet by running `./job.sh trace boot`. This will start up a VM and trace it until it successfully boots. A baselet, `config-db/linux-cosmic/cosmic/boot.config`, will be generated.
+We generate the baselet by running `./job.sh trace boot`. This will start up a
+VM and trace it until it successfully boots. A baselet,
+`config-db/linux-cosmic/cosmic/boot.config`, will be generated.
  
- We generate the applet for Nginx by running `./job.sh trace nginx`. This will start up a VM and trace it until the designated Nginx workload is finished. An applet, `config-db/linux-cosmic/cosmic/nginx.config`, will be generated.
- The way to distinguish the phase of booting and the phase of running Nginx workload is a marker program. This program makes the program counter to a magic location i.e., `0x333333333000` and `0x222222222000`. We need to execute the marker before and after the workload to know the phase of workload by inspecting the trace.
+We generate the applet for Nginx by running `./job.sh trace nginx`. This will
+start up a VM and trace it until the designated Nginx workload is finished. An
+applet, `config-db/linux-cosmic/cosmic/nginx.config`, will be generated.
+
+The way to distinguish the phase of booting and the phase of running Nginx
+workload is a marker program. This program makes the program counter to a
+magic location i.e., `0x333333333000` and `0x222222222000`. We need to execute
+the marker before and after the workload to know the phase of workload by
+inspecting the trace.
  
- ```c
+```c
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/mman.h>
 
 int main(int argc, char **argv) {
-        char *ptr = NULL;
-        if(argc == 1) {
-                ptr = mmap(0x333333333000, 0x1000, PROT_READ|PROT_WRITE|PROT_EXEC,
-                                MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-        }
-        else {
-                ptr = mmap(0x222222222000, 0x1000, PROT_READ|PROT_WRITE|PROT_EXEC,
-                                MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-        }
+    char *ptr = NULL;
+    if(argc == 1) {
+            ptr = mmap(0x333333333000, 0x1000, PROT_READ|PROT_WRITE|PROT_EXEC,
+                            MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+    }
+    else {
+            ptr = mmap(0x222222222000, 0x1000, PROT_READ|PROT_WRITE|PROT_EXEC,
+                            MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+    }
 
-        memset(ptr, 0xc3, 0x1000);
-        ((void(*)())ptr)();
-        printf("ptr: %p\n", ptr);
-
+    memset(ptr, 0xc3, 0x1000);
+    ((void(*)())ptr)();
+    printf("ptr: %p\n", ptr);
 }
 ```
+
 ## Compose
+
 ```bash
 ./job.sh compose nginx # compose apache applet with boot baselet
 ```
-Now, we have a baselet and an applet for Nginx. We need to compose them together for the final kernel configuration by running `./job.sh compose ngnix`.
-A debloated kernel will be built and placed in `kernelbuild/linux-cosmic/cosmic/nginx`. (You will notice the building time is a lot shorter compared to building the vanilla kernel.).
+Now, we have a baselet and an applet for Nginx. We need to compose them
+together for the final kernel configuration by running `./job.sh compose
+ngnix`.
+A debloated kernel will be built and placed in
+`kernelbuild/linux-cosmic/cosmic/nginx`. (You will notice the building time is
+a lot shorter compared to building the vanilla kernel.).
 
 ## Test
 You can use the following command to test if the debloated kernel works.
@@ -118,8 +144,12 @@ The first line represents the Nginx kernel that we just built and the second lin
 15825782        8519002 2576384 26921168        19ac8d0 kernelbuild/linux-cosmic/cosmic/base/vmlinux
 ```
 
-## Starting from scratch
-The environment is packed in a container image. If starting from scratch, you can use the following commands to setup the environment. These commands clone the git repository, switch to `s4_demo` branch, build the container image from a Dockerfile and, finally, run a container.
+## Starting from scratch (Not necessary for this session because we prepare the AWS image)
+
+The environment is packed in a container image. If starting from scratch, you
+can use the following commands to setup the environment. These commands clone
+the git repository, switch to `s4_demo` branch, build the container image from
+a Dockerfile and, finally, run a container.
 
 ```bash
 git clone https://github.com/hckuo/Cozart.git ~/Cozart
@@ -130,6 +160,7 @@ cd ~/Cozart
 sudo docker run -v $PWD:/Cozart --privileged -it --name cozart cozart-env /bin/bash
 ```
 In the docker container:
+
 ```bash
 cd /Cozart
 source constant.sh
@@ -140,7 +171,6 @@ make setup-linux # clone the linux source
 make build-base # build the vanilla kernel as the baseline
 make build-db
 ```
-
 
 The above lists all commands necessary to setup the environment.
 - `constant.sh` contains constant variables such as the kernel and disk path.
