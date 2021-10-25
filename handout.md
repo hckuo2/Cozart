@@ -33,7 +33,6 @@ done
 service nginx stop
 ...
 ```
-- `make build-base` builds a vanilla kernel by Ubuntu cosmic config and store it at `kernelbuild/`. (This can take a while.) This vanilla kernel will be used as the baseline for debloating.
 -  `make build-db` parses the Linux source files to extract the relationships between source files and kernel configurations. It generates two files: `directives.db` and `filename.db`.
 
 `directives.db` contains the mapping of C directives and source code lines as the following:
@@ -136,6 +135,7 @@ make debootstrap # create a rootfs for the VM
 make setup-qemu # patch the qemu to enable PC tracing
 make setup-linux # clone the linux source
 make build-base # build the vanilla kernel as the baseline
+make build-db
 ```
 
 
@@ -144,3 +144,5 @@ The above lists all commands necessary to setup the environment.
 -  We then need to patch QEMU in order to enable tracing by `make setup-qemu`.
 -  We download the Linux source files and build our vanilla kernel by `make setup-linux`.
 - `make debootstrap` utilizes the system command, `deboostrap` to create disk image for tracing and it prepares necessary files such as the application and its workload.
+- `make build-base` builds a vanilla kernel by Ubuntu cosmic config and store it at `kernelbuild/`. (This can take a while.) This vanilla kernel will be used as the baseline for debloating.
+- -  `make build-db` parses the Linux source files to extract the relationships between source files and kernel configurations. It generates two files: `directives.db` and `filename.db`.
