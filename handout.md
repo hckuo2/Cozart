@@ -21,12 +21,6 @@ cd /Cozart
 source constant.sh
 make build-db # parse the linux source to extract the relationships between the configuration options and code
 ```
-
-The above lists all commands necessary to setup the environment.
-- `constant.sh` contains constant variables such as the kernel and disk path.
--  We then need to patch QEMU in order to enable tracing by `make setup-qemu`.
--  We download the Linux source files and build our vanilla kernel by `make setup-linux`.
-- `make debootstrap` utilizes the system command, `deboostrap` to create disk image for tracing and it prepares necessary files such as the application and its workload.
 In this demo, we will be debloating a kernel for Nginx so the workload looks like the following.
 
 ```bash
@@ -143,3 +137,10 @@ make setup-qemu # patch the qemu to enable PC tracing
 make setup-linux # clone the linux source
 make build-base # build the vanilla kernel as the baseline
 ```
+
+
+The above lists all commands necessary to setup the environment.
+- `constant.sh` contains constant variables such as the kernel and disk path.
+-  We then need to patch QEMU in order to enable tracing by `make setup-qemu`.
+-  We download the Linux source files and build our vanilla kernel by `make setup-linux`.
+- `make debootstrap` utilizes the system command, `deboostrap` to create disk image for tracing and it prepares necessary files such as the application and its workload.
