@@ -105,7 +105,10 @@ A debloated kernel will be built and placed in `kernelbuild/linux-cosmic/cosmic/
 You can use the following command to test if the debloated kernel works.
 
 ```bash
-$qemubin -smp $cores -m $mem -cpu $cpu -drive file="$workdir/qemu-disk.ext4,if=ide,format=raw" -kernel $kernelbuild/$linux/$base/nginx/vmlinuz* -nographic -no-reboot -append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=/benchmark-scripts/nginx.sh"
+$qemubin -smp $cores -m $mem -cpu $cpu \
+    -drive file="$workdir/qemu-disk.ext4,if=ide,format=raw" \
+    -kernel $kernelbuild/$linux/$base/nginx/vmlinuz* -nographic \
+    -no-reboot -append "nokaslr panic=-1 console=ttyS0 root=/dev/sda rw init=/benchmark-scripts/nginx.sh"
 ```
 We compare the kernel size by running the command. `size $linux/vmlinux kernelbuild/linux-cosmic/cosmic/base/vmlinux`
 The first line represents the Nginx kernel that we just built and the second line is the vanilla kernel. We see a 24% reduction in size.
@@ -145,4 +148,4 @@ The above lists all commands necessary to setup the environment.
 -  We download the Linux source files and build our vanilla kernel by `make setup-linux`.
 - `make debootstrap` utilizes the system command, `deboostrap` to create disk image for tracing and it prepares necessary files such as the application and its workload.
 - `make build-base` builds a vanilla kernel by Ubuntu cosmic config and store it at `kernelbuild/`. (This can take a while.) This vanilla kernel will be used as the baseline for debloating.
-- -  `make build-db` parses the Linux source files to extract the relationships between source files and kernel configurations. It generates two files: `directives.db` and `filename.db`.
+- `make build-db` parses the Linux source files to extract the relationships between source files and kernel configurations. It generates two files: `directives.db` and `filename.db`.
