@@ -1,3 +1,4 @@
+#!/bin/bash
 source constant.sh
 #Would you like to setup VALIDATE PASSWORD plugin? NO
 #New password: root
