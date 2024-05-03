@@ -14,7 +14,7 @@ build-db:
 		awk -f postproc-fndb.awk | sed 's/^\.\///' >filename.db
 
 setup-linux:
-	git clone --depth=1 git://kernel.ubuntu.com/ubuntu/ubuntu-cosmic.git $(linux)
+	git clone --depth=1 https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/cosmic $(linux)
 	cd $(linux) && \
 		git apply -v ../patches/watchdog.patch
 	make remove-makefile-escaped-newlines
